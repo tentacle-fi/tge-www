@@ -17,17 +17,17 @@ const Farm: React.FC = () => {
 
   const RedeemButton = useMemo(() => {
     if (status !== "connected") {
-      return <Button disabled text="Harvest &amp; Unstake ESCH/UBQ" variant="secondary" />;
+      return <Button disabled text="Harvest &amp; Unstake INK/UBQ" variant="secondary" />;
     }
     if (!isRedeeming) {
-      return <Button onClick={onRedeemESCHUBQ} text="Harvest &amp; Unstake ESCH/UBQ" variant="secondary" />;
+      return <Button onClick={onRedeemESCHUBQ} text="Harvest &amp; Unstake INK/UBQ" variant="secondary" />;
     }
     return <Button disabled text="Redeeming..." variant="secondary" />;
   }, [isRedeeming, onRedeemESCHUBQ]);
 
   return (
     <Page>
-      <PageHeader icon="🌾🦖" subtitle="Stake ESCH/UBQ Shinobi LP tokens and grow TGE1s" title="Farm" />
+      <PageHeader icon="🌾🦖" subtitle="Stake INK/UBQ Shinobi LP tokens and grow INK" title="Farm" />
       <Container>
         <Spacer />
         <Split>
@@ -45,8 +45,8 @@ const Farm: React.FC = () => {
           <Button full text="Addresses" to="/addresses" variant="secondary" />
           <Button
             full
-            text="Get ESCH/UBQ LP tokens"
-            href="https://shinobi-info.ubiq.ninja/pair/0xf102ad140b26c3c6af9e9358da9deaa27cb1dbea"
+            text="Get INK/UBQ LP tokens"
+            href="https://shinobi-info.ubiq.ninja/pair/"
             variant="tertiary"
           />
         </Split>

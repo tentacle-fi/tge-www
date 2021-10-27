@@ -32,7 +32,7 @@ export class Contracts {
 
     this.names = {};
     this.names[this.TGE1.options.address] = "TGE1";
-    this.names[this.shinobi_pool.options.address] = "ESCH/UBQ Shinobi LP Yield Farm";
+    this.names[this.shinobi_pool.options.address] = "INK/UBQ Shinobi LP Yield Farm";
   }
 
   setDefaultAccount(account) {
