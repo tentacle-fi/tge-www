@@ -4,6 +4,8 @@ The Ubiq TGE Framework core website application.
 
 Based off of Yam Frontend: https://github.com/yam-finance/yam-www
 
+Adapted for use by the Tentacle.Finance team.
+
 ## Developments
 
 **Install deps**
@@ -16,6 +18,12 @@ yarn install
 
 ```sh
 yarn start
+```
+
+**Build for launch**
+
+```sh
+yarn build
 ```
 
 ## License

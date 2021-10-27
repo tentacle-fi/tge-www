@@ -6,7 +6,7 @@ const Logo: React.FC = () => {
   return (
     <StyledLogo to="/">
       <StyledEmoji>🦖</StyledEmoji>
-      <StyledText>Ubiq TGE Framework</StyledText>
+      <StyledText>Tentacle.Finance</StyledText>
     </StyledLogo>
   );
 };

@@ -11,7 +11,7 @@ const Home: React.FC = () => {
       <PageHeader
         icon={darkMode ? "🌚" : "🌞"}
         subtitle={darkMode ? "🤫 shhh... the squids are sleeping." : "It's a great day to farm INK!"}
-        title="Welcome to Ubiq TGE Framework."
+        title="Welcome to Tentacle.Finance"
       />
     </Page>
   );

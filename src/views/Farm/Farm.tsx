@@ -43,12 +43,7 @@ const Farm: React.FC = () => {
         <Spacer size="lg" />
         <Split>
           <Button full text="Addresses" to="/addresses" variant="secondary" />
-          <Button
-            full
-            text="Get INK/UBQ LP tokens"
-            href="https://shinobi-info.ubiq.ninja/pair/"
-            variant="tertiary"
-          />
+          <Button full text="Get INK/UBQ LP tokens" href="https://shinobi-info.ubiq.ninja/pair/" variant="tertiary" />
         </Split>
       </Container>
     </Page>
