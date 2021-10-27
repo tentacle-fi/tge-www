@@ -48,7 +48,7 @@ const Harvest: React.FC = () => {
         <CardContent>
           <Box alignItems="center" column>
             <Value value={earnedBalance > 0 ? earnedBalance.toString() : "--"} />
-            <Label text="Unharvested TGE1s" />
+            <Label text="Unharvested INK" />
           </Box>
         </CardContent>
         <CardActions>{HarvestAction}</CardActions>
