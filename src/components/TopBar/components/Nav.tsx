@@ -8,6 +8,9 @@ const Nav: React.FC = () => {
       <StyledRouterLink exact activeClassName="active" to="/farm">
         Farm
       </StyledRouterLink>
+      <StyledRouterLink exact activeClassName="active" to="/help">
+        Help
+      </StyledRouterLink>
     </StyledNav>
   );
 };
@@ -20,6 +23,7 @@ const StyledNav = styled.nav`
 const StyledRouterLink = styled(NavLink)`
   color: ${(props) => props.theme.colors.grey[500]};
   font-weight: 700;
+  font-size: 30px;
   padding-left: ${(props) => props.theme.spacing[3]}px;
   padding-right: ${(props) => props.theme.spacing[3]}px;
   text-decoration: none;

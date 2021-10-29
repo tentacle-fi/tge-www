@@ -27,6 +27,10 @@ const Farm: React.FC = () => {
 
   return (
     <Page>
+      <Box row justifyContent="center">
+        <Button full text="Get Started Here" to="/help" />
+      </Box>
+      <Spacer />
       <PageHeader icon="🌾🦖" subtitle="Stake INK/UBQ Shinobi LP tokens and grow INK" title="Farm" />
       <Container>
         <Spacer />

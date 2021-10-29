@@ -63,7 +63,7 @@ const StyledNavWrapper = styled.div`
   display: flex;
   flex: 1;
   justify-content: center;
-  @media (max-width: 768px) {
+  @media (max-width: 600px) {
     display: none;
   }
 `;
@@ -86,7 +86,7 @@ const StyledMenuButton = styled.button`
   outline: 0;
   padding: 0;
   display: none;
-  @media (max-width: 400px) {
+  @media (max-width: 600px) {
     align-items: center;
     display: flex;
     height: 44px;
