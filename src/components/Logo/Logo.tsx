@@ -1,11 +1,14 @@
 import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import octoLogo from "assets/octo_grey.png";
 
 const Logo: React.FC = () => {
   return (
     <StyledLogo to="/">
-      <StyledEmoji>🦖</StyledEmoji>
+      <StyledEmoji>
+        <img src={octoLogo} alt="Tentacle Finance Logo" style={{ height: 48, width: 76.375, alignSelf: "center" }} />
+      </StyledEmoji>
       <StyledText>Tentacle.Finance</StyledText>
     </StyledLogo>
   );

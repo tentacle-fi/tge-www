@@ -9,6 +9,8 @@ import useFarming from "hooks/useFarming";
 import HarvestCard from "./components/Harvest";
 import StakeCard from "./components/Stake";
 import { useWallet } from "use-wallet";
+import inkLogo from "assets/ink_black_alpha.png";
+import ubqLogo from "assets/ubq.png";
 
 const Farm: React.FC = () => {
   const { status } = useWallet();
@@ -31,7 +33,11 @@ const Farm: React.FC = () => {
         <Button full text="Get Started Here" to="/help" />
       </Box>
       <Spacer />
-      <PageHeader icon="🌾🦖" subtitle="Stake INK/UBQ Shinobi LP tokens and grow INK" title="Farm" />
+      <PageHeader icon="" subtitle="Stake INK/UBQ Shinobi LP tokens and grow INK" title="Farm" />
+      <div style={{ clear: "both" }}>
+        <img src={inkLogo} alt="Tentacle Finance Logo" style={{ float: "left", width: "100px", background: "white", borderRadius: 110 }} />
+        <img src={ubqLogo} alt="Ubiq Logo" style={{ float: "left", width: "100px" }} />
+      </div>
       <Container>
         <Spacer />
         <Split>

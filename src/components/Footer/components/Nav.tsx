@@ -8,13 +8,13 @@ const Nav: React.FC = () => {
       <StyledRouterLink exact to="/addresses">
         Addresses
       </StyledRouterLink>
-      <StyledLink href="https://twitter.com/ubiqsmart" target="_blank">
+      <StyledLink href="https://twitter.com/TentacleFinance" target="_blank">
         Twitter
       </StyledLink>
-      <StyledLink href="https://discord.gg/XaqzJB4" target="_blank">
+      <StyledLink href="https://discord.gg/CbTa6Z2JYM" target="_blank">
         Discord
       </StyledLink>
-      <StyledLink href="https://blog.ubiqsmart.com/" target="_blank">
+      <StyledLink href="https://medium.com/@tentaclefinance" target="_blank">
         Medium
       </StyledLink>
     </StyledNav>

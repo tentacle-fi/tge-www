@@ -5,6 +5,7 @@ import { useWallet } from "use-wallet";
 
 import Label from "components/Label";
 import Value from "components/Value";
+import inkLogo from "assets/ink_black_alpha.png";
 
 import useFarming from "hooks/useFarming";
 
@@ -44,7 +45,10 @@ const Harvest: React.FC = () => {
   return (
     <>
       <Card>
-        <CardIcon>🦖</CardIcon>
+        <CardIcon>
+          {" "}
+          <img src={inkLogo} style={{ height: 64, alignSelf: "center", background: "white", borderRadius: 110 }} />{" "}
+        </CardIcon>
         <CardContent>
           <Box alignItems="center" column>
             <Value value={earnedBalance > 0 ? earnedBalance.toString() : "--"} />
