@@ -28,11 +28,11 @@ export class Contracts {
     const contracts = [{ contract: this.TGE1, json: ERC20Json }];
 
     contracts.forEach((contract) => this.setContractProvider(contract.contract, contract.json, provider, networkId));
-    this.shinobi_pool.options.address = "0x32DEDccBf19F5AbF40dd8D2A1204bdcE4dE5aa53";
+    this.shinobi_pool.options.address = "0x6e142959f49d364b30f0478949effdcb58effe44";
 
     this.names = {};
     this.names[this.TGE1.options.address] = "TGE1";
-    this.names[this.shinobi_pool.options.address] = "ESCH/UBQ Shinobi LP Yield Farm";
+    this.names[this.shinobi_pool.options.address] = "INK/UBQ Shinobi LP Yield Farm";
   }
 
   setDefaultAccount(account) {

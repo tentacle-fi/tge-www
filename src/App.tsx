@@ -14,6 +14,7 @@ import useLocalStorage from "hooks/useLocalStorage";
 import Farm from "views/Farm";
 import Home from "views/Home";
 import Addresses from "views/Addresses";
+import Help from "views/Help";
 
 const App: React.FC = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -40,6 +41,9 @@ const App: React.FC = () => {
           </Route>
           <Route exact path="/addresses">
             <Addresses />
+          </Route>
+          <Route exact path="/help">
+            <Help />
           </Route>
         </Switch>
       </Providers>

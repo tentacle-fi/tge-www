@@ -132,7 +132,7 @@ const Stake: React.FC = () => {
         <CardContent>
           <Box alignItems="center" column>
             <Value value={stakeBalance > 0 ? stakeBalance.toString() : "--"} />
-            <Label text="Staked ESCH/UBQ LP Tokens" />
+            <Label text="Staked INK/UBQ LP Tokens" />
           </Box>
         </CardContent>
         <CardActions>
