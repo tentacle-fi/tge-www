@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Countdown, { CountdownRenderProps } from "react-countdown";
 import { Box, Button, Card, CardActions, CardContent, CardIcon } from "react-neu";
 import { useWallet } from "use-wallet";
+import styled from "styled-components";
 
 import Label from "components/Label";
 import Value from "components/Value";
@@ -14,7 +15,7 @@ import { bnToDec, getFullDisplayBalance } from "utils";
 import StakeModal from "./components/StakeModal";
 import UnstakeModal from "./components/UnstakeModal";
 
-const Stake: React.FC = () => {
+const Stake: React.FC = ({ children }) => {
   const [stakeModalIsOpen, setStakeModalIsOpen] = useState(false);
   const [unstakeModalIsOpen, setUnstakeModalIsOpen] = useState(false);
   const [stakeBalance, setStakeBalance] = useState<number>(0);
@@ -128,13 +129,15 @@ const Stake: React.FC = () => {
   return (
     <>
       <Card>
-        <CardIcon>🌱</CardIcon>
-        <CardContent>
+        <StyledBox row justifyContent="center">
+          {children}
+        </StyledBox>
+        <StyledCardContent>
           <Box alignItems="center" column>
             <Value value={stakeBalance > 0 ? stakeBalance.toString() : "--"} />
             <Label text="Staked INK/UBQ LP Tokens" />
           </Box>
-        </CardContent>
+        </StyledCardContent>
         <CardActions>
           {UnstakeButton}
           {StakeButton}
@@ -150,5 +153,14 @@ const Stake: React.FC = () => {
     </>
   );
 };
+
+const StyledBox = styled(Box)`
+  padding-top: 20px;
+  height: 100px;
+`;
+
+const StyledCardContent = styled(Box)`
+  padding-top: 0px;
+`;
 
 export default Stake;
