@@ -57,7 +57,7 @@ const Help: React.FC = () => {
           </ListItem>
           <ListItem legend="Step 4: Add Liquidity">
             Provide UBQ and INK as LP on Shinobi. Note: You will need to "Approve" first on the same page.
-            <Button text="Provide Liquidity with Shinobi" onClick={openURL("https://shinobi-info.ubiq.ninja")} />
+            <Button text="Provide Liquidity with Shinobi" onClick={openURL("https://shinobi.ubiq.ninja/#/add/UBQ/" + INK)} />
           </ListItem>
           <ListItem legend="Step 5: Stake LP tokens">
             Stake your LP tokens on the <Button text="Tentacle.Finance Farm" onClick={openURL("/farm")} />
