@@ -42,8 +42,12 @@ const StakeModal: React.FC<StakeModalProps> = ({ isOpen, onDismiss, onStake }) =
       </ModalContent>
       <ModalActions>
         <Button onClick={onDismiss} text="Cancel" variant="secondary" />
-        <Button disabled={!val || !Number(val) || !Number(fullBalance) || !fullBalance} onClick={handleStakeClick} text="Stake"
-         variant={!val || !Number(val) || !Number(fullBalance) || !fullBalance ? "secondary" : "default"} />
+        <Button
+          disabled={!val || !Number(val) || !Number(fullBalance) || !fullBalance}
+          onClick={handleStakeClick}
+          text="Stake"
+          variant={!val || !Number(val) || !Number(fullBalance) || !fullBalance ? "secondary" : "default"}
+        />
       </ModalActions>
     </Modal>
   );
