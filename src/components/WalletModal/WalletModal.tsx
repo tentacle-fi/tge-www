@@ -10,10 +10,14 @@ import FancyValue from "components/FancyValue";
 
 import useBalances from "hooks/useBalances";
 
+import InkTokenLogo from "assets/ink_black_alpha.png";
+
 const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
   const [, setWalletModalIsOpen] = useState(false);
   const { reset } = useWallet();
   const { TGE1Balance } = useBalances();
+
+  const INKBalance = TGE1Balance;
 
   const getDisplayBalance = useCallback((value?: BigNumber) => {
     if (value) {
@@ -42,7 +46,7 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
       <ModalTitle text="My Wallet" />
       <ModalContent>
         <Box row>
-          <FancyValue icon="🦖" label="TGE1 balance" value={getDisplayBalance(TGE1Balance)} />
+          <FancyValue icon={inkIcon()} label="INK balance" value={getDisplayBalance(INKBalance)} />
         </Box>
         <Spacer />
       </ModalContent>
@@ -54,5 +58,11 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
     </Modal>
   );
 };
+
+function inkIcon() {
+    return (
+            <img src={InkTokenLogo} alt="Tentacle Finance Logo" style={{ marginRight: "10px", height: 64, alignSelf: "center", background: "white", borderRadius: 110 }} />
+    )
+}
 
 export default WalletModal;
