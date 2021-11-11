@@ -115,13 +115,15 @@ const Stake: React.FC = ({ children }) => {
   }, [formattedStakedBalance]);
 
   const renderer = (countdownProps: CountdownRenderProps) => {
-    const { hours, minutes, seconds } = countdownProps;
+    const { days, hours, minutes, seconds } = countdownProps;
     const paddedSeconds = seconds < 10 ? `0${seconds}` : seconds;
     const paddedMinutes = minutes < 10 ? `0${minutes}` : minutes;
     const paddedHours = hours < 10 ? `0${hours}` : hours;
+    const paddedDays = days < 10 ? `0${days}` : days;
+
     return (
       <Box row justifyContent="center">
-        <Label text={`Farming starts in ${paddedHours}:${paddedMinutes}:${paddedSeconds}`} />
+        <Label text={`Farming starts in ${paddedDays} days ${paddedHours}:${paddedMinutes}:${paddedSeconds}`} />
       </Box>
     );
   };
