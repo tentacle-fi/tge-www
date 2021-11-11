@@ -60,9 +60,13 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
 };
 
 function inkIcon() {
-    return (
-            <img src={InkTokenLogo} alt="Tentacle Finance Logo" style={{ marginRight: "10px", height: 64, alignSelf: "center", background: "white", borderRadius: 110 }} />
-    )
+  return (
+    <img
+      src={InkTokenLogo}
+      alt="Tentacle Finance Logo"
+      style={{ marginRight: "10px", height: 64, alignSelf: "center", background: "white", borderRadius: 110 }}
+    />
+  );
 }
 
 export default WalletModal;
