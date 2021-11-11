@@ -12,7 +12,7 @@ import { getEarned, getStaked, harvest, redeem, stake, unstake } from "ubiq-sdk/
 
 import Context from "./Context";
 
-const farmingStartTime = 1637006400 * 1000// UTC for INK+UBQ Yield Farming Start time
+const farmingStartTime = 1637006400 * 1000; // UTC for INK+UBQ Yield Farming Start time
 
 const Provider: React.FC = ({ children }) => {
   const [confirmTxModalIsOpen, setConfirmTxModalIsOpen] = useState(false);
