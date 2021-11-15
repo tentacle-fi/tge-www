@@ -8,7 +8,7 @@ import { ESCHUBQSLPAddress } from "constants/tokenAddresses";
 import useApproval from "hooks/useApproval";
 import useUbiq from "hooks/useUbiq";
 
-import { getEarned, getStaked, harvest, redeem, stake, unstake } from "ubiq-sdk/utils";
+import { getPoolTotalSupply, getEarned, getStaked, harvest, redeem, stake, unstake } from "ubiq-sdk/utils";
 
 import Context from "./Context";
 
@@ -40,6 +40,14 @@ const Provider: React.FC = ({ children }) => {
     const balance = await getStaked(ubiq.contracts.shinobi_pool, account);
     setstakedBalanceESCHUBQ(balance);
   }, [account, setstakedBalanceESCHUBQ, ubiq]);
+
+
+  const fetchTotalSupplyESCHUBQ = useCallback(async () => {
+    if (!account || !ubiq) return;
+    const bigTotalSupply = new BigNumber(await getPoolTotalSupply(ubiq.contracts.shinobi_pool));
+    const totalSupply = bigTotalSupply.shiftedBy(-18).toPrecision(8);
+    console.log('bigTotalSupply: ' + bigTotalSupply + ' totalSupply: ' + totalSupply)
+}, [ubiq]);
 
   const fetchBalances = useCallback(async () => {
     fetchearnedBalanceESCHUBQ();

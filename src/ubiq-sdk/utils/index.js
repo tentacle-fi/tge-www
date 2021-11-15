@@ -21,6 +21,10 @@ export const getPoolStartTime = async (poolContract) => {
   return await poolContract.methods.starttime().call();
 };
 
+export const getPoolTotalSupply = async (poolContract) => {
+  return await poolContract.methods.totalSupply().call();
+};
+
 export const stake = async (ubiq, amount, account, poolContract, onTxHash) => {
   let now = new Date().getTime() / 1000;
   const gas = GAS_LIMIT.STAKING.DEFAULT;
