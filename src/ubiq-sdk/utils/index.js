@@ -2,6 +2,8 @@ import { ethers } from "ethers";
 import Web3 from "web3";
 import BigNumber from "bignumber.js";
 
+const PoolActivationEpoch = 1597172400;
+
 BigNumber.config({
   EXPONENTIAL_AT: 1000,
   DECIMAL_PLACES: 80,
@@ -22,7 +24,7 @@ export const getPoolStartTime = async (poolContract) => {
 export const stake = async (ubiq, amount, account, poolContract, onTxHash) => {
   let now = new Date().getTime() / 1000;
   const gas = GAS_LIMIT.STAKING.DEFAULT;
-  if (now >= 1597172400) {
+  if (now >= PoolActivationEpoch) {
     return poolContract.methods
       .stake(new BigNumber(amount).times(new BigNumber(10).pow(18)).toString())
       .send({ from: account, gas }, async (error, txHash) => {
@@ -46,7 +48,7 @@ export const stake = async (ubiq, amount, account, poolContract, onTxHash) => {
 
 export const unstake = async (ubiq, amount, account, poolContract, onTxHash) => {
   let now = new Date().getTime() / 1000;
-  if (now >= 1597172400) {
+  if (now >= PoolActivationEpoch) {
     return poolContract.methods
       .withdraw(new BigNumber(amount).times(new BigNumber(10).pow(18)).toString())
       .send({ from: account, gas: GAS_LIMIT.GENERAL }, async (error, txHash) => {
@@ -70,7 +72,7 @@ export const unstake = async (ubiq, amount, account, poolContract, onTxHash) => 
 
 export const harvest = async (ubiq, account, poolContract, onTxHash) => {
   let now = new Date().getTime() / 1000;
-  if (now >= 1597172400) {
+  if (now >= PoolActivationEpoch) {
     return poolContract.methods.getReward().send({ from: account, gas: GAS_LIMIT.GENERAL }, async (error, txHash) => {
       if (error) {
         onTxHash && onTxHash("");
@@ -92,7 +94,7 @@ export const harvest = async (ubiq, account, poolContract, onTxHash) => {
 
 export const redeem = async (ubiq, account, poolContract, onTxHash) => {
   let now = new Date().getTime() / 1000;
-  if (now >= 1597172400) {
+  if (now >= PoolActivationEpoch) {
     return poolContract.methods.exit().send({ from: account, gas: GAS_LIMIT.GENERAL }, async (error, txHash) => {
       if (error) {
         onTxHash && onTxHash("");
