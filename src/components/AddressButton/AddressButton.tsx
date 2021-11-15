@@ -37,7 +37,7 @@ const AddressButton: React.FC<AddressButtonProps> = ({ name, address, shinobi, s
         </>
       );
     }
-  }, [darkMode, shinobi]);
+  }, [darkMode, shinobi, address, shinobilink, shinobitext]);
 
   const DisplayAddress = useMemo(() => {
     if (shinobi) {
@@ -56,7 +56,7 @@ const AddressButton: React.FC<AddressButtonProps> = ({ name, address, shinobi, s
         </>
       );
     }
-  }, [darkMode, shinobi]);
+  }, [shinobi, address]);
 
   return (
     <>

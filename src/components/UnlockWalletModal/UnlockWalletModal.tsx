@@ -34,7 +34,7 @@ const UnlockWalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
     if (connector) {
       localStorage.setItem("walletProvider", connector);
     }
-  }, [account, onDismiss]);
+  }, [account, onDismiss, connector]);
 
   return (
     <Modal isOpen={isOpen}>

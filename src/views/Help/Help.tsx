@@ -1,5 +1,5 @@
 import React from "react";
-import { useTheme, Switch, Button } from "react-neu";
+import { Switch, Button } from "react-neu";
 import styled from "styled-components";
 
 import Page from "components/Page";
@@ -7,10 +7,9 @@ import PageHeader from "components/PageHeader";
 
 import WalletButton from "components/TopBar/components/WalletButton";
 
-import { TGE1ESCHUBQYieldFarm, ESCH, TGE1 } from "constants/tokenAddresses";
+import { TGE1 } from "constants/tokenAddresses";
 
 const INK = TGE1.toString();
-const UBQ = ESCH.toString();
 
 // opens a URL when a button is clicked.
 // returns a function to make less code in the on-click assignment.
@@ -22,7 +21,6 @@ function openURL(url: string) {
 }
 
 const Help: React.FC = () => {
-  const { darkMode } = useTheme();
   return (
     <Page>
       <PageHeader icon="" title="Tentacle.Finance help" />
@@ -88,15 +86,15 @@ const ListItem: React.FC<ListItemProps> = ({ children, legend = "" }) => {
   );
 };
 
-const StyledLink = styled.a`
-  color: ${(props) => props.theme.colors.grey[500]};
-  padding-left: ${(props) => props.theme.spacing[3]}px;
-  padding-right: ${(props) => props.theme.spacing[3]}px;
-  text-decoration: none;
-  &:hover {
-    color: ${(props) => props.theme.colors.grey[600]};
-  }
-`;
+// const StyledLink = styled.a`
+//   color: ${(props) => props.theme.colors.grey[500]};
+//   padding-left: ${(props) => props.theme.spacing[3]}px;
+//   padding-right: ${(props) => props.theme.spacing[3]}px;
+//   text-decoration: none;
+//   &:hover {
+//     color: ${(props) => props.theme.colors.grey[600]};
+//   }
+// `;
 
 const StyledFieldset = styled.fieldset`
   border-top: 1px dashed #cecece;

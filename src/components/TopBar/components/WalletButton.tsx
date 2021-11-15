@@ -59,7 +59,7 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
       localStorage.setItem("account", localAccount);
       setUserAccount(localAccount);
     }
-  }, [account, userAccount, handleDismissWalletModal]);
+  }, [account, userAccount, handleDismissWalletModal, checkLocalUserAccount]);
 
   useEffect(() => {
     let checkConnection = setTimeout(() => {
@@ -82,7 +82,7 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
         handleConnectWalletConnect();
       }
     }
-  }, []);
+  }, [account, handleConnectMetamask, handleConnectWalletConnect]);
 
   return (
     <>

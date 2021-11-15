@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import Countdown, { CountdownRenderProps } from "react-countdown";
-import { Box, Button, Card, CardActions, CardContent, CardIcon } from "react-neu";
+import { Box, Button, Card, CardActions } from "react-neu";
 import { useWallet } from "use-wallet";
 import styled from "styled-components";
 
@@ -87,7 +87,7 @@ const Stake: React.FC = ({ children }) => {
     if (isApproved) {
       return <Button full onClick={handleStakeClick} text="Stake" variant="secondary" />;
     }
-  }, [countdown, handleStakeClick, isApproving, onApprove, status]);
+  }, [handleStakeClick, isStaking, isApproved, isApproving, onApprove, status]);
 
   const UnstakeButton = useMemo(() => {
     const hasStaked = stakedBalanceESCHUBQ && stakedBalanceESCHUBQ.toNumber() > 0;
@@ -98,7 +98,7 @@ const Stake: React.FC = ({ children }) => {
       return <Button disabled full text="Unstaking..." variant="secondary" />;
     }
     return <Button full onClick={handleUnstakeClick} text="Unstake" variant="secondary" />;
-  }, [handleUnstakeClick, isApproving, onApprove, status]);
+  }, [handleUnstakeClick, isUnstaking, stakedBalanceESCHUBQ, status]);
 
   const formattedStakedBalance = useCallback(async () => {
     if (stakedBalanceESCHUBQ && bnToDec(stakedBalanceESCHUBQ) > 0) {

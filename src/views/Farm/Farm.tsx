@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 
-import { CardIcon, Box, Button, Container, Separator, Spacer } from "react-neu";
+import { Box, Button, Container, Separator, Spacer } from "react-neu";
 
 import Page from "components/Page";
 import PageHeader from "components/PageHeader";
@@ -25,7 +25,7 @@ const Farm: React.FC = () => {
       return <Button onClick={onRedeemESCHUBQ} text="Harvest &amp; Unstake INK/UBQ" variant="secondary" />;
     }
     return <Button disabled text="Redeeming..." variant="secondary" />;
-  }, [isRedeeming, onRedeemESCHUBQ]);
+  }, [isRedeeming, onRedeemESCHUBQ, status]);
 
   return (
     <Page>

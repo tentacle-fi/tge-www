@@ -35,7 +35,7 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
     if (onDismiss) {
       onDismiss();
     }
-  }, [reset]);
+  }, [reset, onDismiss]);
 
   useEffect(() => {
     isOpen = !isOpen;
