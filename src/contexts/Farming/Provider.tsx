@@ -41,13 +41,12 @@ const Provider: React.FC = ({ children }) => {
     setstakedBalanceESCHUBQ(balance);
   }, [account, setstakedBalanceESCHUBQ, ubiq]);
 
-
   const fetchTotalSupplyESCHUBQ = useCallback(async () => {
     if (!account || !ubiq) return;
     const bigTotalSupply = new BigNumber(await getPoolTotalSupply(ubiq.contracts.shinobi_pool));
     const totalSupply = bigTotalSupply.shiftedBy(-18).toPrecision(8);
-    console.log('bigTotalSupply: ' + bigTotalSupply + ' totalSupply: ' + totalSupply)
-}, [ubiq]);
+    console.log("bigTotalSupply: " + bigTotalSupply + " totalSupply: " + totalSupply);
+  }, [ubiq]);
 
   const fetchBalances = useCallback(async () => {
     fetchearnedBalanceESCHUBQ();
