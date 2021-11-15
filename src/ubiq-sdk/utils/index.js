@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import Web3 from "web3";
 import BigNumber from "bignumber.js";
 
-const PoolActivationEpoch = 1597172400;
+const PoolActivationEpoch = 1597172400; // Epoch when website interaction unlocks
 
 BigNumber.config({
   EXPONENTIAL_AT: 1000,
