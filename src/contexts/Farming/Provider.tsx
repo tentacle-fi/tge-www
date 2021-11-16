@@ -24,7 +24,7 @@ const Provider: React.FC = ({ children }) => {
   const [earnedBalanceESCHUBQ, setearnedBalanceESCHUBQ] = useState<BigNumber>();
   const [stakedBalanceESCHUBQ, setstakedBalanceESCHUBQ] = useState<BigNumber>();
   const [totalSupplyESCHUBQ, settotalSupplyESCHUBQ] = useState<BigNumber>();
-  const [lpPercentESCHUBQ, setlpPercentESCHUBQ] = useState<String>('0.0');
+  const [lpPercentESCHUBQ, setlpPercentESCHUBQ] = useState<String>("0.0");
   const ubiq = useUbiq();
   const { account } = useWallet();
 
@@ -49,26 +49,23 @@ const Provider: React.FC = ({ children }) => {
     const totalSupply = bigTotalSupply.shiftedBy(-18).toPrecision(8);
     const stakedLpSupply = new BigNumber(await getStaked(ubiq.contracts.shinobi_pool, account));
 
+    let lpPercent = "0.0";
 
-        let lpPercent = '0.0'
+    if (stakedLpSupply !== undefined) {
+      lpPercent = stakedLpSupply.div(bigTotalSupply).shiftedBy(2).toPrecision(6);
+    }
 
-        if(stakedLpSupply !== undefined){
-        lpPercent = stakedLpSupply.div(bigTotalSupply).shiftedBy(2).toPrecision(6)
-        }
+    console.log("my percent lp:", lpPercent, "stakedLP", stakedLpSupply.shiftedBy(-18).toPrecision(8), "totalSupply", totalSupply);
 
-        console.log('my percent lp:', lpPercent, 'stakedLP', stakedLpSupply.shiftedBy(-18).toPrecision(8), 'totalSupply', totalSupply)
-
-
-
-    settotalSupplyESCHUBQ(bigTotalSupply)
-    setlpPercentESCHUBQ(lpPercent)
-}, [ubiq, account]);
+    settotalSupplyESCHUBQ(bigTotalSupply);
+    setlpPercentESCHUBQ(lpPercent);
+  }, [ubiq, account]);
 
   const fetchBalances = useCallback(async () => {
     fetchearnedBalanceESCHUBQ();
     fetchstakedBalanceESCHUBQ();
-    fetchTotalSupplyESCHUBQ()
-}, [fetchearnedBalanceESCHUBQ, fetchstakedBalanceESCHUBQ, fetchTotalSupplyESCHUBQ]);
+    fetchTotalSupplyESCHUBQ();
+  }, [fetchearnedBalanceESCHUBQ, fetchstakedBalanceESCHUBQ, fetchTotalSupplyESCHUBQ]);
 
   const handleApprove = useCallback(() => {
     setConfirmTxModalIsOpen(true);
@@ -161,7 +158,7 @@ const Provider: React.FC = ({ children }) => {
         onStakeESCHUBQ: handleStakeESCHUBQ,
         onUnstakeESCHUBQ: handleUnstakeESCHUBQ,
         earnedBalanceESCHUBQ,
-        stakedBalanceESCHUBQ
+        stakedBalanceESCHUBQ,
       }}
     >
       {children}
