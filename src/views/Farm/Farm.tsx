@@ -25,7 +25,7 @@ const Farm: React.FC = () => {
       return <Button onClick={onRedeemESCHUBQ} text="Harvest &amp; Unstake INK/UBQ" variant="secondary" />;
     }
     return <Button disabled text="Redeeming..." variant="secondary" />;
-  }, [isRedeeming, onRedeemESCHUBQ]);
+  }, [isRedeeming, onRedeemESCHUBQ, status]);
 
   return (
     <Page>
@@ -33,15 +33,15 @@ const Farm: React.FC = () => {
         <Button full text="Get Started Here" to="/help" />
       </Box>
       <Spacer />
-      <PageHeader icon="" subtitle="Stake INK/UBQ Shinobi LP tokens and grow INK" title="Farm" />
-      <div style={{ clear: "both" }}>
-        <img src={inkLogo} alt="Tentacle Finance Logo" style={{ float: "left", width: "100px", background: "white", borderRadius: 110 }} />
-        <img src={ubqLogo} alt="Ubiq Logo" style={{ float: "left", width: "100px" }} />
-      </div>
+      <PageHeader icon="" subtitle="Stake INK/UBQ Shinobi LP tokens and farm INK" title="Farm" />
       <Container>
         <Spacer />
         <Split>
-          <StakeCard />
+          <StakeCard>
+            <img src={inkLogo} alt="Tentacle Finance Logo" style={{ width: "80px", height: "80px", background: "white", borderRadius: "40px" }} />
+            <span style={{ fontSize: "50px", lineHeight: "80px", width: "50px", display: "block", textAlign: "center" }}>+</span>
+            <img src={ubqLogo} alt="Ubiq Logo" style={{ width: "80px", height: "80px" }} />
+          </StakeCard>
           <HarvestCard />
         </Split>
         <Spacer />
@@ -53,7 +53,12 @@ const Farm: React.FC = () => {
         <Spacer size="lg" />
         <Split>
           <Button full text="Addresses" to="/addresses" variant="secondary" />
-          <Button full text="Get INK/UBQ LP tokens" href="https://shinobi-info.ubiq.ninja/pair/" variant="tertiary" />
+          <Button
+            full
+            text="Get INK/UBQ LP tokens"
+            href="https://shinobi-info.ubiq.ninja/pair/0x1ea388d8dcf980a95967228b1dfcea1692dbe25d"
+            variant="tertiary"
+          />
         </Split>
       </Container>
     </Page>

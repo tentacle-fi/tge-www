@@ -36,7 +36,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
         </StyledSubtitle>
       );
     }
-  }, [subtitle]);
+  }, [subtitle, subtitleOpacity, subtitleWeight]);
 
   return (
     <Container size="sm">

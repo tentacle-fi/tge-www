@@ -14,7 +14,7 @@ import { bnToDec } from "utils";
 const Harvest: React.FC = () => {
   const [earnedBalance, setEarnedBalance] = useState<number>(0);
   const { status } = useWallet();
-  const { earnedBalanceESCHUBQ, isHarvesting, isRedeeming, onHarvestESCHUBQ } = useFarming();
+  const { earnedBalanceESCHUBQ, isHarvesting, onHarvestESCHUBQ } = useFarming();
 
   const formattedEarnedBalance = useCallback(async () => {
     if (earnedBalanceESCHUBQ && bnToDec(earnedBalanceESCHUBQ) > 0) {
@@ -40,14 +40,14 @@ const Harvest: React.FC = () => {
     if (isHarvesting) {
       return <Button disabled full text="Harvesting..." variant="secondary" />;
     }
-  }, [isHarvesting, isRedeeming, earnedBalance, onHarvestESCHUBQ]);
+  }, [status, isHarvesting, earnedBalance, onHarvestESCHUBQ]);
 
   return (
     <>
       <Card>
         <CardIcon>
           {" "}
-          <img src={inkLogo} style={{ height: 64, alignSelf: "center", background: "white", borderRadius: 110 }} />{" "}
+          <img src={inkLogo} alt="INK token logo" style={{ height: 64, alignSelf: "center", background: "white", borderRadius: 110 }} />{" "}
         </CardIcon>
         <CardContent>
           <Box alignItems="center" column>

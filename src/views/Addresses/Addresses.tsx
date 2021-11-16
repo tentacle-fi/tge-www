@@ -10,19 +10,20 @@ const Addresses: React.FC = () => {
   return (
     <Page>
       <PageHeader icon={"🎖️"} title={"Addresses"} subtitle={"Official Addresses"} />
-      <Container size="sm">
-        <h2>INK Addresses &amp; Assets</h2>
+      <Container size="md">
+        <h2>Token Addresses (INK, UBQ)</h2>
         <AddressButton
           name="INK"
           address={TGE1}
-          shinobi={false}
+          shinobi={true}
           shinobitext="Buy at Shinobi"
-          shinobilink="https://shinobi.ubiq.ninja/swap?inputCurrency="
+          shinobilink="https://shinobi.ubiq.ninja/#/swap?outputCurrency="
         />
+
         <AddressButton name="UBQ" address={ESCH} shinobi={true} />
 
-        <h3>INK Contracts Addresses</h3>
-        <AddressButton name="Yield Farm" address={TGE1ESCHUBQYieldFarm} shinobi={false} />
+        <h3>INK Contract Addresses</h3>
+        <AddressButton name="INK/UBQ Yield Farm" address={TGE1ESCHUBQYieldFarm} shinobi={false} />
       </Container>
     </Page>
   );

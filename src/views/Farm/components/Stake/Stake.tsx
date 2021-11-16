@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import Countdown, { CountdownRenderProps } from "react-countdown";
-import { Box, Button, Card, CardActions, CardContent, CardIcon } from "react-neu";
+import { Box, Button, Card, CardActions } from "react-neu";
 import { useWallet } from "use-wallet";
+import styled from "styled-components";
 
 import Label from "components/Label";
 import Value from "components/Value";
@@ -14,7 +15,7 @@ import { bnToDec, getFullDisplayBalance } from "utils";
 import StakeModal from "./components/StakeModal";
 import UnstakeModal from "./components/UnstakeModal";
 
-const Stake: React.FC = () => {
+const Stake: React.FC = ({ children }) => {
   const [stakeModalIsOpen, setStakeModalIsOpen] = useState(false);
   const [unstakeModalIsOpen, setUnstakeModalIsOpen] = useState(false);
   const [stakeBalance, setStakeBalance] = useState<number>(0);
@@ -86,7 +87,7 @@ const Stake: React.FC = () => {
     if (isApproved) {
       return <Button full onClick={handleStakeClick} text="Stake" variant="secondary" />;
     }
-  }, [countdown, handleStakeClick, isApproving, onApprove, status]);
+  }, [handleStakeClick, isStaking, isApproved, isApproving, onApprove, status]);
 
   const UnstakeButton = useMemo(() => {
     const hasStaked = stakedBalanceESCHUBQ && stakedBalanceESCHUBQ.toNumber() > 0;
@@ -97,7 +98,7 @@ const Stake: React.FC = () => {
       return <Button disabled full text="Unstaking..." variant="secondary" />;
     }
     return <Button full onClick={handleUnstakeClick} text="Unstake" variant="secondary" />;
-  }, [handleUnstakeClick, isApproving, onApprove, status]);
+  }, [handleUnstakeClick, isUnstaking, stakedBalanceESCHUBQ, status]);
 
   const formattedStakedBalance = useCallback(async () => {
     if (stakedBalanceESCHUBQ && bnToDec(stakedBalanceESCHUBQ) > 0) {
@@ -114,13 +115,15 @@ const Stake: React.FC = () => {
   }, [formattedStakedBalance]);
 
   const renderer = (countdownProps: CountdownRenderProps) => {
-    const { hours, minutes, seconds } = countdownProps;
+    const { days, hours, minutes, seconds } = countdownProps;
     const paddedSeconds = seconds < 10 ? `0${seconds}` : seconds;
     const paddedMinutes = minutes < 10 ? `0${minutes}` : minutes;
     const paddedHours = hours < 10 ? `0${hours}` : hours;
+    const paddedDays = days < 10 ? `0${days}` : days;
+
     return (
       <Box row justifyContent="center">
-        <Label text={`Farming starts in ${paddedHours}:${paddedMinutes}:${paddedSeconds}`} />
+        <Label text={`Farming starts in ${paddedDays} days ${paddedHours}:${paddedMinutes}:${paddedSeconds}`} />
       </Box>
     );
   };
@@ -128,13 +131,15 @@ const Stake: React.FC = () => {
   return (
     <>
       <Card>
-        <CardIcon>🌱</CardIcon>
-        <CardContent>
+        <StyledBox row justifyContent="center">
+          {children}
+        </StyledBox>
+        <StyledCardContent>
           <Box alignItems="center" column>
             <Value value={stakeBalance > 0 ? stakeBalance.toString() : "--"} />
             <Label text="Staked INK/UBQ LP Tokens" />
           </Box>
-        </CardContent>
+        </StyledCardContent>
         <CardActions>
           {UnstakeButton}
           {StakeButton}
@@ -150,5 +155,14 @@ const Stake: React.FC = () => {
     </>
   );
 };
+
+const StyledBox = styled(Box)`
+  padding-top: 20px;
+  height: 100px;
+`;
+
+const StyledCardContent = styled(Box)`
+  padding-top: 0px;
+`;
 
 export default Stake;

@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import octoLogo from "assets/octo_grey.png";
+import octoLogo from "assets/octo_purple.png";
 
 const Logo: React.FC = () => {
   return (
