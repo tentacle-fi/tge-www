@@ -4,13 +4,14 @@ import { useWallet } from "use-wallet";
 import { provider } from "web3-core";
 
 import { TGE1, ESCHUBQSLPAddress } from "constants/tokenAddresses";
-import { getBalance } from "utils";
+import { getBalance, getCurrentBlock } from "utils";
 
 import Context from "./Context";
 
 const Provider: React.FC = ({ children }) => {
   const [TGE1Balance, setTGE1Balance] = useState<BigNumber>();
   const [ESCHUBQLPBalance, setESCHUBQLPBalance] = useState<BigNumber>();
+  const [CurrentBlock, setCurrentBlock] = useState("");
 
   const { account, ethereum }: { account: string | null; ethereum: provider } = useWallet();
 
@@ -23,6 +24,15 @@ const Provider: React.FC = ({ children }) => {
     [setTGE1Balance, setESCHUBQLPBalance]
   );
 
+  const fetchCurrentBlock = useCallback(
+    async (userAddress: string, provider: provider) => {
+      const currentBlock = await getCurrentBlock(provider);
+
+      setCurrentBlock(currentBlock.toString());
+    },
+    [setCurrentBlock]
+  );
+
   useEffect(() => {
     if (account && ethereum) {
       fetchBalances(account, ethereum);
@@ -32,7 +42,12 @@ const Provider: React.FC = ({ children }) => {
   useEffect(() => {
     if (account && ethereum) {
       fetchBalances(account, ethereum);
-      let refreshInterval = setInterval(() => fetchBalances(account, ethereum), 10000);
+      fetchCurrentBlock(account, ethereum);
+
+      let refreshInterval = setInterval(() => {
+        fetchCurrentBlock(account, ethereum);
+        fetchBalances(account, ethereum);
+      }, 10000);
       return () => clearInterval(refreshInterval);
     }
   }, [account, ethereum, fetchBalances]);
@@ -42,6 +57,7 @@ const Provider: React.FC = ({ children }) => {
       value={{
         TGE1Balance,
         ESCHUBQLPBalance,
+        CurrentBlock,
       }}
     >
       {children}

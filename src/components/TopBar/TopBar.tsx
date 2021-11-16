@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { Container, Spacer } from "react-neu";
 import styled from "styled-components";
@@ -9,12 +9,15 @@ import MenuIcon from "components/icons/Menu";
 import DarkModeSwitch from "../DarkModeSwitch";
 import Nav from "./components/Nav";
 import WalletButton from "./components/WalletButton";
+import useBalances from "hooks/useBalances";
 
 interface TopBarProps {
   onPresentMobileMenu: () => void;
 }
 
 const TopBar: React.FC<TopBarProps> = ({ onPresentMobileMenu }) => {
+  const { CurrentBlock } = useBalances();
+
   return (
     <StyledTopBar>
       <Container size="lg">
@@ -26,6 +29,7 @@ const TopBar: React.FC<TopBarProps> = ({ onPresentMobileMenu }) => {
             <Nav />
           </StyledNavWrapper>
           <StyledAccountButtonWrapper>
+            <p>#{CurrentBlock}</p>
             <StyledTopBarDarkModeSwitch>
               <DarkModeSwitch />
             </StyledTopBarDarkModeSwitch>

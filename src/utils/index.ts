@@ -112,3 +112,13 @@ export const getTimestampDate = (obj: { ts: number; ap?: boolean }) => {
   const year = d.getFullYear().toString().substring(0, 2) + (obj.ap ? " " + getAMPM(d) : "");
   return (day < 9 ? "0" + day : day) + s + (month <= 9 ? "0" + month : month) + s + year;
 };
+
+export const getCurrentBlock = async (provider: provider): Promise<string> => {
+  try {
+    const web3 = new Web3(provider);
+    const blockNumber: string = (await web3.eth.getBlockNumber()).toString();
+    return blockNumber;
+  } catch (e) {
+    return "0";
+  }
+};
