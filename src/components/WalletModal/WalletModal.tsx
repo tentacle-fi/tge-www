@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState } from "react";
 
 import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
@@ -11,12 +11,12 @@ import FancyValue from "components/FancyValue";
 import useBalances from "hooks/useBalances";
 
 import InkTokenLogo from "assets/ink_black_alpha.png";
+import UBQTokenLogo from "assets/ubq.png";
 
 const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
   const [, setWalletModalIsOpen] = useState(false);
   const { reset } = useWallet();
-  const { TGE1Balance } = useBalances();
-
+  const { TGE1Balance, UBQBalance } = useBalances();
   const INKBalance = TGE1Balance;
 
   const getDisplayBalance = useCallback((value?: BigNumber) => {
@@ -37,16 +37,13 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
     }
   }, [reset, onDismiss]);
 
-  useEffect(() => {
-    isOpen = !isOpen;
-  }, [setWalletModalIsOpen]);
-
   return (
     <Modal isOpen={isOpen}>
       <ModalTitle text="My Wallet" />
       <ModalContent>
-        <Box row>
-          <FancyValue icon={inkIcon()} label="INK balance" value={getDisplayBalance(INKBalance)} />
+        <Box column>
+          <FancyValue icon={getIcon("ubq")} label="UBQ balance" value={getDisplayBalance(UBQBalance)} />
+          <FancyValue icon={getIcon("ink")} label="INK balance" value={getDisplayBalance(INKBalance)} />
         </Box>
         <Spacer />
       </ModalContent>
@@ -59,10 +56,20 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
   );
 };
 
-function inkIcon() {
+function getIcon(logo: string) {
+  let icon;
+  switch (logo) {
+    case "ink":
+      icon = InkTokenLogo;
+      break;
+    case "ubq":
+      icon = UBQTokenLogo;
+      break;
+  }
+
   return (
     <img
-      src={InkTokenLogo}
+      src={icon}
       alt="Tentacle Finance Logo"
       style={{ marginRight: "10px", height: 64, alignSelf: "center", background: "white", borderRadius: 110 }}
     />

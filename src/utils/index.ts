@@ -74,6 +74,17 @@ export const getBalance = async (provider: provider, tokenAddress: string, userA
   }
 };
 
+export const getCoinBalance = async (provider: provider, userAddress: string): Promise<string> => {
+  try {
+    const web3 = new Web3(provider);
+    const balance: string = await web3.eth.getBalance(userAddress);
+
+    return balance;
+  } catch (e) {
+    return "0";
+  }
+};
+
 export const getERC20Contract = (provider: provider, address: string) => {
   const web3 = new Web3(provider);
   const contract = new web3.eth.Contract((ERC20ABI.abi as unknown) as AbiItem, address);

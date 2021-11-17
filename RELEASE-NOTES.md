@@ -9,3 +9,4 @@
 - added LP % for staked amount to the Farm page and shortened the displayed digits for easier reading
 - small UI visual style improvements
 - dev nice-to-have changes
+- added UBQ balance to My Walet modal
