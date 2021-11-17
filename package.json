@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "react-scripts start",
+    "start": "BROWSER=none react-scripts start",
     "build": "CI= GENERATE_SOURCEMAP=false react-scripts build",
     "lint": "prettier --write \"**/*.+(js|jsx|ts|tsx|json|css)\" --print-width 150",
     "eslint": "eslint . --fix",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "echo 'do not run this!' && exit(1) && #react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"

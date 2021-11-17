@@ -10,7 +10,7 @@ import Value from "components/Value";
 
 import useFarming from "hooks/useFarming";
 
-import { bnToDec, getFullDisplayBalance, getShortDisplayBalance } from "utils";
+import { bnToDec, getShortDisplayBalance } from "utils";
 
 import StakeModal from "./components/StakeModal";
 import UnstakeModal from "./components/UnstakeModal";
