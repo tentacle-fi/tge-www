@@ -9,3 +9,4 @@
 - added LP % for staked amount to the Farm page and shortened the displayed digits for easier reading
 - small UI visual style improvements
 - dev nice-to-have changes
+- web3 wallet helper functionality added to recommend the UBQ network, and add INK token via button click

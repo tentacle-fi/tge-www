@@ -16,6 +16,10 @@ import Home from "views/Home";
 import Addresses from "views/Addresses";
 import Help from "views/Help";
 
+import MetaMask from "./metamask.js";
+
+MetaMask();
+
 const App: React.FC = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
 

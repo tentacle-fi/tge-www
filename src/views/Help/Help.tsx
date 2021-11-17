@@ -9,6 +9,8 @@ import WalletButton from "components/TopBar/components/WalletButton";
 
 import { TGE1 } from "constants/tokenAddresses";
 
+import { addInkToWallet } from "metamask.js";
+
 const INK = TGE1.toString();
 
 // opens a URL when a button is clicked.
@@ -37,9 +39,11 @@ const Help: React.FC = () => {
             Tentacle.Finance supports Web3 wallets such as Metamask and Sparrow.
             <Button text="Learn how to setup a wallet" onClick={openURL("https://ubiqsmart.com/en/wallets")} />
           </ListItem>
+
           <ListItem legend="Step 2: Connect your wallet">
             Unlock your wallet by clicking this button or the one in the top right of Tentacle.Finance! <WalletButton />
           </ListItem>
+
           <ListItem legend="Step 3: Get some tokens">
             Obtain UBQ and INK balance in your wallet
             <Switch>
@@ -52,14 +56,18 @@ const Help: React.FC = () => {
               <h3>Obtain INK at:</h3>
               <Button text="Shinobi Swap" onClick={openURL("https://shinobi.ubiq.ninja/#/swap?outputCurrency=" + INK)} />
             </Switch>
+            <Button onClick={addInkToWallet} text="Add INK to Wallet" variant="secondary" />
           </ListItem>
+
           <ListItem legend="Step 4: Add Liquidity">
             Provide UBQ and INK as LP on Shinobi. Note: You will need to "Approve" first on the same page.
             <Button text="Provide Liquidity with Shinobi" onClick={openURL("https://shinobi.ubiq.ninja/#/add/UBQ/" + INK)} />
           </ListItem>
+
           <ListItem legend="Step 5: Stake LP tokens">
             Stake your LP tokens on the <Button text="Tentacle.Finance Farm" onClick={openURL("/farm")} />
           </ListItem>
+
           <ListItem legend="Step 6: Watch your INK increase!">
             Every block your INK balance will increase proportional to the amount of LP tokens staked and your percentage of the yield farm. Relax and
             watch your INK grow!
