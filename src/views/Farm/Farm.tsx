@@ -11,6 +11,9 @@ import StakeCard from "./components/Stake";
 import { useWallet } from "use-wallet";
 import inkLogo from "assets/ink_black_alpha.png";
 import ubqLogo from "assets/ubq.png";
+import { TGE1 } from "constants/tokenAddresses";
+
+const INK = TGE1.toString();
 
 const Farm: React.FC = () => {
   const { status } = useWallet();
@@ -53,12 +56,7 @@ const Farm: React.FC = () => {
         <Spacer size="lg" />
         <Split>
           <Button full text="Addresses" to="/addresses" variant="secondary" />
-          <Button
-            full
-            text="Get INK/UBQ LP tokens"
-            href="https://shinobi-info.ubiq.ninja/pair/0x1ea388d8dcf980a95967228b1dfcea1692dbe25d"
-            variant="tertiary"
-          />
+          <Button full text="Get INK/UBQ LP tokens" href={"https://shinobi.ubiq.ninja/#/add/UBQ/" + INK} variant="tertiary" />
         </Split>
       </Container>
     </Page>
