@@ -24,7 +24,7 @@ const Provider: React.FC = ({ children }) => {
   const [earnedBalanceESCHUBQ, setearnedBalanceESCHUBQ] = useState<BigNumber>();
   const [stakedBalanceESCHUBQ, setstakedBalanceESCHUBQ] = useState<BigNumber>();
   const [totalSupplyESCHUBQ, settotalSupplyESCHUBQ] = useState<BigNumber>();
-  const [lpPercentESCHUBQ, setlpPercentESCHUBQ] = useState<String>("0.0");
+  const [lpPercentESCHUBQ, setlpPercentESCHUBQ] = useState<BigNumber>();
   const ubiq = useUbiq();
   const { account } = useWallet();
 
@@ -46,16 +46,13 @@ const Provider: React.FC = ({ children }) => {
   const fetchTotalSupplyESCHUBQ = useCallback(async () => {
     if (!account || !ubiq) return;
     const bigTotalSupply = new BigNumber(await getPoolTotalSupply(ubiq.contracts.shinobi_pool));
-    const totalSupply = bigTotalSupply.shiftedBy(-18).toPrecision(8);
     const stakedLpSupply = new BigNumber(await getStaked(ubiq.contracts.shinobi_pool, account));
 
-    let lpPercent = "0.0";
+    let lpPercent = new BigNumber(0);
 
     if (stakedLpSupply !== undefined) {
-      lpPercent = stakedLpSupply.div(bigTotalSupply).shiftedBy(2).toPrecision(6);
+      lpPercent = stakedLpSupply.div(bigTotalSupply);
     }
-
-    console.log("my percent lp:", lpPercent, "stakedLP", stakedLpSupply.shiftedBy(-18).toPrecision(8), "totalSupply", totalSupply);
 
     settotalSupplyESCHUBQ(bigTotalSupply);
     setlpPercentESCHUBQ(lpPercent);
@@ -159,6 +156,8 @@ const Provider: React.FC = ({ children }) => {
         onUnstakeESCHUBQ: handleUnstakeESCHUBQ,
         earnedBalanceESCHUBQ,
         stakedBalanceESCHUBQ,
+        totalSupplyESCHUBQ,
+        lpPercentESCHUBQ,
       }}
     >
       {children}

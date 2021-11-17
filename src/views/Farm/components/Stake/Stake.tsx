@@ -10,7 +10,7 @@ import Value from "components/Value";
 
 import useFarming from "hooks/useFarming";
 
-import { bnToDec, getFullDisplayBalance } from "utils";
+import { bnToDec, getFullDisplayBalance, getShortDisplayBalance } from "utils";
 
 import StakeModal from "./components/StakeModal";
 import UnstakeModal from "./components/UnstakeModal";
@@ -19,6 +19,7 @@ const Stake: React.FC = ({ children }) => {
   const [stakeModalIsOpen, setStakeModalIsOpen] = useState(false);
   const [unstakeModalIsOpen, setUnstakeModalIsOpen] = useState(false);
   const [stakeBalance, setStakeBalance] = useState<number>(0);
+  const [lpPercent, setLpPercent] = useState<number>(0);
 
   const { status } = useWallet();
   const {
@@ -32,6 +33,7 @@ const Stake: React.FC = ({ children }) => {
     onStakeESCHUBQ,
     onUnstakeESCHUBQ,
     stakedBalanceESCHUBQ,
+    lpPercentESCHUBQ,
   } = useFarming();
 
   const handleDismissStakeModal = useCallback(() => {
@@ -102,17 +104,26 @@ const Stake: React.FC = ({ children }) => {
 
   const formattedStakedBalance = useCallback(async () => {
     if (stakedBalanceESCHUBQ && bnToDec(stakedBalanceESCHUBQ) > 0) {
-      setStakeBalance(Number(getFullDisplayBalance(stakedBalanceESCHUBQ)));
+      setStakeBalance(Number(getShortDisplayBalance(stakedBalanceESCHUBQ)));
     } else {
       setStakeBalance(0);
     }
   }, [stakedBalanceESCHUBQ]);
 
+  const formattedLpPercent = useCallback(async () => {
+    if (lpPercentESCHUBQ && bnToDec(lpPercentESCHUBQ) > 0) {
+      setLpPercent(Number(lpPercentESCHUBQ.shiftedBy(2).toPrecision(6)));
+    } else {
+      setLpPercent(0);
+    }
+  }, [lpPercentESCHUBQ]);
+
   useEffect(() => {
     formattedStakedBalance();
+    formattedLpPercent();
     let refreshInterval = setInterval(formattedStakedBalance, 10000);
     return () => clearInterval(refreshInterval);
-  }, [formattedStakedBalance]);
+  }, [formattedStakedBalance, formattedLpPercent]);
 
   const renderer = (countdownProps: CountdownRenderProps) => {
     const { days, hours, minutes, seconds } = countdownProps;
@@ -136,8 +147,8 @@ const Stake: React.FC = ({ children }) => {
         </StyledBox>
         <StyledCardContent>
           <Box alignItems="center" column>
-            <Value value={stakeBalance > 0 ? stakeBalance.toString() : "--"} />
-            <Label text="Staked INK/UBQ LP Tokens" />
+            <Value value={stakeBalance > 0 ? stakeBalance.toString() + " INK/UBQ LP" : "--"} />
+            <Value valueSize="14px" valueBold="400" value={lpPercent > 0 ? lpPercent.toString() + " Pool %" : "--"} />
           </Box>
         </StyledCardContent>
         <CardActions>

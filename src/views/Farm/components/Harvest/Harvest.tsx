@@ -9,7 +9,7 @@ import inkLogo from "assets/ink_black_alpha.png";
 
 import useFarming from "hooks/useFarming";
 
-import { bnToDec } from "utils";
+import { bnToDec, getShortDisplayBalance } from "utils";
 
 const Harvest: React.FC = () => {
   const [earnedBalance, setEarnedBalance] = useState<number>(0);
@@ -18,7 +18,7 @@ const Harvest: React.FC = () => {
 
   const formattedEarnedBalance = useCallback(async () => {
     if (earnedBalanceESCHUBQ && bnToDec(earnedBalanceESCHUBQ) > 0) {
-      setEarnedBalance(bnToDec(earnedBalanceESCHUBQ));
+      setEarnedBalance(Number(getShortDisplayBalance(earnedBalanceESCHUBQ)));
     } else {
       setEarnedBalance(0);
     }
