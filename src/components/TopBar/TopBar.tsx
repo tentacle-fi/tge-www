@@ -29,7 +29,9 @@ const TopBar: React.FC<TopBarProps> = ({ onPresentMobileMenu }) => {
             <Nav />
           </StyledNavWrapper>
           <StyledAccountButtonWrapper>
-            <p>#{CurrentBlock}</p>
+            <StyledCurrentBlock>
+              <span>Block #: {CurrentBlock}</span>
+            </StyledCurrentBlock>
             <StyledTopBarDarkModeSwitch>
               <DarkModeSwitch />
             </StyledTopBarDarkModeSwitch>
@@ -44,6 +46,18 @@ const TopBar: React.FC<TopBarProps> = ({ onPresentMobileMenu }) => {
     </StyledTopBar>
   );
 };
+
+const StyledCurrentBlock = styled.div`
+  display: flex;
+  white-space: nowrap;
+  border: 1px dotted #cecece;
+  padding: 8px;
+  border-radius: 50px;
+  margin-right: 10px;
+  @media (max-width: 400px) {
+    display: none;
+  }
+`;
 
 const StyledLogoWrapper = styled.div`
   width: 156px;
