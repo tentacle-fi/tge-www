@@ -6,3 +6,4 @@
 # Unreleased
 - added versioning to build outputs, update `package.json` `version` for next release
 - further UI improvements for a link on the Farming page to Shinobi LP addition
+- added LP % for staked amount to the Farm page and shortened the displayed digits for easier reading
