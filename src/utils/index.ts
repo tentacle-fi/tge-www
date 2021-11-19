@@ -76,7 +76,7 @@ export const getBalance = async (provider: provider, tokenAddress: string, userA
 
 export const getERC20Contract = (provider: provider, address: string) => {
   const web3 = new Web3(provider);
-  const contract = new web3.eth.Contract((ERC20ABI.abi as unknown) as AbiItem, address);
+  const contract = new web3.eth.Contract(ERC20ABI.abi as unknown as AbiItem, address);
   return contract;
 };
 

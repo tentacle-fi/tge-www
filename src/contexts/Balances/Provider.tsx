@@ -13,7 +13,7 @@ const Provider: React.FC = ({ children }) => {
   const [ESCHUBQLPBalance, setESCHUBQLPBalance] = useState<BigNumber>();
   const [CurrentBlock, setCurrentBlock] = useState("");
 
-  const { account, ethereum }: { account: string | null; ethereum: provider } = useWallet();
+  const { account, ethereum } = useWallet();
 
   const fetchBalances = useCallback(
     async (userAddress: string, provider: provider) => {

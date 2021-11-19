@@ -9,3 +9,6 @@
 - added LP % for staked amount to the Farm page and shortened the displayed digits for easier reading
 - small UI visual style improvements
 - dev nice-to-have changes
+- React 17 upgrade
+- added MUI components library
+- forked `use-wallet` repo to modify for react 17 and include UBQ network

@@ -5,12 +5,8 @@ import { NavLink } from "react-router-dom";
 const Nav: React.FC = () => {
   return (
     <StyledNav>
-      <StyledRouterLink exact activeClassName="active" to="/farm">
-        Farm
-      </StyledRouterLink>
-      <StyledRouterLink exact activeClassName="active" to="/help">
-        Help
-      </StyledRouterLink>
+      <StyledRouterLink to="/farm">Farm</StyledRouterLink>
+      <StyledRouterLink to="/help">Help</StyledRouterLink>
     </StyledNav>
   );
 };

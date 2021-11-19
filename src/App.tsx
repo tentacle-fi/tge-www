@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { createTheme, ThemeProvider } from "react-neu";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { UseWalletProvider } from "use-wallet";
 
 import MobileMenu from "components/MobileMenu";
@@ -32,20 +32,14 @@ const App: React.FC = () => {
       <Providers>
         <TopBar onPresentMobileMenu={handlePresentMobileMenu} />
         <MobileMenu onDismiss={handleDismissMobileMenu} visible={mobileMenu} />
-        <Switch>
-          <Route exact path="/">
-            <Home />
-          </Route>
-          <Route exact path="/farm">
-            <Farm />
-          </Route>
-          <Route exact path="/addresses">
-            <Addresses />
-          </Route>
-          <Route exact path="/help">
-            <Help />
-          </Route>
-        </Switch>
+        <Routes>
+
+        <Route path="/" element={<Home />} />
+
+          <Route path="/farm" element={<Farm />} />
+          <Route path="/addresses" element={<Addresses />} />
+          <Route path="/help" element={<Help />} />
+        </Routes>
       </Providers>
     </Router>
   );
@@ -62,7 +56,11 @@ const Providers: React.FC = ({ children }) => {
   }, []);
   return (
     <ThemeProvider darkModeEnabled={darkModeSetting} darkTheme={darkTheme} lightTheme={lightTheme}>
-      <UseWalletProvider chainId={8}>
+      <UseWalletProvider connectors={{
+      injected: {
+        //allows you to connect and switch between mainnet and rinkeby within Metamask.
+        chainId: [8],
+    }}}>
         <UbiqProvider>
           <BalancesProvider>
             <FarmingProvider>{children}</FarmingProvider>
