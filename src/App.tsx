@@ -33,8 +33,7 @@ const App: React.FC = () => {
         <TopBar onPresentMobileMenu={handlePresentMobileMenu} />
         <MobileMenu onDismiss={handleDismissMobileMenu} visible={mobileMenu} />
         <Routes>
-
-        <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home />} />
 
           <Route path="/farm" element={<Farm />} />
           <Route path="/addresses" element={<Addresses />} />
@@ -56,11 +55,14 @@ const Providers: React.FC = ({ children }) => {
   }, []);
   return (
     <ThemeProvider darkModeEnabled={darkModeSetting} darkTheme={darkTheme} lightTheme={lightTheme}>
-      <UseWalletProvider connectors={{
-      injected: {
-        //allows you to connect and switch between mainnet and rinkeby within Metamask.
-        chainId: [8],
-    }}}>
+      <UseWalletProvider
+        connectors={{
+          injected: {
+            //allows you to connect and switch between mainnet and rinkeby within Metamask.
+            chainId: [8],
+          },
+        }}
+      >
         <UbiqProvider>
           <BalancesProvider>
             <FarmingProvider>{children}</FarmingProvider>
