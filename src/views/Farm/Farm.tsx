@@ -15,7 +15,24 @@ import { TGE1 } from "constants/tokenAddresses";
 
 const INK = TGE1.toString();
 
+interface YieldFarmProps {
+  farmKey: number;
+}
+
 const Farm: React.FC = () => {
+  return (
+    <Page>
+      <Box row justifyContent="center">
+        <Button full text="Get Started Here" to="/help" />
+      </Box>
+      <Spacer />
+      <PageHeader icon="" subtitle="Stake INK/UBQ Shinobi LP tokens and farm INK" title="Farm" />
+      <YieldFarm farmKey={0} />
+    </Page>
+  );
+};
+
+const YieldFarm: React.FC<YieldFarmProps> = ({ farmKey }) => {
   const { status } = useWallet();
 
   const { isRedeeming, onRedeemESCHUBQ } = useFarming();
@@ -31,35 +48,28 @@ const Farm: React.FC = () => {
   }, [isRedeeming, onRedeemESCHUBQ, status]);
 
   return (
-    <Page>
-      <Box row justifyContent="center">
-        <Button full text="Get Started Here" to="/help" />
-      </Box>
+    <Container>
       <Spacer />
-      <PageHeader icon="" subtitle="Stake INK/UBQ Shinobi LP tokens and farm INK" title="Farm" />
-      <Container>
-        <Spacer />
-        <Split>
-          <StakeCard>
-            <img src={inkLogo} alt="Tentacle Finance Logo" style={{ width: "80px", height: "80px", background: "white", borderRadius: "40px" }} />
-            <span style={{ fontSize: "50px", lineHeight: "80px", width: "50px", display: "block", textAlign: "center" }}>+</span>
-            <img src={ubqLogo} alt="Ubiq Logo" style={{ width: "80px", height: "80px" }} />
-          </StakeCard>
-          <HarvestCard />
-        </Split>
-        <Spacer />
-        <Box row justifyContent="center">
-          {RedeemButton}
-        </Box>
-        <Spacer size="lg" />
-        <Separator />
-        <Spacer size="lg" />
-        <Split>
-          <Button full text="Addresses" to="/addresses" variant="secondary" />
-          <Button full text="Get INK/UBQ LP tokens" href={"https://shinobi.ubiq.ninja/#/add/UBQ/" + INK} variant="tertiary" />
-        </Split>
-      </Container>
-    </Page>
+      <Split>
+        <StakeCard>
+          <img src={inkLogo} alt="INK Token Logo" style={{ width: "80px", height: "80px", background: "white", borderRadius: "40px" }} />
+          <span style={{ fontSize: "50px", lineHeight: "80px", width: "50px", display: "block", textAlign: "center" }}>+</span>
+          <img src={ubqLogo} alt="Ubiq Logo" style={{ width: "80px", height: "80px" }} />
+        </StakeCard>
+        <HarvestCard farmKey={farmKey} />
+      </Split>
+      <Spacer />
+      <Box row justifyContent="center">
+        {RedeemButton}
+      </Box>
+      <Spacer size="lg" />
+      <Separator />
+      <Spacer size="lg" />
+      <Split>
+        <Button full text="Addresses" to="/addresses" variant="secondary" />
+        <Button full text="Get INK/UBQ LP tokens" href={"https://shinobi.ubiq.ninja/#/add/UBQ/" + INK} variant="tertiary" />
+      </Split>
+    </Container>
   );
 };
 

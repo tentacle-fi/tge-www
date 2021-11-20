@@ -11,18 +11,22 @@ import useFarming from "hooks/useFarming";
 
 import { bnToDec, getShortDisplayBalance } from "utils";
 
-const Harvest: React.FC = () => {
+interface HarvestProps {
+  farmKey: number;
+}
+
+const Harvest: React.FC<HarvestProps> = ({ farmKey }) => {
   const [earnedBalance, setEarnedBalance] = useState<number>(0);
   const { status } = useWallet();
-  const { earnedBalanceESCHUBQ, isHarvesting, onHarvestESCHUBQ } = useFarming();
+  const { earnedBalances, isHarvesting, onHarvestESCHUBQ } = useFarming();
 
   const formattedEarnedBalance = useCallback(async () => {
-    if (earnedBalanceESCHUBQ && bnToDec(earnedBalanceESCHUBQ) > 0) {
-      setEarnedBalance(Number(getShortDisplayBalance(earnedBalanceESCHUBQ)));
+    if (earnedBalances && bnToDec(earnedBalances[farmKey]) > 0) {
+      setEarnedBalance(Number(getShortDisplayBalance(earnedBalances[farmKey])));
     } else {
       setEarnedBalance(0);
     }
-  }, [earnedBalanceESCHUBQ]);
+  }, [earnedBalances, farmKey]);
 
   useEffect(() => {
     formattedEarnedBalance();

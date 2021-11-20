@@ -9,33 +9,34 @@ import useApproval from "hooks/useApproval";
 import useUbiq from "hooks/useUbiq";
 
 import { getPoolTotalSupply, getEarned, getStaked, harvest, redeem, stake, unstake } from "ubiq-sdk/utils";
-
 import Context from "./Context";
-
-const farmingStartTime = 1637006400 * 1000; // UTC for INK+UBQ Yield Farming Start time
 
 const Provider: React.FC = ({ children }) => {
   const [confirmTxModalIsOpen, setConfirmTxModalIsOpen] = useState(false);
-  const [countdown, setCountdown] = useState<number>();
-  const [isHarvesting, setIsHarvesting] = useState(false);
-  const [isRedeeming, setIsRedeeming] = useState(false);
-  const [isStaking, setIsStaking] = useState(false);
-  const [isUnstaking, setIsUnstaking] = useState(false);
-  const [earnedBalanceESCHUBQ, setearnedBalanceESCHUBQ] = useState<BigNumber>();
-  const [stakedBalanceESCHUBQ, setstakedBalanceESCHUBQ] = useState<BigNumber>();
-  const [totalSupplyESCHUBQ, settotalSupplyESCHUBQ] = useState<BigNumber>();
-  const [lpPercentESCHUBQ, setlpPercentESCHUBQ] = useState<BigNumber>();
   const ubiq = useUbiq();
   const { account } = useWallet();
 
+  // TODO: create a class or function to generate an array of objects/properties for each farm
+  const farmingStartTime = 1637006400 * 1000; // UTC for INK+UBQ Yield Farming Start time
+  const [countdown, setCountdown] = useState<number>(); // countdown timer shown when farm is to start
+  const [isHarvesting, setIsHarvesting] = useState(false); // harvesting available token
+  const [isRedeeming, setIsRedeeming] = useState(false); // unstake and harvest all
+  const [isStaking, setIsStaking] = useState(false); // staking lp
+  const [isUnstaking, setIsUnstaking] = useState(false); // unstaking lp
+
+  const [earnedBalances, setearnedBalances] = useState<Array<BigNumber>>();
+
+  const [stakedBalanceESCHUBQ, setstakedBalanceESCHUBQ] = useState<BigNumber>();
+  const [totalSupplyESCHUBQ, settotalSupplyESCHUBQ] = useState<BigNumber>();
+  const [lpPercentESCHUBQ, setlpPercentESCHUBQ] = useState<BigNumber>();
   const ESCHUBQPoolAddress = ubiq ? ubiq.contracts.shinobi_pool.options.address : "";
   const { isApproved, isApproving, onApprove } = useApproval(ESCHUBQSLPAddress, ESCHUBQPoolAddress, () => setConfirmTxModalIsOpen(false));
 
-  const fetchearnedBalanceESCHUBQ = useCallback(async () => {
+  const fetchearnedBalances = useCallback(async () => {
     if (!account || !ubiq) return;
     const balance = await getEarned(ubiq.contracts.shinobi_pool, account);
-    setearnedBalanceESCHUBQ(balance);
-  }, [account, setearnedBalanceESCHUBQ, ubiq]);
+    setearnedBalances([balance]);
+  }, [account, setearnedBalances, ubiq]);
 
   const fetchstakedBalanceESCHUBQ = useCallback(async () => {
     if (!account || !ubiq) return;
@@ -59,10 +60,10 @@ const Provider: React.FC = ({ children }) => {
   }, [ubiq, account]);
 
   const fetchBalances = useCallback(async () => {
-    fetchearnedBalanceESCHUBQ();
+    fetchearnedBalances();
     fetchstakedBalanceESCHUBQ();
     fetchTotalSupplyESCHUBQ();
-  }, [fetchearnedBalanceESCHUBQ, fetchstakedBalanceESCHUBQ, fetchTotalSupplyESCHUBQ]);
+  }, [fetchearnedBalances, fetchstakedBalanceESCHUBQ, fetchTotalSupplyESCHUBQ]);
 
   const handleApprove = useCallback(() => {
     setConfirmTxModalIsOpen(true);
@@ -136,7 +137,7 @@ const Provider: React.FC = ({ children }) => {
   useEffect(() => {
     let refreshInterval = setInterval(() => setCountdown(farmingStartTime - Date.now()), 1000);
     return () => clearInterval(refreshInterval);
-  }, [setCountdown]);
+  }, [setCountdown, farmingStartTime]);
 
   return (
     <Context.Provider
@@ -154,7 +155,7 @@ const Provider: React.FC = ({ children }) => {
         onRedeemESCHUBQ: handleRedeemESCHUBQ,
         onStakeESCHUBQ: handleStakeESCHUBQ,
         onUnstakeESCHUBQ: handleUnstakeESCHUBQ,
-        earnedBalanceESCHUBQ,
+        earnedBalances,
         stakedBalanceESCHUBQ,
         totalSupplyESCHUBQ,
         lpPercentESCHUBQ,

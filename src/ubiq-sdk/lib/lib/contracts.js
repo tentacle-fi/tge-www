@@ -25,14 +25,7 @@ export class Contracts {
   }
 
   setProvider(provider, networkId) {
-    const contracts = [{ contract: this.TGE1, json: ERC20Json }];
-
-    contracts.forEach((contract) => this.setContractProvider(contract.contract, contract.json, provider, networkId));
     this.shinobi_pool.options.address = "0x6e142959f49d364b30f0478949effdcb58effe44";
-
-    this.names = {};
-    this.names[this.TGE1.options.address] = "TGE1";
-    this.names[this.shinobi_pool.options.address] = "INK/UBQ Shinobi LP Yield Farm";
   }
 
   setDefaultAccount(account) {
@@ -192,14 +185,5 @@ export class Contracts {
   async setGasLimit() {
     const block = await this.web3.eth.getBlock("latest");
     this.blockGasLimit = block.gasLimit - SUBTRACT_GAS_LIMIT;
-  }
-
-  setContractProvider(contract, contractJson, provider, networkId) {
-    contract.setProvider(provider);
-    try {
-      contract.options.address = contractJson.networks[networkId] && contractJson.networks[networkId].address;
-    } catch (error) {
-      // console.log(error)
-    }
   }
 }

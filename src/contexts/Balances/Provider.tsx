@@ -9,10 +9,11 @@ import { getBalance, getCurrentBlock } from "utils";
 import Context from "./Context";
 
 const Provider: React.FC = ({ children }) => {
+  // TODO: edit list of tokens if multi farming is needed
   const [TGE1Balance, setTGE1Balance] = useState<BigNumber>();
   const [ESCHUBQLPBalance, setESCHUBQLPBalance] = useState<BigNumber>();
-  const [CurrentBlock, setCurrentBlock] = useState("");
 
+  const [CurrentBlock, setCurrentBlock] = useState("");
   const { account, ethereum } = useWallet();
 
   const fetchBalances = useCallback(

@@ -2,7 +2,6 @@ import BigNumber from "bignumber.js";
 
 export interface ContextValues {
   countdown?: number;
-  earnedBalance?: BigNumber;
   isApproved?: boolean;
   isApproving?: boolean;
   isHarvesting?: boolean;
@@ -10,7 +9,8 @@ export interface ContextValues {
   isStaking?: boolean;
   isUnstaking?: boolean;
 
-  earnedBalanceESCHUBQ?: BigNumber;
+  earnedBalances?: Array<BigNumber>;
+
   stakedBalanceESCHUBQ?: BigNumber;
   totalSupplyESCHUBQ?: BigNumber;
   lpPercentESCHUBQ?: BigNumber;
