@@ -2,7 +2,9 @@ import React, { useMemo } from "react";
 import styled from "styled-components";
 import copy from "assets/copy.svg";
 import confirm from "assets/copy_confirm.svg";
-import { Box, Spacer, useTheme } from "react-neu";
+import { useTheme } from "react-neu";
+
+import Box from "@mui/material/Box";
 
 interface AddressButtonProps {
   name?: string;
@@ -20,7 +22,6 @@ const AddressButton: React.FC<AddressButtonProps> = ({ name, address, shinobi, s
     if (shinobi) {
       return (
         <>
-          <Spacer />
           <StyledLink
             darkMode={darkMode}
             href={shinobilink ? shinobilink + address : "https://shinobi.ubiq.ninja/swap?inputCurrency=" + address}
@@ -60,7 +61,7 @@ const AddressButton: React.FC<AddressButtonProps> = ({ name, address, shinobi, s
 
   return (
     <>
-      <Box row>
+      <Box sx={{ borderRadius: "10px" }}>
         <StyledButton darkMode={darkMode} shinobi={shinobi}>
           <StyledSpan>
             <StyledName darkMode={darkMode} shinobi={shinobi}>
@@ -80,7 +81,6 @@ const AddressButton: React.FC<AddressButtonProps> = ({ name, address, shinobi, s
         </StyledButton>
         {DisplayShinobi}
       </Box>
-      <Spacer />
     </>
   );
 };
