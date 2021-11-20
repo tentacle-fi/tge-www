@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 
-import Button from '@mui/material/Button';
-import ButtonGroup from '@mui/material/ButtonGroup';
+import Button from "@mui/material/Button";
+import ButtonGroup from "@mui/material/ButtonGroup";
 
 import Page from "components/Page";
 import PageHeader from "components/PageHeader";
@@ -37,7 +37,9 @@ const Help: React.FC = () => {
         <StyledUl>
           <ListItem legend="Step 1: Setup your wallet">
             Tentacle.Finance supports Web3 wallets such as Metamask and Sparrow.
-            <Button onClick={openURL("https://ubiqsmart.com/en/wallets")} variant="outlined">Learn how to setup a wallet</Button>
+            <Button onClick={openURL("https://ubiqsmart.com/en/wallets")} variant="outlined">
+              Learn how to setup a wallet
+            </Button>
           </ListItem>
           <ListItem legend="Step 2: Connect your wallet">
             Unlock your wallet by clicking this button or the one in the top right of Tentacle.Finance! <WalletButton />
@@ -46,21 +48,34 @@ const Help: React.FC = () => {
             Obtain UBQ and INK balance in your wallet
             <ButtonGroup>
               <h3>Obtain UBQ at:</h3>
-              <Button onClick={openURL("https://bittrex.com/Market/Index?MarketName=USDT-UBQ")} variant="outlined">Bittrex</Button>
-              <Button onClick={openURL("https://dovewallet.com/en/trade/spot/ubq-usdt")} variant="outlined">Dove Wallet</Button>
-              <Button onClick={openURL("https://shinobi.ubiq.ninja/#/swap")} variant="outlined">Shinobi Swap</Button>
+              <Button onClick={openURL("https://bittrex.com/Market/Index?MarketName=USDT-UBQ")} variant="outlined">
+                Bittrex
+              </Button>
+              <Button onClick={openURL("https://dovewallet.com/en/trade/spot/ubq-usdt")} variant="outlined">
+                Dove Wallet
+              </Button>
+              <Button onClick={openURL("https://shinobi.ubiq.ninja/#/swap")} variant="outlined">
+                Shinobi Swap
+              </Button>
             </ButtonGroup>
             <ButtonGroup>
               <h3>Obtain INK at:</h3>
-              <Button onClick={openURL("https://shinobi.ubiq.ninja/#/swap?outputCurrency=" + INK)} variant="outlined">Shinobi Swap</Button>
+              <Button onClick={openURL("https://shinobi.ubiq.ninja/#/swap?outputCurrency=" + INK)} variant="outlined">
+                Shinobi Swap
+              </Button>
             </ButtonGroup>
           </ListItem>
           <ListItem legend="Step 4: Add Liquidity">
             Provide UBQ and INK as LP on Shinobi. Note: You will need to "Approve" first on the same page.
-            <Button onClick={openURL("https://shinobi.ubiq.ninja/#/add/UBQ/" + INK)} variant="outlined">Provide Liquidity with Shinobi</Button>
+            <Button onClick={openURL("https://shinobi.ubiq.ninja/#/add/UBQ/" + INK)} variant="outlined">
+              Provide Liquidity with Shinobi
+            </Button>
           </ListItem>
           <ListItem legend="Step 5: Stake LP tokens">
-            Stake your LP tokens on the <Button onClick={openURL("/farm")} variant="outlined">Tentacle.Finance Farm</Button>
+            Stake your LP tokens on the{" "}
+            <Button onClick={openURL("/farm")} variant="outlined">
+              Tentacle.Finance Farm
+            </Button>
           </ListItem>
           <ListItem legend="Step 6: Watch your INK increase!">
             Every block your INK balance will increase proportional to the amount of LP tokens staked and your percentage of the yield farm. Relax and

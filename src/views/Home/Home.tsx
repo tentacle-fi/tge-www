@@ -14,7 +14,7 @@ import TimelineConnector from "@mui/lab/TimelineConnector";
 import TimelineContent from "@mui/lab/TimelineContent";
 import TimelineDot from "@mui/lab/TimelineDot";
 
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from "@mui/material/Tooltip";
 
 function TopBarElements() {
   return (
@@ -24,88 +24,88 @@ function TopBarElements() {
   );
 }
 
-function BlockHeightChip(){
-    return(
-        <Tooltip title='current block height'>
-          <Chip label="Chip Outlined" variant="outlined" color="success" />
-        </Tooltip>
-    );
+function BlockHeightChip() {
+  return (
+    <Tooltip title="current block height">
+      <Chip label="Chip Outlined" variant="outlined" color="success" />
+    </Tooltip>
+  );
 }
 
 function TimelinePhase1() {
-    return (
-      <>
+  return (
+    <>
       <TimelineItem>
         <TimelineSeparator>
           <TimelineDot />
           <TimelineConnector />
         </TimelineSeparator>
-      <Tooltip title='phase 1'>
-        <TimelineContent>
-          <p>Phase 1</p>
-          Launch INK, Launch Tentacle.Finance Site, Begin Farming
-        </TimelineContent>
-      </Tooltip>
+        <Tooltip title="phase 1">
+          <TimelineContent>
+            <p>Phase 1</p>
+            Launch INK, Launch Tentacle.Finance Site, Begin Farming
+          </TimelineContent>
+        </Tooltip>
       </TimelineItem>
-      </>
-);
+    </>
+  );
 }
 
 function TimelinePhase2() {
-    return (
-      <>
+  return (
+    <>
       <TimelineItem>
         <TimelineSeparator>
           <TimelineDot />
           <TimelineConnector />
         </TimelineSeparator>
-      <Tooltip title='phase 2'>
-        <TimelineContent>
-          <p>Phase 2</p>
-          Launch Additional Farms, Enhance Farm UI
-        </TimelineContent>
-      </Tooltip>
+        <Tooltip title="phase 2">
+          <TimelineContent>
+            <p>Phase 2</p>
+            Launch Additional Farms, Enhance Farm UI
+          </TimelineContent>
+        </Tooltip>
       </TimelineItem>
-      </>
-    );
+    </>
+  );
 }
 
 function TimelinePhase3() {
-    return (
-      <>
+  return (
+    <>
       <TimelineItem>
         <TimelineSeparator>
           <TimelineDot />
           <TimelineConnector />
         </TimelineSeparator>
-      <Tooltip title='phase 3'>
-        <TimelineContent>
-          <p>Phase 3</p>
-          Additional Farming Features, Secret Launch, Governance, Treasury, Bridges after voting
-        </TimelineContent>
-      </Tooltip>
+        <Tooltip title="phase 3">
+          <TimelineContent>
+            <p>Phase 3</p>
+            Additional Farming Features, Secret Launch, Governance, Treasury, Bridges after voting
+          </TimelineContent>
+        </Tooltip>
       </TimelineItem>
-      </>
-    );
+    </>
+  );
 }
 
 function TimelinePhase4() {
-    return (
-        <>
-        <TimelineItem>
-          <TimelineSeparator>
-            <TimelineDot />
-            <TimelineConnector />
-          </TimelineSeparator>
-        <Tooltip title='phase 4'>
+  return (
+    <>
+      <TimelineItem>
+        <TimelineSeparator>
+          <TimelineDot />
+          <TimelineConnector />
+        </TimelineSeparator>
+        <Tooltip title="phase 4">
           <TimelineContent>
             <p>Phase 4</p>
             TBA
           </TimelineContent>
         </Tooltip>
-        </TimelineItem>
-        </>
-    )
+      </TimelineItem>
+    </>
+  );
 }
 
 const Home: React.FC = () => {
