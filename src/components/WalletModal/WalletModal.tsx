@@ -10,6 +10,7 @@ import useBalances from "hooks/useBalances";
 import { AvailableFarms } from "farms/AvailableFarms";
 
 import InkTokenLogo from "assets/ink_black_alpha.png";
+import GransTokenLogo from "assets/grans-flat.png";
 
 const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
   const [, setWalletModalIsOpen] = useState(false);
@@ -47,7 +48,7 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
       <ModalContent>
         <Box sx={{}}>
           <FancyValue icon={inkIcon()} label="INK balance" value={getDisplayBalance(INKBalance)} />
-          <FancyValue icon={inkIcon()} label="GRANS balance" value={getDisplayBalance(GRANSBalance)} />
+          <FancyValue icon={gransIcon()} label="GRANS balance" value={getDisplayBalance(GRANSBalance)} />
         </Box>
         <Spacer />
       </ModalContent>
@@ -68,6 +69,16 @@ function inkIcon() {
   return (
     <img
       src={InkTokenLogo}
+      alt="Token Logo"
+      style={{ marginRight: "10px", height: 64, alignSelf: "center", background: "white", borderRadius: 110 }}
+    />
+  );
+}
+
+function gransIcon() {
+  return (
+    <img
+      src={GransTokenLogo}
       alt="Token Logo"
       style={{ marginRight: "10px", height: 64, alignSelf: "center", background: "white", borderRadius: 110 }}
     />
