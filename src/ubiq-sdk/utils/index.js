@@ -155,11 +155,3 @@ export const waitTransaction = async (provider, txHash) => {
   }
   return txReceipt.status;
 };
-
-// export const getCurrentBlock = async (ubiq) => {
-//   try {
-//     return await ubiq.web3.eth.getBlock("latest");
-//   } catch (e) {
-//     console.log(e);
-//   }
-// };
