@@ -18,7 +18,6 @@ interface TopBarProps {
 }
 
 const TopBar: React.FC<TopBarProps> = ({ onPresentMobileMenu }) => {
-
   return (
     <StyledTopBar>
       <Container size="lg">
@@ -30,7 +29,7 @@ const TopBar: React.FC<TopBarProps> = ({ onPresentMobileMenu }) => {
             <Nav />
           </StyledNavWrapper>
           <StyledAccountButtonWrapper>
-              <BlockheightHider isLoggedIn={false} />
+            <BlockheightHider isLoggedIn={false} />
             <StyledTopBarDarkModeSwitch>
               <DarkModeSwitch />
             </StyledTopBarDarkModeSwitch>
@@ -122,16 +121,18 @@ interface BlockheightHiderProps {
   isLoggedIn: boolean;
 }
 
-const BlockheightHider: React.FC<BlockheightHiderProps> = ({children, isLoggedIn}) => {
+const BlockheightHider: React.FC<BlockheightHiderProps> = ({ children, isLoggedIn }) => {
   isLoggedIn = window.ethereum.isSparrow;
   const { CurrentBlock } = useBalances();
-  if (CurrentBlock !== '0') {
-      return  <StyledCurrentBlock>
-                <span>Block #: {CurrentBlock}</span>
-              </StyledCurrentBlock>;
+  if (CurrentBlock !== "0") {
+    return (
+      <StyledCurrentBlock>
+        <span>Block #: {CurrentBlock}</span>
+      </StyledCurrentBlock>
+    );
   }
-      return null;
-  }
+  return null;
+};
 
 //   const ListItem: React.FC<ListItemProps> = ({ children, legend = "" }) => {
 //   return (
