@@ -33,6 +33,13 @@ const Provider: React.FC = ({ children }) => {
     [setCurrentBlock]
   );
 
+  const clearCurrentBlock = useCallback(
+      () => {
+          setCurrentBlock('0');
+      },
+      [setCurrentBlock]
+  );
+
   useEffect(() => {
     if (account && ethereum) {
       fetchBalances(account, ethereum);
@@ -47,10 +54,12 @@ const Provider: React.FC = ({ children }) => {
       let refreshInterval = setInterval(() => {
         fetchCurrentBlock(account, ethereum);
         fetchBalances(account, ethereum);
-      }, 10000);
+    }, 10000);
       return () => clearInterval(refreshInterval);
-    }
-  }, [account, ethereum, fetchBalances, fetchCurrentBlock]);
+  } else {
+      clearCurrentBlock();
+  }
+}, [account, ethereum, fetchBalances, fetchCurrentBlock, clearCurrentBlock]);
 
   return (
     <Context.Provider

@@ -11,12 +11,13 @@ import Nav from "./components/Nav";
 import WalletButton from "./components/WalletButton";
 import useBalances from "hooks/useBalances";
 
+declare const window: any;
+
 interface TopBarProps {
   onPresentMobileMenu: () => void;
 }
 
 const TopBar: React.FC<TopBarProps> = ({ onPresentMobileMenu }) => {
-  const { CurrentBlock } = useBalances();
 
   return (
     <StyledTopBar>
@@ -29,9 +30,7 @@ const TopBar: React.FC<TopBarProps> = ({ onPresentMobileMenu }) => {
             <Nav />
           </StyledNavWrapper>
           <StyledAccountButtonWrapper>
-            <StyledCurrentBlock>
-              <span>Block #: {CurrentBlock}</span>
-            </StyledCurrentBlock>
+              <BlockheightHider isLoggedIn={false} />
             <StyledTopBarDarkModeSwitch>
               <DarkModeSwitch />
             </StyledTopBarDarkModeSwitch>
@@ -118,5 +117,29 @@ const StyledTopBarDarkModeSwitch = styled.div`
     display: none;
   }
 `;
+
+interface BlockheightHiderProps {
+  isLoggedIn: boolean;
+}
+
+const BlockheightHider: React.FC<BlockheightHiderProps> = ({children, isLoggedIn}) => {
+  isLoggedIn = window.ethereum.isSparrow;
+  const { CurrentBlock } = useBalances();
+  if (CurrentBlock !== '0') {
+      return  <StyledCurrentBlock>
+                <span>Block #: {CurrentBlock}</span>
+              </StyledCurrentBlock>;
+  }
+      return null;
+  }
+
+//   const ListItem: React.FC<ListItemProps> = ({ children, legend = "" }) => {
+//   return (
+//     <li>
+//         {legend !== "" && <legend>{legend}</legend>}
+//         <div className="list-item-children-container">{children}</div>
+//     </li>
+//   );
+// };
 
 export default TopBar;
