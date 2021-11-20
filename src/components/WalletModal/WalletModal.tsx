@@ -4,7 +4,13 @@ import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
 
 import numeral from "numeral";
-import { Box, Button, Modal, ModalActions, ModalContent, ModalProps, ModalTitle, Separator, Spacer } from "react-neu";
+import { Modal, ModalActions, ModalContent, ModalProps, ModalTitle, Separator, Spacer } from "react-neu";
+
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+// import Modal from '@mui/material/Modal';
+// import ModalActions from '@mui/material/Modal';
+// import ModalContent from '@mui/material/Modal';
 
 import FancyValue from "components/FancyValue";
 
@@ -45,15 +51,19 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
     <Modal isOpen={isOpen}>
       <ModalTitle text="My Wallet" />
       <ModalContent>
-        <Box row>
+        <Box sx={{}}>
           <FancyValue icon={inkIcon()} label="INK balance" value={getDisplayBalance(INKBalance)} />
         </Box>
         <Spacer />
       </ModalContent>
       <Separator />
       <ModalActions>
-        <Button onClick={onDismiss} text="Cancel" variant="secondary" />
-        <Button onClick={handleSignOut} text="Sign Out" />
+        <Button onClick={onDismiss} variant="outlined">
+          Cancel
+        </Button>
+        <Button onClick={handleSignOut} color="error">
+          Sign Out
+        </Button>
       </ModalActions>
     </Modal>
   );
