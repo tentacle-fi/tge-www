@@ -37,7 +37,7 @@ const Help: React.FC = () => {
         <StyledUl>
           <ListItem legend="Step 1: Setup your wallet">
             Tentacle.Finance supports Web3 wallets such as Metamask and Sparrow.
-            <Button onClick={openURL("https://ubiqsmart.com/en/wallets")} variant="outlined">
+            <Button  onClick={openURL("https://ubiqsmart.com/en/wallets")} variant="outlined">
               Learn how to setup a wallet
             </Button>
           </ListItem>
@@ -50,7 +50,7 @@ const Help: React.FC = () => {
             Obtain UBQ and INK balance in your wallet
             <ButtonGroup>
               <h3>Obtain UBQ at:</h3>
-              <Button onClick={openURL("https://bittrex.com/Market/Index?MarketName=USDT-UBQ")} variant="outlined">
+              <Button sx={{marginLeft: "10px"}} onClick={openURL("https://bittrex.com/Market/Index?MarketName=USDT-UBQ")} variant="outlined">
                 Bittrex
               </Button>
               <Button onClick={openURL("https://dovewallet.com/en/trade/spot/ubq-usdt")} variant="outlined">
@@ -62,7 +62,7 @@ const Help: React.FC = () => {
             </ButtonGroup>
             <ButtonGroup>
               <h3>Obtain INK at:</h3>
-              <Button onClick={openURL("https://shinobi.ubiq.ninja/#/swap?outputCurrency=" + INK)} variant="outlined">
+              <Button sx={{marginLeft: "10px"}} onClick={openURL("https://shinobi.ubiq.ninja/#/swap?outputCurrency=" + INK)} variant="outlined">
                 Shinobi Swap
               </Button>
               <Button onClick={addInkToWallet} variant="outlined">
@@ -80,7 +80,7 @@ Add INK to Wallet
 
           <ListItem legend="Step 5: Stake LP tokens">
             Stake your LP tokens on the{" "}
-            <Button onClick={openURL("/farm")} variant="outlined">
+            <Button sx={{marginLeft: "10px"}} onClick={openURL("/farm")} variant="outlined">
               Tentacle.Finance Farm
             </Button>
           </ListItem>
