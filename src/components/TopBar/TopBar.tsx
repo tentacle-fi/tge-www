@@ -134,13 +134,4 @@ const BlockheightHider: React.FC<BlockheightHiderProps> = ({ children, isLoggedI
   return null;
 };
 
-//   const ListItem: React.FC<ListItemProps> = ({ children, legend = "" }) => {
-//   return (
-//     <li>
-//         {legend !== "" && <legend>{legend}</legend>}
-//         <div className="list-item-children-container">{children}</div>
-//     </li>
-//   );
-// };
-
 export default TopBar;
