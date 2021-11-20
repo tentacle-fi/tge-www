@@ -9,11 +9,7 @@ import useFarming from "hooks/useFarming";
 import HarvestCard from "./components/Harvest";
 import StakeCard from "./components/Stake";
 import { useWallet } from "use-wallet";
-import inkLogo from "assets/ink_black_alpha.png";
-import ubqLogo from "assets/ubq.png";
-import { TGE1 } from "constants/tokenAddresses";
-
-const INK = TGE1.toString();
+import { AvailableFarms } from "farms/AvailableFarms";
 
 interface YieldFarmProps {
   farmKey: number;
@@ -28,33 +24,50 @@ const Farm: React.FC = () => {
       <Spacer />
       <PageHeader icon="" subtitle="Stake INK/UBQ Shinobi LP tokens and farm INK" title="Farm" />
       <YieldFarm farmKey={0} />
+      <YieldFarm farmKey={1} />
     </Page>
   );
 };
 
 const YieldFarm: React.FC<YieldFarmProps> = ({ farmKey }) => {
+  // TODO: move this to an external file
+
+  const farm = AvailableFarms[farmKey];
+
   const { status } = useWallet();
 
-  const { isRedeeming, onRedeemESCHUBQ } = useFarming();
+  const { isRedeeming, onRedeem } = useFarming();
 
   const RedeemButton = useMemo(() => {
     if (status !== "connected") {
-      return <Button disabled text="Harvest &amp; Unstake INK/UBQ" variant="secondary" />;
+      return <Button disabled text={`Harvest &amp; Unstake ${farm.name}`} variant="secondary" />;
     }
-    if (!isRedeeming) {
-      return <Button onClick={onRedeemESCHUBQ} text="Harvest &amp; Unstake INK/UBQ" variant="secondary" />;
+    if (isRedeeming !== undefined && isRedeeming[farmKey] === false) {
+      return (
+        <Button
+          onClick={() => {
+            onRedeem(farmKey);
+          }}
+          text={`Harvest & Unstake ${farm.name}`}
+          variant="secondary"
+        />
+      );
     }
     return <Button disabled text="Redeeming..." variant="secondary" />;
-  }, [isRedeeming, onRedeemESCHUBQ, status]);
+  }, [isRedeeming, onRedeem, farmKey, farm, status]);
 
   return (
     <Container>
       <Spacer />
       <Split>
-        <StakeCard>
-          <img src={inkLogo} alt="INK Token Logo" style={{ width: "80px", height: "80px", background: "white", borderRadius: "40px" }} />
+        <StakeCard farmKey={farmKey}>
+          <img
+            src={farm.tokenA.logo}
+            alt={`${farm.tokenA.symbol} Logo`}
+            style={{ width: "80px", height: "80px", background: "white", borderRadius: "40px" }}
+          />
           <span style={{ fontSize: "50px", lineHeight: "80px", width: "50px", display: "block", textAlign: "center" }}>+</span>
-          <img src={ubqLogo} alt="Ubiq Logo" style={{ width: "80px", height: "80px" }} />
+          <img src={farm.tokenB.logo} alt={`${farm.tokenB.symbol} Logo`} style={{ width: "80px", height: "80px" }} />
         </StakeCard>
         <HarvestCard farmKey={farmKey} />
       </Split>
@@ -67,7 +80,7 @@ const YieldFarm: React.FC<YieldFarmProps> = ({ farmKey }) => {
       <Spacer size="lg" />
       <Split>
         <Button full text="Addresses" to="/addresses" variant="secondary" />
-        <Button full text="Get INK/UBQ LP tokens" href={"https://shinobi.ubiq.ninja/#/add/UBQ/" + INK} variant="tertiary" />
+        <Button full text={`Get ${farm.name} LP tokens`} href={farm.lp.url} variant="tertiary" />
       </Split>
     </Container>
   );

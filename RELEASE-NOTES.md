@@ -12,3 +12,5 @@
 - React 17 upgrade
 - added MUI components library
 - forked `use-wallet` repo to modify for react 17 and include UBQ network
+- general improvements fixing errors and UI issues
+- multi farming support

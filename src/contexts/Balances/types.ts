@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 
 export interface ContextValues {
-  TGE1Balance?: BigNumber;
-  ESCHUBQLPBalance?: BigNumber;
+  tokenBalances?: Array<BigNumber>;
+  LPBalances?: Array<BigNumber>;
   CurrentBlock?: string;
 }

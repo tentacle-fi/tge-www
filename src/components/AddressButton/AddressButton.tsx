@@ -27,7 +27,6 @@ const AddressButton: React.FC<AddressButtonProps> = ({ name, address, shinobi, s
             href={shinobilink ? shinobilink + address : "https://shinobi.ubiq.ninja/swap?inputCurrency=" + address}
             target="_blank"
             color="white"
-            overflow={true}
           >
             <StyledShinobiButton darkMode={darkMode}>
               <StyledSpan>
@@ -44,9 +43,8 @@ const AddressButton: React.FC<AddressButtonProps> = ({ name, address, shinobi, s
     if (shinobi) {
       return (
         <>
-          <span className="address combine">
+          <span className="address">
             <AddressStart>{address}</AddressStart>
-            <AddressEnd>{address}</AddressEnd>
           </span>
         </>
       );
@@ -166,7 +164,7 @@ const StyledName = styled.span<StyledSpanProps>`
 const StyledLink = styled.a<StyledLinkProps>`
   cursor: pointer;
   color: ${(props) => (props.color ? props.color : "white")};
-  overflow: ${(props) => (props.overflow ? null : "hidden")};
+  overflow: ${(props) => (props.overflow ? "inherit" : "hidden")};
   text-decoration: none;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -208,10 +206,10 @@ const AddressStart = styled.span`
   text-overflow: ellipsis;
 `;
 
-const AddressEnd = styled.span`
-  display: inline-flex;
-  width: calc(50% - 28px);
-  justify-content: flex-end;
-`;
+// const AddressEnd = styled.span`
+//   display: inline-flex;
+//   width: calc(50% - 28px);
+//   justify-content: flex-end;
+// `;
 
 export default AddressButton;

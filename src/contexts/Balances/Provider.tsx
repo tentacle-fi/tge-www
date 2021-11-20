@@ -2,27 +2,36 @@ import React, { useCallback, useEffect, useState } from "react";
 import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
 import { provider } from "web3-core";
-
-import { TGE1, ESCHUBQSLPAddress } from "constants/tokenAddresses";
 import { getBalance, getCurrentBlock } from "utils";
 
 import Context from "./Context";
 
+import { AvailableFarms } from "farms/AvailableFarms";
+
 const Provider: React.FC = ({ children }) => {
   // TODO: edit list of tokens if multi farming is needed
-  const [TGE1Balance, setTGE1Balance] = useState<BigNumber>();
-  const [ESCHUBQLPBalance, setESCHUBQLPBalance] = useState<BigNumber>();
+  const [tokenBalances, settokenBalances] = useState<Array<BigNumber>>();
+  const [LPBalances, setLPBalances] = useState<Array<BigNumber>>();
 
   const [CurrentBlock, setCurrentBlock] = useState("");
   const { account, ethereum } = useWallet();
 
   const fetchBalances = useCallback(
     async (userAddress: string, provider: provider) => {
-      const balances = await Promise.all([await getBalance(provider, TGE1, userAddress), await getBalance(provider, ESCHUBQSLPAddress, userAddress)]);
-      setTGE1Balance(new BigNumber(balances[0]).dividedBy(new BigNumber(10).pow(18)));
-      setESCHUBQLPBalance(new BigNumber(balances[1]).dividedBy(new BigNumber(10).pow(18)));
+      let tokenBalances = [];
+      let lpBalances = [];
+
+      for (let i = 0; i < AvailableFarms.length; i++) {
+        tokenBalances.push(
+          new BigNumber(await getBalance(provider, AvailableFarms[i].tokenA.address, userAddress)).dividedBy(new BigNumber(10).pow(18))
+        );
+        lpBalances.push(new BigNumber(await getBalance(provider, AvailableFarms[i].lp.address, userAddress)).dividedBy(new BigNumber(10).pow(18)));
+      }
+
+      settokenBalances(tokenBalances);
+      setLPBalances(lpBalances);
     },
-    [setTGE1Balance, setESCHUBQLPBalance]
+    [settokenBalances, setLPBalances]
   );
 
   const fetchCurrentBlock = useCallback(
@@ -56,8 +65,8 @@ const Provider: React.FC = ({ children }) => {
   return (
     <Context.Provider
       value={{
-        TGE1Balance,
-        ESCHUBQLPBalance,
+        tokenBalances,
+        LPBalances,
         CurrentBlock,
       }}
     >

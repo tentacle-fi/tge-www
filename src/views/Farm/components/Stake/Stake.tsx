@@ -15,26 +15,26 @@ import { bnToDec, getShortDisplayBalance } from "utils";
 import StakeModal from "./components/StakeModal";
 import UnstakeModal from "./components/UnstakeModal";
 
-const Stake: React.FC = ({ children }) => {
+import useApproval from "hooks/useApproval";
+import { AvailableFarms } from "farms/AvailableFarms";
+
+interface StakeProps {
+  farmKey: number;
+}
+
+const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
   const [stakeModalIsOpen, setStakeModalIsOpen] = useState(false);
   const [unstakeModalIsOpen, setUnstakeModalIsOpen] = useState(false);
   const [stakeBalance, setStakeBalance] = useState<number>(0);
   const [lpPercent, setLpPercent] = useState<number>(0);
 
+  const { isApproved, isApproving, onApprove } = useApproval(AvailableFarms[farmKey].lp.address, AvailableFarms[farmKey].yieldfarm.address, () =>
+    setConfirmTxModalIsOpen(false)
+  );
+
   const { status } = useWallet();
-  const {
-    countdown,
-    farmingStartTime,
-    isApproved,
-    isApproving,
-    isStaking,
-    isUnstaking,
-    onApprove,
-    onStakeESCHUBQ,
-    onUnstakeESCHUBQ,
-    stakedBalanceESCHUBQ,
-    lpPercentESCHUBQ,
-  } = useFarming();
+  const { countdown, farmingStartTime, isStaking, isUnstaking, setConfirmTxModalIsOpen, onStake, onUnstake, stakedBalances, lpPercents } =
+    useFarming();
 
   const handleDismissStakeModal = useCallback(() => {
     setStakeModalIsOpen(false);
@@ -45,19 +45,19 @@ const Stake: React.FC = ({ children }) => {
   }, [setUnstakeModalIsOpen]);
 
   const handleOnStake = useCallback(
-    (amount: string) => {
-      onStakeESCHUBQ(amount);
+    (contractIndex: number, amount: string) => {
+      onStake(contractIndex, amount);
       handleDismissStakeModal();
     },
-    [handleDismissStakeModal, onStakeESCHUBQ]
+    [handleDismissStakeModal, onStake]
   );
 
   const handleOnUnstake = useCallback(
-    (amount: string) => {
-      onUnstakeESCHUBQ(amount);
+    (contractIndex: number, amount: string) => {
+      onUnstake(contractIndex, amount);
       handleDismissUnstakeModal();
     },
-    [handleDismissUnstakeModal, onUnstakeESCHUBQ]
+    [handleDismissUnstakeModal, onUnstake]
   );
 
   const handleStakeClick = useCallback(() => {
@@ -72,51 +72,54 @@ const Stake: React.FC = ({ children }) => {
     if (status !== "connected") {
       return <Button disabled full text="Stake" variant="secondary" />;
     }
-    if (isStaking) {
+    if (isStaking !== undefined && isStaking[farmKey] === true) {
       return <Button disabled full text="Staking..." variant="secondary" />;
     }
-    if (!isApproved) {
+    if (isApproved !== undefined && isApproved === false) {
       return (
         <Button
-          disabled={isApproving}
+          disabled={isApproving === true}
           full
-          onClick={onApprove}
-          text={!isApproving ? "Approve staking" : "Approving staking..."}
+          onClick={() => {
+            setConfirmTxModalIsOpen(true);
+            onApprove();
+          }}
+          text={isApproving !== undefined && isApproving === false ? "Approve staking" : "Approving staking..."}
           variant={isApproving || status !== "connected" ? "secondary" : "default"}
         />
       );
     }
-    if (isApproved) {
+    if (isApproved !== undefined && isApproved === true) {
       return <Button full onClick={handleStakeClick} text="Stake" variant="secondary" />;
     }
-  }, [handleStakeClick, isStaking, isApproved, isApproving, onApprove, status]);
+  }, [handleStakeClick, isStaking, isApproved, isApproving, onApprove, status, farmKey, setConfirmTxModalIsOpen]);
 
   const UnstakeButton = useMemo(() => {
-    const hasStaked = stakedBalanceESCHUBQ && stakedBalanceESCHUBQ.toNumber() > 0;
+    const hasStaked = stakedBalances === undefined ? false : stakedBalances[farmKey] && stakedBalances[farmKey].toNumber() > 0;
     if (status !== "connected" || !hasStaked) {
       return <Button disabled full text="Unstake" variant="secondary" />;
     }
-    if (isUnstaking) {
+    if (isUnstaking !== undefined && isUnstaking[farmKey] === true) {
       return <Button disabled full text="Unstaking..." variant="secondary" />;
     }
     return <Button full onClick={handleUnstakeClick} text="Unstake" variant="secondary" />;
-  }, [handleUnstakeClick, isUnstaking, stakedBalanceESCHUBQ, status]);
+  }, [handleUnstakeClick, isUnstaking, stakedBalances, status, farmKey]);
 
   const formattedStakedBalance = useCallback(async () => {
-    if (stakedBalanceESCHUBQ && bnToDec(stakedBalanceESCHUBQ) > 0) {
-      setStakeBalance(Number(getShortDisplayBalance(stakedBalanceESCHUBQ)));
+    if (stakedBalances !== undefined && stakedBalances[farmKey] && bnToDec(stakedBalances[farmKey]) > 0) {
+      setStakeBalance(Number(getShortDisplayBalance(stakedBalances[farmKey])));
     } else {
       setStakeBalance(0);
     }
-  }, [stakedBalanceESCHUBQ]);
+  }, [stakedBalances, farmKey]);
 
   const formattedLpPercent = useCallback(async () => {
-    if (lpPercentESCHUBQ && bnToDec(lpPercentESCHUBQ) > 0) {
-      setLpPercent(Number(lpPercentESCHUBQ.shiftedBy(2).toPrecision(6)));
+    if (lpPercents !== undefined && bnToDec(lpPercents[farmKey]) > 0) {
+      setLpPercent(Number(lpPercents[farmKey].shiftedBy(2).toPrecision(6)));
     } else {
       setLpPercent(0);
     }
-  }, [lpPercentESCHUBQ]);
+  }, [lpPercents, farmKey]);
 
   useEffect(() => {
     formattedStakedBalance();
@@ -147,7 +150,7 @@ const Stake: React.FC = ({ children }) => {
         </StyledBox>
         <StyledCardContent>
           <Box alignItems="center" column>
-            <Value value={stakeBalance > 0 ? stakeBalance.toString() + " INK/UBQ LP" : "--"} />
+            <Value value={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name} LP` : "--"} />
             <Value valueSize="14px" valueBold="400" value={lpPercent > 0 ? lpPercent.toString() + " Pool %" : "--"} />
           </Box>
         </StyledCardContent>
@@ -155,14 +158,14 @@ const Stake: React.FC = ({ children }) => {
           {UnstakeButton}
           {StakeButton}
         </CardActions>
-        {typeof countdown !== "undefined" && countdown > 0 && (
+        {typeof countdown !== "undefined" && countdown[farmKey] > 0 && (
           <CardActions>
-            <Countdown date={farmingStartTime} renderer={renderer} />
+            <Countdown date={farmingStartTime[farmKey]} renderer={renderer} />
           </CardActions>
         )}
       </Card>
-      <StakeModal isOpen={stakeModalIsOpen} onDismiss={handleDismissStakeModal} onStake={handleOnStake} />
-      <UnstakeModal isOpen={unstakeModalIsOpen} onDismiss={handleDismissUnstakeModal} onUnstake={handleOnUnstake} />
+      <StakeModal farmKey={farmKey} isOpen={stakeModalIsOpen} onDismiss={handleDismissStakeModal} onStake={handleOnStake} />
+      <UnstakeModal farmKey={farmKey} isOpen={unstakeModalIsOpen} onDismiss={handleDismissUnstakeModal} onUnstake={handleOnUnstake} />
     </>
   );
 };

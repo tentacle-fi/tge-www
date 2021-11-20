@@ -9,9 +9,7 @@ import PageHeader from "components/PageHeader";
 
 import WalletButton from "components/TopBar/components/WalletButton";
 
-import { TGE1 } from "constants/tokenAddresses";
-
-const INK = TGE1.toString();
+import { INK } from "farms/AvailableFarms";
 
 // opens a URL when a button is clicked.
 // returns a function to make less code in the on-click assignment.

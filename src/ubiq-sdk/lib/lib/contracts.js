@@ -2,10 +2,12 @@ import BigNumber from "bignumber.js/bignumber";
 import * as Types from "./types.js";
 import { SUBTRACT_GAS_LIMIT } from "./constants.js";
 
-import ERC20Json from "../clean_build/contracts/IERC20.json";
+// import ERC20Json from "../clean_build/contracts/IERC20.json";
 import WETHJson from "./weth.json";
 
 import ShinobiPoolJson from "../clean_build/contracts/ShinobiPool.json";
+
+import { AvailableFarms } from "farms/AvailableFarms";
 
 export class Contracts {
   constructor(provider, networkId, web3, options) {
@@ -17,15 +19,22 @@ export class Contracts {
     this.defaultGasPrice = options.defaultGasPrice;
 
     this.shinobi_pool = new this.web3.eth.Contract(ShinobiPoolJson.abi);
-    this.TGE1 = new this.web3.eth.Contract(ERC20Json.abi);
+    this.shinobi_pool.options.address = "0x6e142959f49d364b30f0478949effdcb58effe44";
+    // this.TGE1 = new this.web3.eth.Contract(ERC20Json.abi);
+    this.pools = {};
+
+    for (let i = 0; i < AvailableFarms.length; i++) {
+      this.pools[i] = new this.web3.eth.Contract(ShinobiPoolJson.abi);
+      this.pools[i].options.address = AvailableFarms[i].yieldfarm.address;
+    }
 
     this.weth = new this.web3.eth.Contract(WETHJson);
-    this.setProvider(provider, networkId);
+    // this.setProvider(provider, networkId);
     this.setDefaultAccount(this.web3.eth.defaultAccount);
   }
 
   setProvider(provider, networkId) {
-    this.shinobi_pool.options.address = "0x6e142959f49d364b30f0478949effdcb58effe44";
+    console.log("TODO: fix contracts.js::setProvider");
   }
 
   setDefaultAccount(account) {

@@ -7,18 +7,21 @@ import TokenInput from "components/TokenInput";
 
 import useFarming from "hooks/useFarming";
 import { getFullDisplayBalance } from "utils";
+import { AvailableFarms } from "farms/AvailableFarms";
 
 interface UnstakeModalProps extends ModalProps {
-  onUnstake: (amount: string) => void;
+  onUnstake: (contractIndex: number, amount: string) => void;
+  farmKey: number;
 }
 
-const UnstakeModal: React.FC<UnstakeModalProps> = ({ isOpen, onDismiss, onUnstake }) => {
+const UnstakeModal: React.FC<UnstakeModalProps> = ({ isOpen, onDismiss, onUnstake, farmKey }) => {
   const [val, setVal] = useState("");
-  const { stakedBalanceESCHUBQ } = useFarming();
+  const { stakedBalances } = useFarming();
+  const stakedAmount = stakedBalances === undefined ? null : stakedBalances[farmKey];
 
   const fullBalance = useMemo(() => {
-    return getFullDisplayBalance(stakedBalanceESCHUBQ || new BigNumber(0));
-  }, [stakedBalanceESCHUBQ]);
+    return getFullDisplayBalance(stakedAmount || new BigNumber(0));
+  }, [stakedAmount]);
 
   const handleChange = useCallback(
     (e: React.FormEvent<HTMLInputElement>) => {
@@ -32,14 +35,20 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({ isOpen, onDismiss, onUnstak
   }, [fullBalance, setVal]);
 
   const handleUnstakeClick = useCallback(() => {
-    onUnstake(val);
-  }, [onUnstake, val]);
+    onUnstake(farmKey, val);
+  }, [onUnstake, farmKey, val]);
 
   return (
     <Modal isOpen={isOpen}>
       <ModalTitle text="Unstake" />
       <ModalContent>
-        <TokenInput value={val} onSelectMax={handleSelectMax} onChange={handleChange} max={fullBalance} symbol="ESCH_UBQ_SLP" />
+        <TokenInput
+          value={val}
+          onSelectMax={handleSelectMax}
+          onChange={handleChange}
+          max={fullBalance}
+          symbol={AvailableFarms[farmKey].name + " LP"}
+        />
       </ModalContent>
       <ModalActions>
         <Button onClick={onDismiss} text="Cancel" variant="secondary" />

@@ -6,18 +6,20 @@ import { Button, Modal, ModalActions, ModalContent, ModalProps, ModalTitle } fro
 import TokenInput from "components/TokenInput";
 import useBalances from "hooks/useBalances";
 import { getFullDisplayBalance } from "utils";
+import { AvailableFarms } from "farms/AvailableFarms";
 
 interface StakeModalProps extends ModalProps {
-  onStake: (amount: string) => void;
+  onStake: (contractIndex: number, amount: string) => void;
+  farmKey: number;
 }
 
-const StakeModal: React.FC<StakeModalProps> = ({ isOpen, onDismiss, onStake }) => {
+const StakeModal: React.FC<StakeModalProps> = ({ isOpen, onDismiss, onStake, farmKey }) => {
   const [val, setVal] = useState("");
-  const { ESCHUBQLPBalance } = useBalances();
+  const { LPBalances } = useBalances();
 
   const fullBalance = useMemo(() => {
-    return getFullDisplayBalance(ESCHUBQLPBalance || new BigNumber(0), 0);
-  }, [ESCHUBQLPBalance]);
+    return getFullDisplayBalance(LPBalances !== undefined ? LPBalances[farmKey] : new BigNumber(0), 0);
+  }, [LPBalances, farmKey]);
 
   const handleChange = useCallback(
     (e: React.FormEvent<HTMLInputElement>) => {
@@ -31,14 +33,20 @@ const StakeModal: React.FC<StakeModalProps> = ({ isOpen, onDismiss, onStake }) =
   }, [fullBalance, setVal]);
 
   const handleStakeClick = useCallback(() => {
-    onStake(val);
-  }, [onStake, val]);
+    onStake(farmKey, val);
+  }, [onStake, val, farmKey]);
 
   return (
     <Modal isOpen={isOpen}>
       <ModalTitle text="Stake" />
       <ModalContent>
-        <TokenInput value={val} onSelectMax={handleSelectMax} onChange={handleChange} max={fullBalance} symbol="INK_UBQ_SLP" />
+        <TokenInput
+          value={val}
+          onSelectMax={handleSelectMax}
+          onChange={handleChange}
+          max={fullBalance}
+          symbol={AvailableFarms[farmKey].name + " LP"}
+        />
       </ModalContent>
       <ModalActions>
         <Button onClick={onDismiss} text="Cancel" variant="secondary" />
