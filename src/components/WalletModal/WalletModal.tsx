@@ -12,7 +12,7 @@ import { addInkToWallet, addGransToWallet } from "metamask.js";
 
 import InkTokenLogo from "assets/ink_black_alpha.png";
 import UBQTokenLogo from "assets/ubq.png";
-import GRANSTokenLogo from "assets/grans-flat.png"
+import GRANSTokenLogo from "assets/grans-flat.png";
 
 const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
   const [, setWalletModalIsOpen] = useState(false);
@@ -45,20 +45,16 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
           <FancyValue icon={getIcon("ubq")} label="UBQ balance" value={getDisplayBalance(UBQBalance)} />
 
           <FancyValue icon={getIcon("ink")} label="INK balance" value={getDisplayBalance(INKBalance)} />
-          <Button onClick={addInkToWallet}>
-          Add Ink token to Wallet
-          </Button>
+          <Button onClick={addInkToWallet}>Add Ink token to Wallet</Button>
 
           <FancyValue icon={getIcon("10grans")} label="10GRANS balance" value={getDisplayBalance(GRANSBalance)} />
-          <Button onClick={addGransToWallet}>
-          Add 10GRANS token to Wallet
-          </Button>
+          <Button onClick={addGransToWallet}>Add 10GRANS token to Wallet</Button>
         </Box>
         <Spacer />
       </ModalContent>
       <Separator />
       <ModalActions>
-        <Button onClick={onDismiss} variant="outlined">
+        <Button onClick={onDismiss} variant="contained">
           Cancel
         </Button>
         <Button onClick={handleSignOut} color="error">
@@ -78,11 +74,11 @@ function getIcon(logo: string) {
     case "ubq":
       icon = UBQTokenLogo;
       break;
-      case "10grans":
-      icon = GRANSTokenLogo
+    case "10grans":
+      icon = GRANSTokenLogo;
       break;
-      default:
-      console.warn('getIcon() logo does not exist', logo)
+    default:
+      console.warn("getIcon() logo does not exist", logo);
   }
 
   return (

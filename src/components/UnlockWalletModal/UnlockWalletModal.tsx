@@ -7,13 +7,15 @@ import metamaskLogo from "assets/metamask-fox.svg";
 import sparrowLogo from "assets/sparrow.png";
 
 import WalletProviderCard from "./components/WalletProviderCard";
+import { switchToUBQNetwork } from "metamask.js";
 
 declare const window: any;
 
 const UnlockWalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
   const { account, connector, connect } = useWallet();
 
-  const handleConnectMetamask = useCallback(() => {
+  const handleConnectMetamask = useCallback(async () => {
+    await switchToUBQNetwork();
     connect("injected");
   }, [connect]);
 

@@ -75,8 +75,8 @@ export const getBalance = async (provider: provider, tokenAddress: string, userA
 };
 
 export const getBalanceAsBigNum = async (provider: provider, tokenAddress: string, userAddress: string): Promise<BigNumber> => {
-    return new BigNumber(await getBalance(provider, tokenAddress, userAddress)).dividedBy(new BigNumber(10).pow(18))
-}
+  return new BigNumber(await getBalance(provider, tokenAddress, userAddress)).dividedBy(new BigNumber(10).pow(18));
+};
 
 export const getCoinBalance = async (provider: provider, userAddress: string): Promise<string> => {
   try {
@@ -90,8 +90,8 @@ export const getCoinBalance = async (provider: provider, userAddress: string): P
 };
 
 export const getCoinBalanceAsBigNum = async (provider: provider, userAddress: string): Promise<BigNumber> => {
-    return new BigNumber(await getCoinBalance(provider, userAddress)).dividedBy(new BigNumber(10).pow(18))
-}
+  return new BigNumber(await getCoinBalance(provider, userAddress)).dividedBy(new BigNumber(10).pow(18));
+};
 
 export const getERC20Contract = (provider: provider, address: string) => {
   const web3 = new Web3(provider);

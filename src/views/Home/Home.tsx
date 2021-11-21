@@ -54,7 +54,7 @@ const Home: React.FC = () => {
   return (
     <Page>
       <PageHeader
-        icon={darkMode ? <NightsStayIcon /> : "🌞"}
+        icon={darkMode ? <NightsStayIcon sx={{ fontSize: "98px" }} /> : "🌞"}
         subtitle={darkMode ? "🤫 shhh... the squids are sleeping." : "It's a great day to farm INK!"}
         title="Welcome to Tentacle.Finance"
       />

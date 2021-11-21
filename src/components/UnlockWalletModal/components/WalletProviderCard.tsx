@@ -5,9 +5,6 @@ import styled from "styled-components";
 import { CardIcon } from "react-neu";
 
 import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 
 interface WalletProviderCardProps {
@@ -16,19 +13,12 @@ interface WalletProviderCardProps {
   onSelect: () => void;
 }
 const WalletProviderCard: React.FC<WalletProviderCardProps> = ({ icon, name, onSelect }) => (
-  <Card sx={{ minWidth: 275 }}>
-    <Box sx={{ display: "flex", flexDirection: "column" }}>
+  <Box sx={{ display: "flex", flexDirection: "column" }}>
+    <Button onClick={onSelect} variant="contained">
       <CardIcon>{icon}</CardIcon>
-      <CardContent>
-        <StyledName>{name}</StyledName>
-      </CardContent>
-      <CardActions>
-        <Button onClick={onSelect} variant="outlined">
-          Select
-        </Button>
-      </CardActions>
-    </Box>
-  </Card>
+      <StyledName>{name}</StyledName>
+    </Button>
+  </Box>
 );
 
 const StyledName = styled.div`

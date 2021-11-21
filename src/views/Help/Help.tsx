@@ -12,7 +12,6 @@ import WalletButton from "components/TopBar/components/WalletButton";
 import { INK } from "farms/AvailableFarms";
 import { addInkToWallet } from "metamask.js";
 
-
 // opens a URL when a button is clicked.
 // returns a function to make less code in the on-click assignment.
 // eg: onClick={openURL('https://example.com/')}
@@ -66,7 +65,7 @@ const Help: React.FC = () => {
                 Shinobi Swap
               </Button>
               <Button onClick={addInkToWallet} variant="outlined">
-Add INK to Wallet
+                Add INK to Wallet
               </Button>
             </ButtonGroup>
           </ListItem>

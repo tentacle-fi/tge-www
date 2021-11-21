@@ -26,16 +26,14 @@ const Provider: React.FC = ({ children }) => {
       let lpBalances = [];
 
       for (let i = 0; i < AvailableFarms.length; i++) {
-        tokenBalances.push(
-            await getBalanceAsBigNum(provider, AvailableFarms[i].tokenA.address, userAddress)
-        );
-        lpBalances.push(await getBalanceAsBigNum(provider, AvailableFarms[i].lp.address, userAddress))
+        tokenBalances.push(await getBalanceAsBigNum(provider, AvailableFarms[i].tokenA.address, userAddress));
+        lpBalances.push(await getBalanceAsBigNum(provider, AvailableFarms[i].lp.address, userAddress));
       }
 
       // set the shortcut balances
-      setUBQBalance(await getCoinBalanceAsBigNum(provider, userAddress))
-      setINKBalance(await getBalanceAsBigNum(provider, INK, userAddress))
-      setGRANSBalance(await getBalanceAsBigNum(provider, GRANS, userAddress))
+      setUBQBalance(await getCoinBalanceAsBigNum(provider, userAddress));
+      setINKBalance(await getBalanceAsBigNum(provider, INK, userAddress));
+      setGRANSBalance(await getBalanceAsBigNum(provider, GRANS, userAddress));
 
       settokenBalances(tokenBalances);
       setLPBalances(lpBalances);
@@ -79,7 +77,7 @@ const Provider: React.FC = ({ children }) => {
         CurrentBlock,
         UBQBalance,
         INKBalance,
-        GRANSBalance
+        GRANSBalance,
       }}
     >
       {children}
