@@ -10,6 +10,8 @@ import PageHeader from "components/PageHeader";
 import WalletButton from "components/TopBar/components/WalletButton";
 
 import { INK } from "farms/AvailableFarms";
+import { addInkToWallet } from "metamask.js";
+
 
 // opens a URL when a button is clicked.
 // returns a function to make less code in the on-click assignment.
@@ -39,9 +41,11 @@ const Help: React.FC = () => {
               Learn how to setup a wallet
             </Button>
           </ListItem>
+
           <ListItem legend="Step 2: Connect your wallet">
             Unlock your wallet by clicking this button or the one in the top right of Tentacle.Finance! <WalletButton />
           </ListItem>
+
           <ListItem legend="Step 3: Get some tokens">
             Obtain UBQ and INK balance in your wallet
             <ButtonGroup>
@@ -61,20 +65,26 @@ const Help: React.FC = () => {
               <Button onClick={openURL("https://shinobi.ubiq.ninja/#/swap?outputCurrency=" + INK)} variant="outlined">
                 Shinobi Swap
               </Button>
+              <Button onClick={addInkToWallet} variant="outlined">
+Add INK to Wallet
+              </Button>
             </ButtonGroup>
           </ListItem>
+
           <ListItem legend="Step 4: Add Liquidity">
             Provide UBQ and INK as LP on Shinobi. Note: You will need to "Approve" first on the same page.
             <Button onClick={openURL("https://shinobi.ubiq.ninja/#/add/UBQ/" + INK)} variant="outlined">
               Provide Liquidity with Shinobi
             </Button>
           </ListItem>
+
           <ListItem legend="Step 5: Stake LP tokens">
             Stake your LP tokens on the{" "}
             <Button onClick={openURL("/farm")} variant="outlined">
               Tentacle.Finance Farm
             </Button>
           </ListItem>
+
           <ListItem legend="Step 6: Watch your INK increase!">
             Every block your INK balance will increase proportional to the amount of LP tokens staked and your percentage of the yield farm. Relax and
             watch your INK grow!

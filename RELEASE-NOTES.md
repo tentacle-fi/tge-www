@@ -15,3 +15,4 @@
 - forked `use-wallet` repo to modify for react 17 and include UBQ network
 - general improvements fixing errors and UI issues
 - multi farming support
+- web3 wallet helper functionality added to recommend the UBQ network, and add INK token via button click

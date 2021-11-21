@@ -8,6 +8,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import FancyValue from "components/FancyValue";
 import useBalances from "hooks/useBalances";
+import { addInkToWallet, addGransToWallet } from "metamask.js";
 
 import InkTokenLogo from "assets/ink_black_alpha.png";
 import UBQTokenLogo from "assets/ubq.png";
@@ -42,8 +43,16 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
       <ModalContent>
         <Box>
           <FancyValue icon={getIcon("ubq")} label="UBQ balance" value={getDisplayBalance(UBQBalance)} />
+
           <FancyValue icon={getIcon("ink")} label="INK balance" value={getDisplayBalance(INKBalance)} />
+          <Button onClick={addInkToWallet}>
+          Add Ink token to Wallet
+          </Button>
+
           <FancyValue icon={getIcon("10grans")} label="10GRANS balance" value={getDisplayBalance(GRANSBalance)} />
+          <Button onClick={addGransToWallet}>
+          Add 10GRANS token to Wallet
+          </Button>
         </Box>
         <Spacer />
       </ModalContent>
