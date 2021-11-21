@@ -48,7 +48,7 @@ const Help: React.FC = () => {
 
           <ListItem legend="Step 3: Get some tokens">
             Obtain UBQ and INK balance in your wallet
-            <ButtonGroup>
+            <ButtonGroup sx={{margin: "10px"}}>
               <h3>Obtain UBQ at:</h3>
               <Button sx={{marginLeft: "10px"}} onClick={openURL("https://bittrex.com/Market/Index?MarketName=USDT-UBQ")} variant="outlined">
                 Bittrex
