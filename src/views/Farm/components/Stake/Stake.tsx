@@ -83,7 +83,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
         <Value valueSize="16px" valueBold="400" value={`current APR / APY`} />
 
         <Link href={AvailableFarms[farmKey].lp.url} target="_blank" rel="noopener" underline="always">
-          {AvailableFarms[farmKey].name} <LinkIcon />
+          Manage {AvailableFarms[farmKey].name} liquidity <LinkIcon />
         </Link>
       </div>
 
