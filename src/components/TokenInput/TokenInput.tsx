@@ -9,12 +9,9 @@ interface TokenInputProps extends InputProps {
   onSelectMax?: () => void;
 }
 
-const TokenInput: React.FC<TokenInputProps> = ({ max, symbol, onChange, onSelectMax, value }) => {
+const TokenInput: React.FC<TokenInputProps> = ({ max, symbol, onChange, onSelectMax, value, children }) => {
   return (
     <StyledTokenInput>
-      <StyledMaxText>
-        {max.toLocaleString()} {symbol} Available
-      </StyledMaxText>
       <Input
         endAdornment={
           <StyledTokenAdornmentWrapper>
@@ -29,11 +26,14 @@ const TokenInput: React.FC<TokenInputProps> = ({ max, symbol, onChange, onSelect
         placeholder="0"
         value={value}
       />
+      {children}
     </StyledTokenInput>
   );
 };
 
-const StyledTokenInput = styled.div``;
+const StyledTokenInput = styled.div`
+  display: flex;
+`;
 
 const StyledSpacer = styled.div`
   width: ${(props) => props.theme.spacing[3]}px;
@@ -44,18 +44,8 @@ const StyledTokenAdornmentWrapper = styled.div`
   display: flex;
 `;
 
-const StyledMaxText = styled.div`
-  align-items: center;
-  color: ${(props) => props.theme.colors.grey[500]};
-  display: flex;
-  font-size: 14px;
-  font-weight: 700;
-  height: 44px;
-  justify-content: flex-end;
-`;
-
 const StyledTokenSymbol = styled.span`
-  color: ${(props) => props.theme.colors.grey[600]};
+  color: ${(props) => props.theme.colors.grey[200]};
   font-weight: 700;
 `;
 

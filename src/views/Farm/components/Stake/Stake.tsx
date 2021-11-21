@@ -1,109 +1,37 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import Countdown, { CountdownRenderProps } from "react-countdown";
-import { Box, Button, Card, CardActions } from "react-neu";
-import { useWallet } from "use-wallet";
-import styled from "styled-components";
+import { Box } from "react-neu";
 
 import Label from "components/Label";
 import Value from "components/Value";
 
 import useFarming from "hooks/useFarming";
 
-import { bnToDec, getShortDisplayBalance } from "utils";
+import { bnToDec, getShortDisplayBalance, getFullDisplayBalance } from "utils";
 
-import StakeModal from "./components/StakeModal";
-import UnstakeModal from "./components/UnstakeModal";
-
-import useApproval from "hooks/useApproval";
 import { AvailableFarms } from "farms/AvailableFarms";
+
+import useBalances from "hooks/useBalances";
+import BigNumber from "bignumber.js";
+import LinkIcon from "@mui/icons-material/Link";
+import Link from "@mui/material/Link";
 
 interface StakeProps {
   farmKey: number;
 }
 
 const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
-  const [stakeModalIsOpen, setStakeModalIsOpen] = useState(false);
-  const [unstakeModalIsOpen, setUnstakeModalIsOpen] = useState(false);
   const [stakeBalance, setStakeBalance] = useState<number>(0);
   const [lpPercent, setLpPercent] = useState<number>(0);
 
-  const { isApproved, isApproving, onApprove } = useApproval(AvailableFarms[farmKey].lp.address, AvailableFarms[farmKey].yieldfarm.address, () =>
-    setConfirmTxModalIsOpen(false)
-  );
+  const { LPBalances } = useBalances();
 
-  const { status } = useWallet();
-  const { countdown, farmingStartTime, isStaking, isUnstaking, setConfirmTxModalIsOpen, onStake, onUnstake, stakedBalances, lpPercents } =
-    useFarming();
+  const availableLPBalance = useMemo(() => {
+    return getFullDisplayBalance(LPBalances !== undefined ? LPBalances[farmKey] : new BigNumber(0), 0);
+  }, [LPBalances, farmKey]);
 
-  const handleDismissStakeModal = useCallback(() => {
-    setStakeModalIsOpen(false);
-  }, [setStakeModalIsOpen]);
-
-  const handleDismissUnstakeModal = useCallback(() => {
-    setUnstakeModalIsOpen(false);
-  }, [setUnstakeModalIsOpen]);
-
-  const handleOnStake = useCallback(
-    (contractIndex: number, amount: string) => {
-      onStake(contractIndex, amount);
-      handleDismissStakeModal();
-    },
-    [handleDismissStakeModal, onStake]
-  );
-
-  const handleOnUnstake = useCallback(
-    (contractIndex: number, amount: string) => {
-      onUnstake(contractIndex, amount);
-      handleDismissUnstakeModal();
-    },
-    [handleDismissUnstakeModal, onUnstake]
-  );
-
-  const handleStakeClick = useCallback(() => {
-    setStakeModalIsOpen(true);
-  }, [setStakeModalIsOpen]);
-
-  const handleUnstakeClick = useCallback(() => {
-    setUnstakeModalIsOpen(true);
-  }, [setUnstakeModalIsOpen]);
-
-  const StakeButton = useMemo(() => {
-    if (status !== "connected") {
-      return <Button disabled full text="Stake" variant="secondary" />;
-    }
-    if (isStaking !== undefined && isStaking[farmKey] === true) {
-      return <Button disabled full text="Staking..." variant="secondary" />;
-    }
-    if (isApproved !== undefined && isApproved === false) {
-      return (
-        <Button
-          disabled={isApproving === true}
-          full
-          onClick={() => {
-            setConfirmTxModalIsOpen(true);
-            onApprove();
-          }}
-          text={isApproving !== undefined && isApproving === false ? "Approve staking" : "Approving staking..."}
-          variant={isApproving || status !== "connected" ? "secondary" : "default"}
-        />
-      );
-    }
-    if (isApproved !== undefined && isApproved === true) {
-      return <Button full onClick={handleStakeClick} text="Stake" variant="secondary" />;
-    }
-  }, [handleStakeClick, isStaking, isApproved, isApproving, onApprove, status, farmKey, setConfirmTxModalIsOpen]);
-
-  const UnstakeButton = useMemo(() => {
-    const hasStaked = stakedBalances === undefined ? false : stakedBalances[farmKey] && stakedBalances[farmKey].toNumber() > 0;
-    if (status !== "connected" || !hasStaked) {
-      return <Button disabled full text="Unstake" variant="secondary" />;
-    }
-    if (isUnstaking !== undefined && isUnstaking[farmKey] === true) {
-      return <Button disabled full text="Unstaking..." variant="secondary" />;
-    }
-    return <Button full onClick={handleUnstakeClick} text="Unstake" variant="secondary" />;
-  }, [handleUnstakeClick, isUnstaking, stakedBalances, status, farmKey]);
+  const { countdown, farmingStartTime, stakedBalances, lpPercents } = useFarming();
 
   const formattedStakedBalance = useCallback(async () => {
     if (stakedBalances !== undefined && stakedBalances[farmKey] && bnToDec(stakedBalances[farmKey]) > 0) {
@@ -144,39 +72,24 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
 
   return (
     <>
-      <Card>
-        <StyledBox row justifyContent="center">
-          {children}
-        </StyledBox>
-        <StyledCardContent>
-          <Box alignItems="center" column>
-            <Value value={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name} LP` : "--"} />
-            <Value valueSize="14px" valueBold="400" value={lpPercent > 0 ? lpPercent.toString() + " Pool %" : "--"} />
-          </Box>
-        </StyledCardContent>
-        <CardActions>
-          {UnstakeButton}
-          {StakeButton}
-        </CardActions>
-        {typeof countdown !== "undefined" && countdown[farmKey] > 0 && (
-          <CardActions>
-            <Countdown date={farmingStartTime[farmKey]} renderer={renderer} />
-          </CardActions>
-        )}
-      </Card>
-      <StakeModal farmKey={farmKey} isOpen={stakeModalIsOpen} onDismiss={handleDismissStakeModal} onStake={handleOnStake} />
-      <UnstakeModal farmKey={farmKey} isOpen={unstakeModalIsOpen} onDismiss={handleDismissUnstakeModal} onUnstake={handleOnUnstake} />
+      <div style={{ display: "flex", flexDirection: "column", gap: "10px 5px", textAlign: "left" }}>
+        <Value value={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name} LP Staked` : "--"} />
+        <Value valueSize="16px" valueBold="400" value={lpPercent > 0 ? lpPercent.toString() + " Pool %" : "--"} />
+        <Value valueSize="16px" valueBold="400" value={`${parseFloat(availableLPBalance).toFixed(6)} LP Tokens Unstaked`} />
+
+        <Value valueSize="16px" valueBold="400" value={`TVL`} />
+        <Value valueSize="16px" valueBold="400" value={`my token balances in LP`} />
+        <Value valueSize="16px" valueBold="400" value={`my pool value $`} />
+        <Value valueSize="16px" valueBold="400" value={`current APR / APY`} />
+
+        <Link href={AvailableFarms[farmKey].lp.url} target="_blank" rel="noopener" underline="always">
+          {AvailableFarms[farmKey].name} <LinkIcon />
+        </Link>
+      </div>
+
+      {typeof countdown !== "undefined" && countdown[farmKey] > 0 && <Countdown date={farmingStartTime[farmKey]} renderer={renderer} />}
     </>
   );
 };
-
-const StyledBox = styled(Box)`
-  padding-top: 20px;
-  height: 100px;
-`;
-
-const StyledCardContent = styled(Box)`
-  padding-top: 0px;
-`;
 
 export default Stake;

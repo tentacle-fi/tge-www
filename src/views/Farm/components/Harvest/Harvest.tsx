@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
-import { Box, Button, Card, CardActions, CardContent, CardIcon } from "react-neu";
+import { Box } from "react-neu";
 import { useWallet } from "use-wallet";
-
-import Label from "components/Label";
 import Value from "components/Value";
 
 import useFarming from "hooks/useFarming";
 
 import { bnToDec, getShortDisplayBalance } from "utils";
 import { AvailableFarms } from "farms/AvailableFarms";
+import LoadingButton from "@mui/lab/LoadingButton";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
 interface HarvestProps {
   farmKey: number;
@@ -36,46 +36,46 @@ const Harvest: React.FC<HarvestProps> = ({ farmKey }) => {
 
   const HarvestAction = useMemo(() => {
     if (status !== "connected") {
-      return <Button disabled full text="Harvest" variant="secondary" />;
+      return <p>Connect Wallet</p>;
     }
     if (isHarvesting !== undefined && isHarvesting[farmKey] === false) {
       return (
-        <Button
+        <LoadingButton
           disabled={earnedBalance <= 0}
-          full
           onClick={() => {
             onHarvest(farmKey);
           }}
-          text="Harvest"
-          variant="secondary"
-        />
+          endIcon={<AttachMoneyIcon />}
+          loading={false}
+          loadingPosition="end"
+          variant="contained"
+          color="success"
+          size="small"
+        >
+          Harvest
+        </LoadingButton>
       );
     }
     if (isHarvesting !== undefined && isHarvesting[farmKey] === true) {
-      return <Button disabled full text="Harvesting..." variant="secondary" />;
+      return <p>Harvesting...</p>;
     }
   }, [status, isHarvesting, earnedBalance, onHarvest, farmKey]);
 
   return (
-    <>
-      <Card>
-        <CardIcon>
-          {" "}
-          <img
-            src={AvailableFarms[farmKey].yieldfarm.payOutLogo}
-            alt={AvailableFarms[farmKey].yieldfarm.payOut + " token logo"}
-            style={{ height: 64, alignSelf: "center", background: "white", borderRadius: 110 }}
-          />{" "}
-        </CardIcon>
-        <CardContent>
-          <Box alignItems="center" column>
-            <Value value={earnedBalance > 0 ? earnedBalance.toString() : "--"} />
-            <Label text={"Unharvested " + AvailableFarms[farmKey].yieldfarm.payOut} />
-          </Box>
-        </CardContent>
-        <CardActions>{HarvestAction}</CardActions>
-      </Card>
-    </>
+    <div style={{ padding: "10px 5px 10px 5px" }}>
+      <img
+        src={AvailableFarms[farmKey].yieldfarm.payOutLogo}
+        alt={AvailableFarms[farmKey].yieldfarm.payOut + " token logo"}
+        style={{ height: 64, alignSelf: "center", background: "white", borderRadius: 110 }}
+      />
+
+      <Box alignItems="center" column>
+        <Value value={earnedBalance > 0 ? earnedBalance.toString() : "--"} />
+        <p>{"Unharvested " + AvailableFarms[farmKey].yieldfarm.payOut}</p>
+      </Box>
+
+      {HarvestAction}
+    </div>
   );
 };
 

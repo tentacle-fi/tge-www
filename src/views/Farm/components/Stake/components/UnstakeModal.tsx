@@ -1,20 +1,21 @@
 import React, { useCallback, useMemo, useState } from "react";
 
 import BigNumber from "bignumber.js";
-import { Button, Modal, ModalActions, ModalContent, ModalProps, ModalTitle } from "react-neu";
-
 import TokenInput from "components/TokenInput";
 
 import useFarming from "hooks/useFarming";
 import { getFullDisplayBalance } from "utils";
 import { AvailableFarms } from "farms/AvailableFarms";
 
-interface UnstakeModalProps extends ModalProps {
+import LoadingButton from "@mui/lab/LoadingButton";
+import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox";
+
+interface UnstakeModalProps {
   onUnstake: (contractIndex: number, amount: string) => void;
   farmKey: number;
 }
 
-const UnstakeModal: React.FC<UnstakeModalProps> = ({ isOpen, onDismiss, onUnstake, farmKey }) => {
+const UnstakeModal: React.FC<UnstakeModalProps> = ({ onUnstake, farmKey }) => {
   const [val, setVal] = useState("");
   const { stakedBalances } = useFarming();
   const stakedAmount = stakedBalances === undefined ? null : stakedBalances[farmKey];
@@ -39,27 +40,31 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({ isOpen, onDismiss, onUnstak
   }, [onUnstake, farmKey, val]);
 
   return (
-    <Modal isOpen={isOpen}>
-      <ModalTitle text="Unstake" />
-      <ModalContent>
-        <TokenInput
-          value={val}
-          onSelectMax={handleSelectMax}
-          onChange={handleChange}
-          max={fullBalance}
-          symbol={AvailableFarms[farmKey].name + " LP"}
-        />
-      </ModalContent>
-      <ModalActions>
-        <Button onClick={onDismiss} text="Cancel" variant="secondary" />
-        <Button
-          disabled={!val || !Number(val)}
-          onClick={handleUnstakeClick}
-          text="Unstake"
-          variant={!val || !Number(val) ? "secondary" : "default"}
-        />
-      </ModalActions>
-    </Modal>
+    <>
+      <TokenInput
+        value={val}
+        onSelectMax={handleSelectMax}
+        onChange={handleChange}
+        max={fullBalance}
+        symbol={`Unstake ${AvailableFarms[farmKey].name} LP`}
+      >
+        <LoadingButton
+          onClick={() => {
+            if (val && Number(val)) {
+              handleUnstakeClick();
+            }
+          }}
+          endIcon={<IndeterminateCheckBoxIcon />}
+          loading={false}
+          loadingPosition="end"
+          variant="contained"
+          color="warning"
+          size="medium"
+        >
+          Unstake
+        </LoadingButton>
+      </TokenInput>
+    </>
   );
 };
 

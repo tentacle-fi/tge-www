@@ -1,19 +1,20 @@
 import React, { useCallback, useMemo, useState } from "react";
 
 import BigNumber from "bignumber.js";
-import { Button, Modal, ModalActions, ModalContent, ModalProps, ModalTitle } from "react-neu";
 
 import TokenInput from "components/TokenInput";
 import useBalances from "hooks/useBalances";
 import { getFullDisplayBalance } from "utils";
 import { AvailableFarms } from "farms/AvailableFarms";
+import LoadingButton from "@mui/lab/LoadingButton";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
-interface StakeModalProps extends ModalProps {
+interface StakeModalProps {
   onStake: (contractIndex: number, amount: string) => void;
   farmKey: number;
 }
 
-const StakeModal: React.FC<StakeModalProps> = ({ isOpen, onDismiss, onStake, farmKey }) => {
+const StakeModal: React.FC<StakeModalProps> = ({ onStake, farmKey }) => {
   const [val, setVal] = useState("");
   const { LPBalances } = useBalances();
 
@@ -37,27 +38,31 @@ const StakeModal: React.FC<StakeModalProps> = ({ isOpen, onDismiss, onStake, far
   }, [onStake, val, farmKey]);
 
   return (
-    <Modal isOpen={isOpen}>
-      <ModalTitle text="Stake" />
-      <ModalContent>
-        <TokenInput
-          value={val}
-          onSelectMax={handleSelectMax}
-          onChange={handleChange}
-          max={fullBalance}
-          symbol={AvailableFarms[farmKey].name + " LP"}
-        />
-      </ModalContent>
-      <ModalActions>
-        <Button onClick={onDismiss} text="Cancel" variant="secondary" />
-        <Button
-          disabled={!val || !Number(val) || !Number(fullBalance) || !fullBalance}
-          onClick={handleStakeClick}
-          text="Stake"
-          variant={!val || !Number(val) || !Number(fullBalance) || !fullBalance ? "secondary" : "default"}
-        />
-      </ModalActions>
-    </Modal>
+    <>
+      <TokenInput
+        value={val}
+        onSelectMax={handleSelectMax}
+        onChange={handleChange}
+        max={fullBalance}
+        symbol={`Stake ${AvailableFarms[farmKey].name} LP`}
+      >
+        <LoadingButton
+          onClick={() => {
+            if (val && Number(val) && Number(fullBalance) && fullBalance) {
+              handleStakeClick();
+            }
+          }}
+          endIcon={<AddCircleOutlineIcon />}
+          loading={false}
+          loadingPosition="end"
+          variant="contained"
+          color="info"
+          size="medium"
+        >
+          Stake
+        </LoadingButton>
+      </TokenInput>
+    </>
   );
 };
 
