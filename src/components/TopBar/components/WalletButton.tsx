@@ -96,9 +96,9 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
             </Button>
           </Tooltip>
         ) : (
-          <Tooltip title="view balances">
-            <Button onClick={handleWalletClick} size="small" variant="contained" startIcon={<AccountBalanceWalletIcon />}>
-              View Balances
+          <Tooltip title="view Account details">
+            <Button onClick={handleWalletClick} size="medium" variant="contained" startIcon={<AccountBalanceWalletIcon />}>
+              Account
             </Button>
           </Tooltip>
         )}

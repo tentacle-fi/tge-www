@@ -1,4 +1,5 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState } from "react";
+
 import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
 import numeral from "numeral";
@@ -7,18 +8,15 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import FancyValue from "components/FancyValue";
 import useBalances from "hooks/useBalances";
-import { AvailableFarms } from "farms/AvailableFarms";
 
 import InkTokenLogo from "assets/ink_black_alpha.png";
-import GransTokenLogo from "assets/grans-flat.png";
+import UBQTokenLogo from "assets/ubq.png";
+import GRANSTokenLogo from "assets/grans-flat.png"
 
 const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
   const [, setWalletModalIsOpen] = useState(false);
   const { reset } = useWallet();
-  const { tokenBalances } = useBalances();
-
-  const INKBalance = tokenBalances !== undefined && AvailableFarms[0].tokenA.symbol === "INK" ? tokenBalances[0] : undefined;
-  const GRANSBalance = tokenBalances !== undefined && AvailableFarms[1].tokenA.symbol === "GRANS" ? tokenBalances[1] : undefined;
+  const { INKBalance, UBQBalance, GRANSBalance } = useBalances();
 
   const getDisplayBalance = useCallback((value?: BigNumber) => {
     if (value) {
@@ -38,17 +36,14 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
     }
   }, [reset, onDismiss]);
 
-  useEffect(() => {
-    isOpen = !isOpen;
-  }, [setWalletModalIsOpen]);
-
   return (
     <Modal isOpen={isOpen}>
       <ModalTitle text="My Wallet" />
       <ModalContent>
-        <Box sx={{}}>
-          <FancyValue icon={inkIcon()} label="INK balance" value={getDisplayBalance(INKBalance)} />
-          <FancyValue icon={gransIcon()} label="GRANS balance" value={getDisplayBalance(GRANSBalance)} />
+        <Box>
+          <FancyValue icon={getIcon("ubq")} label="UBQ balance" value={getDisplayBalance(UBQBalance)} />
+          <FancyValue icon={getIcon("ink")} label="INK balance" value={getDisplayBalance(INKBalance)} />
+          <FancyValue icon={getIcon("10grans")} label="10GRANS balance" value={getDisplayBalance(GRANSBalance)} />
         </Box>
         <Spacer />
       </ModalContent>
@@ -65,21 +60,26 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
   );
 };
 
-function inkIcon() {
-  return (
-    <img
-      src={InkTokenLogo}
-      alt="Token Logo"
-      style={{ marginRight: "10px", height: 64, alignSelf: "center", background: "white", borderRadius: 110 }}
-    />
-  );
-}
+function getIcon(logo: string) {
+  let icon;
+  switch (logo) {
+    case "ink":
+      icon = InkTokenLogo;
+      break;
+    case "ubq":
+      icon = UBQTokenLogo;
+      break;
+      case "10grans":
+      icon = GRANSTokenLogo
+      break;
+      default:
+      console.warn('getIcon() logo does not exist', logo)
+  }
 
-function gransIcon() {
   return (
     <img
-      src={GransTokenLogo}
-      alt="Token Logo"
+      src={icon}
+      alt={`${logo} token logo`}
       style={{ marginRight: "10px", height: 64, alignSelf: "center", background: "white", borderRadius: 110 }}
     />
   );

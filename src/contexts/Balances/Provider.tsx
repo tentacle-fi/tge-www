@@ -2,16 +2,20 @@ import React, { useCallback, useEffect, useState } from "react";
 import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
 import { provider } from "web3-core";
-import { getBalance, getCurrentBlock } from "utils";
+
+import { getCurrentBlock, getCoinBalanceAsBigNum, getBalanceAsBigNum } from "utils";
 
 import Context from "./Context";
 
-import { AvailableFarms } from "farms/AvailableFarms";
+import { AvailableFarms, INK, GRANS } from "farms/AvailableFarms";
 
 const Provider: React.FC = ({ children }) => {
-  // TODO: edit list of tokens if multi farming is needed
   const [tokenBalances, settokenBalances] = useState<Array<BigNumber>>();
   const [LPBalances, setLPBalances] = useState<Array<BigNumber>>();
+
+  const [UBQBalance, setUBQBalance] = useState<BigNumber>();
+  const [INKBalance, setINKBalance] = useState<BigNumber>();
+  const [GRANSBalance, setGRANSBalance] = useState<BigNumber>();
 
   const [CurrentBlock, setCurrentBlock] = useState("");
   const { account, ethereum } = useWallet();
@@ -23,15 +27,20 @@ const Provider: React.FC = ({ children }) => {
 
       for (let i = 0; i < AvailableFarms.length; i++) {
         tokenBalances.push(
-          new BigNumber(await getBalance(provider, AvailableFarms[i].tokenA.address, userAddress)).dividedBy(new BigNumber(10).pow(18))
+            await getBalanceAsBigNum(provider, AvailableFarms[i].tokenA.address, userAddress)
         );
-        lpBalances.push(new BigNumber(await getBalance(provider, AvailableFarms[i].lp.address, userAddress)).dividedBy(new BigNumber(10).pow(18)));
+        lpBalances.push(await getBalanceAsBigNum(provider, AvailableFarms[i].lp.address, userAddress))
       }
+
+      // set the shortcut balances
+      setUBQBalance(await getCoinBalanceAsBigNum(provider, userAddress))
+      setINKBalance(await getBalanceAsBigNum(provider, INK, userAddress))
+      setGRANSBalance(await getBalanceAsBigNum(provider, GRANS, userAddress))
 
       settokenBalances(tokenBalances);
       setLPBalances(lpBalances);
     },
-    [settokenBalances, setLPBalances]
+    [settokenBalances, setLPBalances, setUBQBalance, setINKBalance, setGRANSBalance]
   );
 
   const fetchCurrentBlock = useCallback(
@@ -68,6 +77,9 @@ const Provider: React.FC = ({ children }) => {
         tokenBalances,
         LPBalances,
         CurrentBlock,
+        UBQBalance,
+        INKBalance,
+        GRANSBalance
       }}
     >
       {children}
