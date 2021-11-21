@@ -1,4 +1,4 @@
-import {INK, UBQ, GRANS } from "farms/AvailableFarms"
+import {INK, GRANS } from "farms/AvailableFarms"
 
 export default function metamask() {
   let ethereum = window.ethereum;

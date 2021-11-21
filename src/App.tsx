@@ -9,7 +9,6 @@ import TopBar from "components/TopBar";
 import { BalancesProvider } from "contexts/Balances";
 import { FarmingProvider } from "contexts/Farming";
 import UbiqProvider from "contexts/UbiqProvider";
-import useLocalStorage from "hooks/useLocalStorage";
 
 import Farm from "views/Farm";
 import Home from "views/Home";
@@ -49,7 +48,7 @@ const App: React.FC = () => {
 };
 
 const Providers: React.FC = ({ children }) => {
-  const [darkModeSetting] = useLocalStorage("darkMode", false);
+  // const [darkModeSetting] = useLocalStorage("darkMode", false);
   const { dark: darkTheme, light: lightTheme } = useMemo(() => {
     return createTheme({
       baseColor: { h: 338, s: 100, l: 41 },
@@ -58,7 +57,7 @@ const Providers: React.FC = ({ children }) => {
     });
   }, []);
   return (
-    <ThemeProvider darkModeEnabled={darkModeSetting} darkTheme={darkTheme} lightTheme={lightTheme}>
+    <ThemeProvider darkModeEnabled={true} darkTheme={darkTheme} lightTheme={lightTheme}>
       <UseWalletProvider
         connectors={{
           injected: {

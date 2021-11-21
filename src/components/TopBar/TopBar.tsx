@@ -5,8 +5,6 @@ import styled from "styled-components";
 
 import Logo from "components/Logo";
 import MenuIcon from "components/icons/Menu";
-
-import DarkModeSwitch from "../DarkModeSwitch";
 import Nav from "./components/Nav";
 import WalletButton from "./components/WalletButton";
 import useBalances from "hooks/useBalances";
@@ -33,7 +31,7 @@ const TopBar: React.FC<TopBarProps> = ({ onPresentMobileMenu }) => {
               <span>Block #: {CurrentBlock}</span>
             </StyledCurrentBlock>
             <StyledTopBarDarkModeSwitch>
-              <DarkModeSwitch />
+
             </StyledTopBarDarkModeSwitch>
             <Spacer />
             <WalletButton />
