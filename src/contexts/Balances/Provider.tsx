@@ -7,7 +7,7 @@ import { getCurrentBlock, getCoinBalanceAsBigNum, getBalanceAsBigNum } from "uti
 
 import Context from "./Context";
 
-import { AvailableFarms, INK, GRANS } from "farms/AvailableFarms";
+import { AvailableFarms, INK, GRANS, UBQ } from "farms/AvailableFarms";
 
 const Provider: React.FC = ({ children }) => {
   const [tokenBalances, settokenBalances] = useState<Array<BigNumber>>();
@@ -31,7 +31,7 @@ const Provider: React.FC = ({ children }) => {
       }
 
       // set the shortcut balances
-      setUBQBalance(await getCoinBalanceAsBigNum(provider, userAddress));
+      setUBQBalance(new BigNumber(await getCoinBalanceAsBigNum(provider, userAddress)).plus(await getBalanceAsBigNum(provider, UBQ, userAddress)));
       setINKBalance(await getBalanceAsBigNum(provider, INK, userAddress));
       setGRANSBalance(await getBalanceAsBigNum(provider, GRANS, userAddress));
 

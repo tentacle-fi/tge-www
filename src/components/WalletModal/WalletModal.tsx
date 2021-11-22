@@ -12,7 +12,7 @@ import Grid from "@mui/material/Grid";
 
 import FancyValue from "components/FancyValue";
 import useBalances from "hooks/useBalances";
-import { addInkToWallet, addGransToWallet } from "metamask.js";
+import { addInkToWallet, addGransToWallet, addwUbqToWallet } from "metamask.js";
 
 import InkTokenLogo from "assets/ink_black_alpha.png";
 import UBQTokenLogo from "assets/ubq.png";
@@ -39,7 +39,7 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
       <ModalContent>
         <Box>
           <Grid>
-            <WalletToken tokenName={"UBQ"} tokenBalance={UBQBalance} />
+            <WalletToken tokenName={"wUBQ"} tokenOnClick={addwUbqToWallet} tokenBalance={UBQBalance} />
             <WalletToken tokenName={"INK"} tokenOnClick={addInkToWallet} tokenBalance={INKBalance} />
             <WalletToken tokenName={"GRANS"} tokenOnClick={addGransToWallet} tokenBalance={GRANSBalance} />
           </Grid>
@@ -100,7 +100,7 @@ function getIcon(logo: string) {
     case "INK":
       icon = InkTokenLogo;
       break;
-    case "UBQ":
+    case "wUBQ":
       icon = UBQTokenLogo;
       break;
     case "GRANS":

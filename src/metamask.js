@@ -1,4 +1,4 @@
-import { INK, GRANS } from "farms/AvailableFarms";
+import { INK, GRANS, UBQ } from "farms/AvailableFarms";
 
 export async function switchToUBQNetwork() {
   let ethereum = window.ethereum;
@@ -51,6 +51,10 @@ export async function addInkToWallet() {
 
 export async function addGransToWallet() {
   await addTokenToWallet("GRANS", GRANS, "grans.png");
+}
+
+export async function addwUbqToWallet() {
+  await addTokenToWallet("wUBQ", UBQ, "ubq.png");
 }
 
 async function addTokenToWallet(tokenSymbol, tokenAddress, tokenIconUrl) {
