@@ -51,9 +51,9 @@ const StakeModal: React.FC<StakeModalProps> = ({ farmKey }) => {
     setConfirmTxModalIsOpen(true);
     await stake(ubiq, val, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
       if (txHash === "") {
-        setConfirmTxModalIsOpen(false);
         setisStaking(false);
       }
+      setConfirmTxModalIsOpen(false);
     });
     setConfirmTxModalIsOpen(false);
     setisStaking(false);

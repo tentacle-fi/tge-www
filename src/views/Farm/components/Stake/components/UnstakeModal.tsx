@@ -51,9 +51,9 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({ farmKey }) => {
     setConfirmTxModalIsOpen(true);
     await unstake(ubiq, val, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
       if (txHash === "") {
-        setConfirmTxModalIsOpen(false);
         setisUnstaking(false);
       }
+      setConfirmTxModalIsOpen(false);
     });
     setConfirmTxModalIsOpen(false);
     setisUnstaking(false);

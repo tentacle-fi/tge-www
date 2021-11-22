@@ -8,7 +8,7 @@ import { Modal, ModalActions, ModalContent, ModalProps, ModalTitle, Separator } 
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Grid from '@mui/material/Grid';
+import Grid from "@mui/material/Grid";
 
 import FancyValue from "components/FancyValue";
 import useBalances from "hooks/useBalances";
@@ -59,46 +59,40 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
 };
 
 interface WalletTokenProps {
-    tokenName: string;
-    tokenOnClick?: () => void;
-    tokenBalance: BigNumber | undefined
+  tokenName: string;
+  tokenOnClick?: () => void;
+  tokenBalance: BigNumber | undefined;
 }
 
-const WalletToken: React.FC<WalletTokenProps> = ({tokenName, tokenOnClick, tokenBalance}) => {
-
-    const getDisplayBalance = useCallback((value?: BigNumber) => {
-      if (value) {
-        return numeral(value).format("0.00a");
-      } else {
-        return "--";
-      }
-    }, []);
-
-    const AddTokenButton = function () {
-        if ( tokenOnClick !== undefined ){
-            return (
-
-                <Button onClick={tokenOnClick}>
-                Add {tokenName} to Wallet
-                </Button>
-            )
-        }
-        return <></>
+const WalletToken: React.FC<WalletTokenProps> = ({ tokenName, tokenOnClick, tokenBalance }) => {
+  const getDisplayBalance = useCallback((value?: BigNumber) => {
+    if (value) {
+      return numeral(value).format("0.00a");
+    } else {
+      return "--";
     }
+  }, []);
 
-    return (
-        <Box sx={{ display: "flex" }}>
-          <Grid container>
-            <Grid item xs={7}>
-              <FancyValue icon={getIcon(tokenName)} label={tokenName + " balance"} value={getDisplayBalance(tokenBalance)} />
-            </Grid>
-            <Grid item xs={5}>
-              <AddTokenButton />
-            </Grid>
-          </Grid>
-        </Box>
-    )
-}
+  const AddTokenButton = function () {
+    if (tokenOnClick !== undefined) {
+      return <Button onClick={tokenOnClick}>Add {tokenName} to Wallet</Button>;
+    }
+    return <></>;
+  };
+
+  return (
+    <Box sx={{ display: "flex" }}>
+      <Grid container>
+        <Grid item xs={7}>
+          <FancyValue icon={getIcon(tokenName)} label={tokenName + " balance"} value={getDisplayBalance(tokenBalance)} />
+        </Grid>
+        <Grid item xs={5}>
+          <AddTokenButton />
+        </Grid>
+      </Grid>
+    </Box>
+  );
+};
 
 function getIcon(logo: string) {
   let icon;
@@ -110,7 +104,7 @@ function getIcon(logo: string) {
       icon = UBQTokenLogo;
       break;
     case "GRANS":
-      icon = GRANSTokenLogo
+      icon = GRANSTokenLogo;
       break;
     default:
       console.warn("getIcon() logo does not exist", logo);

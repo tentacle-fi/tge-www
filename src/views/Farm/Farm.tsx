@@ -166,9 +166,9 @@ const HarvestAll: React.FC<HarvestAllProps> = ({ farmKey }) => {
     setisRedeeming(false);
     await redeem(ubiq, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
       if (txHash === "") {
-        setConfirmTxModalIsOpen(false);
         setisRedeeming(false);
       }
+      setConfirmTxModalIsOpen(false);
     }).catch((err) => {
       if (err.code === 4001) {
         console.log("Wallet: User cancelled");
