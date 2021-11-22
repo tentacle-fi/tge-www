@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 
 import { Button, Spacer } from "react-neu";
 
@@ -23,6 +23,8 @@ import UnstakeModal from "./components/Stake/components/UnstakeModal";
 
 import BlockIcon from "@mui/icons-material/Block";
 import SettingsIcon from "@mui/icons-material/Settings";
+import useUbiq from "hooks/useUbiq";
+import { redeem } from "ubiq-sdk/utils";
 
 const theme = createTheme({
   palette: {
@@ -71,43 +73,7 @@ const YieldFarm: React.FC<YieldFarmProps> = ({ farmKey }) => {
 
   const farm = AvailableFarms[farmKey];
 
-  const { status } = useWallet();
-
-  const { isRedeeming, onRedeem, onStake, onUnstake } = useFarming();
-
   const [manageFarm, setManageFarm] = useState(false);
-
-  const handleOnStake = useCallback(
-    (contractIndex: number, amount: string) => {
-      onStake(contractIndex, amount);
-    },
-    [onStake]
-  );
-
-  const handleOnUnstake = useCallback(
-    (contractIndex: number, amount: string) => {
-      onUnstake(contractIndex, amount);
-    },
-    [onUnstake]
-  );
-
-  const RedeemButton = useMemo(() => {
-    if (status !== "connected") {
-      return <Button disabled text={`Harvest & Unstake ${farm.name}`} variant="secondary" />;
-    }
-    if (isRedeeming !== undefined && isRedeeming[farmKey] === false) {
-      return (
-        <Button
-          onClick={() => {
-            onRedeem(farmKey);
-          }}
-          text={`Harvest & Unstake ${farm.name}`}
-          variant="secondary"
-        />
-      );
-    }
-    return <Button disabled text="Redeeming..." variant="secondary" />;
-  }, [isRedeeming, onRedeem, farmKey, farm, status]);
 
   return (
     <Box
@@ -172,22 +138,10 @@ const YieldFarm: React.FC<YieldFarmProps> = ({ farmKey }) => {
         <Grid item xs={9} sx={{ display: manageFarm === true ? "" : "none" }}>
           <StyledItem>
             <div style={{ display: "flex", flexDirection: "column", gap: "20px 5px" }}>
-              <StakeModal farmKey={farmKey} onStake={handleOnStake} />
-              <UnstakeModal farmKey={farmKey} onUnstake={handleOnUnstake} />
+              <StakeModal farmKey={farmKey} />
+              <UnstakeModal farmKey={farmKey} />
 
-              <LoadingButton
-                onClick={() => {
-                  onRedeem(farmKey);
-                }}
-                endIcon={<BlockIcon />}
-                loading={false}
-                loadingPosition="end"
-                variant="contained"
-                color="error"
-                size="medium"
-              >
-                Harvest & Unstake (All LP and Unharvested rewards)
-              </LoadingButton>
+              <HarvestAll farmKey={farmKey} />
             </div>
           </StyledItem>
         </Grid>
@@ -196,31 +150,51 @@ const YieldFarm: React.FC<YieldFarmProps> = ({ farmKey }) => {
   );
 };
 
-/*
+interface HarvestAllProps {
+  farmKey: number;
+}
 
-<Container>
-<Spacer />
-<Split>
-  <StakeCard farmKey={farmKey}>
-    <img
-      src={farm.tokenA.logo}
-      alt={`${farm.tokenA.symbol} Logo`}
-      style={{ width: "80px", height: "80px", background: "white", borderRadius: "40px" }}
-    />
-    <span style={{ fontSize: "50px", lineHeight: "80px", width: "50px", display: "block", textAlign: "center" }}>+</span>
-    <img src={farm.tokenB.logo} alt={`${farm.tokenB.symbol} Logo`} style={{ width: "80px", height: "80px" }} />
-  </StakeCard>
-  <HarvestCard farmKey={farmKey} />
-</Split>
-<Spacer />
-<Box justifyContent="center">{RedeemButton}</Box>
-<Spacer size="lg" />
-<Separator />
-<Spacer size="lg" />
-<Split>
-  <Button full text={`Get ${farm.name} LP tokens`} href={farm.lp.url} variant="tertiary" />
-</Split>
-</Container>
-*/
+const HarvestAll: React.FC<HarvestAllProps> = ({ farmKey }) => {
+  const [isRedeeming, setisRedeeming] = useState(false);
+  const ubiq = useUbiq();
+  const { setConfirmTxModalIsOpen } = useFarming();
+  const { account } = useWallet();
+
+  const handleRedeem = useCallback(async () => {
+    if (!ubiq) return;
+    setConfirmTxModalIsOpen(true);
+    setisRedeeming(false);
+    await redeem(ubiq, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
+      if (txHash === "") {
+        setConfirmTxModalIsOpen(false);
+        setisRedeeming(false);
+      }
+    }).catch((err) => {
+      if (err.code === 4001) {
+        console.log("Wallet: User cancelled");
+      } else {
+        console.log("Error caught:", err);
+      }
+    });
+    setConfirmTxModalIsOpen(false);
+    setisRedeeming(false);
+  }, [account, setConfirmTxModalIsOpen, setisRedeeming, ubiq, farmKey]);
+
+  return (
+    <LoadingButton
+      onClick={() => {
+        handleRedeem();
+      }}
+      endIcon={<BlockIcon />}
+      loading={isRedeeming}
+      loadingPosition="end"
+      variant="contained"
+      color="error"
+      size="medium"
+    >
+      Harvest & Unstake (All LP and Unharvested rewards)
+    </LoadingButton>
+  );
+};
 
 export default Farm;

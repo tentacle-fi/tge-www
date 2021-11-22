@@ -10,15 +10,21 @@ import { AvailableFarms } from "farms/AvailableFarms";
 import LoadingButton from "@mui/lab/LoadingButton";
 import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox";
 
+import useUbiq from "hooks/useUbiq";
+import { useWallet } from "use-wallet";
+import { unstake } from "ubiq-sdk/utils";
+
 interface UnstakeModalProps {
-  onUnstake: (contractIndex: number, amount: string) => void;
   farmKey: number;
 }
 
-const UnstakeModal: React.FC<UnstakeModalProps> = ({ onUnstake, farmKey }) => {
+const UnstakeModal: React.FC<UnstakeModalProps> = ({ farmKey }) => {
   const [val, setVal] = useState("");
-  const { stakedBalances } = useFarming();
+  const { stakedBalances, setConfirmTxModalIsOpen } = useFarming();
+  const [isUnstaking, setisUnstaking] = useState(false);
   const stakedAmount = stakedBalances === undefined ? null : stakedBalances[farmKey];
+  const ubiq = useUbiq();
+  const { account } = useWallet();
 
   const fullBalance = useMemo(() => {
     return getFullDisplayBalance(stakedAmount || new BigNumber(0));
@@ -35,9 +41,25 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({ onUnstake, farmKey }) => {
     setVal(fullBalance);
   }, [fullBalance, setVal]);
 
-  const handleUnstakeClick = useCallback(() => {
-    onUnstake(farmKey, val);
-  }, [onUnstake, farmKey, val]);
+  const handleUnstake = useCallback(async () => {
+    // updateStateAtIndex(isUnstaking, setIsUnstaking, true, contractIndex);
+    // setTimeout(() => {
+    //   updateStateAtIndex(isUnstaking, setIsUnstaking, false, contractIndex);
+    // }, 4000);
+
+    if (!ubiq) return;
+    setConfirmTxModalIsOpen(true);
+    await unstake(ubiq, val, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
+      if (txHash === "") {
+        setConfirmTxModalIsOpen(false);
+        setisUnstaking(false);
+      }
+    });
+    setConfirmTxModalIsOpen(false);
+    setisUnstaking(false);
+  }, [account, setConfirmTxModalIsOpen, setisUnstaking, ubiq, val, farmKey]);
+
+  // console.log('modal isUnstaking', isUnstaking)
 
   return (
     <>
@@ -51,11 +73,11 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({ onUnstake, farmKey }) => {
         <LoadingButton
           onClick={() => {
             if (val && Number(val)) {
-              handleUnstakeClick();
+              handleUnstake();
             }
           }}
           endIcon={<IndeterminateCheckBoxIcon />}
-          loading={false}
+          loading={isUnstaking}
           loadingPosition="end"
           variant="contained"
           color="warning"

@@ -8,15 +8,22 @@ import { getFullDisplayBalance } from "utils";
 import { AvailableFarms } from "farms/AvailableFarms";
 import LoadingButton from "@mui/lab/LoadingButton";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import useFarming from "hooks/useFarming";
+import useUbiq from "hooks/useUbiq";
+import { useWallet } from "use-wallet";
+import { stake } from "ubiq-sdk/utils";
 
 interface StakeModalProps {
-  onStake: (contractIndex: number, amount: string) => void;
   farmKey: number;
 }
 
-const StakeModal: React.FC<StakeModalProps> = ({ onStake, farmKey }) => {
+const StakeModal: React.FC<StakeModalProps> = ({ farmKey }) => {
   const [val, setVal] = useState("");
   const { LPBalances } = useBalances();
+  const { setConfirmTxModalIsOpen } = useFarming();
+  const [isStaking, setisStaking] = useState(false);
+  const ubiq = useUbiq();
+  const { account } = useWallet();
 
   const fullBalance = useMemo(() => {
     return getFullDisplayBalance(LPBalances !== undefined ? LPBalances[farmKey] : new BigNumber(0), 0);
@@ -33,9 +40,24 @@ const StakeModal: React.FC<StakeModalProps> = ({ onStake, farmKey }) => {
     setVal(fullBalance);
   }, [fullBalance, setVal]);
 
-  const handleStakeClick = useCallback(() => {
-    onStake(farmKey, val);
-  }, [onStake, val, farmKey]);
+  const handleStake = useCallback(async () => {
+    // updateStateAtIndex(isStaking, setIsStaking, true, contractIndex);
+    // setTimeout(() => {
+    //   updateStateAtIndex(isStaking, setIsStaking, false, contractIndex);
+    // }, 4000);
+
+    if (!ubiq) return;
+    setisStaking(true);
+    setConfirmTxModalIsOpen(true);
+    await stake(ubiq, val, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
+      if (txHash === "") {
+        setConfirmTxModalIsOpen(false);
+        setisStaking(false);
+      }
+    });
+    setConfirmTxModalIsOpen(false);
+    setisStaking(false);
+  }, [account, setConfirmTxModalIsOpen, setisStaking, ubiq, farmKey, val]);
 
   return (
     <>
@@ -49,11 +71,11 @@ const StakeModal: React.FC<StakeModalProps> = ({ onStake, farmKey }) => {
         <LoadingButton
           onClick={() => {
             if (val && Number(val) && Number(fullBalance) && fullBalance) {
-              handleStakeClick();
+              handleStake();
             }
           }}
           endIcon={<AddCircleOutlineIcon />}
-          loading={false}
+          loading={isStaking}
           loadingPosition="end"
           variant="contained"
           color="info"

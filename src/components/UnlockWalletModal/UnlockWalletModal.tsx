@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect } from "react";
-import { Box, Button, Modal, ModalActions, ModalContent, ModalProps, ModalTitle } from "react-neu";
+import { Box, Modal, ModalActions, ModalContent, ModalProps, ModalTitle } from "react-neu";
 import styled from "styled-components";
 import { useWallet } from "use-wallet";
 
 import metamaskLogo from "assets/metamask-fox.svg";
 import sparrowLogo from "assets/sparrow.png";
-
+import Button from "@mui/material/Button";
 import WalletProviderCard from "./components/WalletProviderCard";
 import { switchToUBQNetwork } from "metamask.js";
 
@@ -54,7 +54,9 @@ const UnlockWalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
       </ModalContent>
       <ModalActions>
         <Box flex={1} row justifyContent="center">
-          <Button onClick={onDismiss} text="Cancel" variant="secondary" />
+          <Button onClick={onDismiss} variant="contained">
+            Cancel
+          </Button>
         </Box>
       </ModalActions>
     </Modal>

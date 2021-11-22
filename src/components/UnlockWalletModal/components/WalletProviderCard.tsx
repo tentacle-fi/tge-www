@@ -14,7 +14,7 @@ interface WalletProviderCardProps {
 }
 const WalletProviderCard: React.FC<WalletProviderCardProps> = ({ icon, name, onSelect }) => (
   <Box sx={{ display: "flex", flexDirection: "column" }}>
-    <Button onClick={onSelect} variant="contained">
+    <Button onClick={onSelect} variant="outlined">
       <CardIcon>{icon}</CardIcon>
       <StyledName>{name}</StyledName>
     </Button>

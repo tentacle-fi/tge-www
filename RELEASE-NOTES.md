@@ -18,3 +18,4 @@
 - web3 wallet helper functionality added to recommend the UBQ network, and add INK token via button click
 - forced Dark Mode to always on
 - updates to UI nav bar
+- fixed bug with harvest, stake, unstake and redeem buttons
