@@ -68,7 +68,7 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({ farmKey }) => {
         max={fullBalance}
         symbol={`Unstake ${AvailableFarms[farmKey].name} LP`}
       >
-        <LoadingButton
+        <LoadingButton sx={{ marginLeft: "10px"}}
           onClick={() => {
             if (val && Number(val)) {
               handleUnstake();

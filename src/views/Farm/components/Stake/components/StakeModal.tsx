@@ -68,7 +68,7 @@ const StakeModal: React.FC<StakeModalProps> = ({ farmKey }) => {
         max={fullBalance}
         symbol={`Stake ${AvailableFarms[farmKey].name} LP`}
       >
-        <LoadingButton
+        <LoadingButton sx={{ marginLeft: "10px"}}
           onClick={() => {
             if (val && Number(val) && Number(fullBalance) && fullBalance) {
               handleStake();
