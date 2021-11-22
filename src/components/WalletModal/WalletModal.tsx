@@ -67,7 +67,7 @@ interface WalletTokenProps {
 const WalletToken: React.FC<WalletTokenProps> = ({ tokenName, tokenOnClick, tokenBalance }) => {
   const getDisplayBalance = useCallback((value?: BigNumber) => {
     if (value) {
-      return numeral(value).format("0.00a");
+      return numeral(value).format("0.0000a");
     } else {
       return "--";
     }
