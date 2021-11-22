@@ -59,8 +59,6 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({ farmKey }) => {
     setisUnstaking(false);
   }, [account, setConfirmTxModalIsOpen, setisUnstaking, ubiq, val, farmKey]);
 
-  // console.log('modal isUnstaking', isUnstaking)
-
   return (
     <>
       <TokenInput

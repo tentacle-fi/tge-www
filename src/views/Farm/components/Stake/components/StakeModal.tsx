@@ -4,11 +4,11 @@ import BigNumber from "bignumber.js";
 
 import TokenInput from "components/TokenInput";
 import useBalances from "hooks/useBalances";
+import useFarming from "hooks/useFarming";
 import { getFullDisplayBalance } from "utils";
 import { AvailableFarms } from "farms/AvailableFarms";
 import LoadingButton from "@mui/lab/LoadingButton";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import useFarming from "hooks/useFarming";
 import useUbiq from "hooks/useUbiq";
 import { useWallet } from "use-wallet";
 import { stake } from "ubiq-sdk/utils";

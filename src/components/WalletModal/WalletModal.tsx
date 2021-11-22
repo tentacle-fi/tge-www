@@ -3,9 +3,13 @@ import React, { useCallback, useState } from "react";
 import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
 import numeral from "numeral";
-import { Modal, ModalActions, ModalContent, ModalProps, ModalTitle, Separator, Spacer } from "react-neu";
+
+import { Modal, ModalActions, ModalContent, ModalProps, ModalTitle, Separator } from "react-neu";
+
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Grid from '@mui/material/Grid';
+
 import FancyValue from "components/FancyValue";
 import useBalances from "hooks/useBalances";
 import { addInkToWallet, addGransToWallet } from "metamask.js";
@@ -18,14 +22,6 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
   const [, setWalletModalIsOpen] = useState(false);
   const { reset } = useWallet();
   const { INKBalance, UBQBalance, GRANSBalance } = useBalances();
-
-  const getDisplayBalance = useCallback((value?: BigNumber) => {
-    if (value) {
-      return numeral(value).format("0.00a");
-    } else {
-      return "--";
-    }
-  }, []);
 
   const handleSignOut = useCallback(() => {
     localStorage.removeItem("account");
@@ -42,15 +38,12 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
       <ModalTitle text="My Wallet" />
       <ModalContent>
         <Box>
-          <FancyValue icon={getIcon("ubq")} label="UBQ balance" value={getDisplayBalance(UBQBalance)} />
-
-          <FancyValue icon={getIcon("ink")} label="INK balance" value={getDisplayBalance(INKBalance)} />
-          <Button onClick={addInkToWallet}>Add Ink token to Wallet</Button>
-
-          <FancyValue icon={getIcon("10grans")} label="10GRANS balance" value={getDisplayBalance(GRANSBalance)} />
-          <Button onClick={addGransToWallet}>Add 10GRANS token to Wallet</Button>
+          <Grid>
+            <WalletToken tokenName={"UBQ"} tokenBalance={UBQBalance} />
+            <WalletToken tokenName={"INK"} tokenOnClick={addInkToWallet} tokenBalance={INKBalance} />
+            <WalletToken tokenName={"GRANS"} tokenOnClick={addGransToWallet} tokenBalance={GRANSBalance} />
+          </Grid>
         </Box>
-        <Spacer />
       </ModalContent>
       <Separator />
       <ModalActions>
@@ -65,17 +58,59 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
   );
 };
 
+interface WalletTokenProps {
+    tokenName: string;
+    tokenOnClick?: () => void;
+    tokenBalance: BigNumber | undefined
+}
+
+const WalletToken: React.FC<WalletTokenProps> = ({tokenName, tokenOnClick, tokenBalance}) => {
+
+    const getDisplayBalance = useCallback((value?: BigNumber) => {
+      if (value) {
+        return numeral(value).format("0.00a");
+      } else {
+        return "--";
+      }
+    }, []);
+
+    const AddTokenButton = function () {
+        if ( tokenOnClick !== undefined ){
+            return (
+
+                <Button onClick={tokenOnClick}>
+                Add {tokenName} to Wallet
+                </Button>
+            )
+        }
+        return <></>
+    }
+
+    return (
+        <Box sx={{ display: "flex" }}>
+          <Grid container>
+            <Grid item xs={7}>
+              <FancyValue icon={getIcon(tokenName)} label={tokenName + " balance"} value={getDisplayBalance(tokenBalance)} />
+            </Grid>
+            <Grid item xs={5}>
+              <AddTokenButton />
+            </Grid>
+          </Grid>
+        </Box>
+    )
+}
+
 function getIcon(logo: string) {
   let icon;
   switch (logo) {
-    case "ink":
+    case "INK":
       icon = InkTokenLogo;
       break;
-    case "ubq":
+    case "UBQ":
       icon = UBQTokenLogo;
       break;
-    case "10grans":
-      icon = GRANSTokenLogo;
+    case "GRANS":
+      icon = GRANSTokenLogo
       break;
     default:
       console.warn("getIcon() logo does not exist", logo);
