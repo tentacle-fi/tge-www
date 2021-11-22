@@ -4,8 +4,7 @@ import { useTheme } from "react-neu";
 import Page from "components/Page";
 import PageHeader from "components/PageHeader";
 
-import Chip from "@mui/material/Chip";
-import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box"
 
 import Timeline from "@mui/lab/Timeline";
 import TimelineItem from "@mui/lab/TimelineItem";
@@ -55,14 +54,23 @@ const Home: React.FC = () => {
     <Page>
       <PageHeader
         icon={darkMode ? <NightsStayIcon sx={{ fontSize: "98px" }} /> : "🌞"}
-        subtitle={darkMode ? "🤫 shhh... the squids are sleeping." : "It's a great day to farm INK!"}
         title="Welcome to Tentacle.Finance"
       />
+      <Introduction />
       <RoadmapTimeline />
-      <TopBarElements />
     </Page>
   );
 };
+
+function Introduction() {
+    return (
+        <Box sx={{ textAlign: "center" }}>
+          <div>
+          Tentacle Finance is a collection of Decentralized Finance (DeFi) apps and traditional Smart Contract Decentralized Apps (dApps). These are produced and maintained by the Tentacle Finance Decentralized Autonomous Organization (DAO).
+          </div>
+        </Box>
+    )
+}
 
 function RoadmapTimeline() {
   return (
@@ -72,22 +80,6 @@ function RoadmapTimeline() {
       <TimelinePhase title="Phase 3" desc="Additional Farming Features, Secret Launch, Governance, Treasury, Bridges after voting" />
       <TimelinePhase title="Phase 4" desc="TBA" />
     </Timeline>
-  );
-}
-
-function TopBarElements() {
-  return (
-    <Stack direction="row" spacing={2}>
-      <BlockHeightChip />
-    </Stack>
-  );
-}
-
-function BlockHeightChip() {
-  return (
-    <Tooltip title="current block height">
-      <Chip label="Chip Outlined" variant="outlined" color="success" />
-    </Tooltip>
   );
 }
 

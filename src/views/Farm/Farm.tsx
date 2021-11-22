@@ -54,7 +54,7 @@ const StyledItem = styled(Paper)(({ theme }) => ({
 const Farm: React.FC = () => {
   return (
     <Page>
-      <Box justifyContent="center">
+      <Box textAlign="center">
         <h1>Yield Farms</h1>
         <p>Join a farming pool to start earning INK!</p>
         <Button full text="Get Started Here" to="/help" />
