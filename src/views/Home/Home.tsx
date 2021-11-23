@@ -4,7 +4,7 @@ import { useTheme } from "react-neu";
 import Page from "components/Page";
 import PageHeader from "components/PageHeader";
 
-import Box from "@mui/material/Box"
+import Box from "@mui/material/Box";
 
 import Timeline from "@mui/lab/Timeline";
 import TimelineItem from "@mui/lab/TimelineItem";
@@ -52,10 +52,7 @@ const Home: React.FC = () => {
   const { darkMode } = useTheme();
   return (
     <Page>
-      <PageHeader
-        icon={darkMode ? <NightsStayIcon sx={{ fontSize: "98px" }} /> : "🌞"}
-        title="Welcome to Tentacle.Finance"
-      />
+      <PageHeader icon={darkMode ? <NightsStayIcon sx={{ fontSize: "98px" }} /> : "🌞"} title="Welcome to Tentacle.Finance" />
       <Introduction />
       <RoadmapTimeline />
     </Page>
@@ -63,13 +60,14 @@ const Home: React.FC = () => {
 };
 
 function Introduction() {
-    return (
-        <Box sx={{ textAlign: "center" }}>
-          <div>
-          Tentacle Finance is a collection of Decentralized Finance (DeFi) apps and traditional Smart Contract Decentralized Apps (dApps). These are produced and maintained by the Tentacle Finance Decentralized Autonomous Organization (DAO).
-          </div>
-        </Box>
-    )
+  return (
+    <Box sx={{ textAlign: "center", maxWidth: "800px" }}>
+      <p>
+        Tentacle Finance is a collection of Decentralized Finance (DeFi) apps and traditional Smart Contract Decentralized Apps (dApps). These are
+        produced and maintained by the Tentacle Finance Decentralized Autonomous Organization (DAO).
+      </p>
+    </Box>
+  );
 }
 
 function RoadmapTimeline() {

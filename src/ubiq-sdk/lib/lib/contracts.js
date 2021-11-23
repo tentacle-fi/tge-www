@@ -18,8 +18,6 @@ export class Contracts {
     this.defaultGas = options.defaultGas;
     this.defaultGasPrice = options.defaultGasPrice;
 
-    this.shinobi_pool = new this.web3.eth.Contract(ShinobiPoolJson.abi);
-    this.shinobi_pool.options.address = "0x6e142959f49d364b30f0478949effdcb58effe44";
     // this.TGE1 = new this.web3.eth.Contract(ERC20Json.abi);
     this.pools = {};
 

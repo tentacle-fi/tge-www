@@ -140,7 +140,6 @@ const YieldFarm: React.FC<YieldFarmProps> = ({ farmKey }) => {
             <div style={{ display: "flex", flexDirection: "column", gap: "20px 5px" }}>
               <StakeModal farmKey={farmKey} />
               <UnstakeModal farmKey={farmKey} />
-
               <HarvestAll farmKey={farmKey} />
             </div>
           </StyledItem>
