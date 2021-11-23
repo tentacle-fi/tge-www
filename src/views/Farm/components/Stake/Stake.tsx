@@ -1,24 +1,15 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-
 import Countdown, { CountdownRenderProps } from "react-countdown";
 import { Box } from "react-neu";
-
 import Label from "components/Label";
 import Value from "components/Value";
-
 import useFarming from "hooks/useFarming";
-
 import { bnToDec, getShortDisplayBalance, getFullDisplayBalance } from "utils";
-
 import { AvailableFarms } from "farms/AvailableFarms";
-
 import useBalances from "hooks/useBalances";
 import BigNumber from "bignumber.js";
-
-import { styled } from "@mui/material/styles";
 import LinkIcon from "@mui/icons-material/Link";
 import Link from "@mui/material/Link";
-import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 
 interface StakeProps {

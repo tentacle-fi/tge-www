@@ -20,7 +20,6 @@ import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 
 import LoadingButton from "@mui/lab/LoadingButton";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { lightGreen, blue } from "@mui/material/colors";
 import StakeModal from "./components/Stake/components/StakeModal";
 import UnstakeModal from "./components/Stake/components/UnstakeModal";
 
