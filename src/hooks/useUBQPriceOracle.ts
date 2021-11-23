@@ -32,7 +32,7 @@ const useUBQPriceOracle = () => {
       fetchOracle();
     }
 
-    let refreshInterval = setInterval(fetchOracle, 30 * 60 * 60 * 1000);// 30 mins
+    let refreshInterval = setInterval(fetchOracle, 30 * 60 * 60 * 1000); // 30 mins
     return () => clearInterval(refreshInterval);
   });
 
