@@ -33,7 +33,6 @@ const App: React.FC = () => {
         <MobileMenu onDismiss={handleDismissMobileMenu} visible={mobileMenu} />
         <Routes>
           <Route path="/" element={<Home />} />
-
           <Route path="/farm" element={<Farm />} />
           <Route path="/addresses" element={<Addresses />} />
           <Route path="/help" element={<Help />} />
@@ -47,9 +46,10 @@ const Providers: React.FC = ({ children }) => {
   // const [darkModeSetting] = useLocalStorage("darkMode", false);
   const { dark: darkTheme, light: lightTheme } = useMemo(() => {
     return createTheme({
-      baseColor: { h: 338, s: 100, l: 41 },
-      baseColorDark: { h: 339, s: 89, l: 49 },
-      borderRadius: 28,
+      // baseColor: { h: 338, s: 100, l: 41 },
+      baseColor: { h: 240, s: 39, l: 36 },
+      baseColorDark: { h: 222, s: 82, l: 21 },
+      borderRadius: 24,
     });
   }, []);
   return (

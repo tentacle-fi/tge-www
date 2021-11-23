@@ -14,8 +14,12 @@ import { AvailableFarms } from "farms/AvailableFarms";
 
 import useBalances from "hooks/useBalances";
 import BigNumber from "bignumber.js";
+
+import { styled } from '@mui/material/styles';
 import LinkIcon from "@mui/icons-material/Link";
 import Link from "@mui/material/Link";
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
 
 interface StakeProps {
   farmKey: number;
@@ -73,23 +77,37 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
   return (
     <>
       <div style={{ display: "flex", flexDirection: "column", gap: "10px 5px", textAlign: "left" }}>
-        <Value value={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name} LP Staked` : "--"} />
-        <Value valueSize="16px" valueBold="400" value={lpPercent > 0 ? lpPercent.toString() + " Pool %" : "--"} />
-        <Value valueSize="16px" valueBold="400" value={`${parseFloat(availableLPBalance).toFixed(6)} LP Tokens Unstaked`} />
+        <Stack>
+        <StyledStackItem val={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name} LP Staked` : "--"} />
+        <StyledStackItem val={lpPercent > 0 ? lpPercent.toString() + " Pool %" : "--"} />
+        <StyledStackItem val={`${parseFloat(availableLPBalance).toFixed(6)} LP Tokens Unstaked`} />
 
-        <Value valueSize="16px" valueBold="400" value={`TVL`} />
-        <Value valueSize="16px" valueBold="400" value={`my token balances in LP`} />
-        <Value valueSize="16px" valueBold="400" value={`my pool value $`} />
-        <Value valueSize="16px" valueBold="400" value={`current APR / APY`} />
+        <StyledStackItem val={`TVL`} />
+        <StyledStackItem val={`my token balances in LP`} />
+        <StyledStackItem val={`my pool value $`} />
+        <StyledStackItem val={`current APR / APY`} />
 
         <Link href={AvailableFarms[farmKey].lp.url} target="_blank" rel="noopener" underline="always">
           Manage {AvailableFarms[farmKey].name} liquidity <LinkIcon />
         </Link>
+        </Stack>
       </div>
 
       {typeof countdown !== "undefined" && countdown[farmKey] > 0 && <Countdown date={farmingStartTime[farmKey]} renderer={renderer} />}
     </>
   );
 };
+
+interface StackItemProps {
+    val: string,
+    valueSize?: string,
+    valueBold?: string
+}
+
+const StyledStackItem: React.FC<StackItemProps> = ({ val }) => {
+    return (
+        <Value valueSize={val || "16px"} valueBold={val || "400"} value={val}/>
+    )
+}
 
 export default Stake;

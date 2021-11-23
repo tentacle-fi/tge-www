@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 
-import { Button, Spacer } from "react-neu";
+import { Spacer } from "react-neu";
 
 import Page from "components/Page";
 
@@ -11,9 +11,12 @@ import { useWallet } from "use-wallet";
 import { AvailableFarms } from "farms/AvailableFarms";
 
 import { styled } from "@mui/material/styles";
+import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
+import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 
 import LoadingButton from "@mui/lab/LoadingButton";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -28,13 +31,26 @@ import { redeem } from "ubiq-sdk/utils";
 
 const theme = createTheme({
   palette: {
+    primary: {
+      main: "#383883", // purple
+    },
     secondary: {
-      // This is green.A700 as hex.
-      main: lightGreen.A400,
+      dark: "#053b06", // dark green
+      main: "#0b5d1e", // neutral green
+      light: "#06d6a0" // light green
+    },
+    success: {
+      main: "#3acf14", // light green
     },
     info: {
-      main: blue[800],
+      main: "#247ba0", // blue/teal
     },
+    warning: {
+      main: "#bf610a", // dark orange
+  },
+    error: {
+      main: "#bf1212", // dark red
+    }
   },
 });
 
@@ -51,13 +67,18 @@ const StyledItem = styled(Paper)(({ theme }) => ({
   height: "100%",
 }));
 
+const StyledArrowIcon = styled(ArrowCircleUpIcon)(({ theme }) => ({
+    color: theme.palette.secondary.main,
+    rotate: '90deg'
+}));
+
 const Farm: React.FC = () => {
   return (
     <Page>
       <Box textAlign="center">
         <h1>Yield Farms</h1>
         <p>Join a farming pool to start earning INK!</p>
-        <Button full text="Get Started Here" to="/help" />
+        <Button color="success" startIcon={<StyledArrowIcon />}><Link href="/help">Click Here for Help</Link></Button>
       </Box>
       <Spacer />
       <ThemeProvider theme={theme}>
