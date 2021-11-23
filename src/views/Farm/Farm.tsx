@@ -11,12 +11,12 @@ import { useWallet } from "use-wallet";
 import { AvailableFarms } from "farms/AvailableFarms";
 
 import { styled } from "@mui/material/styles";
-import Button from '@mui/material/Button';
-import Link from '@mui/material/Link';
+import Button from "@mui/material/Button";
+import Link from "@mui/material/Link";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
+import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 
 import LoadingButton from "@mui/lab/LoadingButton";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -37,7 +37,7 @@ const theme = createTheme({
     secondary: {
       dark: "#053b06", // dark green
       main: "#0b5d1e", // neutral green
-      light: "#06d6a0" // light green
+      light: "#06d6a0", // light green
     },
     success: {
       main: "#3acf14", // light green
@@ -47,10 +47,10 @@ const theme = createTheme({
     },
     warning: {
       main: "#bf610a", // dark orange
-  },
+    },
     error: {
       main: "#bf1212", // dark red
-    }
+    },
   },
 });
 
@@ -68,8 +68,8 @@ const StyledItem = styled(Paper)(({ theme }) => ({
 }));
 
 const StyledArrowIcon = styled(ArrowCircleUpIcon)(({ theme }) => ({
-    color: theme.palette.secondary.main,
-    rotate: '90deg'
+  color: theme.palette.secondary.main,
+  rotate: "90deg",
 }));
 
 const Farm: React.FC = () => {
@@ -78,7 +78,9 @@ const Farm: React.FC = () => {
       <Box textAlign="center">
         <h1>Yield Farms</h1>
         <p>Join a farming pool to start earning INK!</p>
-        <Button color="success" startIcon={<StyledArrowIcon />}><Link href="/help">Click Here for Help</Link></Button>
+        <Button color="success" startIcon={<StyledArrowIcon />}>
+          <Link href="/help">Click Here for Help</Link>
+        </Button>
       </Box>
       <Spacer />
       <ThemeProvider theme={theme}>

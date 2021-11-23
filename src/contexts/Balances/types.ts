@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { IOraclePrice } from "hooks/useUBQPriceOracle";
 
 export interface ContextValues {
   tokenBalances?: Array<BigNumber>;
@@ -7,4 +8,5 @@ export interface ContextValues {
   GRANSBalance?: BigNumber;
   UBQBalance?: BigNumber;
   CurrentBlock?: string;
+  UBQoracle?: IOraclePrice;
 }

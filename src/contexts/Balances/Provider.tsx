@@ -9,6 +9,8 @@ import Context from "./Context";
 
 import { AvailableFarms, INK, GRANS, UBQ } from "farms/AvailableFarms";
 
+import useUBQPriceOracle from "hooks/useUBQPriceOracle";
+
 const Provider: React.FC = ({ children }) => {
   const [tokenBalances, settokenBalances] = useState<Array<BigNumber>>();
   const [LPBalances, setLPBalances] = useState<Array<BigNumber>>();
@@ -19,6 +21,8 @@ const Provider: React.FC = ({ children }) => {
 
   const [CurrentBlock, setCurrentBlock] = useState("");
   const { account, ethereum } = useWallet();
+
+  const { oracle } = useUBQPriceOracle();
 
   const fetchBalances = useCallback(
     async (userAddress: string, provider: provider) => {
@@ -78,6 +82,7 @@ const Provider: React.FC = ({ children }) => {
         UBQBalance,
         INKBalance,
         GRANSBalance,
+        UBQoracle: oracle,
       }}
     >
       {children}

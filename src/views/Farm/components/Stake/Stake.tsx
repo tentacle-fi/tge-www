@@ -15,11 +15,11 @@ import { AvailableFarms } from "farms/AvailableFarms";
 import useBalances from "hooks/useBalances";
 import BigNumber from "bignumber.js";
 
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles";
 import LinkIcon from "@mui/icons-material/Link";
 import Link from "@mui/material/Link";
-import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
+import Paper from "@mui/material/Paper";
+import Stack from "@mui/material/Stack";
 
 interface StakeProps {
   farmKey: number;
@@ -29,7 +29,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
   const [stakeBalance, setStakeBalance] = useState<number>(0);
   const [lpPercent, setLpPercent] = useState<number>(0);
 
-  const { LPBalances } = useBalances();
+  const { LPBalances, UBQoracle } = useBalances();
 
   const availableLPBalance = useMemo(() => {
     return getFullDisplayBalance(LPBalances !== undefined ? LPBalances[farmKey] : new BigNumber(0), 0);
@@ -78,18 +78,20 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
     <>
       <div style={{ display: "flex", flexDirection: "column", gap: "10px 5px", textAlign: "left" }}>
         <Stack>
-        <StyledStackItem val={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name} LP Staked` : "--"} />
-        <StyledStackItem val={lpPercent > 0 ? lpPercent.toString() + " Pool %" : "--"} />
-        <StyledStackItem val={`${parseFloat(availableLPBalance).toFixed(6)} LP Tokens Unstaked`} />
+          <StyledStackItem val={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name} LP Staked` : "--"} />
+          <StyledStackItem val={lpPercent > 0 ? lpPercent.toString() + " Pool %" : "--"} />
+          <StyledStackItem val={`${parseFloat(availableLPBalance).toFixed(6)} LP Tokens Unstaked`} />
 
-        <StyledStackItem val={`TVL`} />
-        <StyledStackItem val={`my token balances in LP`} />
-        <StyledStackItem val={`my pool value $`} />
-        <StyledStackItem val={`current APR / APY`} />
+          <StyledStackItem val={`UBQ = $ ${UBQoracle?.price?.usdt || "--"}`} />
 
-        <Link href={AvailableFarms[farmKey].lp.url} target="_blank" rel="noopener" underline="always">
-          Manage {AvailableFarms[farmKey].name} liquidity <LinkIcon />
-        </Link>
+          <StyledStackItem val={`TVL`} />
+          <StyledStackItem val={`my token balances in LP`} />
+          <StyledStackItem val={`my pool value $`} />
+          <StyledStackItem val={`current APR / APY`} />
+
+          <Link href={AvailableFarms[farmKey].lp.url} target="_blank" rel="noopener" underline="always">
+            Manage {AvailableFarms[farmKey].name} liquidity <LinkIcon />
+          </Link>
         </Stack>
       </div>
 
@@ -99,15 +101,13 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
 };
 
 interface StackItemProps {
-    val: string,
-    valueSize?: string,
-    valueBold?: string
+  val: string;
+  valueSize?: string;
+  valueBold?: string;
 }
 
 const StyledStackItem: React.FC<StackItemProps> = ({ val }) => {
-    return (
-        <Value valueSize={val || "16px"} valueBold={val || "400"} value={val}/>
-    )
-}
+  return <Value valueSize={val || "16px"} valueBold={val || "400"} value={val} />;
+};
 
 export default Stake;
