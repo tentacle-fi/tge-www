@@ -169,6 +169,8 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
 
   useEffect(() => {
     const localAccount = localStorage.getItem("account");
+    const slicedLocalAccount = localStorage.setItem("slicedLocalAccount", localAccount?.slice(4, 4) || "");
+    console.log('sliced', slicedLocalAccount)
     const walletProvider = localStorage.getItem("walletProvider");
     if (!account && localAccount) {
       setUserAccount(localAccount);
@@ -179,7 +181,7 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
         handleConnectWalletConnect();
       }
     }
-  }, [account, handleConnectMetamask, handleConnectWalletConnect]);
+}, [account, handleConnectMetamask, handleConnectWalletConnect]);
 
   return (
     <>
@@ -195,7 +197,7 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
         ) : (
           <Tooltip title="view Account details">
             <Button onClick={handleWalletClick} size="medium" variant="contained" startIcon={<AccountBalanceWalletIcon />}>
-              Account
+              {"0x" + userAccount.substring(2, 6) + "..." + userAccount.substring(38)}
             </Button>
           </Tooltip>
         )}
