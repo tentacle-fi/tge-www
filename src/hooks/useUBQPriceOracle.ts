@@ -70,7 +70,7 @@ async function getUBQPriceOracle(): Promise<Array<IOraclePrice | undefined>> {
       return sorted;
     }
   } catch (e) {
-    console.log("error with logs", e);
+    console.error("getUBQPriceOracle: error with logs", e);
   }
 
   return [new OraclePrice(undefined)];
@@ -116,7 +116,7 @@ async function getLogs(addy: string, fromBlockHex: string) {
   try {
     return await ubq_provider.getLogs(filter);
   } catch (e) {
-    console.log("getlogs error", e);
+    console.error("getlogs error", e);
   }
 }
 

@@ -170,7 +170,6 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
   useEffect(() => {
     const localAccount = localStorage.getItem("account");
     const slicedLocalAccount = localStorage.setItem("slicedLocalAccount", localAccount?.slice(4, 4) || "");
-    console.log("sliced", slicedLocalAccount);
     const walletProvider = localStorage.getItem("walletProvider");
     if (!account && localAccount) {
       setUserAccount(localAccount);
