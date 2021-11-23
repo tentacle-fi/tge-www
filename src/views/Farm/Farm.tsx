@@ -77,7 +77,7 @@ const Farm: React.FC = () => {
     <Page>
       <Box textAlign="center">
         <h1>Yield Farms</h1>
-        <p>Join a farming pool to start earning INK!</p>
+        <p>Join a farming pool to start earning rewards!</p>
         <Button color="success" startIcon={<StyledArrowIcon />}>
           <Link href="/help">Click Here for Help</Link>
         </Button>
