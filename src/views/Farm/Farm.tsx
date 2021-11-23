@@ -10,6 +10,8 @@ import StakeCard from "./components/Stake";
 import { useWallet } from "use-wallet";
 import { AvailableFarms } from "farms/AvailableFarms";
 
+import { Link as RouterLink } from "react-router-dom";
+
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
@@ -78,7 +80,9 @@ const Farm: React.FC = () => {
         <h1>Yield Farms</h1>
         <p>Join a farming pool to start earning rewards!</p>
         <Button color="success" startIcon={<StyledArrowIcon />}>
-          <Link href="/help">Click Here for Help</Link>
+          <Link component={RouterLink} to="/help">
+            Click Here for Help
+          </Link>
         </Button>
       </Box>
       <Spacer />
