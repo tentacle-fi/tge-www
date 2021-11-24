@@ -20,8 +20,6 @@ const Provider: React.FC = ({ children }) => {
     });
   }, []); // UTC for INK+UBQ Yield Farming Start time
 
-  const [countdown, setCountdown] = useState<Array<number>>([]); // countdown timer shown when farm is to start
-
   const [stakedBalances, setstakedBalances] = useState<Array<BigNumber>>();
   const [totalSupplyLP, settotalSupplyLP] = useState<Array<BigNumber>>();
   const [lpPercents, setlpPercents] = useState<Array<BigNumber>>();
@@ -93,23 +91,10 @@ const Provider: React.FC = ({ children }) => {
     return () => clearInterval(refreshInterval);
   }, [fetchBalances]);
 
-  // shut off until issue#9 is fixed
-  // useEffect(() => {
-  //   let refreshInterval = setInterval(() => {
-  //     let times = [];
-  //     for (let i = 0; i < AvailableFarms.length; i++) {
-  //       times.push(farmingStartTime[i] - Date.now());
-  //     }
-  //     setCountdown(times);
-  //   }, 1000);
-  //   return () => clearInterval(refreshInterval);
-  // }, [setCountdown, farmingStartTime]);
-
   return (
     <Context.Provider
       value={{
         farmingStartTime,
-        countdown,
         setConfirmTxModalIsOpen: setConfirmTxModalIsOpen,
         earnedBalances,
         stakedBalances,

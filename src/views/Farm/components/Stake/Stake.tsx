@@ -86,7 +86,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
         </Stack>
       </div>
 
-      {typeof countdown !== "undefined" && countdown[farmKey] > 0 && <Countdown date={farmingStartTime[farmKey]} renderer={renderer} />}
+      {typeof farmingStartTime !== "undefined" && farmingStartTime[farmKey] > Date.now() && <Countdown date={farmingStartTime[farmKey]} renderer={renderer} />}
     </>
   );
 };
