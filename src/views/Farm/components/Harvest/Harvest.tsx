@@ -106,4 +106,4 @@ const Harvest: React.FC<HarvestProps> = ({ farmKey }) => {
   );
 };
 
-export default Harvest;
+export default React.memo(Harvest);

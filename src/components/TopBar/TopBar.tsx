@@ -7,6 +7,7 @@ import Logo from "components/Logo";
 import MenuIcon from "components/icons/Menu";
 import Nav from "./components/Nav";
 import WalletButton from "./components/WalletButton";
+import BlockHeightButton from "components/BlockHeightButton";
 
 interface TopBarProps {
   onPresentMobileMenu: () => void;
@@ -24,7 +25,7 @@ const TopBar: React.FC<TopBarProps> = ({ onPresentMobileMenu }) => {
             <Nav />
           </StyledNavWrapper>
           <StyledAccountButtonWrapper>
-            <WalletButton />
+            <WalletButton blockHeightButton={<BlockHeightButton />} />
           </StyledAccountButtonWrapper>
           <StyledMenuButton onClick={onPresentMobileMenu}>
             <MenuIcon />

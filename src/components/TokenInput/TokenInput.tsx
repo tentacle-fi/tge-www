@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { Input, InputProps } from "react-neu";
 
 import Button from "@mui/material/Button";
+import ButtonGroup from "@mui/material/ButtonGroup";
 
 interface TokenInputProps extends InputProps {
   max: number | string;
@@ -20,9 +21,12 @@ const TokenInput: React.FC<TokenInputProps> = ({ max, symbol, onChange, onSelect
             <StyledTokenSymbol>{symbol}</StyledTokenSymbol>
             <StyledSpacer />
             <div>
-              <Button onClick={onSelectMax} size="medium" variant="contained" sx={{ borderRadius: "20px" }}>
-                Max
-              </Button>
+              <ButtonGroup>
+                <Button onClick={onSelectMax} size="medium" variant="contained" sx={{ borderRadius: "20px" }}>
+                  Max
+                </Button>
+                {children}
+              </ButtonGroup>
             </div>
           </StyledTokenAdornmentWrapper>
         }
@@ -30,7 +34,6 @@ const TokenInput: React.FC<TokenInputProps> = ({ max, symbol, onChange, onSelect
         placeholder="0"
         value={value}
       />
-      {children}
     </StyledTokenInput>
   );
 };

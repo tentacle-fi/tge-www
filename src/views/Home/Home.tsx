@@ -81,4 +81,4 @@ function RoadmapTimeline() {
   );
 }
 
-export default Home;
+export default React.memo(Home);

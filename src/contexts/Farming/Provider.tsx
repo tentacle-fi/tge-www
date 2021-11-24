@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo, useRef } from "react";
 
 import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
@@ -17,10 +17,14 @@ const Provider: React.FC = ({ children }) => {
   const ubiq = useUbiq();
   const { account } = useWallet();
 
+  console.log("farming provider");
   // TODO: create a class or function to generate an array of objects/properties for each farm
-  const farmingStartTime = AvailableFarms.map((x) => {
-    return x.yieldfarm.start_time;
-  }); // UTC for INK+UBQ Yield Farming Start time
+  const farmingStartTime = useMemo(() => {
+    console.log("farming provider");
+    return AvailableFarms.map((x) => {
+      return x.yieldfarm.start_time;
+    });
+  }, [AvailableFarms]); // UTC for INK+UBQ Yield Farming Start time
 
   const [countdown, setCountdown] = useState<Array<number>>([]); // countdown timer shown when farm is to start
   const [earnedBalances, setearnedBalances] = useState<Array<BigNumber>>();
@@ -29,15 +33,28 @@ const Provider: React.FC = ({ children }) => {
   const [lpPercents, setlpPercents] = useState<Array<BigNumber>>();
 
   const fetchearnedBalances = useCallback(async () => {
+    console.log("test fetchearnedBalances");
     if (!account || !ubiq) return;
 
+    let update = false;
     let balances = [];
     for (let i = 0; i < AvailableFarms.length; i++) {
       balances.push(await getEarned(ubiq.contracts.pools[i], account));
+
+      // console.log('test balances', balances, earnedBalances)
+
+      if (earnedBalances === undefined) {
+        update = true;
+      } else if (earnedBalances !== undefined && !new BigNumber(balances[i]).isEqualTo(earnedBalances[i])) {
+        update = true;
+      }
     }
 
-    setearnedBalances(balances);
-  }, [account, setearnedBalances, ubiq]);
+    if (update) {
+      console.log("test updatebalances");
+      setearnedBalances(balances);
+    }
+  }, [account, earnedBalances, setearnedBalances, ubiq]);
 
   const fetchstakedBalances = useCallback(async () => {
     if (!account || !ubiq) return;
@@ -74,8 +91,8 @@ const Provider: React.FC = ({ children }) => {
 
   const fetchBalances = useCallback(async () => {
     fetchearnedBalances();
-    fetchstakedBalances();
-    fetchTotalSupplyLP();
+    // fetchstakedBalances();
+    // fetchTotalSupplyLP();
   }, [fetchearnedBalances, fetchstakedBalances, fetchTotalSupplyLP]);
 
   useEffect(() => {
@@ -84,16 +101,17 @@ const Provider: React.FC = ({ children }) => {
     return () => clearInterval(refreshInterval);
   }, [fetchBalances]);
 
-  useEffect(() => {
-    let refreshInterval = setInterval(() => {
-      let times = [];
-      for (let i = 0; i < AvailableFarms.length; i++) {
-        times.push(farmingStartTime[i] - Date.now());
-      }
-      setCountdown(times);
-    }, 1000);
-    return () => clearInterval(refreshInterval);
-  }, [setCountdown, farmingStartTime]);
+  // shut off until issue#9 is fixed
+  // useEffect(() => {
+  //   let refreshInterval = setInterval(() => {
+  //     let times = [];
+  //     for (let i = 0; i < AvailableFarms.length; i++) {
+  //       times.push(farmingStartTime[i] - Date.now());
+  //     }
+  //     setCountdown(times);
+  //   }, 1000);
+  //   return () => clearInterval(refreshInterval);
+  // }, [setCountdown, farmingStartTime]);
 
   return (
     <Context.Provider

@@ -16,78 +16,26 @@ import WidgetsIcon from "@mui/icons-material/Widgets";
 import useBalances from "hooks/useBalances";
 import { switchToUBQNetwork } from "metamask.js";
 
-import CircularProgress, { CircularProgressProps } from "@mui/material/CircularProgress";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-
-interface WalletButtonProps {}
-
-function CircularProgressWithLabel(props: CircularProgressProps & { value: number }) {
-  return (
-    <Box sx={{ position: "relative", display: "inline-flex", marginLeft: "10px" }}>
-      <CircularProgress size={34} variant="determinate" {...props} />
-      <Box
-        sx={{
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 0,
-          position: "absolute",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Typography variant="caption" component="div">{`${Math.round(props.value)}s`}</Typography>
-      </Box>
-    </Box>
-  );
+interface WalletButtonProps {
+  blockHeightButton?: object;
 }
 
-const WalletButton: React.FC<WalletButtonProps> = () => {
+const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
   const [walletModalIsOpen, setWalletModalIsOpen] = useState(false);
   const [unlockModalIsOpen, setUnlockModalIsOpen] = useState(false);
   const [userAccount, setUserAccount] = useState<string | null>();
   const { account, status, connect } = useWallet();
-
-  const { CurrentBlock } = useBalances();
-  const [lastBlock, setLastBlock] = useState(CurrentBlock);
-
-  const [blockTimeCounter, setblockTimeCounter] = useState(1);
-
-  useEffect(() => {
-    const timerId = setInterval(() => setblockTimeCounter(blockTimeCounter + 1), 1000);
-
-    return () => clearInterval(timerId);
-  }, [blockTimeCounter]);
-
-  useEffect(() => {
-    if (lastBlock !== CurrentBlock) {
-      setblockTimeCounter(1);
-    }
-  }, [lastBlock, CurrentBlock, setLastBlock, setblockTimeCounter]);
+  const [, setNetworkState] = useState(false); // re-render the page when the wallet network changes
 
   const ConnectedElements = useCallback(() => {
     // <Chip label={CurrentBlock} color="primary" icon={<WidgetsIcon />} />
 
     if (status === "connected") {
-      return (
-        <Tooltip title="Block height">
-          <Button size="medium" variant="contained">
-            <WidgetsIcon sx={{ fontSize: "14px" }} />
-            {CurrentBlock}
-
-            <CircularProgressWithLabel
-              value={blockTimeCounter}
-              sx={{ color: blockTimeCounter > 88 ? (blockTimeCounter > 180 ? "#ff3300" : "#f9a825") : "#b2ff59" }}
-            />
-          </Button>
-        </Tooltip>
-      );
+      return <>{blockHeightButton}</>;
     }
 
     return <></>;
-  }, [status, CurrentBlock, blockTimeCounter]);
+  }, [status, blockHeightButton]);
 
   const ConnectionStatusIndicator = useCallback(() => {
     if (status === "connected") {
@@ -103,7 +51,12 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
       return (
         <Tooltip title="Network Error, click to switch to Ubiq Network">
           <Button size="small" color="error">
-            <SignalWifiStatusbarConnectedNoInternet4Icon onClick={switchToUBQNetwork} />
+            <SignalWifiStatusbarConnectedNoInternet4Icon
+              onClick={async () => {
+                await switchToUBQNetwork();
+                setNetworkState(true);
+              }}
+            />
           </Button>
         </Tooltip>
       );
@@ -180,6 +133,8 @@ const WalletButton: React.FC<WalletButtonProps> = () => {
       }
     }
   }, [account, handleConnectMetamask, handleConnectWalletConnect]);
+
+  console.log("WalletButton");
 
   return (
     <>

@@ -89,4 +89,4 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({ farmKey }) => {
   );
 };
 
-export default UnstakeModal;
+export default React.memo(UnstakeModal);

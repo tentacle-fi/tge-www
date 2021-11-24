@@ -151,4 +151,4 @@ const StyledUl = styled.ul`
   }
 `;
 
-export default Help;
+export default React.memo(Help);

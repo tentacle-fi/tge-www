@@ -68,25 +68,25 @@ const StakeModal: React.FC<StakeModalProps> = ({ farmKey }) => {
         max={fullBalance}
         symbol={`Stake ${AvailableFarms[farmKey].name} LP`}
       >
-      <LoadingButton
-        sx={{ marginLeft: "10px" }}
-        onClick={() => {
-          if (val && Number(val) && Number(fullBalance) && fullBalance) {
-            handleStake();
-          }
-        }}
-        endIcon={<AddCircleOutlineIcon />}
-        loading={isStaking}
-        loadingPosition="end"
-        variant="contained"
-        color="info"
-        size="medium"
-      >
-        Stake
-      </LoadingButton>
+        <LoadingButton
+          sx={{ marginLeft: "10px" }}
+          onClick={() => {
+            if (val && Number(val) && Number(fullBalance) && fullBalance) {
+              handleStake();
+            }
+          }}
+          endIcon={<AddCircleOutlineIcon />}
+          loading={isStaking}
+          loadingPosition="end"
+          variant="contained"
+          color="info"
+          size="medium"
+        >
+          Stake
+        </LoadingButton>
       </TokenInput>
     </>
   );
 };
 
-export default StakeModal;
+export default React.memo(StakeModal);

@@ -4,7 +4,7 @@ export async function switchToUBQNetwork() {
   let ethereum = window.ethereum;
 
   try {
-    await ethereum.request({
+    return await ethereum.request({
       method: "wallet_switchEthereumChain",
       params: [{ chainId: "0x8" }],
     });
@@ -13,7 +13,7 @@ export async function switchToUBQNetwork() {
     switch (switchError.code) {
       case 4902:
         try {
-          await ethereum.request({
+          return await ethereum.request({
             method: "wallet_addEthereumChain",
             params: [
               {
@@ -42,6 +42,8 @@ export async function switchToUBQNetwork() {
       default:
         console.error("wallet_switchEthereumChain error code:", switchError.code, switchError.message);
     }
+
+    return Promise.reject();
   }
 }
 

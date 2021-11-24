@@ -21,13 +21,14 @@ const useAllowance = (tokenAddress?: string, spenderAddress?: string) => {
     [setAllowance, spenderAddress, tokenAddress]
   );
 
-  useEffect(() => {
-    if (account && ethereum && spenderAddress && tokenAddress) {
-      fetchAllowance(account, ethereum);
-    }
-    let refreshInterval = setInterval(fetchAllowance, 10000);
-    return () => clearInterval(refreshInterval);
-  }, [account, ethereum, spenderAddress, tokenAddress, fetchAllowance]);
+  // shut off until issue#9 is fixed
+  // useEffect(() => {
+  //   if (account && ethereum && spenderAddress && tokenAddress) {
+  //     fetchAllowance(account, ethereum);
+  //   }
+  //   let refreshInterval = setInterval(fetchAllowance, 10000);
+  //   return () => clearInterval(refreshInterval);
+  // }, [account, ethereum, spenderAddress, tokenAddress, fetchAllowance]);
 
   return allowance;
 };

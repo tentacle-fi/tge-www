@@ -60,18 +60,19 @@ const Provider: React.FC = ({ children }) => {
     }
   }, [account, ethereum, fetchBalances]);
 
-  useEffect(() => {
-    if (account && ethereum) {
-      fetchBalances(account, ethereum);
-      fetchCurrentBlock(account, ethereum);
-
-      let refreshInterval = setInterval(() => {
-        fetchCurrentBlock(account, ethereum);
-        fetchBalances(account, ethereum);
-      }, 10000);
-      return () => clearInterval(refreshInterval);
-    }
-  }, [account, ethereum, fetchBalances, fetchCurrentBlock]);
+  // shut off until issue#9 is fixed
+  // useEffect(() => {
+  //   if (account && ethereum) {
+  //     fetchBalances(account, ethereum);
+  //     fetchCurrentBlock(account, ethereum);
+  //
+  //     let refreshInterval = setInterval(() => {
+  //       fetchCurrentBlock(account, ethereum);
+  //       fetchBalances(account, ethereum);
+  //     }, 10000);
+  //     return () => clearInterval(refreshInterval);
+  //   }
+  // }, [account, ethereum, fetchBalances, fetchCurrentBlock]);
 
   return (
     <Context.Provider

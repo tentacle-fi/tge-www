@@ -32,7 +32,7 @@ import { redeem } from "ubiq-sdk/utils";
 import useApproval from "hooks/useApproval";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
-import Alert from '@mui/material/Alert';
+import Alert from "@mui/material/Alert";
 
 const theme = createTheme({
   palette: {
@@ -107,36 +107,35 @@ const YieldFarm: React.FC<YieldFarmProps> = ({ farmKey }) => {
     setConfirmTxModalIsOpen(false)
   );
 
-const ApproveOrStakeControls = function () {
-  if (!isApproved) {
-    return (
+  const ApproveOrStakeControls = function () {
+    if (!isApproved) {
+      return (
         <>
-      <LoadingButton
-        sx={{ marginLeft: "10px" }}
-        onClick={onApprove}
-        endIcon={<AddCircleOutlineIcon />}
-        loading={isApproving}
-        loadingPosition="end"
-        variant="contained"
-        color="warning"
-        size="medium"
-      >
-        Approve Staking
-      </LoadingButton>
-      <Alert severity="warning">Approval must be given before staking can take place.</Alert>
+          <LoadingButton
+            sx={{ marginLeft: "10px" }}
+            onClick={onApprove}
+            endIcon={<AddCircleOutlineIcon />}
+            loading={isApproving}
+            loadingPosition="end"
+            variant="contained"
+            color="warning"
+            size="medium"
+          >
+            Approve Staking
+          </LoadingButton>
+          <Alert severity="warning">Approval must be given before staking can take place.</Alert>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <StakeModal farmKey={farmKey} />
+        <UnstakeModal farmKey={farmKey} />
+        <HarvestAll farmKey={farmKey} />
       </>
     );
-  }
-
-  return (
-      <>
-      <StakeModal farmKey={farmKey} />
-      <UnstakeModal farmKey={farmKey} />
-      <HarvestAll farmKey={farmKey} />
-      </>
-  )
-
-}
+  };
 
   return (
     <Box
@@ -201,9 +200,7 @@ const ApproveOrStakeControls = function () {
         <Grid item xs={9} sx={{ display: manageFarm === true ? "" : "none" }}>
           <StyledItem>
             <div style={{ display: "flex", flexDirection: "column", gap: "20px 5px" }}>
-
-            <ApproveOrStakeControls />
-
+              <ApproveOrStakeControls />
             </div>
           </StyledItem>
         </Grid>
@@ -259,4 +256,4 @@ const HarvestAll: React.FC<HarvestAllProps> = ({ farmKey }) => {
   );
 };
 
-export default Farm;
+export default React.memo(Farm);

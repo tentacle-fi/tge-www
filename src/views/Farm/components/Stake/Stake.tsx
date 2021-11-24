@@ -101,4 +101,4 @@ const StyledStackItem: React.FC<StackItemProps> = ({ val }) => {
   return <Value valueSize={val || "16px"} valueBold={val || "400"} value={val} />;
 };
 
-export default Stake;
+export default React.memo(Stake);

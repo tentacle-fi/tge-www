@@ -30,4 +30,4 @@ const Addresses: React.FC = () => {
   );
 };
 
-export default Addresses;
+export default React.memo(Addresses);
