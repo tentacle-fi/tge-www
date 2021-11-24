@@ -3,17 +3,13 @@ import { useWallet } from "use-wallet";
 
 import UnlockWalletModal from "components/UnlockWalletModal";
 import WalletModal from "components/WalletModal";
-
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Tooltip from "@mui/material/Tooltip";
 import LockOpen from "@mui/icons-material/LockOpen";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
-
 import WifiIcon from "@mui/icons-material/Wifi";
 import SignalWifiStatusbarConnectedNoInternet4Icon from "@mui/icons-material/SignalWifiStatusbarConnectedNoInternet4";
-import WidgetsIcon from "@mui/icons-material/Widgets";
-import useBalances from "hooks/useBalances";
 import { switchToUBQNetwork } from "metamask.js";
 
 interface WalletButtonProps {
@@ -28,8 +24,6 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
   const [, setNetworkState] = useState(false); // re-render the page when the wallet network changes
 
   const ConnectedElements = useCallback(() => {
-    // <Chip label={CurrentBlock} color="primary" icon={<WidgetsIcon />} />
-
     if (status === "connected") {
       return <>{blockHeightButton}</>;
     }
@@ -133,8 +127,6 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
       }
     }
   }, [account, handleConnectMetamask, handleConnectWalletConnect]);
-
-  console.log("WalletButton");
 
   return (
     <>

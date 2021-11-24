@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 
 import { Spacer } from "react-neu";
 
@@ -98,7 +98,7 @@ const Farm: React.FC = () => {
   );
 };
 
-const YieldFarm: React.FC<YieldFarmProps> = ({ farmKey }) => {
+const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
   // TODO: move this to an external file
   const farm = AvailableFarms[farmKey];
   const [manageFarm, setManageFarm] = useState(false);
@@ -107,7 +107,7 @@ const YieldFarm: React.FC<YieldFarmProps> = ({ farmKey }) => {
     setConfirmTxModalIsOpen(false)
   );
 
-  const ApproveOrStakeControls = function () {
+  const ApproveOrStakeControls = useMemo(() => {
     if (!isApproved) {
       return (
         <>
@@ -135,7 +135,7 @@ const YieldFarm: React.FC<YieldFarmProps> = ({ farmKey }) => {
         <HarvestAll farmKey={farmKey} />
       </>
     );
-  };
+  }, [farmKey, isApproving, isApproved, onApprove]);
 
   return (
     <Box
@@ -199,21 +199,19 @@ const YieldFarm: React.FC<YieldFarmProps> = ({ farmKey }) => {
         </Grid>
         <Grid item xs={9} sx={{ display: manageFarm === true ? "" : "none" }}>
           <StyledItem>
-            <div style={{ display: "flex", flexDirection: "column", gap: "20px 5px" }}>
-              <ApproveOrStakeControls />
-            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px 5px" }}>{ApproveOrStakeControls}</div>
           </StyledItem>
         </Grid>
       </Grid>
     </Box>
   );
-};
+});
 
 interface HarvestAllProps {
   farmKey: number;
 }
 
-const HarvestAll: React.FC<HarvestAllProps> = ({ farmKey }) => {
+const HarvestAll: React.FC<HarvestAllProps> = React.memo(({ farmKey }) => {
   const [isRedeeming, setisRedeeming] = useState(false);
   const ubiq = useUbiq();
   const { setConfirmTxModalIsOpen } = useFarming();
@@ -254,6 +252,6 @@ const HarvestAll: React.FC<HarvestAllProps> = ({ farmKey }) => {
       Harvest & Unstake (All LP and Unharvested rewards)
     </LoadingButton>
   );
-};
+});
 
 export default React.memo(Farm);
