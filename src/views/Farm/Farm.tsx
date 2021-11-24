@@ -1,17 +1,12 @@
 import React, { useState, useCallback, useMemo } from "react";
-
 import { Spacer } from "react-neu";
-
 import Page from "components/Page";
-
 import useFarming from "hooks/useFarming";
 import HarvestCard from "./components/Harvest";
 import StakeCard from "./components/Stake";
 import { useWallet } from "use-wallet";
 import { AvailableFarms } from "farms/AvailableFarms";
-
 import { Link as RouterLink } from "react-router-dom";
-
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
@@ -19,12 +14,10 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
-
 import LoadingButton from "@mui/lab/LoadingButton";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import StakeModal from "./components/Stake/components/StakeModal";
 import UnstakeModal from "./components/Stake/components/UnstakeModal";
-
 import BlockIcon from "@mui/icons-material/Block";
 import SettingsIcon from "@mui/icons-material/Settings";
 import useUbiq from "hooks/useUbiq";
