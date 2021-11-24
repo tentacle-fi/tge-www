@@ -38,6 +38,9 @@
   "dependencies": {
     "@emotion/react": "^11.6.0",
     "@emotion/styled": "^11.6.0",
+    "@ethersproject/contracts": "^5.5.0",
+    "@ethersproject/providers": "^5.5.0",
+    "@ethersproject/solidity": "^5.5.0",
     "@mui/icons-material": "^5.1.1",
     "@mui/lab": "^5.0.0-alpha.55",
     "@mui/material": "^5.1.1",
@@ -66,6 +69,7 @@
     "request": "^2.88.2",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.0.1",
+    "shinobi-sdk": "^3.0.4",
     "styled-components": "^5.3.3",
     "use-wallet": "https://github.com/tentacle-fi/use-wallet.git",
     "web3": "^1.6.1"
