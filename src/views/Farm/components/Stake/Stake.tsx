@@ -64,7 +64,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
     } else {
       setStakeBalance(0);
     }
-  }, [stakedBalances, farmKey]);
+  }, [stakedBalances, farmKey, UBQoracle, lpPercent]);
 
   const formattedLpPercent = useCallback(async () => {
     if (lpPercents !== undefined && bnToDec(lpPercents[farmKey]) > 0) {
