@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
 import { provider } from "web3-core";
@@ -20,8 +20,16 @@ const BalancesProvider: React.FC = ({ children }) => {
 
   const { oracle } = useUBQPriceOracle();
 
+  const lastUpdate = useRef(0);
+
   const fetchBalances = useCallback(
     async (userAddress: string, provider: provider) => {
+      // limit how often this function can be called
+      if (Date.now() - lastUpdate.current < 9 * 1000) {
+        return;
+      }
+      lastUpdate.current = Date.now();
+
       let newTokenBalances = [];
       let newLpBalances = [];
 
@@ -66,12 +74,12 @@ const BalancesProvider: React.FC = ({ children }) => {
     },
     [setCurrentBlock]
   );
-
-  useEffect(() => {
-    if (account && ethereum) {
-      fetchBalances(account, ethereum);
-    }
-  }, [account, ethereum, fetchBalances]);
+  //
+  // useEffect(() => {
+  //   if (account && ethereum) {
+  //     fetchBalances(account, ethereum);
+  //   }
+  // }, [account, ethereum, fetchBalances]);
 
   useEffect(() => {
     if (account && ethereum) {

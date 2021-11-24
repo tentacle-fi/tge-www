@@ -146,7 +146,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
         ) : (
           <Tooltip title="view Account details">
             <Button onClick={handleWalletClick} size="medium" variant="contained" startIcon={<AccountBalanceWalletIcon />}>
-              {"0x" + userAccount.substring(2, 6) + "..." + userAccount.substring(38)}
+              {userAccount.substring(0, 6) + "..." + userAccount.substring(38)}
             </Button>
           </Tooltip>
         )}
