@@ -1,19 +1,13 @@
 import React, { useState, useEffect } from "react";
 import useBalances from "hooks/useBalances";
 import CircularProgress, { CircularProgressProps } from "@mui/material/CircularProgress";
-
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 
-interface CustomCircularProgressProps extends CircularProgressProps {
-  value: number;
-}
-
-const CircularProgressWithLabel: React.FC<CustomCircularProgressProps> = React.memo(({ value, ...props }) => {
-  // function CircularProgressWithLabel(props: CircularProgressProps & { value: number }) {
+function CircularProgressWithLabel(props: CircularProgressProps & { value: number }) {
   return (
     <Box sx={{ position: "relative", display: "inline-flex", marginLeft: "10px" }}>
       <CircularProgress size={34} variant="determinate" {...props} />
@@ -29,11 +23,11 @@ const CircularProgressWithLabel: React.FC<CustomCircularProgressProps> = React.m
           justifyContent: "center",
         }}
       >
-        <Typography variant="caption" component="div">{`${Math.round(value)}s`}</Typography>
+        <Typography variant="caption" component="div">{`${Math.round(props.value)}s`}</Typography>
       </Box>
     </Box>
   );
-});
+}
 
 const BlockHeightButton: React.FC = () => {
   const { CurrentBlock } = useBalances();
