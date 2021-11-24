@@ -29,6 +29,10 @@ import BlockIcon from "@mui/icons-material/Block";
 import SettingsIcon from "@mui/icons-material/Settings";
 import useUbiq from "hooks/useUbiq";
 import { redeem } from "ubiq-sdk/utils";
+import useApproval from "hooks/useApproval";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+
+import Alert from '@mui/material/Alert';
 
 const theme = createTheme({
   palette: {
@@ -96,10 +100,43 @@ const Farm: React.FC = () => {
 
 const YieldFarm: React.FC<YieldFarmProps> = ({ farmKey }) => {
   // TODO: move this to an external file
-
   const farm = AvailableFarms[farmKey];
-
   const [manageFarm, setManageFarm] = useState(false);
+  const { setConfirmTxModalIsOpen } = useFarming();
+  const { isApproved, isApproving, onApprove } = useApproval(AvailableFarms[farmKey].lp.address, AvailableFarms[farmKey].yieldfarm.address, () =>
+    setConfirmTxModalIsOpen(false)
+  );
+
+const ApproveOrStakeControls = function () {
+  if (!isApproved) {
+    return (
+        <>
+      <LoadingButton
+        sx={{ marginLeft: "10px" }}
+        onClick={onApprove}
+        endIcon={<AddCircleOutlineIcon />}
+        loading={isApproving}
+        loadingPosition="end"
+        variant="contained"
+        color="warning"
+        size="medium"
+      >
+        Approve Staking
+      </LoadingButton>
+      <Alert severity="warning">Approval must be given before staking can take place.</Alert>
+      </>
+    );
+  }
+
+  return (
+      <>
+      <StakeModal farmKey={farmKey} />
+      <UnstakeModal farmKey={farmKey} />
+      <HarvestAll farmKey={farmKey} />
+      </>
+  )
+
+}
 
   return (
     <Box
@@ -164,9 +201,9 @@ const YieldFarm: React.FC<YieldFarmProps> = ({ farmKey }) => {
         <Grid item xs={9} sx={{ display: manageFarm === true ? "" : "none" }}>
           <StyledItem>
             <div style={{ display: "flex", flexDirection: "column", gap: "20px 5px" }}>
-              <StakeModal farmKey={farmKey} />
-              <UnstakeModal farmKey={farmKey} />
-              <HarvestAll farmKey={farmKey} />
+
+            <ApproveOrStakeControls />
+
             </div>
           </StyledItem>
         </Grid>

@@ -12,7 +12,6 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import useUbiq from "hooks/useUbiq";
 import { useWallet } from "use-wallet";
 import { stake } from "ubiq-sdk/utils";
-import useApproval from "hooks/useApproval";
 
 interface StakeModalProps {
   farmKey: number;
@@ -25,9 +24,6 @@ const StakeModal: React.FC<StakeModalProps> = ({ farmKey }) => {
   const [isStaking, setisStaking] = useState(false);
   const ubiq = useUbiq();
   const { account } = useWallet();
-  const { isApproved, isApproving, onApprove } = useApproval(AvailableFarms[farmKey].lp.address, AvailableFarms[farmKey].yieldfarm.address, () =>
-    setConfirmTxModalIsOpen(false)
-  );
 
   const fullBalance = useMemo(() => {
     return getFullDisplayBalance(LPBalances !== undefined ? LPBalances[farmKey] : new BigNumber(0), 0);
@@ -63,25 +59,15 @@ const StakeModal: React.FC<StakeModalProps> = ({ farmKey }) => {
     setisStaking(false);
   }, [account, setConfirmTxModalIsOpen, setisStaking, ubiq, farmKey, val]);
 
-  const StakeOrApproveButton = function () {
-    if (!isApproved) {
-      return (
-        <LoadingButton
-          sx={{ marginLeft: "10px" }}
-          onClick={onApprove}
-          endIcon={<AddCircleOutlineIcon />}
-          loading={isApproving}
-          loadingPosition="end"
-          variant="contained"
-          color="warning"
-          size="medium"
-        >
-          Approve
-        </LoadingButton>
-      );
-    }
-
-    return (
+  return (
+    <>
+      <TokenInput
+        value={val}
+        onSelectMax={handleSelectMax}
+        onChange={handleChange}
+        max={fullBalance}
+        symbol={`Stake ${AvailableFarms[farmKey].name} LP`}
+      >
       <LoadingButton
         sx={{ marginLeft: "10px" }}
         onClick={() => {
@@ -98,19 +84,6 @@ const StakeModal: React.FC<StakeModalProps> = ({ farmKey }) => {
       >
         Stake
       </LoadingButton>
-    );
-  };
-
-  return (
-    <>
-      <TokenInput
-        value={val}
-        onSelectMax={handleSelectMax}
-        onChange={handleChange}
-        max={fullBalance}
-        symbol={`Stake ${AvailableFarms[farmKey].name} LP`}
-      >
-        <StakeOrApproveButton />
       </TokenInput>
     </>
   );
