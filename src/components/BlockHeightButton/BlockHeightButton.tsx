@@ -1,7 +1,6 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import useBalances from "hooks/useBalances";
 import CircularProgress, { CircularProgressProps } from "@mui/material/CircularProgress";
-
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";

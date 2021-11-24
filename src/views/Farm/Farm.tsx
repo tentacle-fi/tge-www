@@ -1,17 +1,12 @@
-import React, { useState, useCallback } from "react";
-
+import React, { useState, useCallback, useMemo } from "react";
 import { Spacer } from "react-neu";
-
 import Page from "components/Page";
-
 import useFarming from "hooks/useFarming";
 import HarvestCard from "./components/Harvest";
 import StakeCard from "./components/Stake";
 import { useWallet } from "use-wallet";
 import { AvailableFarms } from "farms/AvailableFarms";
-
 import { Link as RouterLink } from "react-router-dom";
-
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
@@ -19,12 +14,10 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
-
 import LoadingButton from "@mui/lab/LoadingButton";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import StakeModal from "./components/Stake/components/StakeModal";
 import UnstakeModal from "./components/Stake/components/UnstakeModal";
-
 import BlockIcon from "@mui/icons-material/Block";
 import SettingsIcon from "@mui/icons-material/Settings";
 import useUbiq from "hooks/useUbiq";
@@ -98,7 +91,7 @@ const Farm: React.FC = () => {
   );
 };
 
-const YieldFarm: React.FC<YieldFarmProps> = ({ farmKey }) => {
+const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
   // TODO: move this to an external file
   const farm = AvailableFarms[farmKey];
   const [manageFarm, setManageFarm] = useState(false);
@@ -107,7 +100,7 @@ const YieldFarm: React.FC<YieldFarmProps> = ({ farmKey }) => {
     setConfirmTxModalIsOpen(false)
   );
 
-  const ApproveOrStakeControls = function () {
+  const ApproveOrStakeControls = useMemo(() => {
     if (!isApproved) {
       return (
         <>
@@ -135,7 +128,7 @@ const YieldFarm: React.FC<YieldFarmProps> = ({ farmKey }) => {
         <HarvestAll farmKey={farmKey} />
       </>
     );
-  };
+  }, [farmKey, isApproving, isApproved, onApprove]);
 
   return (
     <Box
@@ -199,21 +192,19 @@ const YieldFarm: React.FC<YieldFarmProps> = ({ farmKey }) => {
         </Grid>
         <Grid item xs={9} sx={{ display: manageFarm === true ? "" : "none" }}>
           <StyledItem>
-            <div style={{ display: "flex", flexDirection: "column", gap: "20px 5px" }}>
-              <ApproveOrStakeControls />
-            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px 5px" }}>{ApproveOrStakeControls}</div>
           </StyledItem>
         </Grid>
       </Grid>
     </Box>
   );
-};
+});
 
 interface HarvestAllProps {
   farmKey: number;
 }
 
-const HarvestAll: React.FC<HarvestAllProps> = ({ farmKey }) => {
+const HarvestAll: React.FC<HarvestAllProps> = React.memo(({ farmKey }) => {
   const [isRedeeming, setisRedeeming] = useState(false);
   const ubiq = useUbiq();
   const { setConfirmTxModalIsOpen } = useFarming();
@@ -254,6 +245,6 @@ const HarvestAll: React.FC<HarvestAllProps> = ({ farmKey }) => {
       Harvest & Unstake (All LP and Unharvested rewards)
     </LoadingButton>
   );
-};
+});
 
 export default React.memo(Farm);

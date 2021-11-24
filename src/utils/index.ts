@@ -183,3 +183,41 @@ export const getCurrentAPY = async (UBQoracle: IOraclePrice | undefined, balance
         return "0";
     }
 }
+export const shouldUpdateAry = function shouldUpdateAry(
+  old_val: Array<BigNumber> | undefined,
+  new_val: Array<BigNumber> | undefined,
+  elemType: string
+): boolean {
+  if (old_val === undefined || new_val === undefined) {
+    return true;
+  }
+  if (old_val instanceof Array) {
+    for (let i = 0; i < old_val.length; i++) {
+      if (old_val !== undefined) {
+        switch (elemType) {
+          case "BigNumber":
+            if (old_val[i] instanceof BigNumber && new_val[i] instanceof BigNumber) {
+              if (!new BigNumber(old_val[i]).isEqualTo(new_val[i])) {
+                return true;
+              }
+            }
+            break;
+        }
+      }
+    }
+  }
+  return false;
+};
+
+export const shouldUpdateVal = function shouldUpdateVal(old_val: BigNumber | undefined, new_val: BigNumber | undefined, elemType: string): boolean {
+  if (old_val === undefined || new_val === undefined) {
+    return true;
+  }
+
+  if (old_val instanceof BigNumber && new_val instanceof BigNumber) {
+    if (!new BigNumber(old_val).isEqualTo(new BigNumber(new_val))) {
+      return true;
+    }
+  }
+  return false;
+};

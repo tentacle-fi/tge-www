@@ -1,6 +1,6 @@
 {
   "name": "ubiq-tge-www",
-  "version": "0.1.1-staging",
+  "version": "0.1.2-staging",
   "private": true,
   "scripts": {
     "start": "BROWSER=none react-scripts start",

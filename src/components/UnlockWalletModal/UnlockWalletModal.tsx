@@ -15,7 +15,12 @@ const UnlockWalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
   const { account, connector, connect } = useWallet();
 
   const handleConnectMetamask = useCallback(async () => {
-    await switchToUBQNetwork();
+    try {
+      await switchToUBQNetwork();
+    } catch (e) {
+      console.error("caught error while connecting wallet:", e);
+    }
+
     connect("injected");
   }, [connect]);
 

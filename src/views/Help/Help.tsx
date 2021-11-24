@@ -1,14 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
-
 import Page from "components/Page";
 import PageHeader from "components/PageHeader";
-
 import WalletButton from "components/TopBar/components/WalletButton";
-
+import { Link as RouterLink } from "react-router-dom";
+import Link from "@mui/material/Link";
 import { INK } from "farms/AvailableFarms";
 import { addInkToWallet } from "metamask.js";
 
@@ -79,8 +77,10 @@ const Help: React.FC = () => {
 
           <ListItem legend="Step 5: Stake LP tokens">
             Stake your LP tokens on the{" "}
-            <Button sx={{ marginLeft: "10px" }} onClick={openURL("/farm")} variant="outlined">
-              Tentacle.Finance Farm
+            <Button sx={{ marginLeft: "10px" }} variant="outlined">
+              <Link component={RouterLink} to="/farm">
+                Tentacle.Finance Farm
+              </Link>
             </Button>
           </ListItem>
 

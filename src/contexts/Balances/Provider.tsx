@@ -1,18 +1,16 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
 import { provider } from "web3-core";
 import useFarming from "hooks/useFarming";
 
-import { getCurrentBlock, getCoinBalanceAsBigNum, getBalanceAsBigNum, getCurrentAPY } from "utils";
+import { getCurrentBlock, getCoinBalanceAsBigNum, getBalanceAsBigNum, getCurrentAPY, shouldUpdateVal, shouldUpdateAry } from "utils";
 
 import Context from "./Context";
-
 import { AvailableFarms, INK, GRANS, UBQ } from "farms/AvailableFarms";
-
 import useUBQPriceOracle from "hooks/useUBQPriceOracle";
 
-const Provider: React.FC = ({ children }) => {
+const BalancesProvider: React.FC = ({ children }) => {
   const [tokenBalances, settokenBalances] = useState<Array<BigNumber>>();
   const [LPBalances, setLPBalances] = useState<Array<BigNumber>>();
 
@@ -27,25 +25,50 @@ const Provider: React.FC = ({ children }) => {
 
   const { oracle } = useUBQPriceOracle();
 
+  const lastUpdate = useRef(0);
+
   const fetchBalances = useCallback(
     async (userAddress: string, provider: provider) => {
-      let tokenBalances = [];
-      let lpBalances = [];
+      // limit how often this function can be called
+      if (Date.now() - lastUpdate.current < 9 * 1000) {
+        return;
+      }
+      lastUpdate.current = Date.now();
+
+      let newTokenBalances = [];
+      let newLpBalances = [];
 
       for (let i = 0; i < AvailableFarms.length; i++) {
-        tokenBalances.push(await getBalanceAsBigNum(provider, AvailableFarms[i].tokenA.address, userAddress));
-        lpBalances.push(await getBalanceAsBigNum(provider, AvailableFarms[i].lp.address, userAddress));
+        newTokenBalances.push(await getBalanceAsBigNum(provider, AvailableFarms[i].tokenA.address, userAddress));
+        newLpBalances.push(await getBalanceAsBigNum(provider, AvailableFarms[i].lp.address, userAddress));
       }
 
       // set the shortcut balances
-      setUBQBalance(new BigNumber(await getCoinBalanceAsBigNum(provider, userAddress)).plus(await getBalanceAsBigNum(provider, UBQ, userAddress)));
-      setINKBalance(await getBalanceAsBigNum(provider, INK, userAddress));
-      setGRANSBalance(await getBalanceAsBigNum(provider, GRANS, userAddress));
+      let ubqBal = new BigNumber(await getCoinBalanceAsBigNum(provider, userAddress)).plus(await getBalanceAsBigNum(provider, UBQ, userAddress));
+      let inkBal = await getBalanceAsBigNum(provider, INK, userAddress);
+      let gransBal = await getBalanceAsBigNum(provider, GRANS, userAddress);
 
-      settokenBalances(tokenBalances);
-      setLPBalances(lpBalances);
+      if (shouldUpdateVal(ubqBal, UBQBalance, "BigNumber")) {
+        setUBQBalance(ubqBal);
+      }
+
+      if (shouldUpdateVal(inkBal, INKBalance, "BigNumber")) {
+        setINKBalance(inkBal);
+      }
+
+      if (shouldUpdateVal(gransBal, GRANSBalance, "BigNumber")) {
+        setGRANSBalance(gransBal);
+      }
+
+      if (shouldUpdateAry(newTokenBalances, tokenBalances, "BigNumber")) {
+        settokenBalances(newTokenBalances);
+      }
+
+      if (shouldUpdateAry(newLpBalances, LPBalances, "BigNumber")) {
+        setLPBalances(newLpBalances);
+      }
     },
-    [settokenBalances, setLPBalances, setUBQBalance, setINKBalance, setGRANSBalance]
+    [tokenBalances, settokenBalances, LPBalances, setLPBalances, setUBQBalance, setINKBalance, setGRANSBalance, UBQBalance, INKBalance, GRANSBalance]
   );
 
   const fetchCurrentBlock = useCallback(
@@ -56,6 +79,12 @@ const Provider: React.FC = ({ children }) => {
     },
     [setCurrentBlock]
   );
+  //
+  // useEffect(() => {
+  //   if (account && ethereum) {
+  //     fetchBalances(account, ethereum);
+  //   }
+  // }, [account, ethereum, fetchBalances]);
 
   const fetchCurrentAPY = useCallback(
     async (userAddress: string) => {
@@ -70,22 +99,15 @@ const Provider: React.FC = ({ children }) => {
   useEffect(() => {
     if (account && ethereum) {
       fetchBalances(account, ethereum);
-    }
-  }, [account, ethereum, fetchBalances]);
+      fetchCurrentBlock(account, ethereum);
 
-  // shut off until issue#9 is fixed
-  // useEffect(() => {
-  //   if (account && ethereum) {
-  //     fetchBalances(account, ethereum);
-  //     fetchCurrentBlock(account, ethereum);
-  //
-  //     let refreshInterval = setInterval(() => {
-  //       fetchCurrentBlock(account, ethereum);
-  //       fetchBalances(account, ethereum);
-  //     }, 10000);
-  //     return () => clearInterval(refreshInterval);
-  //   }
-  // }, [account, ethereum, fetchBalances, fetchCurrentBlock]);
+      let refreshInterval = setInterval(() => {
+        fetchCurrentBlock(account, ethereum);
+        fetchBalances(account, ethereum);
+      }, 10000);
+      return () => clearInterval(refreshInterval);
+    }
+  }, [account, ethereum, fetchBalances, fetchCurrentBlock]);
 
   return (
     <Context.Provider
@@ -105,4 +127,4 @@ const Provider: React.FC = ({ children }) => {
   );
 };
 
-export default Provider;
+export default BalancesProvider;

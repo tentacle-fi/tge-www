@@ -3,8 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
 import { provider } from "web3-core";
-
-import { getAllowance } from "utils";
+import { getAllowance, shouldUpdateVal } from "utils";
 
 const useAllowance = (tokenAddress?: string, spenderAddress?: string) => {
   const [allowance, setAllowance] = useState<BigNumber>();
@@ -15,20 +14,22 @@ const useAllowance = (tokenAddress?: string, spenderAddress?: string) => {
       if (!spenderAddress || !tokenAddress) {
         return;
       }
-      const allowance = await getAllowance(userAddress, spenderAddress, tokenAddress, provider);
-      setAllowance(new BigNumber(allowance));
+      const newAllowance = new BigNumber(await getAllowance(userAddress, spenderAddress, tokenAddress, provider));
+
+      if (shouldUpdateVal(allowance, newAllowance, "BigNumber")) {
+        setAllowance(newAllowance);
+      }
     },
-    [setAllowance, spenderAddress, tokenAddress]
+    [allowance, setAllowance, spenderAddress, tokenAddress]
   );
 
-  // shut off until issue#9 is fixed
-  // useEffect(() => {
-  //   if (account && ethereum && spenderAddress && tokenAddress) {
-  //     fetchAllowance(account, ethereum);
-  //   }
-  //   let refreshInterval = setInterval(fetchAllowance, 10000);
-  //   return () => clearInterval(refreshInterval);
-  // }, [account, ethereum, spenderAddress, tokenAddress, fetchAllowance]);
+  useEffect(() => {
+    if (account && ethereum && spenderAddress && tokenAddress) {
+      fetchAllowance(account, ethereum);
+    }
+    let refreshInterval = setInterval(fetchAllowance, 10000);
+    return () => clearInterval(refreshInterval);
+  }, [account, ethereum, spenderAddress, tokenAddress, fetchAllowance]);
 
   return allowance;
 };

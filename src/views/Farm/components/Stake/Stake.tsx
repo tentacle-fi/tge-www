@@ -26,7 +26,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
     return getFullDisplayBalance(LPBalances !== undefined ? LPBalances[farmKey] : new BigNumber(0), 0);
   }, [LPBalances, farmKey]);
 
-  const { countdown, farmingStartTime, stakedBalances, lpPercents } = useFarming();
+  const { farmingStartTime, stakedBalances, lpPercents } = useFarming();
 
   const formattedStakedBalance = useCallback(async () => {
     if (stakedBalances !== undefined && stakedBalances[farmKey] && bnToDec(stakedBalances[farmKey]) > 0) {
@@ -116,7 +116,9 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
         </Stack>
       </div>
 
-      {typeof countdown !== "undefined" && countdown[farmKey] > 0 && <Countdown date={farmingStartTime[farmKey]} renderer={renderer} />}
+      {typeof farmingStartTime !== "undefined" && farmingStartTime[farmKey] > Date.now() && (
+        <Countdown date={farmingStartTime[farmKey]} renderer={renderer} />
+      )}
     </>
   );
 };

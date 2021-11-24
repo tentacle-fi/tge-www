@@ -19,11 +19,30 @@ interface HarvestProps {
 }
 
 const Harvest: React.FC<HarvestProps> = ({ farmKey }) => {
+  // const {setConfirmTxModalIsOpen } = useFarming();
+
+  // console.log('test earnedBalances', earnedBalance, earnedBalances)
+
+  return (
+    <div style={{ padding: "10px 5px 10px 5px" }}>
+      <img
+        src={AvailableFarms[farmKey].yieldfarm.payOutLogo}
+        alt={AvailableFarms[farmKey].yieldfarm.payOut + " token logo"}
+        style={{ height: 64, alignSelf: "center", background: "white", borderRadius: 110 }}
+      />
+
+      <UnHarvested farmKey={farmKey} />
+    </div>
+  );
+};
+
+const UnHarvested: React.FC<HarvestProps> = React.memo(({ farmKey }) => {
   const [isHarvesting, setisHarvesting] = useState(false);
-  const [earnedBalance, setEarnedBalance] = useState<number>(0);
+
   const { status, account } = useWallet();
-  const { earnedBalances, setConfirmTxModalIsOpen } = useFarming();
   const ubiq = useUbiq();
+  const { earnedBalances, setConfirmTxModalIsOpen } = useFarming();
+  const [earnedBalance, setEarnedBalance] = useState<number>(0);
 
   const formattedEarnedBalance = useCallback(async () => {
     if (earnedBalances && bnToDec(earnedBalances[farmKey]) > 0) {
@@ -55,12 +74,6 @@ const Harvest: React.FC<HarvestProps> = ({ farmKey }) => {
     setisHarvesting(false);
   }, [account, setConfirmTxModalIsOpen, setisHarvesting, ubiq, farmKey]);
 
-  useEffect(() => {
-    formattedEarnedBalance();
-    let refreshInterval = setInterval(formattedEarnedBalance, 10000);
-    return () => clearInterval(refreshInterval);
-  }, [formattedEarnedBalance]);
-
   const HarvestAction = useMemo(() => {
     if (status !== "connected") {
       return <p>Connect Wallet</p>;
@@ -88,22 +101,22 @@ const Harvest: React.FC<HarvestProps> = ({ farmKey }) => {
     }
   }, [status, isHarvesting, earnedBalance, handleHarvest]);
 
-  return (
-    <div style={{ padding: "10px 5px 10px 5px" }}>
-      <img
-        src={AvailableFarms[farmKey].yieldfarm.payOutLogo}
-        alt={AvailableFarms[farmKey].yieldfarm.payOut + " token logo"}
-        style={{ height: 64, alignSelf: "center", background: "white", borderRadius: 110 }}
-      />
+  useEffect(() => {
+    formattedEarnedBalance();
+    let refreshInterval = setInterval(formattedEarnedBalance, 10000);
+    return () => clearInterval(refreshInterval);
+  }, [formattedEarnedBalance]);
 
+  return (
+    <>
       <Box alignItems="center" column>
         <Value value={earnedBalance > 0 ? earnedBalance.toString() : "--"} />
         <p>{"Unharvested " + AvailableFarms[farmKey].yieldfarm.payOut}</p>
       </Box>
 
       {HarvestAction}
-    </div>
+    </>
   );
-};
+});
 
 export default React.memo(Harvest);

@@ -21,3 +21,4 @@
 - fixed bug with harvest, stake, unstake and redeem buttons
 - add introduction text to homepage
 - add wallet address to wallet button
+- react rendering performance upgrades and UI improvements

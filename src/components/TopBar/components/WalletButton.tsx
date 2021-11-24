@@ -3,17 +3,13 @@ import { useWallet } from "use-wallet";
 
 import UnlockWalletModal from "components/UnlockWalletModal";
 import WalletModal from "components/WalletModal";
-
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Tooltip from "@mui/material/Tooltip";
 import LockOpen from "@mui/icons-material/LockOpen";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
-
 import WifiIcon from "@mui/icons-material/Wifi";
 import SignalWifiStatusbarConnectedNoInternet4Icon from "@mui/icons-material/SignalWifiStatusbarConnectedNoInternet4";
-import WidgetsIcon from "@mui/icons-material/Widgets";
-import useBalances from "hooks/useBalances";
 import { switchToUBQNetwork } from "metamask.js";
 
 interface WalletButtonProps {
@@ -28,8 +24,6 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
   const [, setNetworkState] = useState(false); // re-render the page when the wallet network changes
 
   const ConnectedElements = useCallback(() => {
-    // <Chip label={CurrentBlock} color="primary" icon={<WidgetsIcon />} />
-
     if (status === "connected") {
       return <>{blockHeightButton}</>;
     }
@@ -53,7 +47,11 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
           <Button size="small" color="error">
             <SignalWifiStatusbarConnectedNoInternet4Icon
               onClick={async () => {
-                await switchToUBQNetwork();
+                try {
+                  await switchToUBQNetwork();
+                } catch (e) {
+                  console.error("caught error while trying to switch networks:", e);
+                }
                 setNetworkState(true);
               }}
             />
@@ -134,8 +132,6 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
     }
   }, [account, handleConnectMetamask, handleConnectWalletConnect]);
 
-  console.log("WalletButton");
-
   return (
     <>
       <ButtonGroup>
@@ -150,7 +146,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
         ) : (
           <Tooltip title="view Account details">
             <Button onClick={handleWalletClick} size="medium" variant="contained" startIcon={<AccountBalanceWalletIcon />}>
-              {"0x" + userAccount.substring(2, 6) + "..." + userAccount.substring(38)}
+              {userAccount.substring(0, 6) + "..." + userAccount.substring(38)}
             </Button>
           </Tooltip>
         )}
