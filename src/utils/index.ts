@@ -1,11 +1,11 @@
 import BigNumber from "bignumber.js";
 import { getDefaultProvider } from "@ethersproject/providers";
-import { ethers } from 'ethers';
+import { ethers } from "ethers";
 import Web3 from "web3";
 import { provider, TransactionReceipt } from "web3-core";
 import { AbiItem } from "web3-utils";
 import { WETH, ChainId, Fetcher, Route, Token } from "shinobi-sdk";
-import { IOraclePrice } from "hooks/useUBQPriceOracle"
+import { IOraclePrice } from "hooks/useUBQPriceOracle";
 
 import ERC20ABI from "constants/abi/ERC20.json";
 const RPCURL = "https://rpc.octano.dev";
@@ -155,34 +155,31 @@ export const getCurrentBlock = async (provider: provider): Promise<string> => {
 };
 
 export const getCurrentAPY = async (UBQoracle: IOraclePrice | undefined, balances: any): Promise<string> => {
+  console.log("balances debug:", balances);
 
-
-    console.log('balances debug:', balances)
-
-    // const placeholderUbiqPrice = 0.21;
-    try{
-
-        if(UBQoracle === undefined){
-          return "--"
-        }
-
-        const INK = new Token( ChainId.UBIQ, INKADDRESS, INKDECIMALS, INKNAME, INKSYMBOL)
-
-        // setup ethers.js for Fetcher
-        const ethersProvider = getDefaultProvider(RPCURL);
-
-        const pair = await Fetcher.fetchPairData(INK, WETH[INK.chainId], ethersProvider);
-        const route = new Route([pair], WETH[INK.chainId]);
-
-        const midPrice = parseFloat(route.midPrice.toSignificant(6));
-        const inkPrice = UBQoracle.price.usdt / midPrice;
-        console.log('midprice:', midPrice, 'inkPrice:', inkPrice)
-
-        return midPrice.toString();
-    }catch(e){
-        return "0";
+  // const placeholderUbiqPrice = 0.21;
+  try {
+    if (UBQoracle === undefined) {
+      return "--";
     }
-}
+
+    const INK = new Token(ChainId.UBIQ, INKADDRESS, INKDECIMALS, INKNAME, INKSYMBOL);
+
+    // setup ethers.js for Fetcher
+    const ethersProvider = getDefaultProvider(RPCURL);
+
+    const pair = await Fetcher.fetchPairData(INK, WETH[INK.chainId], ethersProvider);
+    const route = new Route([pair], WETH[INK.chainId]);
+
+    const midPrice = parseFloat(route.midPrice.toSignificant(6));
+    const inkPrice = UBQoracle.price.usdt / midPrice;
+    console.log("midprice:", midPrice, "inkPrice:", inkPrice);
+
+    return midPrice.toString();
+  } catch (e) {
+    return "0";
+  }
+};
 export const shouldUpdateAry = function shouldUpdateAry(
   old_val: Array<BigNumber> | undefined,
   new_val: Array<BigNumber> | undefined,

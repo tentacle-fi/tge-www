@@ -89,7 +89,7 @@ const BalancesProvider: React.FC = ({ children }) => {
   const fetchCurrentAPY = useCallback(
     async (userAddress: string) => {
       const currentAPY = await getCurrentAPY(oracle, stakedBalances);
-      console.log('currentAPY:', currentAPY)
+      console.log("currentAPY:", currentAPY);
 
       setCurrentAPY(currentAPY.toString());
     },
@@ -119,7 +119,7 @@ const BalancesProvider: React.FC = ({ children }) => {
         INKBalance,
         GRANSBalance,
         UBQoracle: oracle,
-        CurrentAPY
+        CurrentAPY,
       }}
     >
       {children}
