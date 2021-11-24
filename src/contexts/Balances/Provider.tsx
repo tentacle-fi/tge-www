@@ -79,12 +79,6 @@ const BalancesProvider: React.FC = ({ children }) => {
     },
     [setCurrentBlock]
   );
-  //
-  // useEffect(() => {
-  //   if (account && ethereum) {
-  //     fetchBalances(account, ethereum);
-  //   }
-  // }, [account, ethereum, fetchBalances]);
 
   const fetchCurrentAPY = useCallback(
     async (userAddress: string) => {
