@@ -47,7 +47,11 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
           <Button size="small" color="error">
             <SignalWifiStatusbarConnectedNoInternet4Icon
               onClick={async () => {
-                await switchToUBQNetwork();
+                try {
+                  await switchToUBQNetwork();
+                } catch (e) {
+                  console.error("caught error while trying to switch networks:", e);
+                }
                 setNetworkState(true);
               }}
             />
