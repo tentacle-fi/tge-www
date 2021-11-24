@@ -8,7 +8,8 @@
     "lint": "prettier --write \"**/*.+(js|jsx|ts|tsx|json|css)\" --print-width 150",
     "eslint": "eslint . --fix",
     "test": "react-scripts test",
-    "eject": "echo 'do not run this!' && exit(1) && #react-scripts eject"
+    "eject": "echo 'do not run this!' && exit(1) && #react-scripts eject",
+    "husky_setup": "husky install"
   },
   "engines": {
     "npm": ">=6.0.0",
