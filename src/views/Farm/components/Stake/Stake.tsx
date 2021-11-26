@@ -95,7 +95,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
           <StyledStackItem val={`${parseFloat(availableLPBalance) > 0 ? parseFloat(availableLPBalance).toFixed(6) : "--"} LP Tokens Unstaked`} />
         </Stack>
         <Stack>
-          <StyledStackItem val={`UBQ $${UBQoracle?.price?.usdt.toPrecision(3) || "--"} / INK $${inkPrice.toPrecision(3)}`} />
+          <StyledStackItem val={`UBQ $${UBQoracle?.price?.usdt.toPrecision(3) || "--"} / $${inkPrice.toPrecision(3)} INK`} />
           <StyledStackItem val={`TVL $${currentTvl.toFixed(0)}`} />
           <StyledStackItem val={`APY: ${currentApy.toFixed(0)}%`} />
 
