@@ -96,7 +96,7 @@ const Providers: React.FC = ({ children }) => {
         h4: {
             color: '#ffffff'
         }
-      }
+    },
   });
 
   return (

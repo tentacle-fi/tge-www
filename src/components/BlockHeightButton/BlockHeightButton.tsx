@@ -56,7 +56,7 @@ const BlockHeightButton: React.FC = () => {
 
         <CircularProgressWithLabel
           value={blockTimeCounter}
-          sx={{ color: blockTimeCounter > 88 ? (blockTimeCounter > 180 ? "#ff3300" : "#f9a825") : "#b2ff59" }}
+          sx={{ color: blockTimeCounter > 88 ? (blockTimeCounter > 180 ? 'red' : "blue") : "black" }}
         />
       </Button>
     </Tooltip>
