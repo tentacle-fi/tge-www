@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
 import ConfirmTransactionModal from "components/ConfirmTransactionModal";
 import useUbiq from "hooks/useUbiq";
-import { AvailableFarms } from "farms/AvailableFarms";
+import { AvailableFarms, UBQ } from "farms/AvailableFarms";
 import { getPoolTotalSupply, getEarned, getStaked } from "ubiq-sdk/utils";
 import Context from "./Context";
 import { shouldUpdateAry, getCurrentStats } from "utils";
@@ -91,22 +91,40 @@ const Provider: React.FC = ({ children }) => {
     if (CurrentAPY !== 0) {
       return;
     }
+    let statsAry = [];
     try {
-      // TODO: make generic to calc for all pools in AvailableFarms
-      const stats = await getCurrentStats(ethereum, UBQoracle, totalSupplyLP[0]);
+      for (let i = 0; i < AvailableFarms.length; i++) {
+        try {
+          let token0Price = 0;
+          switch (AvailableFarms[i].tokenA.address) {
+            case UBQ:
+              token0Price = UBQoracle.price.usdt;
+              break;
+            default:
+              throw new Error(`tokenA address unknown! address:${AvailableFarms[i].tokenA.address}`);
+          }
 
-      setCurrentAPY(stats.farmApy);
-      setCurrentTVL(stats.farmTvl);
-      setINKoracle(stats.inkPrice);
+          statsAry.push(
+            await getCurrentStats(ethereum, token0Price, AvailableFarms[i].lp.address, AvailableFarms[i].yieldfarm.address, totalSupplyLP[i])
+          );
+
+          console.log('token 1 price', statsAry[i].token1Price)
+        } catch (e) {
+          console.error("fetchCurrentStats error", e);
+        }
+      }
 
       if (lpPercents !== undefined) {
         const myPoolTokens = {
-          token0: lpPercents[0].toNumber() * stats.reserves.token0,
-          token1: lpPercents[0].toNumber() * stats.reserves.token1,
+          token0: lpPercents[0].toNumber() * statsAry[0].reserves.token0,
+          token1: lpPercents[0].toNumber() * statsAry[0].reserves.token1,
         };
 
         if (PooledTokens.token0 !== myPoolTokens.token0 || PooledTokens.token1 !== myPoolTokens.token1) {
           setPooledTokens(myPoolTokens);
+          setCurrentAPY(statsAry[0].farmApy);
+          setCurrentTVL(statsAry[0].farmTvl);
+          setINKoracle(statsAry[0].token1Price);
         }
       }
     } catch (e) {

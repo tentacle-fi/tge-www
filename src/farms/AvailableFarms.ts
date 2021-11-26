@@ -43,8 +43,8 @@ export const AvailableFarms: Array<IFarm> = [
       address: INK_UBQ_LPAddress,
       url: "https://shinobi.ubiq.ninja/#/add/UBQ/" + INK,
     },
-    tokenA: INK_token,
-    tokenB: UBQ_token,
+    tokenA: UBQ_token,
+    tokenB: INK_token,
   },
   {
     name: "UBQ/GRANS",

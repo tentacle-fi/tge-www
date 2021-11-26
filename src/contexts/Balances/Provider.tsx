@@ -36,7 +36,7 @@ const BalancesProvider: React.FC = ({ children }) => {
       let newLpBalances = [];
 
       for (let i = 0; i < AvailableFarms.length; i++) {
-        newTokenBalances.push(await getBalanceAsBigNum(provider, AvailableFarms[i].tokenA.address, userAddress));
+        newTokenBalances.push(await getBalanceAsBigNum(provider, AvailableFarms[i].tokenB.address, userAddress));
         newLpBalances.push(await getBalanceAsBigNum(provider, AvailableFarms[i].lp.address, userAddress));
       }
 

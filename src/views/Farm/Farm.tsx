@@ -121,15 +121,16 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
         <Grid item xs={3}>
           <StyledItem sx={{ paddingTop: "20px" }}>
             <img
-              src={farm.tokenB.logo}
-              alt={`${farm.tokenB.symbol} Logo`}
-              style={{ width: "80px", height: "80px", background: "#cecece", borderRadius: "40px", marginRight: "-20px" }}
-            />
-            <img
               src={farm.tokenA.logo}
               alt={`${farm.tokenA.symbol} Logo`}
               style={{ width: "80px", height: "80px", background: "white", borderRadius: "40px" }}
             />
+            <img
+              src={farm.tokenB.logo}
+              alt={`${farm.tokenB.symbol} Logo`}
+              style={{ width: "80px", height: "80px", background: "#cecece", borderRadius: "40px", marginRight: "-20px" }}
+            />
+
             <p>{farm.name}</p>
             <LoadingButton
               onClick={() => {

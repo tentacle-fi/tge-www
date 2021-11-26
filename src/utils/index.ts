@@ -3,7 +3,6 @@ import { ethers } from "ethers";
 import Web3 from "web3";
 import { provider, TransactionReceipt } from "web3-core";
 import { AbiItem } from "web3-utils";
-import { IOraclePrice } from "hooks/useUBQPriceOracle";
 
 import ERC20ABI from "constants/abi/ERC20.json";
 import ShinobiPoolERC20 from "ubiq-sdk/lib/clean_build/contracts/ShinobiPool.json";
@@ -191,35 +190,36 @@ export interface ICurrentStats {
   poolTvl: number;
   farmApy: number;
   farmTvl: number;
-  inkPrice: number;
+  token1Price: number;
   reserves: IReserves;
 }
 
-export const getCurrentStats = async (provider: provider, UBQoracle: IOraclePrice | undefined, totalSupplyLP: BigNumber): Promise<ICurrentStats> => {
+export const getCurrentStats = async (
+  provider: provider,
+  token0Price: number,
+  poolLpTokenAddress: string,
+  farmContractAddress: string,
+  totalSupplyLP: BigNumber
+): Promise<ICurrentStats> => {
   try {
-    if (UBQoracle === undefined) {
-      throw new Error("unable to process until UBQoracle price is defined");
-    }
-
     // TODO: make the hard coded values generic via the AvailableFarms and farmKey
-    const reserves = await getReserves(provider, "0x1eA388d8dcF980a95967228B1dFCEA1692dbE25d");
-    const ubqPrice = UBQoracle?.price?.usdt || 0;
+    const reserves = await getReserves(provider, poolLpTokenAddress);
 
     // TODO: pull out the price into separate function call
-    const inkPrice = ubqPrice * reserves.ratio0over1; // ink price in USDt
-    const dailyINKEmissions = await getDailyRewardRate(provider, "0x6e142959f49d364b30f0478949effdcb58effe44"); // Qty of INK released per day based on epoch and rewardRate contract call
-    const poolTvl = reserves.token1 * inkPrice + reserves.token0 * ubqPrice;
-    // const poolApy = ((inkPrice * dailyINKEmissions * 365) / poolTvl) * 100;
+    const token1Price = token0Price * reserves.ratio0over1;
+    const dailyTokenRewardEmissions = await getDailyRewardRate(provider, farmContractAddress);
+    const poolTvl = reserves.token1 * token1Price + reserves.token0 * token0Price;
+    // const poolApy = ((token1Price * dailyTokenRewardEmissions * 365) / poolTvl) * 100;
 
     const poolLpCalcRatio = 1 + (1 - bnToDec(totalSupplyLP) / Math.sqrt(reserves.token0 * reserves.token1));
     const farm_token0 = (bnToDec(totalSupplyLP) * poolLpCalcRatio) / Math.sqrt(1 / reserves.ratio0over1);
     const farm_token1 = (bnToDec(totalSupplyLP) * poolLpCalcRatio) / Math.sqrt(reserves.ratio0over1);
-    const farmTvl = farm_token0 * ubqPrice + farm_token1 * inkPrice;
-    const farmApy = ((inkPrice * dailyINKEmissions * 365) / farmTvl) * 100;
+    const farmTvl = farm_token0 * token0Price + farm_token1 * token1Price;
+    const farmApy = ((token1Price * dailyTokenRewardEmissions * 365) / farmTvl) * 100;
 
     // DEBUG: all the log statements for debug that make sense to have
-    // console.log("ubq price", ubqPrice);
-    // console.log("ink price", inkPrice);
+    // console.log("token0 price", token0Price);
+    // console.log("token1 price", token1Price);
     // console.log("token0", reserves.token0);
     // console.log("token1", reserves.token1);
     // console.log('token0 / token1', reserves.ratio0over1)
@@ -237,7 +237,7 @@ export const getCurrentStats = async (provider: provider, UBQoracle: IOraclePric
       poolTvl: poolTvl,
       farmApy: farmApy,
       farmTvl: farmTvl,
-      inkPrice: inkPrice,
+      token1Price: token1Price,
       reserves: reserves,
     } as ICurrentStats;
   } catch (e) {
