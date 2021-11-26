@@ -212,8 +212,9 @@ const getMidPrice = async (): Promise<number> => {
 };
 
 export interface ICurrentStats {
-  tvl: number;
-  apy: number;
+  poolTvl: number;
+  farmApy: number;
+  farmTvl: number;
   inkPrice: number;
   reserves: IReserves;
 }
@@ -223,6 +224,7 @@ export const getCurrentStats = async (provider: provider, UBQoracle: IOraclePric
     if (UBQoracle === undefined) {
       throw new Error("unable to process until UBQoracle price is defined");
     }
+
     // TODO: make the hard coded values generic via the AvailableFarms and farmKey
     const reserves = await getReserves(provider, "0x1eA388d8dcF980a95967228B1dFCEA1692dbE25d");
     const midPrice = await getMidPrice(); // INK/UBQ midprice
@@ -231,8 +233,8 @@ export const getCurrentStats = async (provider: provider, UBQoracle: IOraclePric
     // TODO: pull out the price into separate function call
     const inkPrice = ubqPrice * (1 / midPrice); // ink price in USDt
     const dailyINKEmissions = await getDailyRewardRate(provider, "0x6e142959f49d364b30f0478949effdcb58effe44"); // Qty of INK released per day based on epoch and rewardRate contract call
-    const tvl = reserves.token1 * inkPrice + reserves.token0 * ubqPrice;
-    const apy = ((inkPrice * dailyINKEmissions * 365) / tvl) * 100;
+    const poolTvl = reserves.token1 * inkPrice + reserves.token0 * ubqPrice;
+    // const poolApy = ((inkPrice * dailyINKEmissions * 365) / tvl) * 100;
 
     // Build the APY
     // tvl$ = (farm reserves ink) * inkPrice + (farm reserves ubq) * ubqPrice
@@ -241,12 +243,34 @@ export const getCurrentStats = async (provider: provider, UBQoracle: IOraclePric
     // apy % = inkYearly$ / tvl$
     //
 
+    console.log("ubq price", ubqPrice);
+    console.log("ink price", inkPrice);
+    console.log("token0", reserves.token0);
+    console.log("token1", reserves.token1);
+    console.log("token0 / token1", reserves.token0 / reserves.token1);
+    console.log("totalSupplylp", bnToDec(totalSupplyLP));
+    console.log("est lp supply", Math.sqrt(reserves.token0 * reserves.token1));
+    const poolLpCalcRatio = 1 + (1 - bnToDec(totalSupplyLP) / Math.sqrt(reserves.token0 * reserves.token1));
+    console.log("lp ratio", poolLpCalcRatio);
+    console.log("pool tvl", poolTvl);
+
+    const farm_token0 = (bnToDec(totalSupplyLP) * poolLpCalcRatio) / Math.sqrt(reserves.token1 / reserves.token0);
+    const farm_token1 = (bnToDec(totalSupplyLP) * poolLpCalcRatio) / Math.sqrt(reserves.token0 / reserves.token1);
+    const farmTvl = farm_token0 * ubqPrice + farm_token1 * inkPrice;
+    const farmApy = ((inkPrice * dailyINKEmissions * 365) / farmTvl) * 100;
+    console.log("");
+    console.log("farm token0", farm_token0);
+    console.log("farm token1", farm_token1);
+    console.log("farm tvl", farmTvl);
+    console.log("farm apy", farmApy);
+
     const ret = {
-      tvl: tvl,
-      apy: apy,
+      poolTvl: poolTvl,
+      farmApy: farmApy,
+      farmTvl: farmTvl,
       inkPrice: inkPrice,
       reserves: reserves,
-    };
+    } as ICurrentStats;
     return ret;
   } catch (e) {
     console.error("getCurrentStats error", e);
