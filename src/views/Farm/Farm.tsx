@@ -15,7 +15,7 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+
 import StakeModal from "./components/Stake/components/StakeModal";
 import UnstakeModal from "./components/Stake/components/UnstakeModal";
 import BlockIcon from "@mui/icons-material/Block";
@@ -26,33 +26,6 @@ import useApproval from "hooks/useApproval";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 import Alert from "@mui/material/Alert";
-
-// DOCS: https://mui.com/customization/palette/#palette-colors
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#06d6a0",
-      light: "#ff3300",
-    },
-    secondary: {
-      dark: "#053b06", // dark green
-      main: "#0b5d1e", // neutral green
-      light: "#06d6a0", // light green
-    },
-    success: {
-      main: "#3acf14", // light green
-    },
-    info: {
-      main: "#247ba0", // blue/teal
-    },
-    warning: {
-      main: "#bf610a", // dark orange
-    },
-    error: {
-      main: "#bf1212", // dark red
-    },
-  },
-});
 
 interface YieldFarmProps {
   farmKey: number;
@@ -85,10 +58,10 @@ const Farm: React.FC = () => {
         </Button>
       </Box>
       <Spacer />
-      <ThemeProvider theme={theme}>
+      <>
         <YieldFarm farmKey={0} />
         <YieldFarm farmKey={1} />
-      </ThemeProvider>
+      </>
     </Page>
   );
 };

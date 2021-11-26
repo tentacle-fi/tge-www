@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { createTheme, ThemeProvider } from "react-neu";
+import { createTheme as neuCreateTheme, ThemeProvider as NEUThemeProvider } from "react-neu";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { UseWalletProvider } from "use-wallet";
 
@@ -45,30 +46,60 @@ const App: React.FC = () => {
 const Providers: React.FC = ({ children }) => {
   // const [darkModeSetting] = useLocalStorage("darkMode", false);
   const { dark: darkTheme, light: lightTheme } = useMemo(() => {
-    return createTheme({
+    return neuCreateTheme({
       // baseColor: { h: 338, s: 100, l: 41 },
       baseColor: { h: 240, s: 39, l: 36 },
       baseColorDark: { h: 222, s: 82, l: 21 },
       borderRadius: 24,
     });
   }, []);
+
+  // DOCS: https://mui.com/customization/palette/#palette-colors
+  const muiTheme = createTheme({
+    palette: {
+      primary: {
+        main: "#06d6a0",
+        light: "#ff3300",
+      },
+      secondary: {
+        dark: "#053b06", // dark green
+        main: "#0b5d1e", // neutral green
+        light: "#06d6a0", // light green
+      },
+      success: {
+        main: "#3acf14", // light green
+      },
+      info: {
+        main: "#247ba0", // blue/teal
+      },
+      warning: {
+        main: "#bf610a", // dark orange
+      },
+      error: {
+        main: "#bf1212", // dark red
+      },
+    },
+  });
+
   return (
-    <ThemeProvider darkModeEnabled={true} darkTheme={darkTheme} lightTheme={lightTheme}>
-      <UseWalletProvider
-        connectors={{
-          injected: {
-            //allows you to connect and switch between mainnet and rinkeby within Metamask.
-            chainId: [8],
-          },
-        }}
-      >
-        <UbiqProvider>
-          <BalancesProvider>
-            <FarmingProvider>{children}</FarmingProvider>
-          </BalancesProvider>
-        </UbiqProvider>
-      </UseWalletProvider>
-    </ThemeProvider>
+    <NEUThemeProvider darkModeEnabled={true} darkTheme={darkTheme} lightTheme={lightTheme}>
+      <ThemeProvider theme={muiTheme}>
+        <UseWalletProvider
+          connectors={{
+            injected: {
+              //allows you to connect and switch between mainnet and rinkeby within Metamask.
+              chainId: [8],
+            },
+          }}
+        >
+          <UbiqProvider>
+            <BalancesProvider>
+              <FarmingProvider>{children}</FarmingProvider>
+            </BalancesProvider>
+          </UbiqProvider>
+        </UseWalletProvider>
+      </ThemeProvider>
+    </NEUThemeProvider>
   );
 };
 
