@@ -91,7 +91,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
     <>
       <Grid container spacing={2}>
         <StyledGridItem variant="wide" val={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name} LP Staked` : "--"} />
-        <StyledGridItem val={`UBQ $${UBQoracle?.price?.usdt.toPrecision(3) || "--"} / $${inkPrice.toPrecision(3)} INK`} />
+        <StyledGridItem val={`${AvailableFarms[farmKey].tokenA.symbol} $${UBQoracle?.price?.usdt.toPrecision(3) || "--"} / $${inkPrice.toPrecision(3)} ${AvailableFarms[farmKey].tokenB.symbol}`} />
         <StyledGridItem variant="wide" val={`LP Value $${formattedMyPoolValue()}`} />
         <StyledGridItem val={`TVL $${currentTvl.toFixed(0)}`} />
         <StyledGridItem variant="wide" val={lpPercent > 0 ? lpPercent.toString() + " Pool %" : "--"} />
