@@ -2,9 +2,8 @@ import React, { useCallback, useEffect, useState, useRef } from "react";
 import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
 import { provider } from "web3-core";
-import useFarming from "hooks/useFarming";
 
-import { getCurrentBlock, getCoinBalanceAsBigNum, getBalanceAsBigNum, getCurrentAPY, shouldUpdateVal, shouldUpdateAry } from "utils";
+import { getCurrentBlock, getCoinBalanceAsBigNum, getBalanceAsBigNum, shouldUpdateVal, shouldUpdateAry } from "utils";
 
 import Context from "./Context";
 import { AvailableFarms, INK, GRANS, UBQ } from "farms/AvailableFarms";
@@ -19,10 +18,8 @@ const BalancesProvider: React.FC = ({ children }) => {
   const [GRANSBalance, setGRANSBalance] = useState<BigNumber>();
 
   const [CurrentBlock, setCurrentBlock] = useState("");
-  const [CurrentAPY, setCurrentAPY] = useState("");
-  const { account, ethereum } = useWallet();
-  const { stakedBalances } = useFarming();
 
+  const { account, ethereum } = useWallet();
   const { oracle } = useUBQPriceOracle();
 
   const lastUpdate = useRef(0);
@@ -80,16 +77,6 @@ const BalancesProvider: React.FC = ({ children }) => {
     [setCurrentBlock]
   );
 
-  const fetchCurrentAPY = useCallback(
-    async (userAddress: string) => {
-      const currentAPY = await getCurrentAPY(oracle, stakedBalances);
-      console.log("currentAPY:", currentAPY);
-
-      setCurrentAPY(currentAPY.toString());
-    },
-    [setCurrentAPY, oracle, stakedBalances]
-  );
-
   useEffect(() => {
     if (account && ethereum) {
       fetchBalances(account, ethereum);
@@ -113,7 +100,6 @@ const BalancesProvider: React.FC = ({ children }) => {
         INKBalance,
         GRANSBalance,
         UBQoracle: oracle,
-        CurrentAPY,
       }}
     >
       {children}

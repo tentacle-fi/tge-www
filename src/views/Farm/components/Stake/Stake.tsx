@@ -20,61 +20,21 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
   const [stakeBalance, setStakeBalance] = useState<number>(0);
   const [lpPercent, setLpPercent] = useState<number>(0);
 
-  const { LPBalances, CurrentAPY, UBQoracle } = useBalances();
+  const { LPBalances, UBQoracle } = useBalances();
 
   const availableLPBalance = useMemo(() => {
     return getFullDisplayBalance(LPBalances !== undefined ? LPBalances[farmKey] : new BigNumber(0), 0);
   }, [LPBalances, farmKey]);
 
-  const { farmingStartTime, stakedBalances, lpPercents } = useFarming();
+  const { farmingStartTime, stakedBalances, lpPercents, currentApy, currentTvl, inkPrice, PooledTokens } = useFarming();
 
   const formattedStakedBalance = useCallback(async () => {
     if (stakedBalances !== undefined && stakedBalances[farmKey] && bnToDec(stakedBalances[farmKey]) > 0) {
-      // Have to put this if statement here to satisfy typescript
-      if (UBQoracle === undefined) {
-        console.log("no UBQoracle defined");
-        return;
-      }
-
-      const midprice = 1.38; // INK/UBQ midprice
-      const inkPrice = 0.14; // ink price in USD
-      const dailyINKEmissions = 138618.7397260273972224; // Qty of INK released per day based on epoch and rewardRate contract call
-
-      // Set lp token balances based on midprice and current stake
-      const lpTokenBalances = { token0: 0, token1: 0 };
-      lpTokenBalances["token0"] = bnToDec(stakedBalances[farmKey]) * midprice;
-      lpTokenBalances["token1"] = bnToDec(stakedBalances[farmKey]) * (1 / midprice);
-
-      // Use current staked balance and percentage to derive total supply
-      // of SLPT in the farm
-      let totalSLPTSupply = 0;
-      totalSLPTSupply = bnToDec(stakedBalances[farmKey]) / (lpPercent / 100);
-      const tvl = totalSLPTSupply * UBQoracle.price.usdt;
-
-      // debug everything so far
-      console.log(
-        "totalSLPTSupply:",
-        totalSLPTSupply,
-        "stakedbalances:",
-        bnToDec(stakedBalances[farmKey]),
-        "token0:",
-        lpTokenBalances["token0"],
-        "token1:",
-        lpTokenBalances["token1"],
-        "tvl:",
-        tvl
-      );
-
-      // Build the APY
-      let apy = tvl / ((inkPrice * dailyINKEmissions * 365) / (totalSLPTSupply * UBQoracle.price.usdt));
-
-      console.log("current APY:", apy.toFixed(0), "%");
-
       setStakeBalance(Number(getShortDisplayBalance(stakedBalances[farmKey])));
     } else {
       setStakeBalance(0);
     }
-  }, [stakedBalances, farmKey, UBQoracle, lpPercent]);
+  }, [stakedBalances, farmKey]);
 
   const formattedLpPercent = useCallback(async () => {
     if (lpPercents !== undefined && bnToDec(lpPercents[farmKey]) > 0) {
@@ -83,6 +43,23 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
       setLpPercent(0);
     }
   }, [lpPercents, farmKey]);
+
+  const formattedMyPoolTokens = useCallback(() => {
+    if (PooledTokens !== undefined) {
+      return ` ${PooledTokens.token0.toFixed(0)} UBQ / ${PooledTokens.token1.toFixed(0)} INK`;
+    }
+
+    return "-- UBQ / -- INK";
+  }, [PooledTokens]);
+
+  const formattedMyPoolValue = useCallback(() => {
+    if (PooledTokens !== undefined && UBQoracle !== undefined) {
+      // return `${(PooledTokens.token0 * UBQoracle.price.usdt).toFixed(0)} UBQ / $${(PooledTokens.token1 * inkPrice).toFixed(0)} INK`
+      return `${(PooledTokens.token0 * UBQoracle.price.usdt + PooledTokens.token1 * inkPrice).toFixed(0)}`;
+    }
+
+    return "-- UBQ / -- INK";
+  }, [PooledTokens, UBQoracle, inkPrice]);
 
   useEffect(() => {
     formattedStakedBalance();
@@ -107,18 +84,20 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
 
   return (
     <>
-      <div style={{ display: "flex", flexDirection: "column", gap: "10px 5px", textAlign: "left" }}>
+      <div style={{ display: "flex", flexDirection: "row", gap: "10px 35px", textAlign: "left" }}>
         <Stack>
           <StyledStackItem val={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name} LP Staked` : "--"} />
           <StyledStackItem val={lpPercent > 0 ? lpPercent.toString() + " Pool %" : "--"} />
-          <StyledStackItem val={`${parseFloat(availableLPBalance).toFixed(6)} LP Tokens Unstaked`} />
 
-          <StyledStackItem val={`UBQ = $ ${UBQoracle?.price?.usdt || "--"}`} />
+          <StyledStackItem val={`LP ${formattedMyPoolTokens()}`} />
+          <StyledStackItem val={`LP Value $${formattedMyPoolValue()}`} />
 
-          <StyledStackItem val={`TVL`} />
-          <StyledStackItem val={`my token balances in LP`} />
-          <StyledStackItem val={`my pool value $`} />
-          <StyledStackItem val={`${CurrentAPY} APR / APY`} />
+          <StyledStackItem val={`${parseFloat(availableLPBalance) > 0 ? parseFloat(availableLPBalance).toFixed(6) : "--"} LP Tokens Unstaked`} />
+        </Stack>
+        <Stack>
+          <StyledStackItem val={`UBQ $${UBQoracle?.price?.usdt.toPrecision(3) || "--"} / INK $${inkPrice.toPrecision(3)}`} />
+          <StyledStackItem val={`TVL $${currentTvl.toFixed(0)}`} />
+          <StyledStackItem val={`APY: ${currentApy.toFixed(0)}%`} />
 
           <Link href={AvailableFarms[farmKey].lp.url} target="_blank" rel="noopener" underline="always">
             Manage {AvailableFarms[farmKey].name} liquidity <LinkIcon />

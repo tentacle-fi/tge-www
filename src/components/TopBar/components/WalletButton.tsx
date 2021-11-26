@@ -21,7 +21,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
   const [unlockModalIsOpen, setUnlockModalIsOpen] = useState(false);
   const [userAccount, setUserAccount] = useState<string | null>();
   const { account, status, connect } = useWallet();
-  const [, setNetworkState] = useState(false); // re-render the page when the wallet network changes
+  const [, setNetworkState] = useState({}); // re-render the page when the wallet network changes
 
   const ConnectedElements = useCallback(() => {
     if (status === "connected") {
@@ -52,7 +52,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
                 } catch (e) {
                   console.error("caught error while trying to switch networks:", e);
                 }
-                setNetworkState(true);
+                setNetworkState({});
               }}
             />
           </Button>

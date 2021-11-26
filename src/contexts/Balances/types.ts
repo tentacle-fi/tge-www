@@ -9,5 +9,4 @@ export interface ContextValues {
   UBQBalance?: BigNumber;
   CurrentBlock?: string;
   UBQoracle?: IOraclePrice;
-  CurrentAPY?: string;
 }

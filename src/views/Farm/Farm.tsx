@@ -27,10 +27,12 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 import Alert from "@mui/material/Alert";
 
+// DOCS: https://mui.com/customization/palette/#palette-colors
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#383883", // purple
+      main: "#06d6a0",
+      light: "#ff3300",
     },
     secondary: {
       dark: "#053b06", // dark green

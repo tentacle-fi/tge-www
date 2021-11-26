@@ -8,6 +8,9 @@ import { WETH, ChainId, Fetcher, Route, Token } from "shinobi-sdk";
 import { IOraclePrice } from "hooks/useUBQPriceOracle";
 
 import ERC20ABI from "constants/abi/ERC20.json";
+import ShinobiPoolERC20 from "ubiq-sdk/lib/clean_build/contracts/ShinobiPool.json";
+
+// TODO: consolidate these values into one area to import where needed
 const RPCURL = "https://rpc.octano.dev";
 const INKADDRESS = "0x7845fCbE28ac19ab7ec1C1D9674E34fdCB4917Db";
 const INKDECIMALS = 18;
@@ -115,7 +118,7 @@ export const decToBn = (dec: number, decimals = 18) => {
   return new BigNumber(dec).multipliedBy(new BigNumber(10).pow(decimals));
 };
 
-export const getFullDisplayBalance = (balance: BigNumber, decimals = 18) => {
+export const getFullDisplayBalance = (balance: BigNumber, decimals = 18): string => {
   return balance.dividedBy(new BigNumber(10).pow(decimals)).toFixed();
 };
 
@@ -154,30 +157,100 @@ export const getCurrentBlock = async (provider: provider): Promise<string> => {
   }
 };
 
-export const getCurrentAPY = async (UBQoracle: IOraclePrice | undefined, balances: any): Promise<string> => {
-  console.log("balances debug:", balances);
+interface IReserves {
+  token0: number;
+  token1: number;
+  timestamp: number;
+}
 
-  // const placeholderUbiqPrice = 0.21;
+export const getReserves = async (provider: provider, tokenAddress: string): Promise<IReserves> => {
   try {
-    if (UBQoracle === undefined) {
-      return "--";
-    }
+    const web3 = new Web3(provider);
+    const tokenContract = new web3.eth.Contract(ShinobiPoolERC20.abi as unknown as AbiItem, tokenAddress);
+    const { _reserve0, _reserve1, _blockTimestampLast } = await tokenContract.methods.getReserves().call();
 
+    const ret = {
+      token0: bnToDec(new BigNumber(_reserve0)),
+      token1: bnToDec(new BigNumber(_reserve1)),
+      timestamp: parseInt(_blockTimestampLast),
+    };
+    return ret;
+  } catch (e) {
+    console.error("getReserves error", e);
+    throw new Error("unable to getReserves");
+  }
+};
+
+export const getDailyRewardRate = async (provider: provider, tokenAddress: string): Promise<number> => {
+  try {
+    const web3 = new Web3(provider);
+    const tokenContract = new web3.eth.Contract(ShinobiPoolERC20.abi as unknown as AbiItem, tokenAddress);
+    const rewards = bnToDec(new BigNumber(await tokenContract.methods.rewardRate().call()));
+    const rate: number = rewards * 60 * 60 * 24;
+    return rate;
+  } catch (e) {
+    console.error("getDailyRewardRate error", e);
+    return -1;
+  }
+};
+
+const getMidPrice = async (): Promise<number> => {
+  try {
     const INK = new Token(ChainId.UBIQ, INKADDRESS, INKDECIMALS, INKNAME, INKSYMBOL);
-
-    // setup ethers.js for Fetcher
     const ethersProvider = getDefaultProvider(RPCURL);
-
     const pair = await Fetcher.fetchPairData(INK, WETH[INK.chainId], ethersProvider);
     const route = new Route([pair], WETH[INK.chainId]);
 
-    const midPrice = parseFloat(route.midPrice.toSignificant(6));
-    const inkPrice = UBQoracle.price.usdt / midPrice;
-    console.log("midprice:", midPrice, "inkPrice:", inkPrice);
+    // console.log('route', route)
 
-    return midPrice.toString();
+    const midPrice = parseFloat(route.midPrice.toSignificant(8));
+    return midPrice;
   } catch (e) {
-    return "0";
+    console.error("getMidPrice error", e);
+    return 0;
+  }
+};
+
+export interface ICurrentStats {
+  tvl: number;
+  apy: number;
+  inkPrice: number;
+  reserves: IReserves;
+}
+
+export const getCurrentStats = async (provider: provider, UBQoracle: IOraclePrice | undefined, totalSupplyLP: BigNumber): Promise<ICurrentStats> => {
+  try {
+    if (UBQoracle === undefined) {
+      throw new Error("unable to process until UBQoracle price is defined");
+    }
+    // TODO: make the hard coded values generic via the AvailableFarms and farmKey
+    const reserves = await getReserves(provider, "0x1eA388d8dcF980a95967228B1dFCEA1692dbE25d");
+    const midPrice = await getMidPrice(); // INK/UBQ midprice
+    const ubqPrice = UBQoracle?.price?.usdt || 0;
+
+    // TODO: pull out the price into separate function call
+    const inkPrice = ubqPrice * (1 / midPrice); // ink price in USDt
+    const dailyINKEmissions = await getDailyRewardRate(provider, "0x6e142959f49d364b30f0478949effdcb58effe44"); // Qty of INK released per day based on epoch and rewardRate contract call
+    const tvl = reserves.token1 * inkPrice + reserves.token0 * ubqPrice;
+    const apy = ((inkPrice * dailyINKEmissions * 365) / tvl) * 100;
+
+    // Build the APY
+    // tvl$ = (farm reserves ink) * inkPrice + (farm reserves ubq) * ubqPrice
+    // inkYearly$ = INK price USDT * daily INK rewards total * 365
+    //
+    // apy % = inkYearly$ / tvl$
+    //
+
+    const ret = {
+      tvl: tvl,
+      apy: apy,
+      inkPrice: inkPrice,
+      reserves: reserves,
+    };
+    return ret;
+  } catch (e) {
+    console.error("getCurrentStats error", e);
+    throw e;
   }
 };
 export const shouldUpdateAry = function shouldUpdateAry(

@@ -6,12 +6,18 @@ import useUbiq from "hooks/useUbiq";
 import { AvailableFarms } from "farms/AvailableFarms";
 import { getPoolTotalSupply, getEarned, getStaked } from "ubiq-sdk/utils";
 import Context from "./Context";
-import { shouldUpdateAry } from "utils";
+import { shouldUpdateAry, getCurrentStats } from "utils";
+import useBalances from "hooks/useBalances";
 
 const Provider: React.FC = ({ children }) => {
   const [confirmTxModalIsOpen, setConfirmTxModalIsOpen] = useState(false);
   const ubiq = useUbiq();
-  const { account } = useWallet();
+  const { account, ethereum } = useWallet();
+  const { UBQoracle } = useBalances();
+  const [CurrentAPY, setCurrentAPY] = useState(0);
+  const [CurrentTVL, setCurrentTVL] = useState(0);
+  const [INKoracle, setINKoracle] = useState(0);
+  const [PooledTokens, setPooledTokens] = useState({ token0: 0, token1: 0 });
 
   // TODO: create a class or function to generate an array of objects/properties for each farm
   const farmingStartTime = useMemo(() => {
@@ -79,11 +85,42 @@ const Provider: React.FC = ({ children }) => {
     }
   }, [ubiq, account, totalSupplyLP, lpPercents, setlpPercents]);
 
+  const fetchCurrentStats = useCallback(async () => {
+    if (UBQoracle === undefined || totalSupplyLP === undefined) {
+      return;
+    }
+    if (CurrentAPY !== 0) {
+      return;
+    }
+    try {
+      // TODO: make generic to calc for all pools in AvailableFarms
+      const stats = await getCurrentStats(ethereum, UBQoracle, totalSupplyLP[0]);
+
+      setCurrentAPY(stats.apy);
+      setCurrentTVL(stats.tvl);
+      setINKoracle(stats.inkPrice);
+
+      if (lpPercents !== undefined) {
+        const myPoolTokens = {
+          token0: lpPercents[0].toNumber() * stats.reserves.token0,
+          token1: lpPercents[0].toNumber() * stats.reserves.token1,
+        };
+
+        if (PooledTokens.token0 !== myPoolTokens.token0 || PooledTokens.token1 !== myPoolTokens.token1) {
+          setPooledTokens(myPoolTokens);
+        }
+      }
+    } catch (e) {
+      console.error("fetchCurrentStats");
+    }
+  }, [setCurrentAPY, UBQoracle, totalSupplyLP, CurrentAPY, ethereum, lpPercents, PooledTokens, setPooledTokens]);
+
   const fetchBalances = useCallback(async () => {
     fetchearnedBalances();
     fetchstakedBalances();
     fetchTotalSupplyLP();
-  }, [fetchearnedBalances, fetchstakedBalances, fetchTotalSupplyLP]);
+    fetchCurrentStats();
+  }, [fetchearnedBalances, fetchstakedBalances, fetchTotalSupplyLP, fetchCurrentStats]);
 
   useEffect(() => {
     fetchBalances();
@@ -100,6 +137,10 @@ const Provider: React.FC = ({ children }) => {
         stakedBalances,
         totalSupplyLP,
         lpPercents,
+        currentApy: CurrentAPY,
+        currentTvl: CurrentTVL,
+        inkPrice: INKoracle,
+        PooledTokens: PooledTokens,
       }}
     >
       {children}
