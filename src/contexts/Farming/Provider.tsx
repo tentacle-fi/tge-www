@@ -95,8 +95,8 @@ const Provider: React.FC = ({ children }) => {
       // TODO: make generic to calc for all pools in AvailableFarms
       const stats = await getCurrentStats(ethereum, UBQoracle, totalSupplyLP[0]);
 
-      setCurrentAPY(stats.apy);
-      setCurrentTVL(stats.tvl);
+      setCurrentAPY(stats.farmApy);
+      setCurrentTVL(stats.farmTvl);
       setINKoracle(stats.inkPrice);
 
       if (lpPercents !== undefined) {
