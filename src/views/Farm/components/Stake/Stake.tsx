@@ -8,11 +8,11 @@ import { AvailableFarms } from "farms/AvailableFarms";
 import useBalances from "hooks/useBalances";
 import BigNumber from "bignumber.js";
 import LinkIcon from "@mui/icons-material/Link";
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
 
 interface StakeProps {
   farmKey: number;
@@ -89,20 +89,20 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
 
   return (
     <>
-        <Grid container spacing={2} >
-          <StyledGridItem variant="wide" val={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name} LP Staked` : "--"} />
-          <StyledGridItem val={`UBQ $${UBQoracle?.price?.usdt.toPrecision(3) || "--"} / $${inkPrice.toPrecision(3)} INK`} />
-          <StyledGridItem variant="wide" val={`LP Value $${formattedMyPoolValue()}`} />
-          <StyledGridItem val={`TVL $${currentTvl.toFixed(0)}`} />
-          <StyledGridItem variant="wide" val={lpPercent > 0 ? lpPercent.toString() + " Pool %" : "--"} />
-          <StyledGridItem val={`APY: ${currentApy.toFixed(0)}%`} />
-          <StyledGridItem variant="wide"val={`LP ${formattedMyPoolTokens()}`} />
-          <StyledGridItem val={`${parseFloat(availableLPBalance) > 0 ? parseFloat(availableLPBalance).toFixed(6) : "0.00"} LP Tokens Unstaked`} />
-        </Grid>
+      <Grid container spacing={2}>
+        <StyledGridItem variant="wide" val={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name} LP Staked` : "--"} />
+        <StyledGridItem val={`UBQ $${UBQoracle?.price?.usdt.toPrecision(3) || "--"} / $${inkPrice.toPrecision(3)} INK`} />
+        <StyledGridItem variant="wide" val={`LP Value $${formattedMyPoolValue()}`} />
+        <StyledGridItem val={`TVL $${currentTvl.toFixed(0)}`} />
+        <StyledGridItem variant="wide" val={lpPercent > 0 ? lpPercent.toString() + " Pool %" : "--"} />
+        <StyledGridItem val={`APY: ${currentApy.toFixed(0)}%`} />
+        <StyledGridItem variant="wide" val={`LP ${formattedMyPoolTokens()}`} />
+        <StyledGridItem val={`${parseFloat(availableLPBalance) > 0 ? parseFloat(availableLPBalance).toFixed(6) : "0.00"} LP Tokens Unstaked`} />
+      </Grid>
       <div>
-          <Button sx={{ width: "100%" }} href={AvailableFarms[farmKey].lp.url} variant="outlined">
-            Manage {AvailableFarms[farmKey].name} liquidity <LinkIcon />
-          </Button>
+        <Button sx={{ width: "100%" }} href={AvailableFarms[farmKey].lp.url} variant="outlined">
+          Manage {AvailableFarms[farmKey].name} liquidity <LinkIcon />
+        </Button>
       </div>
 
       {typeof farmingStartTime !== "undefined" && farmingStartTime[farmKey] > Date.now() && (
@@ -127,13 +127,23 @@ interface GridItemProps {
 }
 
 const StyledGridItem: React.FC<GridItemProps> = ({ val, variant }) => {
-  if( variant === 'wide' ){
-      return <Grid item xs={9} xl={6}><StyledPaper><Typography variant="body1">{val}</Typography></StyledPaper></Grid>
-  }else{
-      return <Grid item xs={3} xl={4}><StyledPaper><Typography variant="body1">{val}</Typography></StyledPaper></Grid>
+  if (variant === "wide") {
+    return (
+      <Grid item xs={6} xl={6}>
+        <StyledPaper>
+          <Typography variant="body1">{val}</Typography>
+        </StyledPaper>
+      </Grid>
+    );
+  } else {
+    return (
+      <Grid item xs={6} xl={6}>
+        <StyledPaper>
+          <Typography variant="body1">{val}</Typography>
+        </StyledPaper>
+      </Grid>
+    );
   }
-
 };
-
 
 export default React.memo(Stake);

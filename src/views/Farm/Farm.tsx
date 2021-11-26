@@ -24,7 +24,7 @@ import useUbiq from "hooks/useUbiq";
 import { redeem } from "ubiq-sdk/utils";
 import useApproval from "hooks/useApproval";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import Typography from '@mui/material/Typography';
+import Typography from "@mui/material/Typography";
 
 import Alert from "@mui/material/Alert";
 
@@ -163,8 +163,8 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
 
         <Grid item xs={3} sx={{ display: manageFarm === true ? "" : "none" }}>
           <StyledItem>
-            <Typography variant='h4'>Manage Liquidity:</Typography>
-            <Typography variant='body1'>Use this to stake, unstake or withdrawl all of your LP tokens and rewards from the yield farm</Typography>
+            <Typography variant="h4">Manage Liquidity:</Typography>
+            <Typography variant="body1">Use this to stake, unstake or withdrawl all of your LP tokens and rewards from the yield farm</Typography>
           </StyledItem>
         </Grid>
         <Grid item xs={9} sx={{ display: manageFarm === true ? "" : "none" }}>

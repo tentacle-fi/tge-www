@@ -10,7 +10,7 @@ import { bnToDec, getShortDisplayBalance } from "utils";
 import { AvailableFarms } from "farms/AvailableFarms";
 import LoadingButton from "@mui/lab/LoadingButton";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import Typography from '@mui/material/Typography';
+import Typography from "@mui/material/Typography";
 
 import useUbiq from "hooks/useUbiq";
 import { harvest } from "ubiq-sdk/utils";
