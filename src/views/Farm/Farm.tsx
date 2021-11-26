@@ -28,51 +28,6 @@ import Typography from '@mui/material/Typography';
 
 import Alert from "@mui/material/Alert";
 
-// DOCS: https://mui.com/customization/palette/#palette-colors
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#06d6a0",
-      light: "#ff3300",
-    },
-    secondary: {
-      dark: "#053b06", // dark green
-      main: "#0b5d1e", // neutral green
-      light: "#06d6a0", // light green
-    },
-    success: {
-      main: "#3acf14", // light green
-    },
-    info: {
-      main: "#247ba0", // blue/teal
-    },
-    warning: {
-      main: "#bf610a", // dark orange
-    },
-    error: {
-      main: "#bf1212", // dark red
-    },
-  },
-  typography: {
-      subtitle1: {
-        fontSize: 12,
-      },
-      body1: {
-        fontWeight: 500,
-        color: '#ffffff'
-      },
-      button: {
-        fontStyle: 'italic',
-      },
-      h3: {
-          color: '#ffffff'
-      },
-      h4: {
-          color: '#ffffff'
-      }
-    }
-});
-
 interface YieldFarmProps {
   farmKey: number;
 }
