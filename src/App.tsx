@@ -80,22 +80,22 @@ const Providers: React.FC = ({ children }) => {
       },
     },
     typography: {
-        subtitle1: {
-          fontSize: 12,
-        },
-        body1: {
-          fontWeight: 500,
-          color: '#ffffff'
-        },
-        button: {
-          fontStyle: 'italic',
-        },
-        h3: {
-            color: '#ffffff'
-        },
-        h4: {
-            color: '#ffffff'
-        }
+      subtitle1: {
+        fontSize: 12,
+      },
+      body1: {
+        fontWeight: 500,
+        color: "#ffffff",
+      },
+      button: {
+        fontStyle: "italic",
+      },
+      h3: {
+        color: "#ffffff",
+      },
+      h4: {
+        color: "#ffffff",
+      },
     },
   });
 
