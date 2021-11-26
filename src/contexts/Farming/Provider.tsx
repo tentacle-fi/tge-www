@@ -108,7 +108,7 @@ const Provider: React.FC = ({ children }) => {
             await getCurrentStats(ethereum, token0Price, AvailableFarms[i].lp.address, AvailableFarms[i].yieldfarm.address, totalSupplyLP[i])
           );
 
-          console.log('token 1 price', statsAry[i].token1Price)
+          console.log("token 1 price", statsAry[i].token1Price);
         } catch (e) {
           console.error("fetchCurrentStats error", e);
         }

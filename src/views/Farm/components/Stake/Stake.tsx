@@ -47,7 +47,9 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
   // TODO: unclear if this is accurate enough or if we need to reverse the uniswap v2 algo from the stakedLP tokens for this account
   const formattedMyPoolTokens = useCallback(() => {
     if (PooledTokens !== undefined) {
-      return ` ${PooledTokens.token0.toFixed(0)} ${AvailableFarms[farmKey].tokenA.symbol}/ ${PooledTokens.token1.toFixed(0)} ${AvailableFarms[farmKey].tokenB.symbol}`;
+      return ` ${PooledTokens.token0.toFixed(0)} ${AvailableFarms[farmKey].tokenA.symbol}/ ${PooledTokens.token1.toFixed(0)} ${
+        AvailableFarms[farmKey].tokenB.symbol
+      }`;
     }
 
     return `-- ${AvailableFarms[farmKey].tokenA.symbol} / -- ${AvailableFarms[farmKey].tokenB.symbol}`;
@@ -96,7 +98,11 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
           <StyledStackItem val={`${parseFloat(availableLPBalance) > 0 ? parseFloat(availableLPBalance).toFixed(6) : "--"} LP Tokens Unstaked`} />
         </Stack>
         <Stack>
-          <StyledStackItem val={`${AvailableFarms[farmKey].tokenA.symbol} $${UBQoracle?.price?.usdt.toPrecision(3) || "--"} / $${inkPrice.toPrecision(3)} ${AvailableFarms[farmKey].tokenB.symbol}`} />
+          <StyledStackItem
+            val={`${AvailableFarms[farmKey].tokenA.symbol} $${UBQoracle?.price?.usdt.toPrecision(3) || "--"} / $${inkPrice.toPrecision(3)} ${
+              AvailableFarms[farmKey].tokenB.symbol
+            }`}
+          />
           <StyledStackItem val={`Farm TVL $${currentTvl.toFixed(0)}`} />
           <StyledStackItem val={`Farm APY: ${currentApy.toFixed(0)}%`} />
 
