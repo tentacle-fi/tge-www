@@ -19,7 +19,6 @@ const Provider: React.FC = ({ children }) => {
   const [INKoracle, setINKoracle] = useState(0);
   const [PooledTokens, setPooledTokens] = useState({ token0: 0, token1: 0 });
 
-  // TODO: create a class or function to generate an array of objects/properties for each farm
   const farmingStartTime = useMemo(() => {
     return AvailableFarms.map((x) => {
       return x.yieldfarm.start_time;

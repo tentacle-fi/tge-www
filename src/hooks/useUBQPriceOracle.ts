@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { ethers } from "ethers";
 
-// TODO: UIP-16 will require this to be updated
+// TODO: UIP-16 will require this to be updated to 22 seconds
 const AVG_BLOCK_TIME_SEC = 88;
 // how many blocks to fetch in the getLogs request. eg, 60 minutes of average blocks
 // this will only be wrong when a LOT of low block times are on-chain eg, the last hour of blocks are 1/2 the average block time
