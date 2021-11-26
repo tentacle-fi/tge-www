@@ -12,13 +12,25 @@ export const GRANS = "0x0826180a4c981d5095cb5c48bb2a098a44cf6f73"; // Token Addr
 export const GRANS_UBQ_LPAddress = "0x6321c294f34c2cdaf61012ac4f3588a527f4d990"; // Pair address (UBQ+GRANS)
 export const GRANS_UBQ_FarmContract = "0x9969A0123c7e7553dac5390221e321C05630d102"; // (UBQ+GRANS) Farm address
 
-const UBQ_token = {
+const UBQ_token: IToken = {
   symbol: "UBQ", // wUBQ token address
   logo: ubqLogo,
   address: UBQ,
 };
 
-export const AvailableFarms = [
+const INK_token: IToken = {
+  symbol: "INK",
+  logo: inkLogo,
+  address: INK,
+};
+
+const GRANS_token: IToken = {
+  symbol: "GRANS",
+  logo: gransLogo,
+  address: GRANS,
+};
+
+export const AvailableFarms: Array<IFarm> = [
   {
     name: "INK/UBQ",
     yieldfarm: {
@@ -31,11 +43,7 @@ export const AvailableFarms = [
       address: INK_UBQ_LPAddress,
       url: "https://shinobi.ubiq.ninja/#/add/UBQ/" + INK,
     },
-    tokenA: {
-      symbol: "INK",
-      logo: inkLogo,
-      address: INK,
-    },
+    tokenA: INK_token,
     tokenB: UBQ_token,
   },
   {
@@ -50,11 +58,29 @@ export const AvailableFarms = [
       address: GRANS_UBQ_LPAddress,
       url: "https://shinobi.ubiq.ninja/#/add/UBQ/" + GRANS,
     },
-    tokenA: {
-      symbol: "GRANS",
-      logo: gransLogo,
-      address: GRANS,
-    },
+    tokenA: GRANS_token,
     tokenB: UBQ_token,
   },
 ];
+
+interface IToken {
+  symbol: string;
+  logo: string;
+  address: string;
+}
+
+export interface IFarm {
+  name: string;
+  yieldfarm: {
+    address: string;
+    start_time: number;
+    payOut: string;
+    payOutLogo: string;
+  };
+  lp: {
+    address: string;
+    url: string;
+  };
+  tokenA: IToken;
+  tokenB: IToken;
+}
