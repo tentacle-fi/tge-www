@@ -2,15 +2,17 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Countdown, { CountdownRenderProps } from "react-countdown";
 import { Box } from "react-neu";
 import Label from "components/Label";
-import Value from "components/Value";
 import useFarming from "hooks/useFarming";
 import { bnToDec, getShortDisplayBalance, getFullDisplayBalance } from "utils";
 import { AvailableFarms } from "farms/AvailableFarms";
 import useBalances from "hooks/useBalances";
 import BigNumber from "bignumber.js";
 import LinkIcon from "@mui/icons-material/Link";
-import Link from "@mui/material/Link";
-import Stack from "@mui/material/Stack";
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import { styled } from "@mui/material/styles";
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
 
 interface StakeProps {
   farmKey: number;
@@ -87,29 +89,20 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
 
   return (
     <>
-      <div style={{ display: "flex", flexDirection: "row", gap: "10px 35px", textAlign: "left" }}>
-        <Stack>
-          <StyledStackItem val={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name} LP Staked` : "--"} />
-          <StyledStackItem val={lpPercent > 0 ? lpPercent.toString() + " Pool %" : "--"} />
-
-          <StyledStackItem val={`LP ${formattedMyPoolTokens()}`} />
-          <StyledStackItem val={`LP Value $${formattedMyPoolValue()}`} />
-
-          <StyledStackItem val={`${parseFloat(availableLPBalance) > 0 ? parseFloat(availableLPBalance).toFixed(6) : "--"} LP Tokens Unstaked`} />
-        </Stack>
-        <Stack>
-          <StyledStackItem
-            val={`${AvailableFarms[farmKey].tokenA.symbol} $${UBQoracle?.price?.usdt.toPrecision(3) || "--"} / $${inkPrice.toPrecision(3)} ${
-              AvailableFarms[farmKey].tokenB.symbol
-            }`}
-          />
-          <StyledStackItem val={`Farm TVL $${currentTvl.toFixed(0)}`} />
-          <StyledStackItem val={`Farm APY: ${currentApy.toFixed(0)}%`} />
-
-          <Link href={AvailableFarms[farmKey].lp.url} target="_blank" rel="noopener" underline="always">
+        <Grid container spacing={2} >
+          <StyledGridItem variant="wide" val={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name} LP Staked` : "--"} />
+          <StyledGridItem val={`UBQ $${UBQoracle?.price?.usdt.toPrecision(3) || "--"} / $${inkPrice.toPrecision(3)} INK`} />
+          <StyledGridItem variant="wide" val={`LP Value $${formattedMyPoolValue()}`} />
+          <StyledGridItem val={`TVL $${currentTvl.toFixed(0)}`} />
+          <StyledGridItem variant="wide" val={lpPercent > 0 ? lpPercent.toString() + " Pool %" : "--"} />
+          <StyledGridItem val={`APY: ${currentApy.toFixed(0)}%`} />
+          <StyledGridItem variant="wide"val={`LP ${formattedMyPoolTokens()}`} />
+          <StyledGridItem val={`${parseFloat(availableLPBalance) > 0 ? parseFloat(availableLPBalance).toFixed(6) : "0.00"} LP Tokens Unstaked`} />
+        </Grid>
+      <div>
+          <Button sx={{ width: "100%" }} href={AvailableFarms[farmKey].lp.url} variant="outlined">
             Manage {AvailableFarms[farmKey].name} liquidity <LinkIcon />
-          </Link>
-        </Stack>
+          </Button>
       </div>
 
       {typeof farmingStartTime !== "undefined" && farmingStartTime[farmKey] > Date.now() && (
@@ -119,14 +112,28 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
   );
 };
 
-interface StackItemProps {
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(1),
+  textAlign: "left",
+  backgroundColor: "#333339",
+  height: "100%",
+}));
+
+interface GridItemProps {
   val: string;
   valueSize?: string;
   valueBold?: string;
+  variant?: string;
 }
 
-const StyledStackItem: React.FC<StackItemProps> = ({ val }) => {
-  return <Value valueSize={val || "16px"} valueBold={val || "400"} value={val} />;
+const StyledGridItem: React.FC<GridItemProps> = ({ val, variant }) => {
+  if( variant === 'wide' ){
+      return <Grid item xs={9} xl={6}><StyledPaper><Typography variant="body1">{val}</Typography></StyledPaper></Grid>
+  }else{
+      return <Grid item xs={3} xl={4}><StyledPaper><Typography variant="body1">{val}</Typography></StyledPaper></Grid>
+  }
+
 };
+
 
 export default React.memo(Stake);

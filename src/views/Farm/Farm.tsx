@@ -24,6 +24,7 @@ import useUbiq from "hooks/useUbiq";
 import { redeem } from "ubiq-sdk/utils";
 import useApproval from "hooks/useApproval";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import Typography from '@mui/material/Typography';
 
 import Alert from "@mui/material/Alert";
 
@@ -36,7 +37,7 @@ const StyledItem = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(1),
   textAlign: "center",
   color: theme.palette.secondary.main,
-  backgroundColor: "#333",
+  backgroundColor: "#333333",
   height: "100%",
 }));
 
@@ -131,7 +132,7 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
               style={{ width: "80px", height: "80px", background: "#cecece", borderRadius: "40px", marginRight: "-20px" }}
             />
 
-            <p>{farm.name}</p>
+            <Typography>{farm.name}</Typography>
             <LoadingButton
               onClick={() => {
                 setManageFarm(!manageFarm);
@@ -162,8 +163,8 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
 
         <Grid item xs={3} sx={{ display: manageFarm === true ? "" : "none" }}>
           <StyledItem>
-            <h3>Manage Liquidity:</h3>
-            <p>Use this to stake, unstake or withdrawl all of your LP tokens and rewards from the yield farm</p>
+            <Typography variant='h4'>Manage Liquidity:</Typography>
+            <Typography variant='body1'>Use this to stake, unstake or withdrawl all of your LP tokens and rewards from the yield farm</Typography>
           </StyledItem>
         </Grid>
         <Grid item xs={9} sx={{ display: manageFarm === true ? "" : "none" }}>

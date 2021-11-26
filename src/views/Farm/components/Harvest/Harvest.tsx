@@ -10,6 +10,7 @@ import { bnToDec, getShortDisplayBalance } from "utils";
 import { AvailableFarms } from "farms/AvailableFarms";
 import LoadingButton from "@mui/lab/LoadingButton";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import Typography from '@mui/material/Typography';
 
 import useUbiq from "hooks/useUbiq";
 import { harvest } from "ubiq-sdk/utils";
@@ -111,7 +112,7 @@ const UnHarvested: React.FC<HarvestProps> = React.memo(({ farmKey }) => {
     <>
       <Box alignItems="center" column>
         <Value value={earnedBalance > 0 ? earnedBalance.toString() : "--"} />
-        <p>{"Unharvested " + AvailableFarms[farmKey].yieldfarm.payOut}</p>
+        <Typography variant="body1">{"Unharvested " + AvailableFarms[farmKey].yieldfarm.payOut}</Typography>
       </Box>
 
       {HarvestAction}

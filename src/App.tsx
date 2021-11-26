@@ -79,6 +79,24 @@ const Providers: React.FC = ({ children }) => {
         main: "#bf1212", // dark red
       },
     },
+    typography: {
+        subtitle1: {
+          fontSize: 12,
+        },
+        body1: {
+          fontWeight: 500,
+          color: '#ffffff'
+        },
+        button: {
+          fontStyle: 'italic',
+        },
+        h3: {
+            color: '#ffffff'
+        },
+        h4: {
+            color: '#ffffff'
+        }
+      }
   });
 
   return (
