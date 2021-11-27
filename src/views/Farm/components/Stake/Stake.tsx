@@ -103,7 +103,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
         <StyledGridLabel contents="APY:" />
         <StyledGridItem variant="data" val={`${currentApy.toFixed(0)}%`} />
         <StyledGridLabel contents="Staked:" />
-        <StyledGridItem variant="data" val={`${formattedMyPoolTokens()}`} />
+        <StyledGridItem variant="data" val={formattedMyPoolTokens()} />
         <StyledGridLabel contents="Unstaked:" />
         <StyledGridItem
           variant="data"
