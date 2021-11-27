@@ -55,7 +55,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
     }
 
     return `-- ${AvailableFarms[farmKey].tokenA.symbol} / -- ${AvailableFarms[farmKey].tokenB.symbol}`;
-  }, [PooledTokens]);
+  }, [PooledTokens, farmKey]);
 
   const formattedMyPoolValue = useCallback(() => {
     if (PooledTokens !== undefined && UBQoracle !== undefined) {
@@ -64,7 +64,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
     }
 
     return `-- ${AvailableFarms[farmKey].tokenA.symbol} / -- ${AvailableFarms[farmKey].tokenB.symbol}`;
-  }, [PooledTokens, UBQoracle, inkPrice]);
+  }, [PooledTokens, UBQoracle, inkPrice, farmKey]);
 
   useEffect(() => {
     formattedStakedBalance();
