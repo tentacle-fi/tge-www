@@ -87,15 +87,23 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
 
   return (
     <>
-        <Grid container spacing={2} >
-          <StyledGridItem variant="wide" val={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name} LP Staked` : "--"} />
-          <StyledGridItem val={`UBQ $${UBQoracle?.price?.usdt.toPrecision(3) || "--"} / $${inkPrice.toPrecision(3)} INK`} />
-          <StyledGridItem variant="wide" val={`LP Value $${formattedMyPoolValue()}`} />
-          <StyledGridItem val={`TVL $${currentTvl.toFixed(0)}`} />
-          <StyledGridItem variant="wide" val={lpPercent > 0 ? lpPercent.toString() + " Pool %" : "--"} />
-          <StyledGridItem val={`APY: ${currentApy.toFixed(0)}%`} />
-          <StyledGridItem variant="wide"val={`LP ${formattedMyPoolTokens()}`} />
-          <StyledGridItem val={`${parseFloat(availableLPBalance) > 0 ? parseFloat(availableLPBalance).toFixed(6) : "0.00"} LP Tokens Unstaked`} />
+        <Grid container spacing={1} >
+          <StyledGridLabel contents="LP Staked:" />
+          <StyledGridItem variant="data" val={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name}` : "--"} />
+          <StyledGridLabel contents="Prices:" />
+          <StyledGridItem variant="data" val={`UBQ $${UBQoracle?.price?.usdt.toPrecision(3) || "--"} / $${inkPrice.toPrecision(3)} INK`} />
+          <StyledGridLabel contents="LP Value:" />
+          <StyledGridItem variant="data" val={`$ ${formattedMyPoolValue()}`} />
+          <StyledGridLabel contents="TVL:" />
+          <StyledGridItem variant="data" val={`$ ${currentTvl.toFixed(0)}`} />
+          <StyledGridLabel contents="Farm %:" />
+          <StyledGridItem variant="data" val={lpPercent > 0 ? lpPercent.toString() + '%' : "--"} />
+          <StyledGridLabel contents="APY:" />
+          <StyledGridItem variant="data" val={`${currentApy.toFixed(0)}%`} />
+          <StyledGridLabel contents="Staked:" />
+          <StyledGridItem variant="data"val={`${formattedMyPoolTokens()}`} />
+          <StyledGridLabel contents="Unstaked:" />
+          <StyledGridItem variant="data" val={`${parseFloat(availableLPBalance) > 0 ? `${parseFloat(availableLPBalance).toFixed(6)}  LP Tokens` : "0.00  LP Tokens"}`} />
         </Grid>
       <div>
           <Button sx={{ width: "100%" }} href={AvailableFarms[farmKey].lp.url} variant="outlined">
@@ -117,6 +125,14 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   height: "100%",
 }));
 
+interface StyledLabelProps {
+    contents: string;
+}
+
+const StyledGridLabel: React.FC<StyledLabelProps> = ({ contents }) => {
+    return <StyledGridItem variant="label" val={contents}><StyledPaper><Typography variant="body1"></Typography></StyledPaper></StyledGridItem>
+}
+
 interface GridItemProps {
   val: string;
   valueSize?: string;
@@ -125,10 +141,12 @@ interface GridItemProps {
 }
 
 const StyledGridItem: React.FC<GridItemProps> = ({ val, variant }) => {
-  if( variant === 'wide' ){
-      return <Grid item xs={9} xl={6}><StyledPaper><Typography variant="body1">{val}</Typography></StyledPaper></Grid>
+  if( variant === 'label' ){
+      return <Grid item xs={1} lg={2}><StyledPaper><Typography variant="body1">{val}</Typography></StyledPaper></Grid>
+  }else if( variant === 'data'){
+      return <Grid item xs={6} lg={4}><StyledPaper><Typography variant="body1">{val}</Typography></StyledPaper></Grid>
   }else{
-      return <Grid item xs={3} xl={4}><StyledPaper><Typography variant="body1">{val}</Typography></StyledPaper></Grid>
+      return <Grid item xs={12} lg={12}><StyledPaper><Typography variant="body1">{val}</Typography></StyledPaper></Grid>
   }
 
 };
