@@ -52,11 +52,11 @@ const Farm: React.FC = () => {
       <Box textAlign="center">
         <h1>Yield Farms</h1>
         <p>Join a farming pool to start earning rewards!</p>
-        <Button color="success" variant="outlined" startIcon={<StyledArrowIcon />}>
-          <Link component={RouterLink} to="/help">
+        <Link component={RouterLink} to="/help">
+          <Button color="success" variant="outlined" startIcon={<StyledArrowIcon />}>
             Click Here for Help
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       </Box>
       <Spacer />
       <>

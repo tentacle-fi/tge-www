@@ -1,23 +1,24 @@
-import React, { useCallback, useEffect, useState, useMemo } from "react";
+import React, { useCallback, useEffect, useState, useMemo, useRef } from "react";
 import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
 import ConfirmTransactionModal from "components/ConfirmTransactionModal";
 import useUbiq from "hooks/useUbiq";
-import { AvailableFarms, UBQ } from "farms/AvailableFarms";
+import { AvailableFarms } from "farms/AvailableFarms";
 import { getPoolTotalSupply, getEarned, getStaked } from "ubiq-sdk/utils";
 import Context from "./Context";
 import { shouldUpdateAry, getCurrentStats } from "utils";
 import useBalances from "hooks/useBalances";
+import { IPooledTokens } from "hooks/useFarming";
 
 const Provider: React.FC = ({ children }) => {
   const [confirmTxModalIsOpen, setConfirmTxModalIsOpen] = useState(false);
   const ubiq = useUbiq();
   const { account, ethereum } = useWallet();
-  const { UBQoracle } = useBalances();
-  const [CurrentAPY, setCurrentAPY] = useState(0);
-  const [CurrentTVL, setCurrentTVL] = useState(0);
-  const [INKoracle, setINKoracle] = useState(0);
-  const [PooledTokens, setPooledTokens] = useState({ token0: 0, token1: 0 });
+  const { UBQoracle, lpTokenReserves, tokenPrices } = useBalances();
+  const [CurrentAPY, setCurrentAPY] = useState<Array<number>>();
+  const [CurrentTVL, setCurrentTVL] = useState<Array<number>>();
+  const [PooledTokens, setPooledTokens] = useState<Array<IPooledTokens>>();
+  const updatedStats = useRef(false);
 
   const farmingStartTime = useMemo(() => {
     return AvailableFarms.map((x) => {
@@ -85,52 +86,60 @@ const Provider: React.FC = ({ children }) => {
   }, [ubiq, account, totalSupplyLP, lpPercents, setlpPercents]);
 
   const fetchCurrentStats = useCallback(async () => {
-    if (UBQoracle === undefined || totalSupplyLP === undefined) {
+    console.log("fetchCurrentStats", lpTokenReserves);
+    if (
+      UBQoracle === undefined ||
+      totalSupplyLP === undefined ||
+      tokenPrices === undefined ||
+      lpTokenReserves === undefined ||
+      lpPercents === undefined
+    ) {
       return;
     }
-    if (CurrentAPY !== 0) {
-      return;
-    }
-    let statsAry = [];
+
+    updatedStats.current = true;
+
+    let apyAry = [];
+    let tvlAry = [];
+    let pooledTokens: Array<IPooledTokens> = [];
     try {
       for (let i = 0; i < AvailableFarms.length; i++) {
         try {
-          let token0Price = 0;
-          switch (AvailableFarms[i].tokenA.address) {
-            case UBQ:
-              token0Price = UBQoracle.price.usdt;
-              break;
-            default:
-              throw new Error(`tokenA address unknown! address:${AvailableFarms[i].tokenA.address}`);
-          }
+          const token0Price = tokenPrices[AvailableFarms[i].tokenA.address];
+          const token1Price = tokenPrices[AvailableFarms[i].tokenB.address];
 
-          statsAry.push(
-            await getCurrentStats(ethereum, token0Price, AvailableFarms[i].lp.address, AvailableFarms[i].yieldfarm.address, totalSupplyLP[i])
+          const stats = await getCurrentStats(
+            ethereum,
+            token0Price,
+            token1Price,
+            lpTokenReserves[i],
+            AvailableFarms[i].lp.address,
+            AvailableFarms[i].yieldfarm.address,
+            totalSupplyLP[i]
           );
 
-          console.log("token 1 price", statsAry[i].token1Price);
+          apyAry.push(stats.farmApy);
+          tvlAry.push(stats.farmTvl);
+
+          pooledTokens.push({
+            token0: lpPercents[i].toNumber() * lpTokenReserves[i].token0,
+            token1: lpPercents[i].toNumber() * lpTokenReserves[i].token1,
+          });
         } catch (e) {
           console.error("fetchCurrentStats error", e);
         }
       }
 
-      if (lpPercents !== undefined) {
-        const myPoolTokens = {
-          token0: lpPercents[0].toNumber() * statsAry[0].reserves.token0,
-          token1: lpPercents[0].toNumber() * statsAry[0].reserves.token1,
-        };
+      console.log("apy:", apyAry);
+      console.log("tvl:", tvlAry);
 
-        if (PooledTokens.token0 !== myPoolTokens.token0 || PooledTokens.token1 !== myPoolTokens.token1) {
-          setPooledTokens(myPoolTokens);
-          setCurrentAPY(statsAry[0].farmApy);
-          setCurrentTVL(statsAry[0].farmTvl);
-          setINKoracle(statsAry[0].token1Price);
-        }
-      }
+      setPooledTokens(pooledTokens);
+      setCurrentAPY(apyAry);
+      setCurrentTVL(tvlAry);
     } catch (e) {
       console.error("fetchCurrentStats");
     }
-  }, [setCurrentAPY, UBQoracle, totalSupplyLP, CurrentAPY, ethereum, lpPercents, PooledTokens, setPooledTokens]);
+  }, [setCurrentAPY, UBQoracle, totalSupplyLP, ethereum, lpPercents, setPooledTokens, tokenPrices, lpTokenReserves]);
 
   const fetchBalances = useCallback(async () => {
     fetchearnedBalances();
@@ -156,7 +165,6 @@ const Provider: React.FC = ({ children }) => {
         lpPercents,
         currentApy: CurrentAPY,
         currentTvl: CurrentTVL,
-        inkPrice: INKoracle,
         PooledTokens: PooledTokens,
       }}
     >
