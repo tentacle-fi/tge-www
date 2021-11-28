@@ -11,6 +11,7 @@ import { AvailableFarms } from "farms/AvailableFarms";
 import LoadingButton from "@mui/lab/LoadingButton";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
 
 import useUbiq from "hooks/useUbiq";
 import { harvest } from "ubiq-sdk/utils";
@@ -81,20 +82,24 @@ const UnHarvested: React.FC<HarvestProps> = React.memo(({ farmKey }) => {
     }
     if (isHarvesting === false) {
       return (
-        <LoadingButton
-          disabled={earnedBalance <= 0}
-          onClick={() => {
-            handleHarvest();
-          }}
-          endIcon={<AttachMoneyIcon />}
-          loading={false}
-          loadingPosition="end"
-          variant="contained"
-          color="success"
-          size="small"
-        >
-          Harvest
-        </LoadingButton>
+        <Tooltip title={earnedBalance > 0 ? "Harvest your rewards!" : "No rewards to harvest"}>
+          <div>
+            <LoadingButton
+              disabled={earnedBalance <= 0}
+              onClick={() => {
+                handleHarvest();
+              }}
+              endIcon={<AttachMoneyIcon />}
+              loading={false}
+              loadingPosition="end"
+              variant="contained"
+              color="success"
+              size="small"
+            >
+              Harvest
+            </LoadingButton>
+          </div>
+        </Tooltip>
       );
     }
     if (isHarvesting === true) {
