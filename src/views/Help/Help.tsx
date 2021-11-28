@@ -5,24 +5,15 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import Page from "components/Page";
 import PageHeader from "components/PageHeader";
 import WalletButton from "components/TopBar/components/WalletButton";
-import { Link as RouterLink } from "react-router-dom";
-import Link from "@mui/material/Link";
+import SLink from "components/SLink";
 import { INK } from "farms/AvailableFarms";
 import { addInkToWallet } from "metamask.js";
-
-// opens a URL when a button is clicked.
-// returns a function to make less code in the on-click assignment.
-// eg: onClick={openURL('https://example.com/')}
-function openURL(url: string) {
-  return () => {
-    window.open(url, "_blank");
-  };
-}
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
 const Help: React.FC = () => {
   return (
     <Page>
-      <PageHeader icon="" title="Tentacle.Finance help" />
+      <PageHeader icon={<HelpOutlineIcon sx={{ fontSize: "98px" }} />} title="Tentacle.Finance Help" />
 
       <div style={{ width: "60%", minWidth: "600px" }}>
         <p>
@@ -34,9 +25,9 @@ const Help: React.FC = () => {
         <StyledUl>
           <ListItem legend="Step 1: Setup your wallet">
             Tentacle.Finance supports Web3 wallets such as Metamask and Sparrow.
-            <Button onClick={openURL("https://ubiqsmart.com/en/wallets")} variant="outlined">
-              Learn how to setup a wallet
-            </Button>
+            <SLink external href="https://ubiqsmart.com/en/wallets">
+              <Button variant="outlined">Learn how to setup a wallet</Button>
+            </SLink>
           </ListItem>
 
           <ListItem legend="Step 2: Connect your wallet">
@@ -47,21 +38,25 @@ const Help: React.FC = () => {
             Obtain UBQ and INK balance in your wallet
             <ButtonGroup sx={{ margin: "10px" }}>
               <h3>Obtain UBQ at:</h3>
-              <Button sx={{ marginLeft: "10px" }} onClick={openURL("https://bittrex.com/Market/Index?MarketName=USDT-UBQ")} variant="outlined">
-                Bittrex
-              </Button>
-              <Button onClick={openURL("https://dovewallet.com/en/trade/spot/ubq-usdt")} variant="outlined">
-                Dove Wallet
-              </Button>
-              <Button onClick={openURL("https://shinobi.ubiq.ninja/#/swap")} variant="outlined">
-                Shinobi Swap
-              </Button>
+              <SLink external href="https://bittrex.com/Market/Index?MarketName=USDT-UBQ">
+                <Button sx={{ marginLeft: "10px" }} variant="outlined">
+                  Bittrex
+                </Button>
+              </SLink>
+              <SLink external href="https://dovewallet.com/en/trade/spot/ubq-usdt">
+                <Button variant="outlined">Dove Wallet</Button>
+              </SLink>
+              <SLink external href="https://shinobi.ubiq.ninja/#/swap">
+                <Button variant="outlined">Shinobi Swap</Button>
+              </SLink>
             </ButtonGroup>
             <ButtonGroup>
               <h3>Obtain INK at:</h3>
-              <Button sx={{ marginLeft: "10px" }} onClick={openURL("https://shinobi.ubiq.ninja/#/swap?outputCurrency=" + INK)} variant="outlined">
-                Shinobi Swap
-              </Button>
+              <SLink external href={"https://shinobi.ubiq.ninja/#/swap?outputCurrency=" + INK}>
+                <Button sx={{ marginLeft: "10px" }} variant="outlined">
+                  Shinobi Swap
+                </Button>
+              </SLink>
               <Button onClick={addInkToWallet} variant="outlined">
                 Add INK to Wallet
               </Button>
@@ -70,18 +65,18 @@ const Help: React.FC = () => {
 
           <ListItem legend="Step 4: Add Liquidity">
             Provide UBQ and INK as LP on Shinobi. Note: You will need to "Approve" first on the same page.
-            <Button onClick={openURL("https://shinobi.ubiq.ninja/#/add/UBQ/" + INK)} variant="outlined">
-              Provide Liquidity with Shinobi
-            </Button>
+            <SLink external href={"https://shinobi.ubiq.ninja/#/add/UBQ/" + INK}>
+              <Button variant="outlined">Provide Liquidity with Shinobi</Button>
+            </SLink>
           </ListItem>
 
           <ListItem legend="Step 5: Stake LP tokens">
             Stake your LP tokens on the{" "}
-            <Button sx={{ marginLeft: "10px" }} variant="outlined">
-              <Link component={RouterLink} to="/farm">
+            <SLink external href="/farm">
+              <Button sx={{ marginLeft: "10px" }} variant="outlined">
                 Tentacle.Finance Farm
-              </Link>
-            </Button>
+              </Button>
+            </SLink>
           </ListItem>
 
           <ListItem legend="Step 6: Watch your INK increase!">
@@ -109,16 +104,6 @@ const ListItem: React.FC<ListItemProps> = ({ children, legend = "" }) => {
     </li>
   );
 };
-
-// const StyledLink = styled.a`
-//   color: ${(props) => props.theme.colors.grey[500]};
-//   padding-left: ${(props) => props.theme.spacing[3]}px;
-//   padding-right: ${(props) => props.theme.spacing[3]}px;
-//   text-decoration: none;
-//   &:hover {
-//     color: ${(props) => props.theme.colors.grey[600]};
-//   }
-// `;
 
 const StyledFieldset = styled.fieldset`
   border-top: 1px dashed #cecece;

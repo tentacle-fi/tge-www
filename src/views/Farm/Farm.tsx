@@ -5,10 +5,8 @@ import HarvestCard from "./components/Harvest";
 import StakeCard from "./components/Stake";
 import { useWallet } from "use-wallet";
 import { AvailableFarms } from "farms/AvailableFarms";
-import { Link as RouterLink } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
-import Link from "@mui/material/Link";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
@@ -24,6 +22,7 @@ import useApproval from "hooks/useApproval";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import Typography from "@mui/material/Typography";
 import Alert from "@mui/material/Alert";
+import SLink from "components/SLink";
 
 interface YieldFarmProps {
   farmKey: number;
@@ -49,11 +48,11 @@ const Farm: React.FC = () => {
       <Box textAlign="center">
         <h1>Yield Farms</h1>
         <p>Join a farming pool to start earning rewards!</p>
-        <Link component={RouterLink} to="/help">
+        <SLink href="/help">
           <Button color="success" variant="outlined" startIcon={<StyledArrowIcon />}>
             Click Here for Help
           </Button>
-        </Link>
+        </SLink>
       </Box>
       <>
         <YieldFarm farmKey={0} />
