@@ -104,11 +104,13 @@ const Provider: React.FC = ({ children }) => {
         try {
           const token0Price = tokenPrices[AvailableFarms[i].tokenA.address];
           const token1Price = tokenPrices[AvailableFarms[i].tokenB.address];
+          const rewardTokenPrice = tokenPrices[AvailableFarms[i].yieldfarm.reward.address];
 
           const stats = await getCurrentStats(
             ethereum,
             token0Price,
             token1Price,
+            rewardTokenPrice,
             lpTokenReserves[i],
             AvailableFarms[i].lp.address,
             AvailableFarms[i].yieldfarm.address,

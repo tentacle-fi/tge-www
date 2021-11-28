@@ -36,8 +36,7 @@ export const AvailableFarms: Array<IFarm> = [
     yieldfarm: {
       address: INK_UBQ_FarmContract,
       start_time: 1637006400 * 1000,
-      payOut: INK_token.symbol,
-      payOutLogo: inkLogo,
+      reward: INK_token,
     },
     lp: {
       address: INK_UBQ_LPAddress,
@@ -51,8 +50,7 @@ export const AvailableFarms: Array<IFarm> = [
     yieldfarm: {
       address: GRANS_UBQ_FarmContract,
       start_time: 1437006400 * 1000,
-      payOut: GRANS_token.symbol,
-      payOutLogo: gransLogo,
+      reward: GRANS_token,
     },
     lp: {
       address: GRANS_UBQ_LPAddress,
@@ -74,8 +72,7 @@ export interface IFarm {
   yieldfarm: {
     address: string;
     start_time: number;
-    payOut: string;
-    payOutLogo: string;
+    reward: IToken;
   };
   lp: {
     address: string;

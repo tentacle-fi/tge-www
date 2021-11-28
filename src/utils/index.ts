@@ -216,6 +216,7 @@ export const getCurrentStats = async (
   provider: provider,
   token0Price: number,
   token1Price: number,
+  rewardTokenPrice: number,
   reserves: IReserves,
   poolLpTokenAddress: string,
   farmContractAddress: string,
@@ -228,7 +229,7 @@ export const getCurrentStats = async (
     const farm_token0 = (bnToDec(totalSupplyLP) * poolLpCalcRatio) / Math.sqrt(1 / reserves.ratio0over1);
     const farm_token1 = (bnToDec(totalSupplyLP) * poolLpCalcRatio) / Math.sqrt(reserves.ratio0over1);
     const farmTvl = farm_token0 * token0Price + farm_token1 * token1Price;
-    const farmApy = ((token1Price * dailyTokenRewardEmissions * 365) / farmTvl) * 100;
+    const farmApy = ((rewardTokenPrice * dailyTokenRewardEmissions * 365) / farmTvl) * 100;
 
     // DEBUG: all the log statements for debug that make sense to have
     // console.log("token0 price", token0Price);

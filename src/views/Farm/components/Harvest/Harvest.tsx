@@ -40,13 +40,13 @@ const Harvest: React.FC<HarvestProps> = ({ farmKey }) => {
     <>
       <div style={{ display: "block", height: "60%", padding: "10px 5px 0 5px" }}>
         <img
-          src={AvailableFarms[farmKey].yieldfarm.payOutLogo}
-          alt={AvailableFarms[farmKey].yieldfarm.payOut + " token logo"}
+          src={AvailableFarms[farmKey].yieldfarm.reward.logo}
+          alt={AvailableFarms[farmKey].yieldfarm.reward.symbol + " token logo"}
           style={{ height: 64, alignSelf: "center", background: "white", borderRadius: 110 }}
         />
 
         <Typography variant="h5">{earnedBalance > 0 ? earnedBalance.toString() : "--"}</Typography>
-        <Typography variant="body1">{"Unharvested " + AvailableFarms[farmKey].yieldfarm.payOut}</Typography>
+        <Typography variant="body1">{"Unharvested " + AvailableFarms[farmKey].yieldfarm.reward.symbol}</Typography>
       </div>
 
       <UnHarvested farmKey={farmKey} earnedBalance={earnedBalance} />

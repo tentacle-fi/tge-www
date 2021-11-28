@@ -149,7 +149,7 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
 
         <Grid item xs={7}>
           <StyledItem>
-            <StakeCard farmKey={farmKey}></StakeCard>
+            <StakeCard farmKey={farmKey} />
           </StyledItem>
         </Grid>
 
