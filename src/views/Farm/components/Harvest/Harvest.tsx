@@ -118,7 +118,7 @@ const UnHarvested: React.FC<HarvestProps> = React.memo(({ farmKey }) => {
     <>
       <Box alignItems="center" column>
         <Value value={earnedBalance > 0 ? earnedBalance.toString() : "--"} />
-        <Typography variant="body1">{"Unharvested " + AvailableFarms[farmKey].yieldfarm.payOut}</Typography>
+        <Typography sx={{ marginTop: "10px" }} variant="body1">{"Unharvested " + AvailableFarms[farmKey].yieldfarm.payOut}</Typography>
       </Box>
 
       {HarvestAction}
