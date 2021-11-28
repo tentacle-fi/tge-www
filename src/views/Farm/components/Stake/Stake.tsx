@@ -139,7 +139,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
         <StyledGridLabel contents="Unstaked:" />
         <StyledGridItem
           variant="data"
-          color={parseFloat(availableLPBalance) > 0 ? "error" : ""}
+          color={parseFloat(availableLPBalance) > 0 ? "#ff6e63" : ""}
           val={`${parseFloat(availableLPBalance) > 0 ? `${parseFloat(availableLPBalance).toFixed(6)}  LP Tokens` : "0.00  LP Tokens"}`}
         />
       </Grid>
