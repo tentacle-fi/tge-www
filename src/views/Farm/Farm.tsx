@@ -14,7 +14,6 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import LoadingButton from "@mui/lab/LoadingButton";
-
 import StakeModal from "./components/Stake/components/StakeModal";
 import UnstakeModal from "./components/Stake/components/UnstakeModal";
 import BlockIcon from "@mui/icons-material/Block";
@@ -24,7 +23,6 @@ import { redeem } from "ubiq-sdk/utils";
 import useApproval from "hooks/useApproval";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import Typography from "@mui/material/Typography";
-
 import Alert from "@mui/material/Alert";
 
 interface YieldFarmProps {
