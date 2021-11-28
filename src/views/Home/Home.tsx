@@ -1,21 +1,15 @@
 import React from "react";
-import { useTheme } from "react-neu";
-
 import Page from "components/Page";
 import PageHeader from "components/PageHeader";
-
 import Box from "@mui/material/Box";
-
 import Timeline from "@mui/lab/Timeline";
 import TimelineItem from "@mui/lab/TimelineItem";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import TimelineConnector from "@mui/lab/TimelineConnector";
 import TimelineContent from "@mui/lab/TimelineContent";
-
 import NightsStayIcon from "@mui/icons-material/NightsStay";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
-
 import Tooltip from "@mui/material/Tooltip";
 
 interface TimelinePhaseProps {
@@ -49,10 +43,9 @@ const TimelinePhase: React.FC<TimelinePhaseProps> = ({ title, desc, complete = f
 };
 
 const Home: React.FC = () => {
-  const { darkMode } = useTheme();
   return (
     <Page>
-      <PageHeader icon={darkMode ? <NightsStayIcon sx={{ fontSize: "98px" }} /> : "🌞"} title="Welcome to Tentacle.Finance" />
+      <PageHeader icon={<NightsStayIcon sx={{ fontSize: "98px" }} />} title="Welcome to Tentacle.Finance" />
       <Introduction />
       <RoadmapTimeline />
     </Page>

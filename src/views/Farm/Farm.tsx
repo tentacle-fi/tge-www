@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { Spacer } from "react-neu";
 import Page from "components/Page";
 import useFarming from "hooks/useFarming";
 import HarvestCard from "./components/Harvest";
@@ -58,7 +57,6 @@ const Farm: React.FC = () => {
           </Button>
         </Link>
       </Box>
-      <Spacer />
       <>
         <YieldFarm farmKey={0} />
         <YieldFarm farmKey={1} />
