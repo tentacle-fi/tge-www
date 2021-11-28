@@ -44,17 +44,19 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
     if (status === "error") {
       return (
         <Tooltip title="Network Error, click to switch to Ubiq Network">
-          <Button size="small" color="error">
-            <SignalWifiStatusbarConnectedNoInternet4Icon
-              onClick={async () => {
-                try {
-                  await switchToUBQNetwork();
-                } catch (e) {
-                  console.error("caught error while trying to switch networks:", e);
-                }
-                setNetworkState({});
-              }}
-            />
+          <Button
+            size="small"
+            color="error"
+            onClick={async () => {
+              try {
+                await switchToUBQNetwork();
+              } catch (e) {
+                console.error("caught error while trying to switch networks:", e);
+              }
+              setNetworkState({});
+            }}
+          >
+            <SignalWifiStatusbarConnectedNoInternet4Icon />
           </Button>
         </Tooltip>
       );
