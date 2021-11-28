@@ -13,6 +13,7 @@ import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
 
 interface StakeProps {
   farmKey: number;
@@ -143,9 +144,12 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
         />
       </Grid>
       <div>
-        <Button sx={{ width: "100%" }} href={AvailableFarms[farmKey].lp.url} variant="outlined">
-          Manage {AvailableFarms[farmKey].name} liquidity <LinkIcon />
-        </Button>
+        <Link target="_blank" rel="noreferrer" href={AvailableFarms[farmKey].lp.url}>
+          <Button sx={{ width: "100%", marginTop: "10px" }} variant="outlined">
+            Manage {AvailableFarms[farmKey].name} liquidity on Shinobi
+            <LinkIcon />
+          </Button>
+        </Link>
       </div>
 
       {typeof farmingStartTime !== "undefined" && farmingStartTime[farmKey] > Date.now() && (
