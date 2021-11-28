@@ -120,7 +120,7 @@ async function getLogs(addy: string, fromBlockHex: string) {
   }
 }
 
-async function getBlock(num?: number) {
+export async function getBlock(num?: number) {
   if (num === undefined) {
     return await ubq_provider.getBlock("latest");
   }

@@ -22,3 +22,4 @@
 - add introduction text to homepage
 - add wallet address to wallet button
 - react rendering performance upgrades and UI improvements
+- block number and timestamp UI updates

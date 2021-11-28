@@ -13,4 +13,5 @@ export interface ContextValues {
   UBQoracle?: IOraclePrice;
   tokenPrices?: ITokenPrice;
   lpTokenReserves?: Array<IReserves>;
+  CurrentBlockTimestamp?: number;
 }

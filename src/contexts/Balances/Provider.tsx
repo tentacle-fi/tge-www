@@ -4,11 +4,11 @@ import { useWallet } from "use-wallet";
 import { provider } from "web3-core";
 import { ITokenPrice } from "hooks/useBalances";
 
-import { getCurrentBlock, getCoinBalanceAsBigNum, getBalanceAsBigNum, shouldUpdateVal, shouldUpdateAry, getTokenPrice, IReserves } from "utils";
+import { getCoinBalanceAsBigNum, getBalanceAsBigNum, shouldUpdateVal, shouldUpdateAry, getTokenPrice, IReserves } from "utils";
 
 import Context from "./Context";
 import { AvailableFarms, INK, GRANS, UBQ } from "farms/AvailableFarms";
-import useUBQPriceOracle from "hooks/useUBQPriceOracle";
+import useUBQPriceOracle, { getBlock } from "hooks/useUBQPriceOracle";
 
 const BalancesProvider: React.FC = ({ children }) => {
   const [tokenBalances, settokenBalances] = useState<Array<BigNumber>>();
@@ -22,6 +22,7 @@ const BalancesProvider: React.FC = ({ children }) => {
   const [tokenReserves, setTokenReserves] = useState<Array<IReserves>>();
 
   const [CurrentBlock, setCurrentBlock] = useState("");
+  const [CurrentBlockTimestamp, setCurrentBlockTimestamp] = useState(0);
 
   const { account, ethereum } = useWallet();
   const { oracle } = useUBQPriceOracle();
@@ -115,22 +116,19 @@ const BalancesProvider: React.FC = ({ children }) => {
     [tokenBalances, settokenBalances, LPBalances, setLPBalances, setUBQBalance, setINKBalance, setGRANSBalance, UBQBalance, INKBalance, GRANSBalance]
   );
 
-  const fetchCurrentBlock = useCallback(
-    async (userAddress: string, provider: provider) => {
-      const currentBlock = await getCurrentBlock(provider);
-
-      setCurrentBlock(currentBlock.toString());
-    },
-    [setCurrentBlock]
-  );
+  const fetchCurrentBlock = useCallback(async () => {
+    const currentBlock = await getBlock();
+    setCurrentBlock(currentBlock.number.toString());
+    setCurrentBlockTimestamp(currentBlock.timestamp);
+  }, [setCurrentBlock, setCurrentBlockTimestamp]);
 
   useEffect(() => {
     if (account && ethereum) {
       fetchBalances(account, ethereum);
-      fetchCurrentBlock(account, ethereum);
+      fetchCurrentBlock();
 
       let refreshInterval = setInterval(() => {
-        fetchCurrentBlock(account, ethereum);
+        fetchCurrentBlock();
         fetchBalances(account, ethereum);
       }, 10000);
       return () => clearInterval(refreshInterval);
@@ -154,6 +152,7 @@ const BalancesProvider: React.FC = ({ children }) => {
         tokenBalances,
         LPBalances,
         CurrentBlock,
+        CurrentBlockTimestamp,
         UBQBalance,
         INKBalance,
         GRANSBalance,
