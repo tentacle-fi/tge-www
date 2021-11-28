@@ -133,7 +133,7 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
             />
 
             <Typography>{farm.name}</Typography>
-            <LoadingButton
+            <LoadingButton sx={{ marginTop: "10px" }}
               onClick={() => {
                 setManageFarm(!manageFarm);
               }}

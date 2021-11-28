@@ -84,7 +84,7 @@ const UnHarvested: React.FC<HarvestProps> = React.memo(({ farmKey }) => {
       return (
         <Tooltip title={earnedBalance > 0 ? "Harvest your rewards!" : "No rewards to harvest"}>
           <div>
-            <LoadingButton
+            <LoadingButton sx={{ marginTop: "10px" }}
               disabled={earnedBalance <= 0}
               onClick={() => {
                 handleHarvest();
