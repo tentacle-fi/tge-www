@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
 import ConfirmTransactionModal from "components/ConfirmTransactionModal";
@@ -18,7 +18,6 @@ const Provider: React.FC = ({ children }) => {
   const [CurrentAPY, setCurrentAPY] = useState<Array<number>>();
   const [CurrentTVL, setCurrentTVL] = useState<Array<number>>();
   const [PooledTokens, setPooledTokens] = useState<Array<IPooledTokens>>();
-  const updatedStats = useRef(false);
 
   const farmingStartTime = useMemo(() => {
     return AvailableFarms.map((x) => {
@@ -86,7 +85,7 @@ const Provider: React.FC = ({ children }) => {
   }, [ubiq, account, totalSupplyLP, lpPercents, setlpPercents]);
 
   const fetchCurrentStats = useCallback(async () => {
-    console.log("fetchCurrentStats", lpTokenReserves);
+    console.log("fetchCurrentStats");
     if (
       UBQoracle === undefined ||
       totalSupplyLP === undefined ||
@@ -96,8 +95,6 @@ const Provider: React.FC = ({ children }) => {
     ) {
       return;
     }
-
-    updatedStats.current = true;
 
     let apyAry = [];
     let tvlAry = [];
@@ -130,9 +127,6 @@ const Provider: React.FC = ({ children }) => {
         }
       }
 
-      console.log("apy:", apyAry);
-      console.log("tvl:", tvlAry);
-
       setPooledTokens(pooledTokens);
       setCurrentAPY(apyAry);
       setCurrentTVL(tvlAry);
@@ -145,14 +139,19 @@ const Provider: React.FC = ({ children }) => {
     fetchearnedBalances();
     fetchstakedBalances();
     fetchTotalSupplyLP();
-    fetchCurrentStats();
-  }, [fetchearnedBalances, fetchstakedBalances, fetchTotalSupplyLP, fetchCurrentStats]);
+  }, [fetchearnedBalances, fetchstakedBalances, fetchTotalSupplyLP]);
 
   useEffect(() => {
     fetchBalances();
     let refreshInterval = setInterval(() => fetchBalances(), 10000);
     return () => clearInterval(refreshInterval);
   }, [fetchBalances]);
+
+  useEffect(() => {
+    fetchCurrentStats();
+    let refreshInterval = setInterval(() => fetchCurrentStats(), 1 * 60 * 1000);
+    return () => clearInterval(refreshInterval);
+  }, [fetchCurrentStats]);
 
   return (
     <Context.Provider
