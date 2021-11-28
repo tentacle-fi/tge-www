@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Countdown, { CountdownRenderProps } from "react-countdown";
-import { Box } from "react-neu";
+import Box from "@mui/material/Box";
 import Label from "components/Label";
 import useFarming from "hooks/useFarming";
 import { bnToDec, getShortDisplayBalance, getFullDisplayBalance } from "utils";
@@ -112,7 +112,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
     const paddedDays = days < 10 ? `0${days}` : days;
 
     return (
-      <Box row justifyContent="center">
+      <Box sx={{ justifyContent: "center" }}>
         <Label text={`Farming starts in ${paddedDays} days ${paddedHours}:${paddedMinutes}:${paddedSeconds}`} />
       </Box>
     );
@@ -121,27 +121,39 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
   return (
     <>
       <Grid container spacing={1}>
-        <StyledGridLabel contents="LP Staked:" />
-        <StyledGridItem
-          variant="data"
-          val={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name} ($ ${formattedMyPoolValue()})` : "--"}
-        />
-        <StyledGridLabel contents="Prices:" />
-        <StyledGridItem variant="data" val={formattedTokenPrices()} />
-        <StyledGridLabel contents="TVL:" />
-        <StyledGridItem variant="data" val={formattedTvl()} />
-        <StyledGridLabel contents="Farm %:" />
-        <StyledGridItem variant="data" val={lpPercent > 0 ? lpPercent.toString() + "%" : "--"} />
-        <StyledGridLabel contents="APY:" />
-        <StyledGridItem variant="data" val={formattedApy()} />
-        <StyledGridLabel contents="Staked:" />
-        <StyledGridItem variant="data" val={formattedMyPoolTokens()} />
-        <StyledGridLabel contents="Unstaked:" />
-        <StyledGridItem
-          variant="data"
-          color={parseFloat(availableLPBalance) > 0 ? "#ff6e63" : ""}
-          val={`${parseFloat(availableLPBalance) > 0 ? `${parseFloat(availableLPBalance).toFixed(6)}  LP Tokens` : "0.00  LP Tokens"}`}
-        />
+        <Box sx={{ width: "50%" }}>
+          <Grid container spacing={1}>
+            <FarmInfo
+              farmKey={farmKey}
+              labelText="LP Staked:"
+              stakeBalance={stakeBalance}
+              contents={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name}` : "--"}
+            />
+            <FarmInfo farmKey={farmKey} labelText="LP Value:" stakeBalance={stakeBalance} contents={`$ ${formattedMyPoolValue()}`} />
+            <FarmInfo
+              farmKey={farmKey}
+              labelText="Farm %:"
+              stakeBalance={stakeBalance}
+              contents={lpPercent > 0 ? lpPercent.toString() + "%" : "--"}
+            />
+            <FarmInfo farmKey={farmKey} labelText="Staked:" stakeBalance={stakeBalance} contents={formattedMyPoolTokens()} />
+          </Grid>
+        </Box>
+
+        <Box sx={{ width: "50%" }}>
+          <Grid container spacing={1}>
+            <FarmInfo farmKey={farmKey} labelText="Prices:" stakeBalance={stakeBalance} contents={formattedTokenPrices()} />
+            <FarmInfo farmKey={farmKey} labelText="TVL:" stakeBalance={stakeBalance} contents={formattedTvl()} />
+            <FarmInfo farmKey={farmKey} labelText="APY:" stakeBalance={stakeBalance} contents={formattedApy()} />
+            <FarmInfo
+              farmKey={farmKey}
+              labelText="Unstaked:"
+              stakeBalance={stakeBalance}
+              color={parseFloat(availableLPBalance) > 0 ? "#ff6e63" : ""}
+              contents={`${parseFloat(availableLPBalance) > 0 ? `${parseFloat(availableLPBalance).toFixed(6)}  LP Tokens` : "0.00  LP Tokens"}`}
+            />
+          </Grid>
+        </Box>
       </Grid>
       <div>
         <Link target="_blank" rel="noreferrer" href={AvailableFarms[farmKey].lp.url}>
@@ -155,6 +167,23 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
       {typeof farmingStartTime !== "undefined" && farmingStartTime[farmKey] > Date.now() && (
         <Countdown date={farmingStartTime[farmKey]} renderer={renderer} />
       )}
+    </>
+  );
+};
+
+interface FarmInfoProps {
+  labelText: string;
+  contents: string;
+  stakeBalance: number;
+  farmKey: number;
+  color?: string;
+}
+
+const FarmInfo: React.FC<FarmInfoProps> = ({ labelText, contents, stakeBalance, farmKey, color }) => {
+  return (
+    <>
+      <StyledGridLabel contents={labelText} />
+      <StyledGridItem variant="data" val={contents} />
     </>
   );
 };
@@ -191,9 +220,9 @@ interface GridItemProps {
 const StyledGridItem: React.FC<GridItemProps> = ({ val, variant, color }) => {
   if (variant === "label") {
     return (
-      <Grid item xs={1} lg={2}>
+      <Grid item xs={2} lg={4}>
         <StyledPaper>
-          <Typography color={color} variant="body1">
+          <Typography color={color} variant="body1" sx={{ textAlign: "right" }}>
             {val}
           </Typography>
         </StyledPaper>
@@ -201,7 +230,7 @@ const StyledGridItem: React.FC<GridItemProps> = ({ val, variant, color }) => {
     );
   } else if (variant === "data") {
     return (
-      <Grid item xs={6} lg={4}>
+      <Grid item xs={10} lg={8}>
         <StyledPaper>
           <Typography color={color} variant="body1">
             {val}
