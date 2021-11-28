@@ -142,12 +142,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
 
         <Box sx={{ width: "50%" }}>
           <Grid container spacing={1}>
-            <FarmInfo
-              farmKey={farmKey}
-              labelText="Prices:"
-              stakeBalance={stakeBalance}
-              contents={formattedTokenPrices()}
-            />
+            <FarmInfo farmKey={farmKey} labelText="Prices:" stakeBalance={stakeBalance} contents={formattedTokenPrices()} />
             <FarmInfo farmKey={farmKey} labelText="TVL:" stakeBalance={stakeBalance} contents={formattedTvl()} />
             <FarmInfo farmKey={farmKey} labelText="APY:" stakeBalance={stakeBalance} contents={formattedApy()} />
             <FarmInfo
@@ -227,7 +222,7 @@ const StyledGridItem: React.FC<GridItemProps> = ({ val, variant, color }) => {
     return (
       <Grid item xs={2} lg={4}>
         <StyledPaper>
-          <Typography color={color} variant="body1" sx={{ textAlign: 'right' }}>
+          <Typography color={color} variant="body1" sx={{ textAlign: "right" }}>
             {val}
           </Typography>
         </StyledPaper>
