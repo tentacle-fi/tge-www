@@ -183,7 +183,7 @@ const FarmInfo: React.FC<FarmInfoProps> = ({ labelText, contents, stakeBalance, 
   return (
     <>
       <StyledGridLabel contents={labelText} />
-      <StyledGridItem variant="data" val={contents} />
+      <StyledGridItem variant="data" color={color} val={contents} />
     </>
   );
 };
