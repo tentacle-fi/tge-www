@@ -164,8 +164,12 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
 
         <Grid item xs={3} sx={{ display: manageFarm === true ? "" : "none" }}>
           <StyledItem>
-            <Typography variant="h4">Manage Liquidity:</Typography>
-            <Typography variant="body1">Use this to stake, unstake or withdrawl all of your LP tokens and rewards from the yield farm</Typography>
+            <Typography sx={{ marginTop: "5px" }} variant="h4">
+              Manage Liquidity
+            </Typography>
+            <Typography sx={{ margin: "20px" }} variant="body1">
+              Use this to stake, unstake or withdraw all of your LP tokens and rewards from the yield farm
+            </Typography>
           </StyledItem>
         </Grid>
         <Grid item xs={9} sx={{ display: manageFarm === true ? "" : "none" }}>
