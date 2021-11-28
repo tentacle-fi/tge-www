@@ -147,13 +147,6 @@ export const getCurrentBlock = async (provider: provider): Promise<string> => {
   }
 };
 
-interface IReserves {
-  token0: number;
-  token1: number;
-  ratio0over1: number;
-  timestamp: number;
-}
-
 export const getReserves = async (provider: provider, tokenAddress: string): Promise<IReserves> => {
   try {
     const web3 = new Web3(provider);
@@ -165,6 +158,7 @@ export const getReserves = async (provider: provider, tokenAddress: string): Pro
       token1: bnToDec(new BigNumber(_reserve1)),
       timestamp: parseInt(_blockTimestampLast),
       ratio0over1: new BigNumber(_reserve0).dividedBy(new BigNumber(_reserve1)).toNumber(),
+      ratio1over0: new BigNumber(_reserve1).dividedBy(new BigNumber(_reserve0)).toNumber(),
     };
     return ret;
   } catch (e) {
@@ -186,31 +180,60 @@ export const getDailyRewardRate = async (provider: provider, tokenAddress: strin
   }
 };
 
+export const getTokenPrice = async (
+  provider: provider,
+  oraclePrice: number,
+  poolLpTokenAddress: string,
+  inverted: boolean = false
+): Promise<ITokenPriceInfo> => {
+  const reserves = await getReserves(provider, poolLpTokenAddress);
+  // console.log('inverted price', oraclePrice * reserves.ratio1over0)
+  // console.log('non-invert price', oraclePrice * reserves.ratio0over1)
+
+  let price = 0;
+  if (inverted) {
+    price = oraclePrice * reserves.ratio1over0;
+  } else {
+    price = oraclePrice * reserves.ratio0over1;
+  }
+
+  return {
+    price: price,
+    reserves: reserves,
+  };
+};
+
+export interface ITokenPriceInfo {
+  price: number;
+  reserves: IReserves;
+}
+
+export interface IReserves {
+  token0: number;
+  token1: number;
+  ratio0over1: number;
+  ratio1over0: number;
+  timestamp: number;
+}
+
 export interface ICurrentStats {
   poolTvl: number;
   farmApy: number;
   farmTvl: number;
-  token1Price: number;
-  reserves: IReserves;
 }
 
 export const getCurrentStats = async (
   provider: provider,
   token0Price: number,
+  token1Price: number,
+  reserves: IReserves,
   poolLpTokenAddress: string,
   farmContractAddress: string,
   totalSupplyLP: BigNumber
 ): Promise<ICurrentStats> => {
   try {
-    // TODO: make the hard coded values generic via the AvailableFarms and farmKey
-    const reserves = await getReserves(provider, poolLpTokenAddress);
-
-    // TODO: pull out the price into separate function call
-    const token1Price = token0Price * reserves.ratio0over1;
     const dailyTokenRewardEmissions = await getDailyRewardRate(provider, farmContractAddress);
-    const poolTvl = reserves.token1 * token1Price + reserves.token0 * token0Price;
-    // const poolApy = ((token1Price * dailyTokenRewardEmissions * 365) / poolTvl) * 100;
-
+    const poolTvl = reserves.token0 * token0Price + reserves.token1 * token1Price;
     const poolLpCalcRatio = 1 + (1 - bnToDec(totalSupplyLP) / Math.sqrt(reserves.token0 * reserves.token1));
     const farm_token0 = (bnToDec(totalSupplyLP) * poolLpCalcRatio) / Math.sqrt(1 / reserves.ratio0over1);
     const farm_token1 = (bnToDec(totalSupplyLP) * poolLpCalcRatio) / Math.sqrt(reserves.ratio0over1);
@@ -237,8 +260,6 @@ export const getCurrentStats = async (
       poolTvl: poolTvl,
       farmApy: farmApy,
       farmTvl: farmTvl,
-      token1Price: token1Price,
-      reserves: reserves,
     } as ICurrentStats;
   } catch (e) {
     console.error("getCurrentStats error", e);

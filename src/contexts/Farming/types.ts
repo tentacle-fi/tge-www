@@ -1,5 +1,7 @@
 import BigNumber from "bignumber.js";
 
+import { IPooledTokens } from "hooks/useFarming";
+
 export interface ContextValues {
   earnedBalances?: Array<BigNumber>;
   stakedBalances?: Array<BigNumber>;
@@ -8,11 +10,7 @@ export interface ContextValues {
   farmingStartTime: Array<number>;
   setConfirmTxModalIsOpen: (isOpen: boolean) => void;
 
-  currentApy: number;
-  currentTvl: number;
-  inkPrice: number;
-  PooledTokens?: {
-    token0: number;
-    token1: number;
-  };
+  currentApy?: Array<number>;
+  currentTvl?: Array<number>;
+  PooledTokens?: Array<IPooledTokens>;
 }

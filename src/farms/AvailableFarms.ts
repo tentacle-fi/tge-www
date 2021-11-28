@@ -32,11 +32,11 @@ const GRANS_token: IToken = {
 
 export const AvailableFarms: Array<IFarm> = [
   {
-    name: "INK/UBQ",
+    name: `${UBQ_token.symbol}/${INK_token.symbol}`,
     yieldfarm: {
       address: INK_UBQ_FarmContract,
       start_time: 1637006400 * 1000,
-      payOut: "INK",
+      payOut: INK_token.symbol,
       payOutLogo: inkLogo,
     },
     lp: {
@@ -47,11 +47,11 @@ export const AvailableFarms: Array<IFarm> = [
     tokenB: INK_token,
   },
   {
-    name: "UBQ/GRANS",
+    name: `${GRANS_token.symbol}/${UBQ_token.symbol}`,
     yieldfarm: {
       address: GRANS_UBQ_FarmContract,
       start_time: 1437006400 * 1000,
-      payOut: "GRANS",
+      payOut: GRANS_token.symbol,
       payOutLogo: gransLogo,
     },
     lp: {

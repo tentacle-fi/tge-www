@@ -22,13 +22,13 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
   const [stakeBalance, setStakeBalance] = useState<number>(0);
   const [lpPercent, setLpPercent] = useState<number>(0);
 
-  const { LPBalances, UBQoracle } = useBalances();
+  const { LPBalances, tokenPrices } = useBalances();
 
   const availableLPBalance = useMemo(() => {
     return getFullDisplayBalance(LPBalances !== undefined ? LPBalances[farmKey] : new BigNumber(0), 0);
   }, [LPBalances, farmKey]);
 
-  const { farmingStartTime, stakedBalances, lpPercents, currentApy, currentTvl, inkPrice, PooledTokens } = useFarming();
+  const { farmingStartTime, stakedBalances, lpPercents, currentApy, currentTvl, PooledTokens } = useFarming();
 
   const formattedStakedBalance = useCallback(async () => {
     if (stakedBalances !== undefined && stakedBalances[farmKey] && bnToDec(stakedBalances[farmKey]) > 0) {
@@ -46,10 +46,10 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
     }
   }, [lpPercents, farmKey]);
 
-  // TODO: unclear if this is accurate enough or if we need to reverse the uniswap v2 algo from the stakedLP tokens for this account
+  // TODO: unclear if this is accurate enough or if we need to reverse the uniswap v2 algo from the stakedLP tokens for this account (LP = sqrt(token0 * token1))
   const formattedMyPoolTokens = useCallback(() => {
     if (PooledTokens !== undefined) {
-      return ` ${PooledTokens.token0.toFixed(0)} ${AvailableFarms[farmKey].tokenA.symbol}/ ${PooledTokens.token1.toFixed(0)} ${
+      return ` ${PooledTokens[farmKey].token0.toFixed(0)} ${AvailableFarms[farmKey].tokenA.symbol}/ ${PooledTokens[farmKey].token1.toFixed(0)} ${
         AvailableFarms[farmKey].tokenB.symbol
       }`;
     }
@@ -58,13 +58,43 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
   }, [PooledTokens, farmKey]);
 
   const formattedMyPoolValue = useCallback(() => {
-    if (PooledTokens !== undefined && UBQoracle !== undefined) {
-      // return `${(PooledTokens.token0 * UBQoracle.price.usdt).toFixed(0)} UBQ / $${(PooledTokens.token1 * inkPrice).toFixed(0)} INK`
-      return `${(PooledTokens.token0 * UBQoracle.price.usdt + PooledTokens.token1 * inkPrice).toFixed(0)}`;
+    if (PooledTokens !== undefined && tokenPrices !== undefined) {
+      return `${(
+        PooledTokens[farmKey].token0 * tokenPrices[AvailableFarms[farmKey].tokenA.address] +
+        PooledTokens[farmKey].token1 * tokenPrices[AvailableFarms[farmKey].tokenB.address]
+      ).toFixed(0)}`;
     }
 
     return `-- ${AvailableFarms[farmKey].tokenA.symbol} / -- ${AvailableFarms[farmKey].tokenB.symbol}`;
-  }, [PooledTokens, UBQoracle, inkPrice, farmKey]);
+  }, [PooledTokens, farmKey, tokenPrices]);
+
+  const formattedTokenPrices = useCallback(() => {
+    const tokenA = AvailableFarms[farmKey].tokenA;
+    const tokenB = AvailableFarms[farmKey].tokenB;
+    if (tokenPrices === undefined) {
+      return `-- ${tokenA.symbol} / -- ${tokenB.symbol}`;
+    }
+
+    return `$${tokenPrices[tokenA.address].toFixed(3)} ${tokenA.symbol} / $${tokenPrices[tokenB.address].toFixed(3)} ${tokenB.symbol}`;
+  }, [tokenPrices, farmKey]);
+
+  const formattedTvl = useCallback(() => {
+    if (currentTvl === undefined) {
+      return "";
+    }
+    return `$ ${currentTvl[farmKey].toFixed(0)}`;
+  }, [currentTvl, farmKey]);
+
+  const formattedApy = useCallback(() => {
+    if (currentApy === undefined) {
+      return "";
+    }
+    if (currentApy[farmKey] > 1) {
+      return `${currentApy[farmKey].toFixed(0)}%`;
+    }
+
+    return `${currentApy[farmKey].toFixed(3)}%`;
+  }, [currentApy, farmKey]);
 
   useEffect(() => {
     formattedStakedBalance();
@@ -91,17 +121,18 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
     <>
       <Grid container spacing={1}>
         <StyledGridLabel contents="LP Staked:" />
-        <StyledGridItem variant="data" val={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name}` : "--"} />
+        <StyledGridItem
+          variant="data"
+          val={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name} ($ ${formattedMyPoolValue()})` : "--"}
+        />
         <StyledGridLabel contents="Prices:" />
-        <StyledGridItem variant="data" val={`UBQ $${UBQoracle?.price?.usdt.toPrecision(3) || "--"} / $${inkPrice.toPrecision(3)} INK`} />
-        <StyledGridLabel contents="LP Value:" />
-        <StyledGridItem variant="data" val={`$ ${formattedMyPoolValue()}`} />
+        <StyledGridItem variant="data" val={formattedTokenPrices()} />
         <StyledGridLabel contents="TVL:" />
-        <StyledGridItem variant="data" val={`$ ${currentTvl.toFixed(0)}`} />
+        <StyledGridItem variant="data" val={formattedTvl()} />
         <StyledGridLabel contents="Farm %:" />
         <StyledGridItem variant="data" val={lpPercent > 0 ? lpPercent.toString() + "%" : "--"} />
         <StyledGridLabel contents="APY:" />
-        <StyledGridItem variant="data" val={`${currentApy.toFixed(0)}%`} />
+        <StyledGridItem variant="data" val={formattedApy()} />
         <StyledGridLabel contents="Staked:" />
         <StyledGridItem variant="data" val={formattedMyPoolTokens()} />
         <StyledGridLabel contents="Unstaked:" />
