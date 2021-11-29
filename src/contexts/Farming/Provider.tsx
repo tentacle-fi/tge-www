@@ -12,6 +12,7 @@ import { IPooledTokens } from "hooks/useFarming";
 
 const Provider: React.FC = ({ children }) => {
   const [confirmTxModalIsOpen, setConfirmTxModalIsOpen] = useState(false);
+  const [confirmTxModalMessage, setConfirmTxModalMessage] = useState("");
   const ubiq = useUbiq();
   const { account, ethereum } = useWallet();
   const { UBQoracle, lpTokenReserves, tokenPrices } = useBalances();
@@ -143,6 +144,19 @@ const Provider: React.FC = ({ children }) => {
     fetchTotalSupplyLP();
   }, [fetchearnedBalances, fetchstakedBalances, fetchTotalSupplyLP]);
 
+  const customTxModal = useCallback(async (isOpen: boolean, message?: string) => {
+    if (isOpen === true) {
+      setConfirmTxModalIsOpen(true);
+      if (message !== undefined) {
+        setConfirmTxModalMessage(message);
+      }
+    } else {
+      // reset
+      setConfirmTxModalIsOpen(false);
+      setConfirmTxModalMessage("");
+    }
+  }, []);
+
   useEffect(() => {
     fetchBalances();
     let refreshInterval = setInterval(() => fetchBalances(), 10000);
@@ -159,7 +173,7 @@ const Provider: React.FC = ({ children }) => {
     <Context.Provider
       value={{
         farmingStartTime,
-        setConfirmTxModalIsOpen: setConfirmTxModalIsOpen,
+        setConfirmModal: customTxModal,
         earnedBalances,
         stakedBalances,
         totalSupplyLP,
@@ -170,7 +184,7 @@ const Provider: React.FC = ({ children }) => {
       }}
     >
       {children}
-      <ConfirmTransactionModal isOpen={confirmTxModalIsOpen} />
+      <ConfirmTransactionModal message={confirmTxModalMessage} isOpen={confirmTxModalIsOpen} />
     </Context.Provider>
   );
 };

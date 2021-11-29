@@ -24,3 +24,4 @@
 - react rendering performance upgrades and UI improvements
 - block number and timestamp UI updates
 - added `SLink` component for internal and external links
+- Confirm Modal custom message option enabled

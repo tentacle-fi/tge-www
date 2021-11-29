@@ -8,7 +8,7 @@ export interface ContextValues {
   totalSupplyLP?: Array<BigNumber>;
   lpPercents?: Array<BigNumber>;
   farmingStartTime: Array<number>;
-  setConfirmTxModalIsOpen: (isOpen: boolean) => void;
+  setConfirmModal: (isOpen: boolean, message?: string) => void;
 
   currentApy?: Array<number>;
   currentTvl?: Array<number>;

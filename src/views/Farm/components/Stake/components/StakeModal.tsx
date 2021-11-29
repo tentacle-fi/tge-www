@@ -20,7 +20,7 @@ interface StakeModalProps {
 const StakeModal: React.FC<StakeModalProps> = ({ farmKey }) => {
   const [val, setVal] = useState("");
   const { LPBalances } = useBalances();
-  const { setConfirmTxModalIsOpen } = useFarming();
+  const { setConfirmModal } = useFarming();
   const [isStaking, setisStaking] = useState(false);
   const ubiq = useUbiq();
   const { account } = useWallet();
@@ -48,16 +48,16 @@ const StakeModal: React.FC<StakeModalProps> = ({ farmKey }) => {
 
     if (!ubiq) return;
     setisStaking(true);
-    setConfirmTxModalIsOpen(true);
+    setConfirmModal(true);
     await stake(ubiq, val, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
       if (txHash === "") {
         setisStaking(false);
       }
-      setConfirmTxModalIsOpen(false);
+      setConfirmModal(false);
     });
-    setConfirmTxModalIsOpen(false);
+    setConfirmModal(false);
     setisStaking(false);
-  }, [account, setConfirmTxModalIsOpen, setisStaking, ubiq, farmKey, val]);
+  }, [account, setConfirmModal, setisStaking, ubiq, farmKey, val]);
 
   return (
     <>

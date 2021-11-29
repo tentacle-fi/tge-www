@@ -66,9 +66,9 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
   // TODO: move this to an external file
   const farm = AvailableFarms[farmKey];
   const [manageFarm, setManageFarm] = useState(false);
-  const { setConfirmTxModalIsOpen } = useFarming();
+  const { setConfirmModal } = useFarming();
   const { isApproved, isApproving, onApprove } = useApproval(AvailableFarms[farmKey].lp.address, AvailableFarms[farmKey].yieldfarm.address, () =>
-    setConfirmTxModalIsOpen(false)
+    setConfirmModal(false)
   );
 
   const ApproveOrStakeControls = useMemo(() => {
@@ -125,7 +125,7 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
               <img
                 src={farm.tokenB.logo}
                 alt={`${farm.tokenB.symbol} Logo`}
-                style={{ width: "80px", height: "80px", background: "#cecece", borderRadius: "40px", marginRight: "-20px" }}
+                style={{ width: "80px", height: "80px", background: "white", borderRadius: "40px", marginRight: "-20px" }}
               />
 
               <Typography sx={{ marginTop: "10px" }}>{farm.name}</Typography>
@@ -186,18 +186,18 @@ interface HarvestAllProps {
 const HarvestAll: React.FC<HarvestAllProps> = React.memo(({ farmKey }) => {
   const [isRedeeming, setisRedeeming] = useState(false);
   const ubiq = useUbiq();
-  const { setConfirmTxModalIsOpen } = useFarming();
+  const { setConfirmModal } = useFarming();
   const { account } = useWallet();
 
   const handleRedeem = useCallback(async () => {
     if (!ubiq) return;
-    setConfirmTxModalIsOpen(true);
+    setConfirmModal(true);
     setisRedeeming(false);
     await redeem(ubiq, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
       if (txHash === "") {
         setisRedeeming(false);
       }
-      setConfirmTxModalIsOpen(false);
+      setConfirmModal(false);
     }).catch((err) => {
       if (err.code === 4001) {
         console.log("Wallet: User cancelled");
@@ -205,9 +205,9 @@ const HarvestAll: React.FC<HarvestAllProps> = React.memo(({ farmKey }) => {
         console.log("Error caught:", err);
       }
     });
-    setConfirmTxModalIsOpen(false);
+    setConfirmModal(false);
     setisRedeeming(false);
-  }, [account, setConfirmTxModalIsOpen, setisRedeeming, ubiq, farmKey]);
+  }, [account, setConfirmModal, setisRedeeming, ubiq, farmKey]);
 
   return (
     <LoadingButton

@@ -99,6 +99,9 @@ const Providers: React.FC = ({ children }) => {
       h5: {
         color: "#ffffff",
       },
+      overline: {
+        color: "#fff",
+      },
     },
   });
 

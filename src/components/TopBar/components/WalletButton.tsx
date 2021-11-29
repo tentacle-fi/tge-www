@@ -11,6 +11,7 @@ import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import WifiIcon from "@mui/icons-material/Wifi";
 import SignalWifiStatusbarConnectedNoInternet4Icon from "@mui/icons-material/SignalWifiStatusbarConnectedNoInternet4";
 import { switchToUBQNetwork } from "metamask.js";
+import useFarming from "hooks/useFarming";
 
 interface WalletButtonProps {
   blockHeightButton?: object;
@@ -21,7 +22,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
   const [unlockModalIsOpen, setUnlockModalIsOpen] = useState(false);
   const [userAccount, setUserAccount] = useState<string | null>();
   const { account, status, connect } = useWallet();
-  const [, setNetworkState] = useState({}); // re-render the page when the wallet network changes
+  const { setConfirmModal } = useFarming();
 
   const ConnectedElements = useCallback(() => {
     if (status === "connected") {
@@ -30,6 +31,16 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
 
     return <></>;
   }, [status, blockHeightButton]);
+
+  const handleSwitchNetwork = useCallback(async () => {
+    try {
+      setConfirmModal(true, "Please allow Tentacle.Finance to switch networks.");
+      await switchToUBQNetwork();
+      window.location.reload();
+    } catch (e) {
+      console.error("caught error while trying to switch networks:", e);
+    }
+  }, [setConfirmModal]);
 
   const ConnectionStatusIndicator = useCallback(() => {
     if (status === "connected") {
@@ -44,18 +55,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
     if (status === "error") {
       return (
         <Tooltip title="Network Error, click to switch to Ubiq Network">
-          <Button
-            size="small"
-            color="error"
-            onClick={async () => {
-              try {
-                await switchToUBQNetwork();
-              } catch (e) {
-                console.error("caught error while trying to switch networks:", e);
-              }
-              setNetworkState({});
-            }}
-          >
+          <Button size="small" color="error" onClick={handleSwitchNetwork}>
             <SignalWifiStatusbarConnectedNoInternet4Icon />
           </Button>
         </Tooltip>
@@ -63,7 +63,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
     }
 
     return <></>;
-  }, [status]);
+  }, [status, handleSwitchNetwork]);
 
   const handleDismissUnlockModal = useCallback(() => {
     setUnlockModalIsOpen(false);

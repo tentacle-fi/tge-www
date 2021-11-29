@@ -59,18 +59,18 @@ const UnHarvested: React.FC<UnHarvestProps> = React.memo(({ farmKey, earnedBalan
 
   const { status, account } = useWallet();
   const ubiq = useUbiq();
-  const { setConfirmTxModalIsOpen } = useFarming();
+  const { setConfirmModal } = useFarming();
 
   const handleHarvest = useCallback(async () => {
     if (!ubiq) return;
-    setConfirmTxModalIsOpen(true);
+    setConfirmModal(true);
     setisHarvesting(true);
     await harvest(ubiq, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
       if (txHash === "") {
         setisHarvesting(false);
       }
 
-      setConfirmTxModalIsOpen(false);
+      setConfirmModal(false);
     }).catch((err) => {
       if (err.code === 4001) {
         console.log("Wallet: User cancelled");
@@ -79,9 +79,9 @@ const UnHarvested: React.FC<UnHarvestProps> = React.memo(({ farmKey, earnedBalan
       }
     });
 
-    setConfirmTxModalIsOpen(false);
+    setConfirmModal(false);
     setisHarvesting(false);
-  }, [account, setConfirmTxModalIsOpen, setisHarvesting, ubiq, farmKey]);
+  }, [account, setConfirmModal, setisHarvesting, ubiq, farmKey]);
 
   const HarvestAction = useMemo(() => {
     if (status !== "connected") {

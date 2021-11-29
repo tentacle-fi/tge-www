@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Countdown, { CountdownRenderProps } from "react-countdown";
 import Box from "@mui/material/Box";
-import Label from "components/Label";
 import useFarming from "hooks/useFarming";
 import { bnToDec, getShortDisplayBalance, getFullDisplayBalance } from "utils";
 import { AvailableFarms } from "farms/AvailableFarms";
@@ -112,8 +111,8 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
     const paddedDays = days < 10 ? `0${days}` : days;
 
     return (
-      <Box sx={{ justifyContent: "center" }}>
-        <Label text={`Farming starts in ${paddedDays} days ${paddedHours}:${paddedMinutes}:${paddedSeconds}`} />
+      <Box sx={{ justifyContent: "center", width: "100%" }}>
+        <Typography variant="overline">{`Farming starts in ${paddedDays} days ${paddedHours}:${paddedMinutes}:${paddedSeconds}`} </Typography>
       </Box>
     );
   };
@@ -121,6 +120,11 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
   return (
     <>
       <Grid container spacing={1}>
+        {typeof farmingStartTime !== "undefined" && farmingStartTime[farmKey] > Date.now() && (
+          <Grid item xs={12}>
+            <Countdown date={farmingStartTime[farmKey]} renderer={renderer} />
+          </Grid>
+        )}
         <Box sx={{ width: "50%" }}>
           <Grid container spacing={1}>
             <FarmInfo
@@ -158,15 +162,11 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
       <div>
         <SLink external href={AvailableFarms[farmKey].lp.url}>
           <Button sx={{ width: "100%", marginTop: "10px" }} variant="outlined">
-            Manage {AvailableFarms[farmKey].name} liquidity on Shinobi
+            Add {AvailableFarms[farmKey].name} liquidity on Shinobi
             <LinkIcon />
           </Button>
         </SLink>
       </div>
-
-      {typeof farmingStartTime !== "undefined" && farmingStartTime[farmKey] > Date.now() && (
-        <Countdown date={farmingStartTime[farmKey]} renderer={renderer} />
-      )}
     </>
   );
 };

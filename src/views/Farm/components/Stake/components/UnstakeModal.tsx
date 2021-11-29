@@ -20,7 +20,7 @@ interface UnstakeModalProps {
 
 const UnstakeModal: React.FC<UnstakeModalProps> = ({ farmKey }) => {
   const [val, setVal] = useState("");
-  const { stakedBalances, setConfirmTxModalIsOpen } = useFarming();
+  const { stakedBalances, setConfirmModal } = useFarming();
   const [isUnstaking, setisUnstaking] = useState(false);
   const stakedAmount = stakedBalances === undefined ? null : stakedBalances[farmKey];
   const ubiq = useUbiq();
@@ -48,16 +48,16 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({ farmKey }) => {
     // }, 4000);
 
     if (!ubiq) return;
-    setConfirmTxModalIsOpen(true);
+    setConfirmModal(true);
     await unstake(ubiq, val, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
       if (txHash === "") {
         setisUnstaking(false);
       }
-      setConfirmTxModalIsOpen(false);
+      setConfirmModal(false);
     });
-    setConfirmTxModalIsOpen(false);
+    setConfirmModal(false);
     setisUnstaking(false);
-  }, [account, setConfirmTxModalIsOpen, setisUnstaking, ubiq, val, farmKey]);
+  }, [account, setConfirmModal, setisUnstaking, ubiq, val, farmKey]);
 
   return (
     <>
