@@ -31,22 +31,17 @@ function CircularProgressWithLabel(props: CircularProgressProps & { value: numbe
 
 const BlockHeightButton: React.FC = () => {
   const { CurrentBlock, CurrentBlockTimestamp } = useBalances();
-  const [lastBlock, setLastBlock] = useState(CurrentBlock);
   const [blockTimeCounter, setblockTimeCounter] = useState(1);
 
   useEffect(() => {
     const timerId = setInterval(() => {
-      setblockTimeCounter(CurrentBlockTimestamp !== undefined ? Math.floor(Date.now() / 1000 - CurrentBlockTimestamp) + 1 : 1);
+      if (CurrentBlockTimestamp !== undefined) {
+        setblockTimeCounter(Math.floor(Date.now() / 1000 - CurrentBlockTimestamp));
+      }
     }, 1000);
 
     return () => clearInterval(timerId);
   }, [blockTimeCounter, CurrentBlockTimestamp]);
-
-  useEffect(() => {
-    if (lastBlock !== CurrentBlock) {
-      setblockTimeCounter(1);
-    }
-  }, [lastBlock, CurrentBlock, setLastBlock, setblockTimeCounter]);
 
   return (
     <Tooltip title="Block height">
