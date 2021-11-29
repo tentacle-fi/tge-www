@@ -75,7 +75,7 @@ const UnHarvested: React.FC<UnHarvestProps> = React.memo(({ farmKey, earnedBalan
       if (err.code === 4001) {
         console.log("Wallet: User cancelled");
       } else {
-        console.log("Error caught:", err);
+        console.error("Error caught:", err);
       }
     });
 

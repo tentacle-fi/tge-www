@@ -202,7 +202,7 @@ const HarvestAll: React.FC<HarvestAllProps> = React.memo(({ farmKey }) => {
       if (err.code === 4001) {
         console.log("Wallet: User cancelled");
       } else {
-        console.log("Error caught:", err);
+        console.error("Error caught:", err);
       }
     });
     setConfirmModal(false);
