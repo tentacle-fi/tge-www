@@ -85,7 +85,7 @@ const UnHarvested: React.FC<UnHarvestProps> = React.memo(({ farmKey, earnedBalan
 
   const HarvestAction = useMemo(() => {
     if (status !== "connected") {
-      return <p>Connect Wallet</p>;
+      return <Typography variant="body1">Connect Wallet</Typography>;
     }
     if (isHarvesting === false) {
       return (

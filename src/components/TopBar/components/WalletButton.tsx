@@ -1,6 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useWallet } from "use-wallet";
-
 import UnlockWalletModal from "components/UnlockWalletModal";
 import WalletModal from "components/WalletModal";
 import Button from "@mui/material/Button";
@@ -12,6 +11,7 @@ import WifiIcon from "@mui/icons-material/Wifi";
 import SignalWifiStatusbarConnectedNoInternet4Icon from "@mui/icons-material/SignalWifiStatusbarConnectedNoInternet4";
 import { switchToUBQNetwork } from "metamask.js";
 import useFarming from "hooks/useFarming";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface WalletButtonProps {
   blockHeightButton?: object;
@@ -23,6 +23,8 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
   const [userAccount, setUserAccount] = useState<string | null>();
   const { account, status, connect } = useWallet();
   const { setConfirmModal } = useFarming();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const ConnectedElements = useCallback(() => {
     if (status === "connected") {
@@ -36,11 +38,13 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
     try {
       setConfirmModal(true, "Please allow Tentacle.Finance to switch networks.");
       await switchToUBQNetwork();
-      window.location.reload();
     } catch (e) {
       console.error("caught error while trying to switch networks:", e);
     }
-  }, [setConfirmModal]);
+
+    navigate(location, { replace: true });
+    setConfirmModal(false);
+  }, [setConfirmModal, location, navigate]);
 
   const ConnectionStatusIndicator = useCallback(() => {
     if (status === "connected") {
