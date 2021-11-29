@@ -36,7 +36,7 @@ const BlockHeightButton: React.FC = () => {
   useEffect(() => {
     const timerId = setInterval(() => {
       if (CurrentBlockTimestamp !== undefined) {
-        setblockTimeCounter(Math.floor(Date.now() / 1000 - CurrentBlockTimestamp));
+        setblockTimeCounter(Math.floor(Date.now() / 1000) - CurrentBlockTimestamp);
       }
     }, 1000);
 

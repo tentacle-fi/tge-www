@@ -41,11 +41,6 @@ const StakeModal: React.FC<StakeModalProps> = ({ farmKey }) => {
   }, [fullBalance, setVal]);
 
   const handleStake = useCallback(async () => {
-    // updateStateAtIndex(isStaking, setIsStaking, true, contractIndex);
-    // setTimeout(() => {
-    //   updateStateAtIndex(isStaking, setIsStaking, false, contractIndex);
-    // }, 4000);
-
     if (!ubiq) return;
     setisStaking(true);
     setConfirmModal(true);

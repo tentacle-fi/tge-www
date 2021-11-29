@@ -42,11 +42,6 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({ farmKey }) => {
   }, [fullBalance, setVal]);
 
   const handleUnstake = useCallback(async () => {
-    // updateStateAtIndex(isUnstaking, setIsUnstaking, true, contractIndex);
-    // setTimeout(() => {
-    //   updateStateAtIndex(isUnstaking, setIsUnstaking, false, contractIndex);
-    // }, 4000);
-
     if (!ubiq) return;
     setConfirmModal(true);
     await unstake(ubiq, val, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
