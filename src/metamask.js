@@ -23,9 +23,10 @@ export async function switchToUBQNetwork() {
             method: "wallet_addEthereumChain",
             params: [
               {
+                // settings match https://chainlist.org/ which resolves an warning/error to the users of MetaMask
                 chainId: "0x8",
                 rpcUrls: ["https://rpc.octano.dev"],
-                chainName: "UBQ",
+                chainName: "Ubiq",
                 blockExplorerUrls: ["https://ubiqscan.io"],
                 iconUrls: ["https://ubiqsmart.com/favicon.ico", "https://ubiqsmart.com/logo.svg"],
                 nativeCurrency: {
