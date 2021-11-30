@@ -36,7 +36,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
       setConfirmModal(true, "Please allow Tentacle.Finance to switch networks.");
       await switchToUBQNetwork();
 
-      window.location.reload()
+      window.location.reload();
     } catch (e) {
       console.error("caught error while trying to switch networks:", e);
     }
