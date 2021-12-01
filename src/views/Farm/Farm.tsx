@@ -55,7 +55,12 @@ const Farm: React.FC = () => {
         </SLink>
       </Box>
       <>
+        <Typography variant="h4" sx={{ left: "20px", marginTop: "20px" }}>
+          Tentacle.Finance Farms:
+        </Typography>
         <YieldFarm farmKey={0} />
+        <hr style={{ width: "80%", border: "1px solid #555", margin: "20px 0" }} />
+        <Typography variant="h4">Community Farms:</Typography>
         <YieldFarm farmKey={1} />
       </>
     </Page>
