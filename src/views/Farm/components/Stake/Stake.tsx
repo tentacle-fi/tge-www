@@ -144,7 +144,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
           </Grid>
         </Box>
 
-        <Box sx={{ width: "50%", marginTop: "8px" }}>
+        <Box sx={{ width: "50%", marginTop: "8px", whiteSpace: "nowrap" }}>
           <Grid container spacing={1}>
             <FarmInfo farmKey={farmKey} labelText="Prices:" stakeBalance={stakeBalance} contents={formattedTokenPrices()} />
             <FarmInfo farmKey={farmKey} labelText="TVL:" stakeBalance={stakeBalance} contents={formattedTvl()} />
