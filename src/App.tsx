@@ -103,6 +103,9 @@ const Providers: React.FC = ({ children }) => {
         color: "#fff",
       },
     },
+    shape: {
+        borderRadius: "12px",
+    }
   });
 
   return (
