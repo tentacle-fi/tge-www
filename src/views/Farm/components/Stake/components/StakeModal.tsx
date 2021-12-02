@@ -12,6 +12,13 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import useUbiq from "hooks/useUbiq";
 import { useWallet } from "use-wallet";
 import { stake } from "ubiq-sdk/utils";
+import { styled } from "@mui/system";
+
+const StyledStakeButton = styled(LoadingButton)(({ theme }) => ({
+  backgroundColor: theme.palette.secondary.main,
+  padding: theme.spacing(1),
+  borderRadius: 16,
+}));
 
 interface StakeModalProps {
   farmKey: number;
@@ -63,7 +70,7 @@ const StakeModal: React.FC<StakeModalProps> = ({ farmKey }) => {
         max={fullBalance}
         symbol={`Stake ${AvailableFarms[farmKey].name} LP`}
       >
-        <LoadingButton
+        <StyledStakeButton
           sx={{ marginLeft: "10px" }}
           onClick={() => {
             if (val && Number(val) && Number(fullBalance) && fullBalance) {
@@ -78,7 +85,7 @@ const StakeModal: React.FC<StakeModalProps> = ({ farmKey }) => {
           size="medium"
         >
           Stake
-        </LoadingButton>
+        </StyledStakeButton>
       </TokenInput>
     </>
   );

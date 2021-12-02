@@ -104,8 +104,8 @@ const Providers: React.FC = ({ children }) => {
       },
     },
     shape: {
-        borderRadius: "12px",
-    }
+      borderRadius: "12px",
+    },
   });
 
   return (
