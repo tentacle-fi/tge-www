@@ -125,7 +125,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
             <Countdown date={farmingStartTime[farmKey]} renderer={renderer} />
           </Grid>
         )}
-        <Box sx={{ width: "50%", marginTop: "8px"}}>
+        <Box sx={{ width: "50%", marginTop: "8px" }}>
           <Grid container spacing={1}>
             <FarmInfo
               farmKey={farmKey}
