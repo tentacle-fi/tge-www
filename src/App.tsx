@@ -80,6 +80,7 @@ const Providers: React.FC = ({ children }) => {
       },
     },
     typography: {
+      // fontFamily: "Charlemagne STD", // INK's font, looks sort of weird on the site now
       subtitle1: {
         fontSize: 12,
       },
@@ -104,7 +105,7 @@ const Providers: React.FC = ({ children }) => {
       },
     },
     shape: {
-      borderRadius: "12px",
+      borderRadius: 12,
     },
   });
 
