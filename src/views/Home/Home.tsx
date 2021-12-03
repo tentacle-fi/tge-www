@@ -68,8 +68,8 @@ function RoadmapTimeline() {
     <Timeline position="alternate">
       <TimelinePhase title="Phase 1" desc="Launch INK, Launch Tentacle.Finance Site, Begin Farming" complete={true} />
       <TimelinePhase title="Phase 2" desc="Launch Additional Farms, Enhance Farm UI" />
-      <TimelinePhase title="Phase 3" desc="Additional Farming Features, Secret Launch, Governance, Treasury, Bridges after voting" />
-      <TimelinePhase title="Phase 4" desc="TBA" />
+      <TimelinePhase title="Phase 3" desc="Additional Farming Features, Secret Launch, DAO Info Page" />
+      <TimelinePhase title="Phase 4" desc="Governance, and More!" />
     </Timeline>
   );
 }

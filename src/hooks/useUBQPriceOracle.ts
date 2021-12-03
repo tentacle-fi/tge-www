@@ -133,11 +133,11 @@ export interface IOraclePrice {
   blockNumber: number;
   transactionHash: string;
   price: {
-    raw: string;
-    usdt: number;
-    btc: number;
-    satoshi: number;
-    timestamp: number;
+    raw: string; // the 'raw' string price that was provided to the contract
+    usdt: number; // the USDT price in whole units (with max decimals)
+    btc: number; // the bitcoin price as a decimal if < 1BTC
+    satoshi: number; // the number of bitcoin satashois, eg, 300 sats
+    timestamp: number; // timestamp for this update
   };
 }
 

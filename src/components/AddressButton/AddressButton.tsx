@@ -206,10 +206,4 @@ const AddressStart = styled.span`
   text-overflow: ellipsis;
 `;
 
-// const AddressEnd = styled.span`
-//   display: inline-flex;
-//   width: calc(50% - 28px);
-//   justify-content: flex-end;
-// `;
-
 export default AddressButton;

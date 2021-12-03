@@ -125,6 +125,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
   useEffect(() => {
     const localAccount = localStorage.getItem("account");
     const walletProvider = localStorage.getItem("walletProvider");
+
     if (!account && localAccount) {
       setUserAccount(localAccount);
       if (localAccount && (walletProvider === "metamask" || walletProvider === "injected")) {

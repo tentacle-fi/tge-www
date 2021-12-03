@@ -1,4 +1,3 @@
-import { ethers } from "ethers";
 import Web3 from "web3";
 import BigNumber from "bignumber.js";
 
@@ -86,12 +85,6 @@ export const redeem = async (ubiq, account, poolContract, onTxHash) => {
     }
     return true;
   });
-};
-
-export const approve = async (tokenContract, poolContract, account) => {
-  return tokenContract.methods
-    .approve(poolContract.options.address, ethers.constants.MaxUint256)
-    .send({ from: account, gas: GAS.LIMIT, gasPrice: GAS.PRICE });
 };
 
 export const getEarned = async (pool, account) => {

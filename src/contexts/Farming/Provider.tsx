@@ -15,7 +15,7 @@ const Provider: React.FC = ({ children }) => {
   const [confirmTxModalMessage, setConfirmTxModalMessage] = useState("");
   const ubiq = useUbiq();
   const { account, ethereum } = useWallet();
-  const { UBQoracle, lpTokenReserves, tokenPrices } = useBalances();
+  const { lpTokenReserves, tokenPrices } = useBalances();
   const [CurrentAPY, setCurrentAPY] = useState<Array<number>>();
   const [CurrentTVL, setCurrentTVL] = useState<Array<number>>();
   const [PooledTokens, setPooledTokens] = useState<Array<IPooledTokens>>();
@@ -87,13 +87,7 @@ const Provider: React.FC = ({ children }) => {
 
   const fetchCurrentStats = useCallback(async () => {
     console.log("fetchCurrentStats");
-    if (
-      UBQoracle === undefined ||
-      totalSupplyLP === undefined ||
-      tokenPrices === undefined ||
-      lpTokenReserves === undefined ||
-      lpPercents === undefined
-    ) {
+    if (totalSupplyLP === undefined || tokenPrices === undefined || lpTokenReserves === undefined || lpPercents === undefined) {
       return;
     }
 
@@ -136,7 +130,7 @@ const Provider: React.FC = ({ children }) => {
     } catch (e) {
       console.error("fetchCurrentStats");
     }
-  }, [setCurrentAPY, UBQoracle, totalSupplyLP, ethereum, lpPercents, setPooledTokens, tokenPrices, lpTokenReserves]);
+  }, [setCurrentAPY, totalSupplyLP, ethereum, lpPercents, setPooledTokens, tokenPrices, lpTokenReserves]);
 
   const fetchBalances = useCallback(async () => {
     fetchearnedBalances();
