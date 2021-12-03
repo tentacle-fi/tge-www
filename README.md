@@ -10,6 +10,8 @@ Adapted for use by the Tentacle.Finance team.
 
 ```sh
 yarn install
+
+yarn husky_setup
 ```
 
 **Start the project**

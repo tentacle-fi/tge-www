@@ -1,63 +1,164 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
 import { provider } from "web3-core";
+import { ITokenPrice } from "hooks/useBalances";
 
-import { TGE1, ESCHUBQSLPAddress } from "constants/tokenAddresses";
-import { getBalance, getCurrentBlock } from "utils";
+import { getCoinBalanceAsBigNum, getBalanceAsBigNum, shouldUpdateVal, shouldUpdateAry, getTokenPrice, IReserves } from "utils";
 
 import Context from "./Context";
+import { AvailableFarms, INK, GRANS, UBQ } from "farms/AvailableFarms";
+import useUBQPriceOracle, { getBlock } from "hooks/useUBQPriceOracle";
 
-const Provider: React.FC = ({ children }) => {
-  const [TGE1Balance, setTGE1Balance] = useState<BigNumber>();
-  const [ESCHUBQLPBalance, setESCHUBQLPBalance] = useState<BigNumber>();
+const BalancesProvider: React.FC = ({ children }) => {
+  const [tokenBalances, settokenBalances] = useState<Array<BigNumber>>();
+  const [LPBalances, setLPBalances] = useState<Array<BigNumber>>();
+
+  const [UBQBalance, setUBQBalance] = useState<BigNumber>();
+  const [INKBalance, setINKBalance] = useState<BigNumber>();
+  const [GRANSBalance, setGRANSBalance] = useState<BigNumber>();
+
+  const [tokenPrices, setTokenPrices] = useState<ITokenPrice>();
+  const [tokenReserves, setTokenReserves] = useState<Array<IReserves>>();
+
   const [CurrentBlock, setCurrentBlock] = useState("");
+  const [CurrentBlockTimestamp, setCurrentBlockTimestamp] = useState(0);
 
-  const { account, ethereum }: { account: string | null; ethereum: provider } = useWallet();
+  const { account, ethereum } = useWallet();
+  const { oracle } = useUBQPriceOracle();
+
+  const lastUpdate = useRef(0);
+
+  const fetchTokenPrices = useCallback(
+    async (provider: provider) => {
+      if (oracle === undefined) {
+        return;
+      }
+
+      let prices = {} as ITokenPrice;
+      let reserves = [] as Array<IReserves>;
+      let update = false;
+
+      // set UBQ price first
+      prices[UBQ] = oracle.price.usdt;
+
+      for (let i = 0; i < AvailableFarms.length; i++) {
+        try {
+          const inverted = AvailableFarms[i].tokenA.address !== UBQ;
+          if (inverted && AvailableFarms[i].tokenB.address !== UBQ) {
+            // TODO: implement price estimates for non-ubq involved pairs
+            throw new Error("Unable to price this token pair, requires an oracle token price first");
+          }
+
+          const token: string = inverted ? AvailableFarms[i].tokenA.address : AvailableFarms[i].tokenB.address;
+          const tokenPriceInfo = await getTokenPrice(provider, oracle.price.usdt, AvailableFarms[i].lp.address, inverted);
+
+          prices[token] = tokenPriceInfo.price;
+          reserves.push(tokenPriceInfo.reserves);
+
+          if (tokenPrices === undefined || prices[token] !== tokenPrices[token]) {
+            update = true;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      if (update) {
+        setTokenPrices(prices);
+        setTokenReserves(reserves);
+      }
+    },
+    [oracle, setTokenPrices, tokenPrices, setTokenReserves]
+  );
 
   const fetchBalances = useCallback(
     async (userAddress: string, provider: provider) => {
-      const balances = await Promise.all([await getBalance(provider, TGE1, userAddress), await getBalance(provider, ESCHUBQSLPAddress, userAddress)]);
-      setTGE1Balance(new BigNumber(balances[0]).dividedBy(new BigNumber(10).pow(18)));
-      setESCHUBQLPBalance(new BigNumber(balances[1]).dividedBy(new BigNumber(10).pow(18)));
+      // limit how often this function can be called
+      if (Date.now() - lastUpdate.current < 9 * 1000) {
+        return;
+      }
+      lastUpdate.current = Date.now();
+
+      let newTokenBalances = [];
+      let newLpBalances = [];
+
+      for (let i = 0; i < AvailableFarms.length; i++) {
+        newTokenBalances.push(await getBalanceAsBigNum(provider, AvailableFarms[i].tokenB.address, userAddress));
+        newLpBalances.push(await getBalanceAsBigNum(provider, AvailableFarms[i].lp.address, userAddress));
+      }
+
+      // set the shortcut balances
+      let ubqBal = new BigNumber(await getCoinBalanceAsBigNum(provider, userAddress)).plus(await getBalanceAsBigNum(provider, UBQ, userAddress));
+      let inkBal = await getBalanceAsBigNum(provider, INK, userAddress);
+      let gransBal = await getBalanceAsBigNum(provider, GRANS, userAddress);
+
+      if (shouldUpdateVal(ubqBal, UBQBalance, "BigNumber")) {
+        setUBQBalance(ubqBal);
+      }
+
+      if (shouldUpdateVal(inkBal, INKBalance, "BigNumber")) {
+        setINKBalance(inkBal);
+      }
+
+      if (shouldUpdateVal(gransBal, GRANSBalance, "BigNumber")) {
+        setGRANSBalance(gransBal);
+      }
+
+      if (shouldUpdateAry(newTokenBalances, tokenBalances, "BigNumber")) {
+        settokenBalances(newTokenBalances);
+      }
+
+      if (shouldUpdateAry(newLpBalances, LPBalances, "BigNumber")) {
+        setLPBalances(newLpBalances);
+      }
     },
-    [setTGE1Balance, setESCHUBQLPBalance]
+    [tokenBalances, settokenBalances, LPBalances, setLPBalances, setUBQBalance, setINKBalance, setGRANSBalance, UBQBalance, INKBalance, GRANSBalance]
   );
 
-  const fetchCurrentBlock = useCallback(
-    async (userAddress: string, provider: provider) => {
-      const currentBlock = await getCurrentBlock(provider);
-
-      setCurrentBlock(currentBlock.toString());
-    },
-    [setCurrentBlock]
-  );
+  const fetchCurrentBlock = useCallback(async () => {
+    const currentBlock = await getBlock();
+    setCurrentBlock(currentBlock.number.toString());
+    setCurrentBlockTimestamp(currentBlock.timestamp);
+  }, [setCurrentBlock, setCurrentBlockTimestamp]);
 
   useEffect(() => {
     if (account && ethereum) {
       fetchBalances(account, ethereum);
-    }
-  }, [account, ethereum, fetchBalances]);
-
-  useEffect(() => {
-    if (account && ethereum) {
-      fetchBalances(account, ethereum);
-      fetchCurrentBlock(account, ethereum);
+      fetchCurrentBlock();
 
       let refreshInterval = setInterval(() => {
-        fetchCurrentBlock(account, ethereum);
+        fetchCurrentBlock();
         fetchBalances(account, ethereum);
       }, 10000);
       return () => clearInterval(refreshInterval);
     }
   }, [account, ethereum, fetchBalances, fetchCurrentBlock]);
 
+  useEffect(() => {
+    if (ethereum) {
+      fetchTokenPrices(ethereum);
+
+      let refreshInterval = setInterval(() => {
+        fetchTokenPrices(ethereum);
+      }, 10 * 60 * 1000);
+      return () => clearInterval(refreshInterval);
+    }
+  }, [ethereum, fetchTokenPrices]);
+
   return (
     <Context.Provider
       value={{
-        TGE1Balance,
-        ESCHUBQLPBalance,
+        tokenBalances,
+        LPBalances,
         CurrentBlock,
+        CurrentBlockTimestamp,
+        UBQBalance,
+        INKBalance,
+        GRANSBalance,
+        UBQoracle: oracle,
+        tokenPrices,
+        lpTokenReserves: tokenReserves,
       }}
     >
       {children}
@@ -65,4 +166,4 @@ const Provider: React.FC = ({ children }) => {
   );
 };
 
-export default Provider;
+export default BalancesProvider;

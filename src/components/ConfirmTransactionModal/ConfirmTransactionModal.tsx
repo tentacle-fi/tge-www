@@ -8,8 +8,16 @@ import sparrowLogo from "assets/sparrow.png";
 
 declare const window: any;
 
-const ConfirmTransactionModal: React.FC<ModalProps> = ({ isOpen }) => {
+interface CustomModalProps extends ModalProps {
+  message?: string;
+}
+
+const ConfirmTransactionModal: React.FC<CustomModalProps> = ({ isOpen, message }) => {
   const { connector } = useWallet();
+
+  if (message === undefined || message === "") {
+    message = "Confirm transaction in wallet.";
+  }
 
   let injectedLogo = metamaskLogo;
 
@@ -30,7 +38,7 @@ const ConfirmTransactionModal: React.FC<ModalProps> = ({ isOpen }) => {
       <ModalContent>
         {WalletLogo}
         <Spacer />
-        <StyledText>Confirm transaction in wallet.</StyledText>
+        <StyledText>{message}</StyledText>
       </ModalContent>
     </Modal>
   );

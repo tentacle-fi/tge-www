@@ -1,23 +1,19 @@
 import React from "react";
 
-import { Container, Spacer } from "react-neu";
+import { Container } from "react-neu";
 import styled from "styled-components";
 
 import Logo from "components/Logo";
 import MenuIcon from "components/icons/Menu";
-
-import DarkModeSwitch from "../DarkModeSwitch";
 import Nav from "./components/Nav";
 import WalletButton from "./components/WalletButton";
-import useBalances from "hooks/useBalances";
+import BlockHeightButton from "components/BlockHeightButton";
 
 interface TopBarProps {
   onPresentMobileMenu: () => void;
 }
 
 const TopBar: React.FC<TopBarProps> = ({ onPresentMobileMenu }) => {
-  const { CurrentBlock } = useBalances();
-
   return (
     <StyledTopBar>
       <Container size="lg">
@@ -29,14 +25,7 @@ const TopBar: React.FC<TopBarProps> = ({ onPresentMobileMenu }) => {
             <Nav />
           </StyledNavWrapper>
           <StyledAccountButtonWrapper>
-            <StyledCurrentBlock>
-              <span>Block #: {CurrentBlock}</span>
-            </StyledCurrentBlock>
-            <StyledTopBarDarkModeSwitch>
-              <DarkModeSwitch />
-            </StyledTopBarDarkModeSwitch>
-            <Spacer />
-            <WalletButton />
+            <WalletButton blockHeightButton={<BlockHeightButton />} />
           </StyledAccountButtonWrapper>
           <StyledMenuButton onClick={onPresentMobileMenu}>
             <MenuIcon />
@@ -46,18 +35,6 @@ const TopBar: React.FC<TopBarProps> = ({ onPresentMobileMenu }) => {
     </StyledTopBar>
   );
 };
-
-const StyledCurrentBlock = styled.div`
-  display: flex;
-  white-space: nowrap;
-  border: 1px dotted #cecece;
-  padding: 8px;
-  border-radius: 50px;
-  margin-right: 10px;
-  @media (max-width: 400px) {
-    display: none;
-  }
-`;
 
 const StyledLogoWrapper = styled.div`
   width: 156px;
@@ -90,7 +67,7 @@ const StyledAccountButtonWrapper = styled.div`
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  width: 156px;
+  width: 256px;
   @media (max-width: 400px) {
     justify-content: center;
     width: auto;
@@ -110,12 +87,6 @@ const StyledMenuButton = styled.button`
     height: 44px;
     justify-content: center;
     width: 44px;
-  }
-`;
-
-const StyledTopBarDarkModeSwitch = styled.div`
-  @media (max-width: 1130px) {
-    display: none;
   }
 `;
 
