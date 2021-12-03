@@ -1,19 +1,16 @@
 import React, { useCallback, useMemo, useState } from "react";
-
 import BigNumber from "bignumber.js";
 import TokenInput from "components/TokenInput";
-
 import useFarming from "hooks/useFarming";
 import { getFullDisplayBalance } from "utils";
 import { AvailableFarms } from "farms/AvailableFarms";
-
 import LoadingButton from "@mui/lab/LoadingButton";
 import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox";
-
 import useUbiq from "hooks/useUbiq";
 import { useWallet } from "use-wallet";
 import { unstake } from "ubiq-sdk/utils";
 import { styled } from "@mui/system";
+import Tooltip from "@mui/material/Tooltip";
 
 const StyledUnstakeButton = styled(LoadingButton)(({ theme }) => ({
   backgroundColor: theme.palette.warning,
@@ -78,22 +75,24 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({ farmKey }) => {
         max={fullBalance}
         symbol={`Unstake ${AvailableFarms[farmKey].name} LP`}
       >
-        <StyledUnstakeButton
-          sx={{ marginLeft: "10px" }}
-          onClick={() => {
-            if (val && Number(val)) {
-              handleUnstake();
-            }
-          }}
-          endIcon={<IndeterminateCheckBoxIcon />}
-          loading={isUnstaking}
-          loadingPosition="end"
-          variant="contained"
-          color="warning"
-          size="medium"
-        >
-          Unstake
-        </StyledUnstakeButton>
+        <Tooltip title="Unstake your LP tokens and stop earning rewards">
+          <StyledUnstakeButton
+            sx={{ marginLeft: "10px" }}
+            onClick={() => {
+              if (val && Number(val)) {
+                handleUnstake();
+              }
+            }}
+            endIcon={<IndeterminateCheckBoxIcon />}
+            loading={isUnstaking}
+            loadingPosition="end"
+            variant="contained"
+            color="warning"
+            size="medium"
+          >
+            Unstake
+          </StyledUnstakeButton>
+        </Tooltip>
       </TokenInput>
     </>
   );
