@@ -57,6 +57,7 @@ const StakeModal: React.FC<StakeModalProps> = ({ farmKey }) => {
       }
       setConfirmModal(false);
     });
+    setVal("0");
     setConfirmModal(false);
     setisStaking(false);
   }, [account, setConfirmModal, setisStaking, ubiq, farmKey, val]);

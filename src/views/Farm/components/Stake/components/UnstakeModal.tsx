@@ -57,6 +57,7 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({ farmKey }) => {
       }
       setConfirmModal(false);
     });
+    setVal("0");
     setConfirmModal(false);
     setisUnstaking(false);
   }, [account, setConfirmModal, setisUnstaking, ubiq, val, farmKey]);
