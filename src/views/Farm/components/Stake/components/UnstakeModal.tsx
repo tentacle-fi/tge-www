@@ -19,6 +19,7 @@ const StyledUnstakeButton = styled(LoadingButton)(({ theme }) => ({
   backgroundColor: theme.palette.warning,
   padding: theme.spacing(1),
   borderRadius: 16,
+  width: "125px",
 }));
 
 interface UnstakeModalProps {
@@ -38,7 +39,7 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({ farmKey }) => {
   }, [stakedAmount]);
 
   const handleChange = useCallback(
-    (e: React.FormEvent<HTMLInputElement>) => {
+    (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
       setVal(e.currentTarget.value);
     },
     [setVal]
@@ -50,8 +51,14 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({ farmKey }) => {
 
   const handleUnstake = useCallback(async () => {
     if (!ubiq) return;
+    let txAmount = val;
+    if (parseFloat(val) > parseFloat(fullBalance)) {
+      setVal(fullBalance);
+      txAmount = fullBalance;
+    }
+
     setConfirmModal(true);
-    await unstake(ubiq, val, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
+    await unstake(ubiq, txAmount, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
       if (txHash === "") {
         setisUnstaking(false);
       }
@@ -60,7 +67,7 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({ farmKey }) => {
     setVal("0");
     setConfirmModal(false);
     setisUnstaking(false);
-  }, [account, setConfirmModal, setisUnstaking, ubiq, val, farmKey]);
+  }, [account, setConfirmModal, setisUnstaking, ubiq, val, farmKey, fullBalance]);
 
   return (
     <>

@@ -18,6 +18,7 @@ const StyledStakeButton = styled(LoadingButton)(({ theme }) => ({
   backgroundColor: theme.palette.secondary.main,
   padding: theme.spacing(1),
   borderRadius: 16,
+  width: "125px",
 }));
 
 interface StakeModalProps {
@@ -37,7 +38,7 @@ const StakeModal: React.FC<StakeModalProps> = ({ farmKey }) => {
   }, [LPBalances, farmKey]);
 
   const handleChange = useCallback(
-    (e: React.FormEvent<HTMLInputElement>) => {
+    (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
       setVal(e.currentTarget.value);
     },
     [setVal]
@@ -49,9 +50,15 @@ const StakeModal: React.FC<StakeModalProps> = ({ farmKey }) => {
 
   const handleStake = useCallback(async () => {
     if (!ubiq) return;
+    let txAmount = val;
+    if (parseFloat(val) > parseFloat(fullBalance)) {
+      setVal(fullBalance);
+      txAmount = fullBalance;
+    }
+
     setisStaking(true);
     setConfirmModal(true);
-    await stake(ubiq, val, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
+    await stake(ubiq, txAmount, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
       if (txHash === "") {
         setisStaking(false);
       }
@@ -60,7 +67,7 @@ const StakeModal: React.FC<StakeModalProps> = ({ farmKey }) => {
     setVal("0");
     setConfirmModal(false);
     setisStaking(false);
-  }, [account, setConfirmModal, setisStaking, ubiq, farmKey, val]);
+  }, [account, setConfirmModal, setisStaking, ubiq, farmKey, val, fullBalance]);
 
   return (
     <>
