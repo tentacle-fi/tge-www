@@ -28,3 +28,4 @@
 - Performance fixes for react state changes
 - Updated gas fees
 - Phase 2 farm testing
+- Mobile styling updates

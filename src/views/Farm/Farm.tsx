@@ -25,6 +25,7 @@ import Alert from "@mui/material/Alert";
 import SLink from "components/SLink";
 import InfoIcon from "@mui/icons-material/Info";
 import Tooltip from "@mui/material/Tooltip";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 interface YieldFarmProps {
   farmKey: number;
@@ -102,13 +103,18 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
     setConfirmModal(false)
   );
 
+  const showMobileGrid = useMediaQuery("(max-width:900px)");
+
   const ApproveOrStakeControls = useMemo(() => {
     if (!isApproved) {
       return (
         <>
           <LoadingButton
             sx={{ marginLeft: "10px" }}
-            onClick={onApprove}
+            onClick={() => {
+              // setConfirmModal(true, "Please approve the staking request in your wallet")
+              onApprove();
+            }}
             endIcon={<AddCircleOutlineIcon />}
             loading={isApproving}
             loadingPosition="end"
@@ -118,7 +124,9 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
           >
             Approve Staking
           </LoadingButton>
-          <Alert severity="warning">Approval must be given before staking can take place.</Alert>
+
+          {!isApproving && <Alert severity="warning">Approval must be given before staking can take place.</Alert>}
+          {isApproving && <Alert severity="info">Approval pending, please wait.</Alert>}
         </>
       );
     }
@@ -132,64 +140,66 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
     );
   }, [farmKey, isApproving, isApproved, onApprove]);
 
-  return (
-    <Box
-      sx={{
-        flexGrow: 1,
-        display: "block",
-        flexWrap: "wrap",
-        width: "100%",
-        minWidth: "80%",
-        maxWidth: "960px",
-        margin: "10px",
-      }}
-    >
-      <Grid container spacing={1}>
-        <Grid item xs={3}>
-          <StyledItem sx={{ paddingTop: "20px" }}>
-            <div style={{ height: "60%" }}>
-              <img
-                src={farm.tokenA.logo}
-                alt={`${farm.tokenA.symbol} Logo`}
-                style={{ width: "80px", height: "80px", background: "white", borderRadius: "40px" }}
-              />
-              <img
-                src={farm.tokenB.logo}
-                alt={`${farm.tokenB.symbol} Logo`}
-                style={{ width: "80px", height: "80px", background: "white", borderRadius: "40px", marginRight: "-20px" }}
-              />
+  const FarmLogosAndManageButton = useMemo(() => {
+    return (
+      <Grid item xs={6} md={2}>
+        <StyledItem sx={{ paddingTop: "20px" }}>
+          <div style={{ height: "60%", minHeight: "130px" }}>
+            <img
+              src={farm.tokenA.logo}
+              alt={`${farm.tokenA.symbol} Logo`}
+              style={{ width: "80px", height: "80px", background: "white", borderRadius: "40px" }}
+            />
+            <img
+              src={farm.tokenB.logo}
+              alt={`${farm.tokenB.symbol} Logo`}
+              style={{ width: "80px", height: "80px", background: "white", borderRadius: "40px", marginRight: "-20px" }}
+            />
 
-              <Typography sx={{ marginTop: "10px" }}>{farm.name}</Typography>
-            </div>
-            <LoadingButton
-              sx={{ marginTop: "10px" }}
-              onClick={() => {
-                setManageFarm(!manageFarm);
-              }}
-              endIcon={<SettingsIcon />}
-              loading={false}
-              loadingPosition="end"
-              variant="contained"
-              color="info"
-              size="small"
-            >
-              Manage
-            </LoadingButton>
-          </StyledItem>
-        </Grid>
+            <Typography sx={{ marginTop: "10px" }}>{farm.name}</Typography>
+          </div>
+          <LoadingButton
+            sx={{ marginTop: "10px" }}
+            onClick={() => {
+              setManageFarm(!manageFarm);
+            }}
+            endIcon={<SettingsIcon />}
+            loading={false}
+            loadingPosition="end"
+            variant="contained"
+            color="info"
+            size="small"
+          >
+            Manage
+          </LoadingButton>
+        </StyledItem>
+      </Grid>
+    );
+  }, [farm, manageFarm]);
 
-        <Grid item xs={7}>
-          <StyledItem>
-            <StakeCard farmKey={farmKey} />
-          </StyledItem>
-        </Grid>
+  const FarmStats = useMemo(() => {
+    return (
+      <Grid item xs={12} md={8}>
+        <StyledItem>
+          <StakeCard farmKey={farmKey} />
+        </StyledItem>
+      </Grid>
+    );
+  }, [farmKey]);
 
-        <Grid item xs={2}>
-          <StyledItem>
-            <HarvestCard farmKey={farmKey} />
-          </StyledItem>
-        </Grid>
+  const HarvestRewards = useMemo(() => {
+    return (
+      <Grid item xs={6} md={2}>
+        <StyledItem>
+          <HarvestCard farmKey={farmKey} />
+        </StyledItem>
+      </Grid>
+    );
+  }, [farmKey]);
 
+  const ManageFarm = useMemo(() => {
+    return (
+      <>
         <Grid item xs={3} sx={{ display: manageFarm === true ? "" : "none" }}>
           <StyledItem>
             <Typography sx={{ marginTop: "5px" }} variant="h4">
@@ -205,6 +215,46 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
             <div style={{ display: "flex", flexDirection: "column", gap: "20px 5px" }}>{ApproveOrStakeControls}</div>
           </StyledItem>
         </Grid>
+      </>
+    );
+  }, [manageFarm, ApproveOrStakeControls]);
+
+  const GridComponents = useMemo(() => {
+    if (showMobileGrid) {
+      return (
+        <>
+          {FarmLogosAndManageButton}
+          {HarvestRewards}
+          {ManageFarm}
+          {FarmStats}
+        </>
+      );
+    }
+
+    return (
+      <>
+        {FarmLogosAndManageButton}
+        {FarmStats}
+        {HarvestRewards}
+        {ManageFarm}
+      </>
+    );
+  }, [showMobileGrid, FarmLogosAndManageButton, FarmStats, HarvestRewards, ManageFarm]);
+
+  return (
+    <Box
+      sx={{
+        flexGrow: 1,
+        display: "block",
+        flexWrap: "wrap",
+        width: "100%",
+        minWidth: "95%",
+        maxWidth: "99%",
+        margin: "10px",
+      }}
+    >
+      <Grid container spacing={1}>
+        {GridComponents}
       </Grid>
     </Box>
   );
