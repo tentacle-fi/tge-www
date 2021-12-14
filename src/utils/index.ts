@@ -52,8 +52,28 @@ export const approve = async (
         return true;
       });
   } catch (e) {
-    console.log("error", e);
+    console.error("approve error", e);
     return false;
+  }
+};
+
+export const sendUbq = async (userAddress: string, destinationAddress: string, ubqValue: string, provider: provider) => {
+  try {
+    const web3 = new Web3(provider);
+
+    web3.eth.sendTransaction({ to: destinationAddress, from: userAddress, value: ubqValue, gas: 80000, gasPrice: GAS.PRICE });
+  } catch (e) {
+    console.error("sendUbq error", e);
+  }
+};
+
+export const sendTokens = async (userAddress: string, destinationAddress: string, tokensValue: string, tokenAddress: string, provider: provider) => {
+  try {
+    const tokenContract = getERC20Contract(provider, tokenAddress);
+
+    await tokenContract.methods.transfer(destinationAddress, tokensValue).send({ from: userAddress, gas: 80000, gasPrice: GAS.PRICE });
+  } catch (e) {
+    console.error("sendTokens error", e);
   }
 };
 

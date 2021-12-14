@@ -11,6 +11,7 @@ import NightsStayIcon from "@mui/icons-material/NightsStay";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import Tooltip from "@mui/material/Tooltip";
+import Donate from "components/Donate";
 
 interface TimelinePhaseProps {
   title: string;
@@ -47,6 +48,7 @@ const Home: React.FC = () => {
     <Page>
       <PageHeader icon={<NightsStayIcon sx={{ fontSize: "98px" }} />} title="Welcome to Tentacle.Finance" />
       <Introduction />
+      <Donate />
       <RoadmapTimeline />
     </Page>
   );
