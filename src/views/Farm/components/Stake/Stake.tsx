@@ -124,7 +124,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
 
   return (
     <>
-      <Grid container spacing={1}>
+      <Grid container spacing={2}>
         {typeof farmingStartTimes !== "undefined" && farmingStartTimes[farmKey] > Date.now() && (
           <Grid item xs={12}>
             <Countdown date={farmingStartTimes[farmKey]} renderer={renderer} />
@@ -225,7 +225,7 @@ interface GridItemProps {
 const StyledGridItem: React.FC<GridItemProps> = ({ val, variant, color }) => {
   if (variant === "label") {
     return (
-      <Grid item xs={2} lg={4}>
+      <Grid item xs={4} sm={4} lg={4}>
         <StyledPaper>
           <Typography color={color} variant="body1" sx={{ textAlign: "right" }}>
             {val}
@@ -235,7 +235,7 @@ const StyledGridItem: React.FC<GridItemProps> = ({ val, variant, color }) => {
     );
   } else if (variant === "data") {
     return (
-      <Grid item xs={10} lg={8}>
+      <Grid item xs={8} sm={8} lg={8}>
         <StyledPaper>
           <Typography color={color} variant="body1">
             {val}
