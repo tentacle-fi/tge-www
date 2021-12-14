@@ -112,7 +112,7 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
           <LoadingButton
             sx={{ marginLeft: "10px" }}
             onClick={() => {
-              // setConfirmModal(true, "Please approve the staking request in your wallet")
+              setConfirmModal(true, "Please approve the staking request in your wallet")
               onApprove();
             }}
             endIcon={<AddCircleOutlineIcon />}
