@@ -40,13 +40,21 @@ const BalancesProvider: React.FC = ({ children }) => {
 
       for (let i = 0; i < AvailableFarms.length; i++) {
         try {
+          const hasUBQ = AvailableFarms[i].tokenA.address === UBQ || AvailableFarms[i].tokenB.address === UBQ;
+          const hasINK = AvailableFarms[i].tokenA.address === INK || AvailableFarms[i].tokenB.address === INK;
+
           const inverted = AvailableFarms[i].tokenA.address !== UBQ && AvailableFarms[i].tokenA.address !== INK;
           if (inverted && AvailableFarms[i].tokenB.address !== UBQ && AvailableFarms[i].tokenB.address !== INK) {
             throw new Error("Unable to price this token pair, requires an oracle token price first");
           }
 
+          let oraclePrice = oracle.price.usdt; // UBQ
+          if (!hasUBQ && hasINK && prices[INK] !== undefined) {
+            oraclePrice = prices[INK];
+          }
+
           const token: string = inverted ? AvailableFarms[i].tokenA.address : AvailableFarms[i].tokenB.address;
-          const tokenPriceInfo = await getTokenPrice(provider, oracle.price.usdt, AvailableFarms[i].lp.address, inverted);
+          const tokenPriceInfo = await getTokenPrice(provider, oraclePrice, AvailableFarms[i].lp.address, inverted);
 
           prices[token] = tokenPriceInfo.price;
           reserves.push(tokenPriceInfo.reserves);

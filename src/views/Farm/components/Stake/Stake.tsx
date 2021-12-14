@@ -51,9 +51,14 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
   // TODO: unclear if this is accurate enough or if we need to reverse the uniswap v2 algo from the stakedLP tokens for this account (LP = sqrt(token0 * token1))
   const formattedMyPoolTokens = useCallback(() => {
     if (PooledTokens !== undefined) {
-      return ` ${PooledTokens[farmKey].token0.toFixed(0)} ${AvailableFarms[farmKey].tokenA.symbol} / ${PooledTokens[farmKey].token1.toFixed(0)} ${
-        AvailableFarms[farmKey].tokenB.symbol
-      }`;
+      let decimals = 0;
+      if (PooledTokens[farmKey].token0 < 1 || PooledTokens[farmKey].token1 < 1) {
+        decimals = 3;
+      }
+
+      return ` ${PooledTokens[farmKey].token0.toFixed(decimals)} ${AvailableFarms[farmKey].tokenA.symbol} / ${PooledTokens[farmKey].token1.toFixed(
+        decimals
+      )} ${AvailableFarms[farmKey].tokenB.symbol}`;
     }
 
     return `-- ${AvailableFarms[farmKey].tokenA.symbol} / -- ${AvailableFarms[farmKey].tokenB.symbol}`;

@@ -79,7 +79,7 @@ export const AvailableFarms: Array<IFarm> = [
   },
   // ESCH/INK
   {
-    name: `${ESCH_token.symbol}/${INK_token.symbol}`,
+    name: `${INK_token.symbol}/${ESCH_token.symbol}`,
     yieldfarm: {
       address: INK_ESCH_FarmContract,
       start_time: 1639634400 * 1000,
@@ -87,10 +87,10 @@ export const AvailableFarms: Array<IFarm> = [
     },
     lp: {
       address: INK_ESCH_LPAddress,
-      url: "https://shinobi.ubiq.ninja/#/add/" + ESCH + "/" + INK,
+      url: "https://shinobi.ubiq.ninja/#/add/" + INK + "/" + ESCH,
     },
-    tokenA: ESCH_token,
-    tokenB: INK_token,
+    tokenA: INK_token,
+    tokenB: ESCH_token,
   },
   // COMMUNITY Pools/Farms
   // GRANS/UBQ

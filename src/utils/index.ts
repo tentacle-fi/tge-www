@@ -179,8 +179,14 @@ export const getTokenPrice = async (
   inverted: boolean = false
 ): Promise<ITokenPriceInfo> => {
   const reserves = await getReserves(provider, poolLpTokenAddress);
-  // console.log('inverted price', oraclePrice * reserves.ratio1over0)
-  // console.log('non-invert price', oraclePrice * reserves.ratio0over1)
+
+  // DEBUG:
+  // console.log("poolLpTokenAddress", poolLpTokenAddress);
+  // console.log("inverted price", oraclePrice * reserves.ratio1over0);
+  // console.log("non-invert price", oraclePrice * reserves.ratio0over1);
+  // console.log("ratio1over0", reserves.ratio1over0);
+  // console.log("ratio0over1", reserves.ratio0over1);
+  // console.log("");
 
   let price = 0;
   if (inverted) {
@@ -212,6 +218,10 @@ export interface ICurrentStats {
   poolTvl: number;
   farmApy: number;
   farmTvl: number;
+  farmPooledTokens: {
+    token0: number;
+    token1: number;
+  };
 }
 
 export const getCurrentStats = async (
@@ -227,13 +237,21 @@ export const getCurrentStats = async (
   try {
     const dailyTokenRewardEmissions = await getDailyRewardRate(provider, farmContractAddress);
     const poolTvl = reserves.token0 * token0Price + reserves.token1 * token1Price;
-    const poolLpCalcRatio = 1 + (1 - bnToDec(totalSupplyLP) / Math.sqrt(reserves.token0 * reserves.token1));
-    const farm_token0 = (bnToDec(totalSupplyLP) * poolLpCalcRatio) / Math.sqrt(reserves.ratio1over0);
-    const farm_token1 = (bnToDec(totalSupplyLP) * poolLpCalcRatio) / Math.sqrt(reserves.ratio0over1);
+
+    // a bug was found when using this with other farms. The error it fixes is approx 1 or 2% at times in established
+    // farms. But the error it presents when the farms are very small or having little LP staked is closer to 98% error.
+    // removing until a better solution can be found.
+    // const poolLpCalcRatio = bnToDec(totalSupplyLP) / Math.sqrt(reserves.token0 * reserves.token1);
+    // const farm_token0 = (bnToDec(totalSupplyLP) * poolLpCalcRatio) / Math.sqrt(reserves.ratio1over0);
+    // const farm_token1 = (bnToDec(totalSupplyLP) * poolLpCalcRatio) / Math.sqrt(reserves.ratio0over1);
+
+    const farm_token0 = bnToDec(totalSupplyLP) / Math.sqrt(reserves.ratio1over0);
+    const farm_token1 = bnToDec(totalSupplyLP) / Math.sqrt(reserves.ratio0over1);
     const farmTvl = farm_token0 * token0Price + farm_token1 * token1Price;
     const farmApy = ((rewardTokenPrice * dailyTokenRewardEmissions * 365) / farmTvl) * 100;
 
-    // DEBUG: all the log statements for debug that make sense to have
+    // DEBUG: all the log statements for debug that make sense to have. if statement filters the info by address to reduce noise/mistakes
+    // if (poolLpTokenAddress === "0x2cd09d8c0484dfb32eb2f23ead45f14c7602921b") {
     // console.log("token0 price", token0Price);
     // console.log("token1 price", token1Price);
     // console.log("token0", reserves.token0);
@@ -244,15 +262,23 @@ export const getCurrentStats = async (
     // console.log("lp ratio", poolLpCalcRatio);
     // console.log("pool tvl", poolTvl);
     // console.log("");
+    // console.log("poolLpTokenAddress", poolLpTokenAddress);
+    // console.log("bnToDec(totalSupplyLP)", bnToDec(totalSupplyLP));
     // console.log("farm token0", farm_token0);
     // console.log("farm token1", farm_token1);
     // console.log("farm tvl", farmTvl);
     // console.log("farm apy", farmApy);
+    // console.log('')
+    // }
 
     return {
       poolTvl: poolTvl,
       farmApy: farmApy,
       farmTvl: farmTvl,
+      farmPooledTokens: {
+        token0: farm_token0,
+        token1: farm_token1,
+      },
     } as ICurrentStats;
   } catch (e) {
     console.error("getCurrentStats error", e);
