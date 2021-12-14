@@ -4,6 +4,8 @@ import Web3 from "web3";
 import { provider, TransactionReceipt } from "web3-core";
 import { AbiItem } from "web3-utils";
 
+import { GAS } from "ubiq-sdk/utils";
+
 import ERC20ABI from "constants/abi/ERC20.json";
 import ShinobiPoolERC20 from "ubiq-sdk/lib/clean_build/contracts/ShinobiPool.json";
 
@@ -33,7 +35,7 @@ export const approve = async (
     const tokenContract = getERC20Contract(provider, tokenAddress);
     return tokenContract.methods
       .approve(spenderAddress, ethers.constants.MaxUint256)
-      .send({ from: userAddress, gas: 80000 }, async (error: any, txHash: string) => {
+      .send({ from: userAddress, gas: 80000, gasPrice: GAS.PRICE }, async (error: any, txHash: string) => {
         if (error) {
           console.log("ERC20 could not be approved", error);
           onTxHash && onTxHash("");
@@ -258,8 +260,8 @@ export const getCurrentStats = async (
   }
 };
 export const shouldUpdateAry = function shouldUpdateAry(
-  old_val: Array<BigNumber> | undefined,
-  new_val: Array<BigNumber> | undefined,
+  old_val: Array<BigNumber> | Array<number> | undefined,
+  new_val: Array<BigNumber> | Array<number> | undefined,
   elemType: string
 ): boolean {
   if (old_val === undefined || new_val === undefined) {
@@ -272,6 +274,13 @@ export const shouldUpdateAry = function shouldUpdateAry(
           case "BigNumber":
             if (old_val[i] instanceof BigNumber && new_val[i] instanceof BigNumber) {
               if (!new BigNumber(old_val[i]).isEqualTo(new_val[i])) {
+                return true;
+              }
+            }
+            break;
+          case "number":
+            if (typeof old_val[i] === "number" && typeof new_val[i] === "number") {
+              if (old_val[i] !== new_val[i]) {
                 return true;
               }
             }

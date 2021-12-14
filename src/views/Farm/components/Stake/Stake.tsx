@@ -13,6 +13,7 @@ import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import SLink from "components/SLink";
+import useUbiq from "hooks/useUbiq";
 
 interface StakeProps {
   farmKey: number;
@@ -23,12 +24,13 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
   const [lpPercent, setLpPercent] = useState<number>(0);
 
   const { LPBalances, tokenPrices } = useBalances();
+  const { BlockNum } = useUbiq();
 
   const availableLPBalance = useMemo(() => {
     return getFullDisplayBalance(LPBalances !== undefined ? LPBalances[farmKey] : new BigNumber(0), 0);
   }, [LPBalances, farmKey]);
 
-  const { farmingStartTime, stakedBalances, lpPercents, currentApy, currentTvl, PooledTokens } = useFarming();
+  const { farmingStartTimes, stakedBalances, lpPercents, currentApy, currentTvl, PooledTokens } = useFarming();
 
   const formattedStakedBalance = useCallback(async () => {
     if (stakedBalances !== undefined && stakedBalances[farmKey] && bnToDec(stakedBalances[farmKey]) > 0) {
@@ -99,9 +101,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
   useEffect(() => {
     formattedStakedBalance();
     formattedLpPercent();
-    let refreshInterval = setInterval(formattedStakedBalance, 10000);
-    return () => clearInterval(refreshInterval);
-  }, [formattedStakedBalance, formattedLpPercent]);
+  }, [formattedStakedBalance, formattedLpPercent, BlockNum]);
 
   const renderer = (countdownProps: CountdownRenderProps) => {
     const { days, hours, minutes, seconds } = countdownProps;
@@ -120,9 +120,9 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
   return (
     <>
       <Grid container spacing={1}>
-        {typeof farmingStartTime !== "undefined" && farmingStartTime[farmKey] > Date.now() && (
+        {typeof farmingStartTimes !== "undefined" && farmingStartTimes[farmKey] > Date.now() && (
           <Grid item xs={12}>
-            <Countdown date={farmingStartTime[farmKey]} renderer={renderer} />
+            <Countdown date={farmingStartTimes[farmKey]} renderer={renderer} />
           </Grid>
         )}
         <Box sx={{ width: "50%", marginTop: "8px" }}>

@@ -25,3 +25,6 @@
 - block number and timestamp UI updates
 - added `SLink` component for internal and external links
 - Confirm Modal custom message option enabled
+- Performance fixes for react state changes
+- Updated gas fees
+- Phase 2 farm testing

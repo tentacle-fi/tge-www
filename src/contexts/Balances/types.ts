@@ -9,9 +9,7 @@ export interface ContextValues {
   INKBalance?: BigNumber;
   GRANSBalance?: BigNumber;
   UBQBalance?: BigNumber;
-  CurrentBlock?: string;
   UBQoracle?: IOraclePrice;
   tokenPrices?: ITokenPrice;
   lpTokenReserves?: Array<IReserves>;
-  CurrentBlockTimestamp?: number;
 }

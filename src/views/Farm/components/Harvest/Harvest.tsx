@@ -21,6 +21,7 @@ interface UnHarvestProps extends HarvestProps {
 const Harvest: React.FC<HarvestProps> = ({ farmKey }) => {
   const { earnedBalances } = useFarming();
   const [earnedBalance, setEarnedBalance] = useState<number>(0);
+  const { BlockNum } = useUbiq();
 
   const formattedEarnedBalance = useCallback(async () => {
     if (earnedBalances && bnToDec(earnedBalances[farmKey]) > 0) {
@@ -32,9 +33,7 @@ const Harvest: React.FC<HarvestProps> = ({ farmKey }) => {
 
   useEffect(() => {
     formattedEarnedBalance();
-    let refreshInterval = setInterval(formattedEarnedBalance, 10000);
-    return () => clearInterval(refreshInterval);
-  }, [formattedEarnedBalance]);
+  }, [BlockNum, formattedEarnedBalance]);
 
   return (
     <>
@@ -58,11 +57,12 @@ const UnHarvested: React.FC<UnHarvestProps> = React.memo(({ farmKey, earnedBalan
   const [isHarvesting, setisHarvesting] = useState(false);
 
   const { status, account } = useWallet();
-  const ubiq = useUbiq();
+  const { ubiq } = useUbiq();
   const { setConfirmModal } = useFarming();
 
   const handleHarvest = useCallback(async () => {
-    if (!ubiq) return;
+    if (!ubiq?.contracts?.pools) return;
+
     setConfirmModal(true);
     setisHarvesting(true);
     await harvest(ubiq, account, ubiq.contracts.pools[farmKey], (txHash: string) => {

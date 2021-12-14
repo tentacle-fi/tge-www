@@ -28,7 +28,7 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({ farmKey }) => {
   const { stakedBalances, setConfirmModal } = useFarming();
   const [isUnstaking, setisUnstaking] = useState(false);
   const stakedAmount = stakedBalances === undefined ? null : stakedBalances[farmKey];
-  const ubiq = useUbiq();
+  const { ubiq } = useUbiq();
   const { account } = useWallet();
 
   const fullBalance = useMemo(() => {

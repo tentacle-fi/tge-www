@@ -32,12 +32,14 @@ const App: React.FC = () => {
       <Providers>
         <TopBar onPresentMobileMenu={handlePresentMobileMenu} />
         <MobileMenu onDismiss={handleDismissMobileMenu} visible={mobileMenu} />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/farm" element={<Farm />} />
-          <Route path="/addresses" element={<Addresses />} />
-          <Route path="/help" element={<Help />} />
-        </Routes>
+        <div style={{ marginTop: "50px" }}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/farm" element={<Farm />} />
+            <Route path="/addresses" element={<Addresses />} />
+            <Route path="/help" element={<Help />} />
+          </Routes>
+        </div>
       </Providers>
     </Router>
   );

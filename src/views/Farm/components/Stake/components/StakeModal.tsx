@@ -30,7 +30,7 @@ const StakeModal: React.FC<StakeModalProps> = ({ farmKey }) => {
   const { LPBalances } = useBalances();
   const { setConfirmModal } = useFarming();
   const [isStaking, setisStaking] = useState(false);
-  const ubiq = useUbiq();
+  const { ubiq } = useUbiq();
   const { account } = useWallet();
 
   const fullBalance = useMemo(() => {

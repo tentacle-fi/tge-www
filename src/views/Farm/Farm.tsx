@@ -80,11 +80,14 @@ const Farm: React.FC = () => {
           Tentacle.Finance Farms <FloatingHelp tooltipText="Farms owned & operated by the Tentacle Finance DAO" />
         </Typography>
         <YieldFarm farmKey={0} />
+        <YieldFarm farmKey={1} />
+        <YieldFarm farmKey={2} />
+
         <hr style={{ width: "80%", border: "1px solid #555", margin: "20px 0" }} />
         <Typography variant="h4">
           Community Farms <FloatingHelp tooltipText="Additional Ubiq farms provided for convenience" />
         </Typography>
-        <YieldFarm farmKey={1} />
+        <YieldFarm farmKey={3} />
       </>
     </Page>
   );
@@ -213,12 +216,12 @@ interface HarvestAllProps {
 
 const HarvestAll: React.FC<HarvestAllProps> = React.memo(({ farmKey }) => {
   const [isRedeeming, setisRedeeming] = useState(false);
-  const ubiq = useUbiq();
+  const { ubiq } = useUbiq();
   const { setConfirmModal } = useFarming();
   const { account } = useWallet();
 
   const handleRedeem = useCallback(async () => {
-    if (!ubiq) return;
+    if (!ubiq?.contracts) return;
     setConfirmModal(true);
     setisRedeeming(false);
     await redeem(ubiq, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
