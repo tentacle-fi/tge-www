@@ -124,7 +124,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
 
   return (
     <>
-      <Grid container spacing={2}>
+      <Grid container spacing={1}>
         {typeof farmingStartTimes !== "undefined" && farmingStartTimes[farmKey] > Date.now() && (
           <Grid item xs={12}>
             <Countdown date={farmingStartTimes[farmKey]} renderer={renderer} />
