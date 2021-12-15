@@ -7,6 +7,9 @@ import AddressButton from "components/AddressButton";
 import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import Typography from "@mui/material/Typography";
 
+import Box from "@mui/material/Box";
+import BuyUBQButtons from "components/BuyUBQButtons";
+
 import { UBQ, AvailableFarms, Tokens } from "farms/AvailableFarms";
 
 const Addresses: React.FC = () => {
@@ -33,17 +36,22 @@ const Addresses: React.FC = () => {
   const InkOfficialFarmAddresses = generateFarmAddressButton(true);
   const CommunityFarmAddresses = generateFarmAddressButton(false);
 
-  // TODO: add all the places to buy UBQ as buttons
   return (
     <Page>
       <PageHeader icon={<AlternateEmailIcon sx={{ fontSize: "96px" }} />} title={"Addresses"} subtitle={"Official Addresses"} />
       <Container size="md">
         <Typography variant="h4">Token Addresses</Typography>
 
-        <AddressButton name="UBQ" address={UBQ} shinobi={true} />
+        <AddressButton name="UBQ" address={UBQ} shinobi={false} />
+        <Box sx={{ margin: "10px 0 30px 0", textAlign: "center" }}>
+          <BuyUBQButtons />
+        </Box>
+
         {TokensAddressButtons}
 
-        <Typography variant="h4">Official INK Yield Farm Addresses</Typography>
+        <Typography variant="h4" sx={{ marginTop: "20px" }}>
+          Official INK Yield Farm Addresses
+        </Typography>
         {InkOfficialFarmAddresses}
 
         <Typography variant="h4" sx={{ marginTop: "35px" }}>

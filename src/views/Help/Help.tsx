@@ -9,6 +9,7 @@ import SLink from "components/SLink";
 import { INK } from "farms/AvailableFarms";
 import { addInkToWallet } from "metamask.js";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import BuyUBQButtons from "components/BuyUBQButtons";
 
 const Help: React.FC = () => {
   return (
@@ -36,20 +37,7 @@ const Help: React.FC = () => {
 
           <ListItem legend="Step 3: Get some tokens">
             Obtain UBQ and INK balance in your wallet
-            <ButtonGroup sx={{ margin: "10px" }}>
-              <h3>Obtain UBQ at:</h3>
-              <SLink external href="https://bittrex.com/Market/Index?MarketName=USDT-UBQ">
-                <Button sx={{ marginLeft: "10px" }} variant="outlined">
-                  Bittrex
-                </Button>
-              </SLink>
-              <SLink external href="https://dovewallet.com/en/trade/spot/ubq-usdt">
-                <Button variant="outlined">Dove Wallet</Button>
-              </SLink>
-              <SLink external href="https://shinobi.ubiq.ninja/#/swap">
-                <Button variant="outlined">Shinobi Swap</Button>
-              </SLink>
-            </ButtonGroup>
+            <BuyUBQButtons />
             <ButtonGroup>
               <h3>Obtain INK at:</h3>
               <SLink external href={"https://shinobi.ubiq.ninja/#/swap?outputCurrency=" + INK}>
