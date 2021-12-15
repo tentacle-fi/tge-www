@@ -48,7 +48,6 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
     }
   }, [lpPercents, farmKey]);
 
-  // TODO: unclear if this is accurate enough or if we need to reverse the uniswap v2 algo from the stakedLP tokens for this account (LP = sqrt(token0 * token1))
   const formattedMyPoolTokens = useCallback(() => {
     if (PooledTokens !== undefined) {
       let decimals = 0;

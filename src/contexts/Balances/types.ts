@@ -9,6 +9,7 @@ export interface ContextValues {
   INKBalance?: BigNumber;
   GRANSBalance?: BigNumber;
   UBQBalance?: BigNumber;
+  ESCHBalance?: BigNumber;
   UBQoracle?: IOraclePrice;
   tokenPrices?: ITokenPrice;
   lpTokenReserves?: Array<IReserves>;

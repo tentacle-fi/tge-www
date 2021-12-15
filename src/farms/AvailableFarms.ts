@@ -3,6 +3,13 @@ import ubqLogo from "assets/ubq.png";
 import gransLogo from "assets/grans-flat.png";
 import eschLogo from "assets/esch-logo.png";
 
+export const Logos = {
+  ink: inkLogo,
+  ubq: ubqLogo,
+  grans: gransLogo,
+  esch: eschLogo,
+};
+
 export const UBQ = "0x1fa6a37c64804c0d797ba6bc1955e50068fbf362"; // UBQ Token address (wUBQ technically)
 
 // INK Farms:

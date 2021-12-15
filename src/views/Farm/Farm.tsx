@@ -248,8 +248,8 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
         display: "block",
         flexWrap: "wrap",
         width: "100%",
-        minWidth: "95%",
-        maxWidth: "99%",
+        minWidth: "90%",
+        maxWidth: "1000px",
         margin: "10px",
       }}
     >

@@ -8,7 +8,7 @@ import useUbiq from "hooks/useUbiq";
 import { getCoinBalanceAsBigNum, getBalanceAsBigNum, getTokenPrice, IReserves } from "utils";
 
 import Context from "./Context";
-import { AvailableFarms, INK, GRANS, UBQ } from "farms/AvailableFarms";
+import { AvailableFarms, INK, GRANS, UBQ, ESCH } from "farms/AvailableFarms";
 import useUBQPriceOracle from "hooks/useUBQPriceOracle";
 
 const BalancesProvider: React.FC = ({ children }) => {
@@ -18,6 +18,7 @@ const BalancesProvider: React.FC = ({ children }) => {
   const [UBQBalance, setUBQBalance] = useState<BigNumber>();
   const [INKBalance, setINKBalance] = useState<BigNumber>();
   const [GRANSBalance, setGRANSBalance] = useState<BigNumber>();
+  const [ESCHBalance, setESCHBalance] = useState<BigNumber>();
 
   const [tokenPrices, setTokenPrices] = useState<ITokenPrice>();
   const [tokenReserves, setTokenReserves] = useState<Array<IReserves>>();
@@ -86,10 +87,12 @@ const BalancesProvider: React.FC = ({ children }) => {
     let ubqBal = new BigNumber(await getCoinBalanceAsBigNum(ethereum, account)).plus(await getBalanceAsBigNum(ethereum, UBQ, account));
     let inkBal = await getBalanceAsBigNum(ethereum, INK, account);
     let gransBal = await getBalanceAsBigNum(ethereum, GRANS, account);
+    let eschBal = await getBalanceAsBigNum(ethereum, ESCH, account);
 
     setUBQBalance(ubqBal);
     setINKBalance(inkBal);
     setGRANSBalance(gransBal);
+    setESCHBalance(eschBal);
     settokenBalances(newTokenBalances);
     setLPBalances(newLpBalances);
   }, [settokenBalances, setLPBalances, setUBQBalance, setINKBalance, setGRANSBalance, account, ethereum]);
@@ -112,6 +115,7 @@ const BalancesProvider: React.FC = ({ children }) => {
         UBQBalance,
         INKBalance,
         GRANSBalance,
+        ESCHBalance,
         UBQoracle: oracle,
         tokenPrices,
         lpTokenReserves: tokenReserves,
