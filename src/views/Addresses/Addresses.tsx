@@ -4,27 +4,51 @@ import { Container } from "react-neu";
 import Page from "components/Page";
 import PageHeader from "components/PageHeader";
 import AddressButton from "components/AddressButton";
+import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
+import Typography from "@mui/material/Typography";
 
-import { INK, UBQ, INK_UBQ_FarmContract } from "farms/AvailableFarms";
+import { UBQ, AvailableFarms, Tokens } from "farms/AvailableFarms";
 
 const Addresses: React.FC = () => {
+  //unfortunately UBQ is a special case for our AddressButton component due to the Shinobi URL link
+  const TokensAddressButtons = Tokens.filter((token) => token.address !== UBQ).map((token, index) => {
+    return (
+      <AddressButton
+        name={token.symbol}
+        address={token.address}
+        shinobi={true}
+        shinobitext="Buy at Shinobi"
+        shinobilink="https://shinobi.ubiq.ninja/#/swap?outputCurrency="
+        key={index.toString()}
+      />
+    );
+  });
+
+  const InkOfficialFarmAddresses = AvailableFarms.filter((farm) => farm.official === true).map((farm, index) => {
+    return <AddressButton name={`${farm.name} Yield Farm`} address={farm.yieldfarm.address} shinobi={false} key={index.toString()} />;
+  });
+
+  const CommunityFarmAddresses = AvailableFarms.filter((farm) => farm.official === false).map((farm, index) => {
+    return <AddressButton name={`${farm.name} Yield Farm`} address={farm.yieldfarm.address} shinobi={false} key={index.toString()} />;
+  });
+
+  // TODO: add all the places to buy UBQ as buttons
   return (
     <Page>
-      <PageHeader icon={"🎖️"} title={"Addresses"} subtitle={"Official Addresses"} />
+      <PageHeader icon={<AlternateEmailIcon sx={{ fontSize: "96px" }} />} title={"Addresses"} subtitle={"Official Addresses"} />
       <Container size="md">
-        <h2>Token Addresses (INK, UBQ)</h2>
-        <AddressButton
-          name="INK"
-          address={INK}
-          shinobi={true}
-          shinobitext="Buy at Shinobi"
-          shinobilink="https://shinobi.ubiq.ninja/#/swap?outputCurrency="
-        />
+        <Typography variant="h4">Token Addresses (INK, UBQ)</Typography>
 
         <AddressButton name="UBQ" address={UBQ} shinobi={true} />
+        {TokensAddressButtons}
 
-        <h3>INK Contract Addresses</h3>
-        <AddressButton name="INK/UBQ Yield Farm" address={INK_UBQ_FarmContract} shinobi={false} />
+        <Typography variant="h4">Official INK Yield Farm Addresses</Typography>
+        {InkOfficialFarmAddresses}
+
+        <Typography variant="h4" sx={{ marginTop: "35px" }}>
+          Community Farm Addresses
+        </Typography>
+        {CommunityFarmAddresses}
       </Container>
     </Page>
   );
