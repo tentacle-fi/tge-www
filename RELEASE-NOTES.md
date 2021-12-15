@@ -31,4 +31,4 @@
 - Mobile styling updates
 
 ## Unreleased
-Nothing at this time
+- reload page on account change
