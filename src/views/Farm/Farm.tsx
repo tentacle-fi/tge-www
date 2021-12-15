@@ -65,6 +65,15 @@ const StyledFloatingHelp = styled(InfoIcon)(({ theme }) => ({
 }));
 
 const Farm: React.FC = () => {
+  const generateFarms = useCallback((official: boolean) => {
+    return AvailableFarms.filter((farm) => farm.official === official).map((farm, index) => {
+      return <YieldFarm farmKey={index} key={index.toString()} />;
+    });
+  }, []);
+
+  const OfficialFarms = generateFarms(true);
+  const CommunityFarms = generateFarms(false);
+
   return (
     <Page>
       <Box textAlign="center">
@@ -80,15 +89,14 @@ const Farm: React.FC = () => {
         <Typography variant="h4" sx={{ left: "20px", marginTop: "20px" }}>
           Tentacle.Finance Farms <FloatingHelp tooltipText="Farms owned & operated by the Tentacle Finance DAO" />
         </Typography>
-        <YieldFarm farmKey={0} />
-        <YieldFarm farmKey={1} />
-        <YieldFarm farmKey={2} />
+
+        {OfficialFarms}
 
         <hr style={{ width: "80%", border: "1px solid #555", margin: "20px 0" }} />
         <Typography variant="h4">
           Community Farms <FloatingHelp tooltipText="Additional Ubiq farms provided for convenience" />
         </Typography>
-        <YieldFarm farmKey={3} />
+        {CommunityFarms}
       </>
     </Page>
   );
