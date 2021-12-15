@@ -1,6 +1,11 @@
 import React from "react";
-import { Button, Card, CardActions, CardContent, CardIcon } from "react-neu";
 import styled from "styled-components";
+
+// TODO: change this to a regular img import
+import { CardIcon } from "react-neu";
+
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 
 interface WalletProviderCardProps {
   icon: React.ReactNode;
@@ -8,15 +13,12 @@ interface WalletProviderCardProps {
   onSelect: () => void;
 }
 const WalletProviderCard: React.FC<WalletProviderCardProps> = ({ icon, name, onSelect }) => (
-  <Card>
-    <CardIcon>{icon}</CardIcon>
-    <CardContent>
+  <Box sx={{ display: "flex", flexDirection: "column" }}>
+    <Button onClick={onSelect} variant="outlined">
+      <CardIcon>{icon}</CardIcon>
       <StyledName>{name}</StyledName>
-    </CardContent>
-    <CardActions>
-      <Button full onClick={onSelect} text="Select" variant="secondary" />
-    </CardActions>
-  </Card>
+    </Button>
+  </Box>
 );
 
 const StyledName = styled.div`

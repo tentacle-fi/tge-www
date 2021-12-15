@@ -2,7 +2,9 @@ import React, { useMemo } from "react";
 import styled from "styled-components";
 import copy from "assets/copy.svg";
 import confirm from "assets/copy_confirm.svg";
-import { Box, Spacer, useTheme } from "react-neu";
+import { useTheme } from "react-neu";
+
+import Box from "@mui/material/Box";
 
 interface AddressButtonProps {
   name?: string;
@@ -20,13 +22,11 @@ const AddressButton: React.FC<AddressButtonProps> = ({ name, address, shinobi, s
     if (shinobi) {
       return (
         <>
-          <Spacer />
           <StyledLink
             darkMode={darkMode}
             href={shinobilink ? shinobilink + address : "https://shinobi.ubiq.ninja/swap?inputCurrency=" + address}
             target="_blank"
             color="white"
-            overflow={true}
           >
             <StyledShinobiButton darkMode={darkMode}>
               <StyledSpan>
@@ -37,15 +37,14 @@ const AddressButton: React.FC<AddressButtonProps> = ({ name, address, shinobi, s
         </>
       );
     }
-  }, [darkMode, shinobi]);
+  }, [darkMode, shinobi, address, shinobilink, shinobitext]);
 
   const DisplayAddress = useMemo(() => {
     if (shinobi) {
       return (
         <>
-          <span className="address combine">
+          <span className="address">
             <AddressStart>{address}</AddressStart>
-            <AddressEnd>{address}</AddressEnd>
           </span>
         </>
       );
@@ -56,11 +55,11 @@ const AddressButton: React.FC<AddressButtonProps> = ({ name, address, shinobi, s
         </>
       );
     }
-  }, [darkMode, shinobi]);
+  }, [shinobi, address]);
 
   return (
     <>
-      <Box row>
+      <Box sx={{ borderRadius: "10px" }}>
         <StyledButton darkMode={darkMode} shinobi={shinobi}>
           <StyledSpan>
             <StyledName darkMode={darkMode} shinobi={shinobi}>
@@ -80,7 +79,6 @@ const AddressButton: React.FC<AddressButtonProps> = ({ name, address, shinobi, s
         </StyledButton>
         {DisplayShinobi}
       </Box>
-      <Spacer />
     </>
   );
 };
@@ -166,7 +164,7 @@ const StyledName = styled.span<StyledSpanProps>`
 const StyledLink = styled.a<StyledLinkProps>`
   cursor: pointer;
   color: ${(props) => (props.color ? props.color : "white")};
-  overflow: ${(props) => (props.overflow ? null : "hidden")};
+  overflow: ${(props) => (props.overflow ? "inherit" : "hidden")};
   text-decoration: none;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -206,12 +204,6 @@ const AddressStart = styled.span`
   display: inline-block;
   width: calc(50% + 22px);
   text-overflow: ellipsis;
-`;
-
-const AddressEnd = styled.span`
-  display: inline-flex;
-  width: calc(50% - 28px);
-  justify-content: flex-end;
 `;
 
 export default AddressButton;

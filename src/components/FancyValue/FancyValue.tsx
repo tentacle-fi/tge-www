@@ -54,7 +54,7 @@ const FancyValue: React.FC<FancyValueProps> = ({ icon, label, value, valueSize, 
         </>
       );
     }
-  }, [hint, darkMode]);
+  }, [hint, darkMode, backgroundColor, borderColor, labelColor, tooltip]);
 
   const FancyLabelDisplay = useMemo(() => {
     if (wrap) {
@@ -74,7 +74,7 @@ const FancyValue: React.FC<FancyValueProps> = ({ icon, label, value, valueSize, 
         </>
       );
     }
-  }, [darkMode, icon, label, value, hint]);
+  }, [icon, label, DisplayHint, wrap]);
 
   const IconDisplay = useMemo(() => {
     if (icon) {

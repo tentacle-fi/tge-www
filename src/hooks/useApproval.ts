@@ -18,6 +18,7 @@ const useApproval = (tokenAddress?: string, spenderAddress?: string, onTxHash?: 
     if (!ethereum || !account || !spenderAddress || !tokenAddress) {
       return;
     }
+
     try {
       setIsApproving(true);
       const result = await approve(account, spenderAddress, tokenAddress, ethereum, onTxHash);

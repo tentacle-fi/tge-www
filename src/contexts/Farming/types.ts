@@ -1,20 +1,16 @@
 import BigNumber from "bignumber.js";
 
+import { IPooledTokens } from "hooks/useFarming";
+
 export interface ContextValues {
-  countdown?: number;
-  earnedBalance?: BigNumber;
-  farmingStartTime: number;
-  isApproved?: boolean;
-  isApproving?: boolean;
-  isHarvesting?: boolean;
-  isRedeeming?: boolean;
-  isStaking?: boolean;
-  isUnstaking?: boolean;
-  onApprove: () => void;
-  onHarvestESCHUBQ: () => void;
-  onRedeemESCHUBQ: () => void;
-  onStakeESCHUBQ: (amount: string) => void;
-  onUnstakeESCHUBQ: (amount: string) => void;
-  earnedBalanceESCHUBQ?: BigNumber;
-  stakedBalanceESCHUBQ?: BigNumber;
+  earnedBalances?: Array<BigNumber>; // rewards earned but not harvested
+  stakedBalances?: Array<BigNumber>; // accounts LP staked in Farm
+  totalSupplyLP?: Array<BigNumber>; // Total LP staked in Farm of All Accounts
+  lpPercents?: Array<BigNumber>; // accounts LP Percent of Farm
+  farmingStartTimes: Array<number>; // the start time for the given Farm
+  setConfirmModal: (isOpen: boolean, message?: string) => void; // display a modal and a given string message, or hide the modal
+
+  currentApy?: Array<number>; // Farming Pool APY calculated
+  currentTvl?: Array<number>; // Farming Pool TVL (total value locked/lp'd) at current prices
+  PooledTokens?: Array<IPooledTokens>; // The 'estimated' tokens pooled inside of the accounts LP tokens
 }

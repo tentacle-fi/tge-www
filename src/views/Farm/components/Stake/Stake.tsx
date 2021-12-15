@@ -1,118 +1,111 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-
 import Countdown, { CountdownRenderProps } from "react-countdown";
-import { Box, Button, Card, CardActions, CardContent, CardIcon } from "react-neu";
-import { useWallet } from "use-wallet";
-import styled from "styled-components";
-
-import Label from "components/Label";
-import Value from "components/Value";
-
+import Box from "@mui/material/Box";
 import useFarming from "hooks/useFarming";
+import { bnToDec, getShortDisplayBalance, getFullDisplayBalance } from "utils";
+import { AvailableFarms } from "farms/AvailableFarms";
+import useBalances from "hooks/useBalances";
+import BigNumber from "bignumber.js";
+import LinkIcon from "@mui/icons-material/Link";
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
+import { styled } from "@mui/material/styles";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
+import SLink from "components/SLink";
+import useUbiq from "hooks/useUbiq";
 
-import { bnToDec, getFullDisplayBalance } from "utils";
+interface StakeProps {
+  farmKey: number;
+}
 
-import StakeModal from "./components/StakeModal";
-import UnstakeModal from "./components/UnstakeModal";
-
-const Stake: React.FC = ({ children }) => {
-  const [stakeModalIsOpen, setStakeModalIsOpen] = useState(false);
-  const [unstakeModalIsOpen, setUnstakeModalIsOpen] = useState(false);
+const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
   const [stakeBalance, setStakeBalance] = useState<number>(0);
+  const [lpPercent, setLpPercent] = useState<number>(0);
 
-  const { status } = useWallet();
-  const {
-    countdown,
-    farmingStartTime,
-    isApproved,
-    isApproving,
-    isStaking,
-    isUnstaking,
-    onApprove,
-    onStakeESCHUBQ,
-    onUnstakeESCHUBQ,
-    stakedBalanceESCHUBQ,
-  } = useFarming();
+  const { LPBalances, tokenPrices } = useBalances();
+  const { BlockNum } = useUbiq();
 
-  const handleDismissStakeModal = useCallback(() => {
-    setStakeModalIsOpen(false);
-  }, [setStakeModalIsOpen]);
+  const availableLPBalance = useMemo(() => {
+    return getFullDisplayBalance(LPBalances !== undefined ? LPBalances[farmKey] : new BigNumber(0), 0);
+  }, [LPBalances, farmKey]);
 
-  const handleDismissUnstakeModal = useCallback(() => {
-    setUnstakeModalIsOpen(false);
-  }, [setUnstakeModalIsOpen]);
-
-  const handleOnStake = useCallback(
-    (amount: string) => {
-      onStakeESCHUBQ(amount);
-      handleDismissStakeModal();
-    },
-    [handleDismissStakeModal, onStakeESCHUBQ]
-  );
-
-  const handleOnUnstake = useCallback(
-    (amount: string) => {
-      onUnstakeESCHUBQ(amount);
-      handleDismissUnstakeModal();
-    },
-    [handleDismissUnstakeModal, onUnstakeESCHUBQ]
-  );
-
-  const handleStakeClick = useCallback(() => {
-    setStakeModalIsOpen(true);
-  }, [setStakeModalIsOpen]);
-
-  const handleUnstakeClick = useCallback(() => {
-    setUnstakeModalIsOpen(true);
-  }, [setUnstakeModalIsOpen]);
-
-  const StakeButton = useMemo(() => {
-    if (status !== "connected") {
-      return <Button disabled full text="Stake" variant="secondary" />;
-    }
-    if (isStaking) {
-      return <Button disabled full text="Staking..." variant="secondary" />;
-    }
-    if (!isApproved) {
-      return (
-        <Button
-          disabled={isApproving}
-          full
-          onClick={onApprove}
-          text={!isApproving ? "Approve staking" : "Approving staking..."}
-          variant={isApproving || status !== "connected" ? "secondary" : "default"}
-        />
-      );
-    }
-    if (isApproved) {
-      return <Button full onClick={handleStakeClick} text="Stake" variant="secondary" />;
-    }
-  }, [countdown, handleStakeClick, isApproving, onApprove, status]);
-
-  const UnstakeButton = useMemo(() => {
-    const hasStaked = stakedBalanceESCHUBQ && stakedBalanceESCHUBQ.toNumber() > 0;
-    if (status !== "connected" || !hasStaked) {
-      return <Button disabled full text="Unstake" variant="secondary" />;
-    }
-    if (isUnstaking) {
-      return <Button disabled full text="Unstaking..." variant="secondary" />;
-    }
-    return <Button full onClick={handleUnstakeClick} text="Unstake" variant="secondary" />;
-  }, [handleUnstakeClick, isApproving, onApprove, status]);
+  const { farmingStartTimes, stakedBalances, lpPercents, currentApy, currentTvl, PooledTokens } = useFarming();
 
   const formattedStakedBalance = useCallback(async () => {
-    if (stakedBalanceESCHUBQ && bnToDec(stakedBalanceESCHUBQ) > 0) {
-      setStakeBalance(Number(getFullDisplayBalance(stakedBalanceESCHUBQ)));
+    if (stakedBalances !== undefined && stakedBalances[farmKey] && bnToDec(stakedBalances[farmKey]) > 0) {
+      setStakeBalance(Number(getShortDisplayBalance(stakedBalances[farmKey])));
     } else {
       setStakeBalance(0);
     }
-  }, [stakedBalanceESCHUBQ]);
+  }, [stakedBalances, farmKey]);
+
+  const formattedLpPercent = useCallback(async () => {
+    if (lpPercents !== undefined && bnToDec(lpPercents[farmKey]) > 0) {
+      setLpPercent(Number(lpPercents[farmKey].shiftedBy(2).toPrecision(6)));
+    } else {
+      setLpPercent(0);
+    }
+  }, [lpPercents, farmKey]);
+
+  const formattedMyPoolTokens = useCallback(() => {
+    if (PooledTokens !== undefined) {
+      let decimals = 0;
+      if (PooledTokens[farmKey].token0 < 1 || PooledTokens[farmKey].token1 < 1) {
+        decimals = 3;
+      }
+
+      return ` ${PooledTokens[farmKey].token0.toFixed(decimals)} ${AvailableFarms[farmKey].tokenA.symbol} / ${PooledTokens[farmKey].token1.toFixed(
+        decimals
+      )} ${AvailableFarms[farmKey].tokenB.symbol}`;
+    }
+
+    return `-- ${AvailableFarms[farmKey].tokenA.symbol} / -- ${AvailableFarms[farmKey].tokenB.symbol}`;
+  }, [PooledTokens, farmKey]);
+
+  const formattedMyPoolValue = useCallback(() => {
+    if (PooledTokens !== undefined && tokenPrices !== undefined) {
+      return `${(
+        PooledTokens[farmKey].token0 * tokenPrices[AvailableFarms[farmKey].tokenA.address] +
+        PooledTokens[farmKey].token1 * tokenPrices[AvailableFarms[farmKey].tokenB.address]
+      ).toFixed(0)}`;
+    }
+
+    return `-- ${AvailableFarms[farmKey].tokenA.symbol} / -- ${AvailableFarms[farmKey].tokenB.symbol}`;
+  }, [PooledTokens, farmKey, tokenPrices]);
+
+  const formattedTokenPrices = useCallback(() => {
+    const tokenA = AvailableFarms[farmKey].tokenA;
+    const tokenB = AvailableFarms[farmKey].tokenB;
+    if (tokenPrices === undefined) {
+      return `-- ${tokenA.symbol} / -- ${tokenB.symbol}`;
+    }
+
+    return `$${tokenPrices[tokenA.address].toFixed(3)} ${tokenA.symbol} / $${tokenPrices[tokenB.address].toFixed(3)} ${tokenB.symbol}`;
+  }, [tokenPrices, farmKey]);
+
+  const formattedTvl = useCallback(() => {
+    if (currentTvl === undefined) {
+      return "";
+    }
+    return `$ ${currentTvl[farmKey].toFixed(0)}`;
+  }, [currentTvl, farmKey]);
+
+  const formattedApy = useCallback(() => {
+    if (currentApy === undefined) {
+      return "";
+    }
+    if (currentApy[farmKey] > 1) {
+      return `${currentApy[farmKey].toFixed(0)}%`;
+    }
+
+    return `${currentApy[farmKey].toFixed(3)}%`;
+  }, [currentApy, farmKey]);
 
   useEffect(() => {
     formattedStakedBalance();
-    let refreshInterval = setInterval(formattedStakedBalance, 10000);
-    return () => clearInterval(refreshInterval);
-  }, [formattedStakedBalance]);
+    formattedLpPercent();
+  }, [formattedStakedBalance, formattedLpPercent, BlockNum]);
 
   const renderer = (countdownProps: CountdownRenderProps) => {
     const { days, hours, minutes, seconds } = countdownProps;
@@ -122,47 +115,144 @@ const Stake: React.FC = ({ children }) => {
     const paddedDays = days < 10 ? `0${days}` : days;
 
     return (
-      <Box row justifyContent="center">
-        <Label text={`Farming starts in ${paddedDays} days ${paddedHours}:${paddedMinutes}:${paddedSeconds}`} />
+      <Box sx={{ justifyContent: "center", width: "100%" }}>
+        <Typography variant="overline">{`Farming starts in ${paddedDays} days ${paddedHours}:${paddedMinutes}:${paddedSeconds}`} </Typography>
       </Box>
     );
   };
 
   return (
     <>
-      <Card>
-        <StyledBox row justifyContent="center">
-          {children}
-        </StyledBox>
-        <StyledCardContent>
-          <Box alignItems="center" column>
-            <Value value={stakeBalance > 0 ? stakeBalance.toString() : "--"} />
-            <Label text="Staked INK/UBQ LP Tokens" />
-          </Box>
-        </StyledCardContent>
-        <CardActions>
-          {UnstakeButton}
-          {StakeButton}
-        </CardActions>
-        {typeof countdown !== "undefined" && countdown > 0 && (
-          <CardActions>
-            <Countdown date={farmingStartTime} renderer={renderer} />
-          </CardActions>
+      <Grid container spacing={1}>
+        {typeof farmingStartTimes !== "undefined" && farmingStartTimes[farmKey] > Date.now() && (
+          <Grid item xs={12}>
+            <Countdown date={farmingStartTimes[farmKey]} renderer={renderer} />
+          </Grid>
         )}
-      </Card>
-      <StakeModal isOpen={stakeModalIsOpen} onDismiss={handleDismissStakeModal} onStake={handleOnStake} />
-      <UnstakeModal isOpen={unstakeModalIsOpen} onDismiss={handleDismissUnstakeModal} onUnstake={handleOnUnstake} />
+        <Box sx={{ width: "50%", marginTop: "8px" }}>
+          <Grid container spacing={1}>
+            <FarmInfo
+              farmKey={farmKey}
+              labelText="LP Staked:"
+              stakeBalance={stakeBalance}
+              contents={stakeBalance > 0 ? `${stakeBalance.toString()} ${AvailableFarms[farmKey].name}` : "--"}
+            />
+            <FarmInfo farmKey={farmKey} labelText="LP Value:" stakeBalance={stakeBalance} contents={`$ ${formattedMyPoolValue()}`} />
+            <FarmInfo
+              farmKey={farmKey}
+              labelText="Farm %:"
+              stakeBalance={stakeBalance}
+              contents={lpPercent > 0 ? lpPercent.toString() + "%" : "--"}
+            />
+            <FarmInfo farmKey={farmKey} labelText="Staked:" stakeBalance={stakeBalance} contents={formattedMyPoolTokens()} />
+          </Grid>
+        </Box>
+
+        <Box sx={{ width: "50%", marginTop: "8px", whiteSpace: "nowrap" }}>
+          <Grid container spacing={1}>
+            <FarmInfo farmKey={farmKey} labelText="Prices:" stakeBalance={stakeBalance} contents={formattedTokenPrices()} />
+            <FarmInfo farmKey={farmKey} labelText="TVL:" stakeBalance={stakeBalance} contents={formattedTvl()} />
+            <FarmInfo farmKey={farmKey} labelText="APY:" stakeBalance={stakeBalance} contents={formattedApy()} />
+            <FarmInfo
+              farmKey={farmKey}
+              labelText="Unstaked:"
+              stakeBalance={stakeBalance}
+              color={parseFloat(availableLPBalance) > 0 ? "#ff6e63" : ""}
+              contents={`${parseFloat(availableLPBalance) > 0 ? `${parseFloat(availableLPBalance).toFixed(6)}  LP Tokens` : "0.00  LP Tokens"}`}
+            />
+          </Grid>
+        </Box>
+      </Grid>
+      <div>
+        <SLink external href={AvailableFarms[farmKey].lp.url}>
+          <Button sx={{ width: "100%", marginTop: "10px" }} variant="outlined">
+            Add {AvailableFarms[farmKey].name} liquidity on Shinobi
+            <LinkIcon />
+          </Button>
+        </SLink>
+      </div>
     </>
   );
 };
 
-const StyledBox = styled(Box)`
-  padding-top: 20px;
-  height: 100px;
-`;
+interface FarmInfoProps {
+  labelText: string;
+  contents: string;
+  stakeBalance: number;
+  farmKey: number;
+  color?: string;
+}
 
-const StyledCardContent = styled(Box)`
-  padding-top: 0px;
-`;
+const FarmInfo: React.FC<FarmInfoProps> = ({ labelText, contents, stakeBalance, farmKey, color }) => {
+  return (
+    <>
+      <StyledGridLabel contents={labelText} />
+      <StyledGridItem variant="data" color={color} val={contents} />
+    </>
+  );
+};
 
-export default Stake;
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(1),
+  textAlign: "left",
+  backgroundColor: "#333339",
+  height: "100%",
+}));
+
+interface StyledLabelProps {
+  contents: string;
+}
+
+const StyledGridLabel: React.FC<StyledLabelProps> = ({ contents }) => {
+  return (
+    <StyledGridItem variant="label" val={contents}>
+      <StyledPaper>
+        <Typography variant="body1"></Typography>
+      </StyledPaper>
+    </StyledGridItem>
+  );
+};
+
+interface GridItemProps {
+  val: string;
+  valueSize?: string;
+  valueBold?: string;
+  variant?: string;
+  color?: string;
+}
+
+const StyledGridItem: React.FC<GridItemProps> = ({ val, variant, color }) => {
+  if (variant === "label") {
+    return (
+      <Grid item xs={4} sm={4} lg={4}>
+        <StyledPaper>
+          <Typography color={color} variant="body1" sx={{ textAlign: "right" }}>
+            {val}
+          </Typography>
+        </StyledPaper>
+      </Grid>
+    );
+  } else if (variant === "data") {
+    return (
+      <Grid item xs={8} sm={8} lg={8}>
+        <StyledPaper>
+          <Typography color={color} variant="body1">
+            {val}
+          </Typography>
+        </StyledPaper>
+      </Grid>
+    );
+  } else {
+    return (
+      <Grid item xs={12} lg={12}>
+        <StyledPaper>
+          <Typography color={color} variant="body1">
+            {val}
+          </Typography>
+        </StyledPaper>
+      </Grid>
+    );
+  }
+};
+
+export default React.memo(Stake);

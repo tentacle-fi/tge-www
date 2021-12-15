@@ -1,147 +1,216 @@
-import React, { useCallback, useEffect, useState } from "react";
-
+import React, { useCallback, useEffect, useState, useMemo, useRef } from "react";
 import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
-
 import ConfirmTransactionModal from "components/ConfirmTransactionModal";
-import { ESCHUBQSLPAddress } from "constants/tokenAddresses";
-import useApproval from "hooks/useApproval";
 import useUbiq from "hooks/useUbiq";
-
-import { getEarned, getStaked, harvest, redeem, stake, unstake } from "ubiq-sdk/utils";
-
+import { AvailableFarms } from "farms/AvailableFarms";
+import { getPoolTotalSupply, getEarned, getStaked } from "ubiq-sdk/utils";
 import Context from "./Context";
-
-const farmingStartTime = 1637006400 * 1000; // UTC for INK+UBQ Yield Farming Start time
+import { getCurrentStats } from "utils";
+import useBalances from "hooks/useBalances";
+import { IPooledTokens } from "hooks/useFarming";
 
 const Provider: React.FC = ({ children }) => {
   const [confirmTxModalIsOpen, setConfirmTxModalIsOpen] = useState(false);
-  const [countdown, setCountdown] = useState<number>();
-  const [isHarvesting, setIsHarvesting] = useState(false);
-  const [isRedeeming, setIsRedeeming] = useState(false);
-  const [isStaking, setIsStaking] = useState(false);
-  const [isUnstaking, setIsUnstaking] = useState(false);
-  const [earnedBalanceESCHUBQ, setearnedBalanceESCHUBQ] = useState<BigNumber>();
-  const [stakedBalanceESCHUBQ, setstakedBalanceESCHUBQ] = useState<BigNumber>();
-  const ubiq = useUbiq();
-  const { account } = useWallet();
+  const [confirmTxModalMessage, setConfirmTxModalMessage] = useState("");
+  const { ubiq, BlockNum } = useUbiq();
+  const { account, ethereum } = useWallet();
+  const { lpTokenReserves, tokenPrices } = useBalances();
+  const [CurrentAPY, setCurrentAPY] = useState<Array<number>>();
+  const [CurrentTVL, setCurrentTVL] = useState<Array<number>>();
+  const [PooledTokens, setPooledTokens] = useState<Array<IPooledTokens>>();
 
-  const ESCHUBQPoolAddress = ubiq ? ubiq.contracts.shinobi_pool.options.address : "";
-  const { isApproved, isApproving, onApprove } = useApproval(ESCHUBQSLPAddress, ESCHUBQPoolAddress, () => setConfirmTxModalIsOpen(false));
+  const farmingStartTimes = useMemo(() => {
+    return AvailableFarms.map((x) => {
+      return x.yieldfarm.start_time;
+    });
+  }, []);
 
-  const fetchearnedBalanceESCHUBQ = useCallback(async () => {
+  const [stakedBalances, setstakedBalances] = useState<Array<BigNumber>>();
+  const [totalSupplyLP, settotalSupplyLP] = useState<Array<BigNumber>>();
+  const [lpPercents, setlpPercents] = useState<Array<BigNumber>>();
+  const [earnedBalances, setearnedBalances] = useState<Array<BigNumber>>();
+  const [FarmPooledTokens, setFarmPooledTokens] = useState<Array<IPooledTokens>>();
+
+  const fetchedEarnedBalancesThisBlock = useRef(false);
+  const fetchedStakedBalancesThisBlock = useRef(false);
+  const fetchedTotalSupplyLPThisBlock = useRef(false);
+  const fetchedStatsThisBlock = useRef(false);
+  const setupPooledTokensThisBlock = useRef(false);
+
+  const fetchearnedBalances = useCallback(async () => {
     if (!account || !ubiq) return;
-    const balance = await getEarned(ubiq.contracts.shinobi_pool, account);
-    setearnedBalanceESCHUBQ(balance);
-  }, [account, setearnedBalanceESCHUBQ, ubiq]);
+    if (fetchedEarnedBalancesThisBlock.current) return;
+    fetchedEarnedBalancesThisBlock.current = true;
 
-  const fetchstakedBalanceESCHUBQ = useCallback(async () => {
+    let balances = [];
+    for (let i = 0; i < AvailableFarms.length; i++) {
+      balances.push(await getEarned(ubiq.contracts.pools[i], account));
+    }
+
+    setearnedBalances(balances);
+  }, [setearnedBalances, account, ubiq]);
+
+  const fetchstakedBalances = useCallback(async () => {
     if (!account || !ubiq) return;
-    const balance = await getStaked(ubiq.contracts.shinobi_pool, account);
-    setstakedBalanceESCHUBQ(balance);
-  }, [account, setstakedBalanceESCHUBQ, ubiq]);
+    if (fetchedStakedBalancesThisBlock.current) return;
+    fetchedStakedBalancesThisBlock.current = true;
+
+    let balances = [];
+    for (let i = 0; i < AvailableFarms.length; i++) {
+      balances.push(await getStaked(ubiq.contracts.pools[i], account));
+    }
+
+    setstakedBalances(balances);
+  }, [setstakedBalances, account, ubiq]);
+
+  const fetchTotalSupplyLP = useCallback(async () => {
+    if (!account || !ubiq) return;
+    if (fetchedTotalSupplyLPThisBlock.current) return;
+    fetchedTotalSupplyLPThisBlock.current = true;
+
+    let percents = [];
+    let totalSupply = [];
+    for (let i = 0; i < AvailableFarms.length; i++) {
+      const bigTotalSupply = new BigNumber(await getPoolTotalSupply(ubiq.contracts.pools[i]));
+      const stakedLpSupply = new BigNumber(await getStaked(ubiq.contracts.pools[i], account));
+
+      let lpPercent = new BigNumber(0);
+
+      if (stakedLpSupply !== undefined) {
+        lpPercent = stakedLpSupply.div(bigTotalSupply);
+      }
+
+      percents.push(lpPercent);
+      totalSupply.push(bigTotalSupply);
+    }
+
+    settotalSupplyLP(totalSupply);
+    setlpPercents(percents);
+  }, [settotalSupplyLP, setlpPercents, account, ubiq]);
+
+  const fetchCurrentStats = useCallback(async () => {
+    if (totalSupplyLP === undefined || lpTokenReserves === undefined || tokenPrices === undefined) {
+      return;
+    }
+    if (fetchedStatsThisBlock.current) return;
+    fetchedStatsThisBlock.current = true;
+
+    let apyAry = [];
+    let tvlAry = [];
+    let pooledInFarm = [];
+
+    for (let i = 0; i < AvailableFarms.length; i++) {
+      try {
+        const token0Price = tokenPrices[AvailableFarms[i].tokenA.address];
+        const token1Price = tokenPrices[AvailableFarms[i].tokenB.address];
+        const rewardTokenPrice = tokenPrices[AvailableFarms[i].yieldfarm.reward.address];
+
+        const stats = await getCurrentStats(
+          ethereum,
+          token0Price,
+          token1Price,
+          rewardTokenPrice,
+          lpTokenReserves[i],
+          AvailableFarms[i].lp.address,
+          AvailableFarms[i].yieldfarm.address,
+          totalSupplyLP[i]
+        );
+
+        apyAry.push(isNaN(stats.farmApy) ? 0 : stats.farmApy);
+        tvlAry.push(stats.farmTvl);
+        pooledInFarm.push(stats.farmPooledTokens);
+      } catch (e) {
+        console.error("fetchCurrentStats error", e);
+
+        apyAry.push(0);
+        tvlAry.push(0);
+        pooledInFarm.push({
+          token0: 0,
+          token1: 0,
+        } as IPooledTokens);
+      }
+    }
+
+    setCurrentAPY(apyAry);
+    setCurrentTVL(tvlAry);
+    setFarmPooledTokens(pooledInFarm);
+  }, [ethereum, lpTokenReserves, tokenPrices, totalSupplyLP]);
+
+  const setupPooledTokens = useCallback(() => {
+    if (lpPercents === undefined || FarmPooledTokens === undefined) {
+      return;
+    }
+    if (setupPooledTokensThisBlock.current) return;
+    setupPooledTokensThisBlock.current = true;
+
+    let pooledTokens: Array<IPooledTokens> = [];
+    for (let i = 0; i < AvailableFarms.length; i++) {
+      if (lpPercents[i].toNumber() > 0 && FarmPooledTokens[i].token0 > 0 && FarmPooledTokens[i].token1 > 0) {
+        pooledTokens.push({
+          token0: lpPercents[i].toNumber() * FarmPooledTokens[i].token0,
+          token1: lpPercents[i].toNumber() * FarmPooledTokens[i].token1,
+        });
+      } else {
+        pooledTokens.push({
+          token0: 0,
+          token1: 0,
+        });
+      }
+    }
+
+    setPooledTokens(pooledTokens);
+  }, [lpPercents, FarmPooledTokens]);
 
   const fetchBalances = useCallback(async () => {
-    fetchearnedBalanceESCHUBQ();
-    fetchstakedBalanceESCHUBQ();
-  }, [fetchearnedBalanceESCHUBQ, fetchstakedBalanceESCHUBQ]);
+    await fetchearnedBalances();
+    await fetchstakedBalances();
+    await fetchTotalSupplyLP();
+    await fetchCurrentStats();
+    setupPooledTokens();
+  }, [fetchCurrentStats, fetchTotalSupplyLP, fetchearnedBalances, fetchstakedBalances, setupPooledTokens]);
 
-  const handleApprove = useCallback(() => {
-    setConfirmTxModalIsOpen(true);
-    onApprove();
-  }, [onApprove, setConfirmTxModalIsOpen]);
-
-  const handleHarvestESCHUBQ = useCallback(async () => {
-    if (!ubiq) return;
-    setConfirmTxModalIsOpen(true);
-    await harvest(ubiq, account, ubiq.contracts.shinobi_pool, () => {
-      setConfirmTxModalIsOpen(false);
-      setIsHarvesting(true);
-    }).catch((err) => {
-      if (err.code === 4001) {
-        console.log("Wallet: User cancelled");
-      } else {
-        console.log("Error caught:", err);
-      }
-    });
-    setIsHarvesting(false);
-  }, [account, setConfirmTxModalIsOpen, setIsHarvesting, ubiq]);
-
-  const handleRedeemESCHUBQ = useCallback(async () => {
-    if (!ubiq) return;
-    setConfirmTxModalIsOpen(true);
-    await redeem(ubiq, account, ubiq.contracts.shinobi_pool, () => {
-      setConfirmTxModalIsOpen(false);
-      setIsRedeeming(true);
-    }).catch((err) => {
-      if (err.code === 4001) {
-        console.log("Wallet: User cancelled");
-      } else {
-        console.log("Error caught:", err);
-      }
-    });
-    setIsRedeeming(false);
-  }, [account, setConfirmTxModalIsOpen, setIsRedeeming, ubiq]);
-
-  const handleStakeESCHUBQ = useCallback(
-    async (amount: string) => {
-      if (!ubiq) return;
+  const customTxModal = useCallback(async (isOpen: boolean, message?: string) => {
+    if (isOpen === true) {
       setConfirmTxModalIsOpen(true);
-      await stake(ubiq, amount, account, ubiq.contracts.shinobi_pool, () => {
-        setConfirmTxModalIsOpen(false);
-        setIsStaking(true);
-      });
-      setIsStaking(false);
-    },
-    [account, setConfirmTxModalIsOpen, setIsStaking, ubiq]
-  );
+      if (message !== undefined) {
+        setConfirmTxModalMessage(message);
+      }
+    } else {
+      // reset
+      setConfirmTxModalIsOpen(false);
+      setConfirmTxModalMessage("");
+    }
+  }, []);
 
-  const handleUnstakeESCHUBQ = useCallback(
-    async (amount: string) => {
-      if (!ubiq) return;
-      setConfirmTxModalIsOpen(true);
-      await unstake(ubiq, amount, account, ubiq.contracts.shinobi_pool, () => {
-        setConfirmTxModalIsOpen(false);
-        setIsUnstaking(true);
-      });
-      setIsUnstaking(false);
-    },
-    [account, setConfirmTxModalIsOpen, setIsUnstaking, ubiq]
-  );
+  useEffect(() => {
+    fetchedEarnedBalancesThisBlock.current = false;
+    fetchedStakedBalancesThisBlock.current = false;
+    fetchedTotalSupplyLPThisBlock.current = false;
+    fetchedStatsThisBlock.current = false;
+    setupPooledTokensThisBlock.current = false;
+  }, [BlockNum]);
 
   useEffect(() => {
     fetchBalances();
-    let refreshInterval = setInterval(() => fetchBalances(), 10000);
-    return () => clearInterval(refreshInterval);
-  }, [fetchBalances]);
-
-  useEffect(() => {
-    let refreshInterval = setInterval(() => setCountdown(farmingStartTime - Date.now()), 1000);
-    return () => clearInterval(refreshInterval);
-  }, [setCountdown]);
+  }, [BlockNum, fetchBalances]);
 
   return (
     <Context.Provider
       value={{
-        farmingStartTime,
-        countdown,
-        isApproved,
-        isApproving,
-        isHarvesting,
-        isRedeeming,
-        isStaking,
-        isUnstaking,
-        onApprove: handleApprove,
-        onHarvestESCHUBQ: handleHarvestESCHUBQ,
-        onRedeemESCHUBQ: handleRedeemESCHUBQ,
-        onStakeESCHUBQ: handleStakeESCHUBQ,
-        onUnstakeESCHUBQ: handleUnstakeESCHUBQ,
-        earnedBalanceESCHUBQ,
-        stakedBalanceESCHUBQ,
+        farmingStartTimes,
+        setConfirmModal: customTxModal,
+        earnedBalances,
+        stakedBalances,
+        totalSupplyLP,
+        lpPercents,
+        currentApy: CurrentAPY,
+        currentTvl: CurrentTVL,
+        PooledTokens: PooledTokens,
       }}
     >
       {children}
-      <ConfirmTransactionModal isOpen={confirmTxModalIsOpen} />
+      <ConfirmTransactionModal message={confirmTxModalMessage} isOpen={confirmTxModalIsOpen} />
     </Context.Provider>
   );
 };
