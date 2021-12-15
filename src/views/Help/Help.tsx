@@ -60,7 +60,7 @@ const Help: React.FC = () => {
 
           <ListItem legend="Step 5: Stake LP tokens">
             Stake your LP tokens on the{" "}
-            <SLink external href="/farm">
+            <SLink href="/farm">
               <Button sx={{ marginLeft: "10px" }} variant="outlined">
                 Tentacle.Finance Farm
               </Button>
