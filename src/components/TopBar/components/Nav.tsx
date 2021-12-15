@@ -5,12 +5,8 @@ import { NavLink } from "react-router-dom";
 const Nav: React.FC = () => {
   return (
     <StyledNav>
-      <StyledRouterLink exact activeClassName="active" to="/farm">
-        Farm
-      </StyledRouterLink>
-      <StyledRouterLink exact activeClassName="active" to="/help">
-        Help
-      </StyledRouterLink>
+      <StyledRouterLink to="/farm">Farm</StyledRouterLink>
+      <StyledRouterLink to="/help">Help</StyledRouterLink>
     </StyledNav>
   );
 };
@@ -21,7 +17,7 @@ const StyledNav = styled.nav`
 `;
 
 const StyledRouterLink = styled(NavLink)`
-  color: ${(props) => props.theme.colors.grey[500]};
+  color: ${(props) => props.theme.colors.grey[200]};
   font-weight: 700;
   font-size: 30px;
   padding-left: ${(props) => props.theme.spacing[3]}px;
@@ -31,7 +27,7 @@ const StyledRouterLink = styled(NavLink)`
     color: ${(props) => props.theme.colors.grey[600]};
   }
   &.active {
-    color: ${(props) => props.theme.colors.primary.main};
+    color: ${(props) => props.theme.colors.primary.light};
   }
 `;
 

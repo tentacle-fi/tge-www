@@ -3,8 +3,9 @@ import { Container } from "react-neu";
 
 import Page from "components/Page";
 import PageHeader from "components/PageHeader";
-import { TGE1ESCHUBQYieldFarm, ESCH, TGE1 } from "constants/tokenAddresses";
 import AddressButton from "components/AddressButton";
+
+import { INK, UBQ, INK_UBQ_FarmContract } from "farms/AvailableFarms";
 
 const Addresses: React.FC = () => {
   return (
@@ -14,19 +15,19 @@ const Addresses: React.FC = () => {
         <h2>Token Addresses (INK, UBQ)</h2>
         <AddressButton
           name="INK"
-          address={TGE1}
+          address={INK}
           shinobi={true}
           shinobitext="Buy at Shinobi"
           shinobilink="https://shinobi.ubiq.ninja/#/swap?outputCurrency="
         />
 
-        <AddressButton name="UBQ" address={ESCH} shinobi={true} />
+        <AddressButton name="UBQ" address={UBQ} shinobi={true} />
 
         <h3>INK Contract Addresses</h3>
-        <AddressButton name="INK/UBQ Yield Farm" address={TGE1ESCHUBQYieldFarm} shinobi={false} />
+        <AddressButton name="INK/UBQ Yield Farm" address={INK_UBQ_FarmContract} shinobi={false} />
       </Container>
     </Page>
   );
 };
 
-export default Addresses;
+export default React.memo(Addresses);
