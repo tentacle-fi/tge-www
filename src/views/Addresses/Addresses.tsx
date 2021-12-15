@@ -38,7 +38,7 @@ const Addresses: React.FC = () => {
     <Page>
       <PageHeader icon={<AlternateEmailIcon sx={{ fontSize: "96px" }} />} title={"Addresses"} subtitle={"Official Addresses"} />
       <Container size="md">
-        <Typography variant="h4">Token Addresses (INK, UBQ)</Typography>
+        <Typography variant="h4">Token Addresses</Typography>
 
         <AddressButton name="UBQ" address={UBQ} shinobi={true} />
         {TokensAddressButtons}
