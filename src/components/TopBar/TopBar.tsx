@@ -43,7 +43,13 @@ const StyledLogoWrapper = styled.div`
   }
 `;
 
-const StyledTopBar = styled.div``;
+const StyledTopBar = styled.div`
+  position: fixed;
+  width: 100%;
+  background-color: #0c001c;
+  top: 0;
+  z-index: 1000;
+`;
 
 const StyledTopBarInner = styled.div`
   align-items: center;

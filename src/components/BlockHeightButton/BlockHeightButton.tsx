@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import useBalances from "hooks/useBalances";
 import CircularProgress, { CircularProgressProps } from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
 import WidgetsIcon from "@mui/icons-material/Widgets";
+import useUbiq from "hooks/useUbiq";
 
 function CircularProgressWithLabel(props: CircularProgressProps & { value: number }) {
   return (
@@ -30,30 +30,26 @@ function CircularProgressWithLabel(props: CircularProgressProps & { value: numbe
 }
 
 const BlockHeightButton: React.FC = () => {
-  const { CurrentBlock /*, CurrentBlockTimestamp */ } = useBalances();
+  const { BlockNum } = useUbiq();
   const [blockTimeCounter, setblockTimeCounter] = useState(1);
 
   useEffect(() => {
     const timerId = setInterval(() => {
-      // if (CurrentBlockTimestamp !== undefined) {
-      //   setblockTimeCounter(Math.floor(Date.now() / 1000) - CurrentBlockTimestamp);
-      // }
       setblockTimeCounter(blockTimeCounter + 1);
     }, 1000);
 
     return () => clearInterval(timerId);
-    // }, [blockTimeCounter, CurrentBlockTimestamp]);
   }, [blockTimeCounter, setblockTimeCounter]);
 
   useEffect(() => {
     setblockTimeCounter(1);
-  }, [CurrentBlock]);
+  }, [BlockNum]);
 
   return (
     <Tooltip title="Block height">
       <Button size="medium" variant="contained">
         <WidgetsIcon sx={{ fontSize: "14px" }} />
-        {CurrentBlock}
+        {BlockNum}
 
         <CircularProgressWithLabel
           value={blockTimeCounter}

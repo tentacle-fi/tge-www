@@ -7,7 +7,7 @@ export interface ContextValues {
   stakedBalances?: Array<BigNumber>; // accounts LP staked in Farm
   totalSupplyLP?: Array<BigNumber>; // Total LP staked in Farm of All Accounts
   lpPercents?: Array<BigNumber>; // accounts LP Percent of Farm
-  farmingStartTime: Array<number>; // the start time for the given Farm
+  farmingStartTimes: Array<number>; // the start time for the given Farm
   setConfirmModal: (isOpen: boolean, message?: string) => void; // display a modal and a given string message, or hide the modal
 
   currentApy?: Array<number>; // Farming Pool APY calculated

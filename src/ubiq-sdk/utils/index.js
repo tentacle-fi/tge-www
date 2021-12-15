@@ -6,7 +6,7 @@ BigNumber.config({
   DECIMAL_PLACES: 80,
 });
 
-const GAS = {
+export const GAS = {
   LIMIT: 510000,
   PRICE: (80 * 1000000000).toString() /*gwei*/,
 };

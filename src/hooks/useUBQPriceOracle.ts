@@ -12,29 +12,23 @@ const ORACLE_ADDY = "0xaefF2F7644f1C615aDb309513c4CB564F44Bb68F";
 const ubq_provider = new ethers.providers.JsonRpcProvider(PROVIDER_URL);
 
 const useUBQPriceOracle = () => {
-  // return getUBQPriceOracle
-  const [fetched, setFetched] = useState<boolean>(false);
   const [oracle, setOracle] = useState<IOraclePrice | undefined>();
 
   const fetchOracle = useCallback(async () => {
-    setFetched(true);
     const data = await getUBQPriceOracle();
     if (data.length > 0 && data[0] !== undefined) {
       setOracle(data[0]);
     } else {
       setOracle(undefined);
     }
-  }, [setOracle, setFetched]);
+  }, [setOracle]);
 
   useEffect(() => {
-    if (!fetched) {
-      // force fetching ONLY ONCE and then on our timer
-      fetchOracle();
-    }
+    fetchOracle();
 
-    let refreshInterval = setInterval(fetchOracle, 30 * 60 * 60 * 1000); // 30 mins
+    let refreshInterval = setInterval(fetchOracle, 30 * 60 * 1000); // 30 mins
     return () => clearInterval(refreshInterval);
-  }, [fetchOracle, fetched]);
+  }, [fetchOracle]);
 
   return { oracle };
 };

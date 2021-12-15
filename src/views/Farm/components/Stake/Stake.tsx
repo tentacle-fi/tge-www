@@ -13,6 +13,7 @@ import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import SLink from "components/SLink";
+import useUbiq from "hooks/useUbiq";
 
 interface StakeProps {
   farmKey: number;
@@ -23,12 +24,13 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
   const [lpPercent, setLpPercent] = useState<number>(0);
 
   const { LPBalances, tokenPrices } = useBalances();
+  const { BlockNum } = useUbiq();
 
   const availableLPBalance = useMemo(() => {
     return getFullDisplayBalance(LPBalances !== undefined ? LPBalances[farmKey] : new BigNumber(0), 0);
   }, [LPBalances, farmKey]);
 
-  const { farmingStartTime, stakedBalances, lpPercents, currentApy, currentTvl, PooledTokens } = useFarming();
+  const { farmingStartTimes, stakedBalances, lpPercents, currentApy, currentTvl, PooledTokens } = useFarming();
 
   const formattedStakedBalance = useCallback(async () => {
     if (stakedBalances !== undefined && stakedBalances[farmKey] && bnToDec(stakedBalances[farmKey]) > 0) {
@@ -46,12 +48,16 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
     }
   }, [lpPercents, farmKey]);
 
-  // TODO: unclear if this is accurate enough or if we need to reverse the uniswap v2 algo from the stakedLP tokens for this account (LP = sqrt(token0 * token1))
   const formattedMyPoolTokens = useCallback(() => {
     if (PooledTokens !== undefined) {
-      return ` ${PooledTokens[farmKey].token0.toFixed(0)} ${AvailableFarms[farmKey].tokenA.symbol} / ${PooledTokens[farmKey].token1.toFixed(0)} ${
-        AvailableFarms[farmKey].tokenB.symbol
-      }`;
+      let decimals = 0;
+      if (PooledTokens[farmKey].token0 < 1 || PooledTokens[farmKey].token1 < 1) {
+        decimals = 3;
+      }
+
+      return ` ${PooledTokens[farmKey].token0.toFixed(decimals)} ${AvailableFarms[farmKey].tokenA.symbol} / ${PooledTokens[farmKey].token1.toFixed(
+        decimals
+      )} ${AvailableFarms[farmKey].tokenB.symbol}`;
     }
 
     return `-- ${AvailableFarms[farmKey].tokenA.symbol} / -- ${AvailableFarms[farmKey].tokenB.symbol}`;
@@ -99,9 +105,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
   useEffect(() => {
     formattedStakedBalance();
     formattedLpPercent();
-    let refreshInterval = setInterval(formattedStakedBalance, 10000);
-    return () => clearInterval(refreshInterval);
-  }, [formattedStakedBalance, formattedLpPercent]);
+  }, [formattedStakedBalance, formattedLpPercent, BlockNum]);
 
   const renderer = (countdownProps: CountdownRenderProps) => {
     const { days, hours, minutes, seconds } = countdownProps;
@@ -120,9 +124,9 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
   return (
     <>
       <Grid container spacing={1}>
-        {typeof farmingStartTime !== "undefined" && farmingStartTime[farmKey] > Date.now() && (
+        {typeof farmingStartTimes !== "undefined" && farmingStartTimes[farmKey] > Date.now() && (
           <Grid item xs={12}>
-            <Countdown date={farmingStartTime[farmKey]} renderer={renderer} />
+            <Countdown date={farmingStartTimes[farmKey]} renderer={renderer} />
           </Grid>
         )}
         <Box sx={{ width: "50%", marginTop: "8px" }}>
@@ -220,7 +224,7 @@ interface GridItemProps {
 const StyledGridItem: React.FC<GridItemProps> = ({ val, variant, color }) => {
   if (variant === "label") {
     return (
-      <Grid item xs={2} lg={4}>
+      <Grid item xs={4} sm={4} lg={4}>
         <StyledPaper>
           <Typography color={color} variant="body1" sx={{ textAlign: "right" }}>
             {val}
@@ -230,7 +234,7 @@ const StyledGridItem: React.FC<GridItemProps> = ({ val, variant, color }) => {
     );
   } else if (variant === "data") {
     return (
-      <Grid item xs={10} lg={8}>
+      <Grid item xs={8} sm={8} lg={8}>
         <StyledPaper>
           <Typography color={color} variant="body1">
             {val}

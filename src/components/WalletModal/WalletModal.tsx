@@ -12,16 +12,14 @@ import Grid from "@mui/material/Grid";
 
 import FancyValue from "components/FancyValue";
 import useBalances from "hooks/useBalances";
-import { addInkToWallet, addGransToWallet, addwUbqToWallet } from "metamask.js";
+import { addInkToWallet, addGransToWallet, addwUbqToWallet, addEschToWallet } from "metamask.js";
 
-import InkTokenLogo from "assets/ink_black_alpha.png";
-import UBQTokenLogo from "assets/ubq.png";
-import GRANSTokenLogo from "assets/grans-flat.png";
+import { Logos } from "farms/AvailableFarms";
 
 const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
   const [, setWalletModalIsOpen] = useState(false);
   const { reset } = useWallet();
-  const { INKBalance, UBQBalance, GRANSBalance } = useBalances();
+  const { INKBalance, UBQBalance, GRANSBalance, ESCHBalance } = useBalances();
 
   const handleSignOut = useCallback(() => {
     localStorage.removeItem("account");
@@ -42,6 +40,7 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
             <WalletToken tokenName={"wUBQ"} tokenOnClick={addwUbqToWallet} tokenBalance={UBQBalance} />
             <WalletToken tokenName={"INK"} tokenOnClick={addInkToWallet} tokenBalance={INKBalance} />
             <WalletToken tokenName={"GRANS"} tokenOnClick={addGransToWallet} tokenBalance={GRANSBalance} />
+            <WalletToken tokenName={"ESCH"} tokenOnClick={addEschToWallet} tokenBalance={ESCHBalance} />
           </Grid>
         </Box>
       </ModalContent>
@@ -98,13 +97,16 @@ function getIcon(logo: string) {
   let icon;
   switch (logo) {
     case "INK":
-      icon = InkTokenLogo;
+      icon = Logos.ink;
       break;
     case "wUBQ":
-      icon = UBQTokenLogo;
+      icon = Logos.ubq;
       break;
     case "GRANS":
-      icon = GRANSTokenLogo;
+      icon = Logos.grans;
+      break;
+    case "ESCH":
+      icon = Logos.esch;
       break;
     default:
       console.warn("getIcon() logo does not exist", logo);
