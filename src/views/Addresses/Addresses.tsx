@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Container } from "react-neu";
 
 import Page from "components/Page";
@@ -24,13 +24,14 @@ const Addresses: React.FC = () => {
     );
   });
 
-  const InkOfficialFarmAddresses = AvailableFarms.filter((farm) => farm.official === true).map((farm, index) => {
-    return <AddressButton name={`${farm.name} Yield Farm`} address={farm.yieldfarm.address} shinobi={false} key={index.toString()} />;
-  });
+  const generateFarmAddressButton = useCallback((official: boolean) => {
+    return AvailableFarms.filter((farm) => farm.official === official).map((farm, index) => {
+      return <AddressButton name={`${farm.name} Yield Farm`} address={farm.yieldfarm.address} shinobi={false} key={index.toString()} />;
+    });
+  }, []);
 
-  const CommunityFarmAddresses = AvailableFarms.filter((farm) => farm.official === false).map((farm, index) => {
-    return <AddressButton name={`${farm.name} Yield Farm`} address={farm.yieldfarm.address} shinobi={false} key={index.toString()} />;
-  });
+  const InkOfficialFarmAddresses = generateFarmAddressButton(true);
+  const CommunityFarmAddresses = generateFarmAddressButton(false);
 
   // TODO: add all the places to buy UBQ as buttons
   return (
