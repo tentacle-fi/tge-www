@@ -32,3 +32,4 @@
 
 ## Unreleased
 - Address page updates
+- Wallet modal fix very small balances

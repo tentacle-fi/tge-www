@@ -33,6 +33,7 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
 
   const WalletTokens = Tokens.map((token, index) => {
     const balance = tokenBalances === undefined ? undefined : tokenBalances[token.address];
+
     return (
       <WalletToken
         tokenName={token.symbol}
@@ -74,6 +75,16 @@ interface WalletTokenProps {
 
 const WalletToken: React.FC<WalletTokenProps> = ({ tokenName, tokenIcon, tokenOnClick, tokenBalance }) => {
   const getDisplayBalance = useCallback((value?: BigNumber) => {
+    if (value !== undefined) {
+      if (value.isLessThan(0.0001) && value.isGreaterThan(0)) {
+        return value.toExponential();
+      }
+
+      if (value.isEqualTo(0)) {
+        return "0";
+      }
+    }
+
     if (value) {
       return numeral(value).format("0.0000a");
     } else {
