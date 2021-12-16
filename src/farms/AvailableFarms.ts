@@ -3,13 +3,6 @@ import ubqLogo from "assets/ubq.png";
 import gransLogo from "assets/grans-flat.png";
 import eschLogo from "assets/esch-logo.png";
 
-export const Logos = {
-  ink: inkLogo,
-  ubq: ubqLogo,
-  grans: gransLogo,
-  esch: eschLogo,
-};
-
 // Token addresses:
 export const UBQ = "0x1fa6a37c64804c0d797ba6bc1955e50068fbf362"; // UBQ Token address (wUBQ technically)
 export const INK = "0x7845fCbE28ac19ab7ec1C1D9674E34fdCB4917Db";
@@ -33,24 +26,28 @@ export const GRANS_UBQ_FarmContract = "0x9969A0123c7e7553dac5390221e321C05630d10
 const UBQ_token: IToken = {
   symbol: "UBQ", // wUBQ token address
   logo: ubqLogo,
+  publicLogo: "ubq.png",
   address: UBQ,
 };
 
 const INK_token: IToken = {
   symbol: "INK",
   logo: inkLogo,
+  publicLogo: "ink.png",
   address: INK,
 };
 
 const GRANS_token: IToken = {
   symbol: "GRANS",
   logo: gransLogo,
+  publicLogo: "grans.png",
   address: GRANS,
 };
 
 const ESCH_token: IToken = {
   symbol: "ESCH",
   logo: eschLogo,
+  publicLogo: "esch.png",
   address: ESCH,
 };
 
@@ -152,6 +149,8 @@ interface IToken {
   symbol: string;
   // location for the image, currently imported from /assets
   logo: string;
+  // name of the logo file located in the /public/tokens/ folder (publicly hosted at /tokens/)
+  publicLogo: string;
   // token address
   address: string;
 }
