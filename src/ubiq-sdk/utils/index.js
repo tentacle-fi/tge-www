@@ -60,6 +60,11 @@ export const harvest = async (ubiq, account, poolContract, onTxHash) => {
       console.log("Harvest error", error);
       return false;
     }
+    if (onTxHash === undefined) {
+      // if the txHash callback isn't defined, return right away
+      return true;
+    }
+
     onTxHash && onTxHash(txHash);
     const status = await waitTransaction(ubiq.web3.eth, txHash);
     if (!status) {

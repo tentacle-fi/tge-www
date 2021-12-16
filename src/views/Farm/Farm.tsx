@@ -17,7 +17,7 @@ import UnstakeModal from "./components/Stake/components/UnstakeModal";
 import BlockIcon from "@mui/icons-material/Block";
 import SettingsIcon from "@mui/icons-material/Settings";
 import useUbiq from "hooks/useUbiq";
-import { redeem } from "ubiq-sdk/utils";
+import { redeem, harvest } from "ubiq-sdk/utils";
 import useApproval from "hooks/useApproval";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import Typography from "@mui/material/Typography";
@@ -82,6 +82,48 @@ const Farm: React.FC = () => {
   const OfficialFarms = generateFarms(true);
   const CommunityFarms = generateFarms(false);
 
+  const { account } = useWallet();
+  const { ubiq } = useUbiq();
+  const { setConfirmModal, earnedBalances } = useFarming();
+
+  const harvestAllShortcut = useCallback(async () => {
+    if (!ubiq?.contracts?.pools || !earnedBalances) return;
+
+    const farmIndexesWithBalances = [] as number[];
+
+    earnedBalances.forEach((balance, index) => {
+      if (balance.isGreaterThan(0)) {
+        farmIndexesWithBalances.push(index);
+      }
+    });
+
+    for (let i = 0; i < farmIndexesWithBalances.length; i++) {
+      await (async () => {
+        setConfirmModal(true, `Please confirm harvesting in your wallet`);
+
+        if (farmIndexesWithBalances.length === i + 1) {
+          // this is the last one
+          await harvest(ubiq, account, ubiq.contracts.pools[farmIndexesWithBalances[i]], (txHash: string) => {
+            if (txHash === "") {
+            }
+
+            setConfirmModal(false);
+          }).catch((err) => {
+            if (err.code === 4001) {
+              console.log("Wallet: User cancelled");
+            } else {
+              console.error("Error caught:", err);
+            }
+          });
+
+          setConfirmModal(false);
+        } else {
+          harvest(ubiq, account, ubiq.contracts.pools[farmIndexesWithBalances[i]]);
+        }
+      })();
+    }
+  }, [account, setConfirmModal, ubiq, earnedBalances]);
+
   return (
     <Page>
       <Box textAlign="center">
@@ -97,6 +139,12 @@ const Farm: React.FC = () => {
         <Typography variant="h4" sx={{ left: "20px", marginTop: "20px" }}>
           Tentacle.Finance Farms <FloatingHelp tooltipText="Farms owned & operated by the Tentacle Finance DAO" />
         </Typography>
+
+        <Box sx={{ width: "100%", textAlign: "right", marginRight: "10%" }}>
+          <Button variant="contained" size="large" onClick={harvestAllShortcut}>
+            Harvest All
+          </Button>
+        </Box>
 
         {OfficialFarms}
 
@@ -309,9 +357,7 @@ const HarvestAll: React.FC<HarvestAllProps> = React.memo(({ farmKey }) => {
 
   return (
     <LoadingButton
-      onClick={() => {
-        handleRedeem();
-      }}
+      onClick={handleRedeem}
       endIcon={<BlockIcon />}
       loading={isRedeeming}
       loadingPosition="end"
