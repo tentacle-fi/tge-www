@@ -6,7 +6,6 @@ import StatsRibbon from "./components/StatsRibbon";
 import PriceRibbon from "./components/PriceRibbon";
 import DAOHoldingsDetails from "./components/DAOHoldingsDetails";
 
-
 const subtitleText = "Various DAO stats to more easily analyze the Tentacle Finance ecosystem at a glance.";
 
 const DaoInfo: React.FC = () => {

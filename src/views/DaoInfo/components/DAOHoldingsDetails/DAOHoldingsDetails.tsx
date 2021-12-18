@@ -2,7 +2,7 @@ import React from "react";
 import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
 import styled from "styled-components";
-import Box from '@mui/material/Box';
+import Box from "@mui/material/Box";
 // import { bnToDec, getShortDisplayBalance } from "utils";
 import Typography from "@mui/material/Typography";
 // import Tooltip from "@mui/material/Tooltip";
@@ -31,21 +31,25 @@ const DAOHoldingsDetails: React.FC<DAOHoldingsDetailsProps> = ({ ubqPrice }) => 
       <p></p>
       <Typography variant="h5">DAO Holdings Details</Typography>
 
-      <Box sx={{ border: 1, padding: "20px"}}>
-      <Typography align="center" variant="h6">Coins/Tokens</Typography>
-      <StyledStack direction="row" spacing={10}>
-        <Chip label={"UBQ: " + UBQHELDPLACEHOLDER} color="primary" />
-        <Chip label={"INK: " + INKHELDPLACEHOLDER} color="secondary" />
-        <Chip label={"GRANS: " + GRANSHELDPLACEHOLDER} color="success" />
-        <Chip label={"ESCH: " + ESCHHELDPLACEHOLDER} color="success" />
-      </StyledStack>
+      <Box sx={{ border: 1, padding: "20px" }}>
+        <Typography align="center" variant="h6">
+          Coins/Tokens
+        </Typography>
+        <StyledStack direction="row" spacing={10}>
+          <Chip label={"UBQ: " + UBQHELDPLACEHOLDER} color="primary" />
+          <Chip label={"INK: " + INKHELDPLACEHOLDER} color="secondary" />
+          <Chip label={"GRANS: " + GRANSHELDPLACEHOLDER} color="success" />
+          <Chip label={"ESCH: " + ESCHHELDPLACEHOLDER} color="success" />
+        </StyledStack>
 
-      <Typography align="center" variant="h6">LP Standing</Typography>
-      <StyledStack direction="row" spacing={15}>
-        <Chip label={"UBQ/INK: " + UBQINKLPPLACEHOLDER} color="primary" />
-        <Chip label={"GRANS/INK: " + GRANSINKLPPLACEHOLDER} color="secondary" />
-        <Chip label={"ESCH/INK: " + ESCHINKLPPLACEHOLDER} color="success" />
-      </StyledStack>
+        <Typography align="center" variant="h6">
+          LP Standing
+        </Typography>
+        <StyledStack direction="row" spacing={15}>
+          <Chip label={"UBQ/INK: " + UBQINKLPPLACEHOLDER} color="primary" />
+          <Chip label={"GRANS/INK: " + GRANSINKLPPLACEHOLDER} color="secondary" />
+          <Chip label={"ESCH/INK: " + ESCHINKLPPLACEHOLDER} color="success" />
+        </StyledStack>
       </Box>
     </>
   );
