@@ -2,26 +2,21 @@ import React, { useCallback, useEffect, useState } from "react";
 import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
 import { provider } from "web3-core";
-import { ITokenPrice } from "hooks/useBalances";
+import { ITokenPrice, ITokenBalance } from "hooks/useBalances";
 import useUbiq from "hooks/useUbiq";
 
 import { getCoinBalanceAsBigNum, getBalanceAsBigNum, getTokenPrice, IReserves } from "utils";
 
 import Context from "./Context";
-import { AvailableFarms, INK, GRANS, UBQ, ESCH } from "farms/AvailableFarms";
+import { AvailableFarms, Tokens, INK, UBQ } from "farms/AvailableFarms";
 import useUBQPriceOracle from "hooks/useUBQPriceOracle";
 
 const BalancesProvider: React.FC = ({ children }) => {
-  const [tokenBalances, settokenBalances] = useState<Array<BigNumber>>();
   const [LPBalances, setLPBalances] = useState<Array<BigNumber>>();
-
-  const [UBQBalance, setUBQBalance] = useState<BigNumber>();
-  const [INKBalance, setINKBalance] = useState<BigNumber>();
-  const [GRANSBalance, setGRANSBalance] = useState<BigNumber>();
-  const [ESCHBalance, setESCHBalance] = useState<BigNumber>();
+  const [tokenReserves, setTokenReserves] = useState<Array<IReserves>>();
 
   const [tokenPrices, setTokenPrices] = useState<ITokenPrice>();
-  const [tokenReserves, setTokenReserves] = useState<Array<IReserves>>();
+  const [tokenBalances, settokenBalances] = useState<ITokenBalance>();
 
   const { account, ethereum } = useWallet();
   const { oracle } = useUBQPriceOracle();
@@ -75,27 +70,28 @@ const BalancesProvider: React.FC = ({ children }) => {
       return;
     }
 
-    let newTokenBalances = [];
+    let newTokenBalances = {} as ITokenBalance;
     let newLpBalances = [];
 
     for (let i = 0; i < AvailableFarms.length; i++) {
-      newTokenBalances.push(await getBalanceAsBigNum(ethereum, AvailableFarms[i].tokenB.address, account));
       newLpBalances.push(await getBalanceAsBigNum(ethereum, AvailableFarms[i].lp.address, account));
     }
 
-    // set the shortcut balances
-    let ubqBal = new BigNumber(await getCoinBalanceAsBigNum(ethereum, account)).plus(await getBalanceAsBigNum(ethereum, UBQ, account));
-    let inkBal = await getBalanceAsBigNum(ethereum, INK, account);
-    let gransBal = await getBalanceAsBigNum(ethereum, GRANS, account);
-    let eschBal = await getBalanceAsBigNum(ethereum, ESCH, account);
+    for (let i = 0; i < Tokens.length; i++) {
+      // UBQ is special again as it's a Token and the main Currency for the network. as such, we want to add both balances together.
+      // otherwise, just get the erc20 token balance
+      if (Tokens[i].address === UBQ) {
+        newTokenBalances[Tokens[i].address] = new BigNumber(await getCoinBalanceAsBigNum(ethereum, account)).plus(
+          await getBalanceAsBigNum(ethereum, UBQ, account)
+        );
+      } else {
+        newTokenBalances[Tokens[i].address] = await getBalanceAsBigNum(ethereum, Tokens[i].address, account);
+      }
+    }
 
-    setUBQBalance(ubqBal);
-    setINKBalance(inkBal);
-    setGRANSBalance(gransBal);
-    setESCHBalance(eschBal);
     settokenBalances(newTokenBalances);
     setLPBalances(newLpBalances);
-  }, [settokenBalances, setLPBalances, setUBQBalance, setINKBalance, setGRANSBalance, account, ethereum]);
+  }, [settokenBalances, setLPBalances, account, ethereum]);
 
   useEffect(() => {
     fetchBalances();
@@ -111,14 +107,10 @@ const BalancesProvider: React.FC = ({ children }) => {
     <Context.Provider
       value={{
         tokenBalances,
-        LPBalances,
-        UBQBalance,
-        INKBalance,
-        GRANSBalance,
-        ESCHBalance,
-        UBQoracle: oracle,
         tokenPrices,
+        LPBalances,
         lpTokenReserves: tokenReserves,
+        UBQoracle: oracle,
       }}
     >
       {children}

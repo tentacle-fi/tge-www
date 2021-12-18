@@ -32,3 +32,6 @@
 
 ## Unreleased
 - reload page on account change
+- Address page updates
+- Wallet modal fix very small balances
+
