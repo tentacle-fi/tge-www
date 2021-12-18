@@ -20,7 +20,8 @@ const PriceRibbon: React.FC<PriceRibbonProps> = ({ ubqPrice }) => {
 
   return (
     <>
-      <Typography variant="h4">Price Ribbon Example</Typography>
+          <p></p>
+      <Typography variant="h5">Price Ribbon</Typography>
       <StyledStack direction="row" spacing={10}>
         <Chip label={"UBQ: " + UBQPRICEPLACEHOLDER} color="primary" />
         <Chip label={"INK: " + INKPRICEPLACEHOLDER} color="secondary" />

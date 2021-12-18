@@ -21,7 +21,7 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
 
   return (
     <>
-      <Typography variant="h4">Stats Ribbon Example</Typography>
+      <Typography variant="h5">Stats Ribbon</Typography>
       <StyledStack direction="row" spacing={10}>
         <Chip label={"Circulating INK: " + CIRCULATINGINKPLACEHOLDER} color="primary" />
         <Chip label={"Ecosystem TVL: " + ECOSYSTEMTVLPLACEHOLDER} color="secondary" />
