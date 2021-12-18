@@ -31,4 +31,5 @@
 - Mobile styling updates
 
 ## Unreleased
-Nothing at this time
+- Address page updates
+- Wallet modal fix very small balances
