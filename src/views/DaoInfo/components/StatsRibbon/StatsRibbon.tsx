@@ -7,24 +7,33 @@ import Typography from "@mui/material/Typography";
 // import Tooltip from "@mui/material/Tooltip";
 // import useUbiq from "hooks/useUbiq";
 
+import useFarming from "hooks/useFarming";
+
 interface StatsRibbonProps {
   blockHeight?: string;
 }
 
 const CIRCULATINGINKPLACEHOLDER = "1,000,000";
-const ECOSYSTEMTVLPLACEHOLDER = "$375,000";
 const DAILYVOLUMEPLACEHOLDER = "$65,039";
 const DAILYTXVOLUMEPLACEHOLDER = "400";
 
 const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
-  console.log("blockHeight passed: ", blockHeight);
+  const { currentTvl } = useFarming();
+  if(currentTvl === undefined){
+      return <></>
+  }
+
+  let ecosystemTvl = 0;
+  for ( const singleTvl of currentTvl.slice(0,2) ) {
+      ecosystemTvl += singleTvl
+  }
 
   return (
     <>
       <Typography variant="h5">Stats Ribbon</Typography>
       <StyledStack direction="row" spacing={10}>
         <Chip label={"Circulating INK: " + CIRCULATINGINKPLACEHOLDER} color="primary" />
-        <Chip label={"Ecosystem TVL: " + ECOSYSTEMTVLPLACEHOLDER} color="secondary" />
+        <Chip label={"Ecosystem TVL: $" + ecosystemTvl} color="secondary" />
         <Chip label={"24hr Vol: " + DAILYVOLUMEPLACEHOLDER} color="success" />
         <Chip label={"24hr TXs: " + DAILYTXVOLUMEPLACEHOLDER} color="info" />
       </StyledStack>
