@@ -19,13 +19,13 @@ const DAILYTXVOLUMEPLACEHOLDER = "400";
 
 const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
   const { currentTvl } = useFarming();
-  if(currentTvl === undefined){
-      return <></>
+  if (currentTvl === undefined) {
+    return <></>;
   }
 
   let ecosystemTvl = 0;
-  for ( const singleTvl of currentTvl.slice(0,2) ) {
-      ecosystemTvl += singleTvl
+  for (const singleTvl of currentTvl.slice(0, 2)) {
+    ecosystemTvl += singleTvl;
   }
 
   return (
