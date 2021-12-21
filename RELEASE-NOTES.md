@@ -35,3 +35,5 @@
 - Address page updates
 - Wallet modal fix very small balances
 - change "cancel" to "close" in wallet modal
+- displayed values for token0/token1 in staked balance accuracy improved
+- ubq Price oracle timeframe expanded to reduce potential for missing the latest price
