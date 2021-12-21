@@ -90,7 +90,7 @@ const Provider: React.FC = ({ children }) => {
   }, [settotalSupplyLP, setlpPercents, account, ubiq]);
 
   const fetchCurrentStats = useCallback(async () => {
-    if (totalSupplyLP === undefined || lpTokenReserves === undefined || tokenPrices === undefined) {
+    if (lpPercents === undefined || totalSupplyLP === undefined || lpTokenReserves === undefined || tokenPrices === undefined) {
       return;
     }
     if (fetchedStatsThisBlock.current) return;
@@ -114,12 +114,13 @@ const Provider: React.FC = ({ children }) => {
           lpTokenReserves[i],
           AvailableFarms[i].lp.address,
           AvailableFarms[i].yieldfarm.address,
-          totalSupplyLP[i]
+          totalSupplyLP[i],
+          lpPercents[i]
         );
 
         apyAry.push(isNaN(stats.farmApy) ? 0 : stats.farmApy);
         tvlAry.push(stats.farmTvl);
-        pooledInFarm.push(stats.farmPooledTokens);
+        pooledInFarm.push(stats.accountPooledTokens);
       } catch (e) {
         console.error("fetchCurrentStats error", e);
 
@@ -135,7 +136,7 @@ const Provider: React.FC = ({ children }) => {
     setCurrentAPY(apyAry);
     setCurrentTVL(tvlAry);
     setFarmPooledTokens(pooledInFarm);
-  }, [ethereum, lpTokenReserves, tokenPrices, totalSupplyLP]);
+  }, [ethereum, lpTokenReserves, tokenPrices, lpPercents, totalSupplyLP]);
 
   const setupPooledTokens = useCallback(() => {
     if (lpPercents === undefined || FarmPooledTokens === undefined) {
@@ -148,8 +149,8 @@ const Provider: React.FC = ({ children }) => {
     for (let i = 0; i < AvailableFarms.length; i++) {
       if (lpPercents[i].toNumber() > 0 && FarmPooledTokens[i].token0 > 0 && FarmPooledTokens[i].token1 > 0) {
         pooledTokens.push({
-          token0: lpPercents[i].toNumber() * FarmPooledTokens[i].token0,
-          token1: lpPercents[i].toNumber() * FarmPooledTokens[i].token1,
+          token0:  FarmPooledTokens[i].token0,
+          token1:  FarmPooledTokens[i].token1,
         });
       } else {
         pooledTokens.push({
