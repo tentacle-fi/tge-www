@@ -241,7 +241,7 @@ export interface ICurrentStats {
   accountPooledTokens: {
     token0: number;
     token1: number;
-  },
+  };
   farmPooledTokens: {
     token0: number;
     token1: number;
@@ -270,10 +270,10 @@ export const getCurrentStats = async (
     // const farm_token0 = (bnToDec(totalSupplyLP) * poolLpCalcRatio) / Math.sqrt(reserves.ratio1over0);
     // const farm_token1 = (bnToDec(totalSupplyLP) * poolLpCalcRatio) / Math.sqrt(reserves.ratio0over1);
 
-    const farm_token0 = (bnToDec(totalSupplyLP)) / Math.sqrt(reserves.ratio1over0);
-    const farm_token1 = (bnToDec(totalSupplyLP)) / Math.sqrt(reserves.ratio0over1);
-    const account_token0 = lpPercent.toNumber() * reserves.token0
-    const account_token1 = lpPercent.toNumber() * reserves.token1
+    const farm_token0 = bnToDec(totalSupplyLP) / Math.sqrt(reserves.ratio1over0);
+    const farm_token1 = bnToDec(totalSupplyLP) / Math.sqrt(reserves.ratio0over1);
+    const account_token0 = lpPercent.toNumber() * reserves.token0;
+    const account_token1 = lpPercent.toNumber() * reserves.token1;
     const farmTvl = farm_token0 * token0Price + farm_token1 * token1Price;
     const farmApy = ((rewardTokenPrice * dailyTokenRewardEmissions * 365) / farmTvl) * 100;
 
@@ -305,7 +305,7 @@ export const getCurrentStats = async (
       farmTvl: farmTvl,
       accountPooledTokens: {
         token0: account_token0,
-        token1: account_token1
+        token1: account_token1,
       },
       farmPooledTokens: {
         token0: farm_token0,

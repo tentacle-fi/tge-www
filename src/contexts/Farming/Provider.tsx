@@ -149,8 +149,8 @@ const Provider: React.FC = ({ children }) => {
     for (let i = 0; i < AvailableFarms.length; i++) {
       if (lpPercents[i].toNumber() > 0 && FarmPooledTokens[i].token0 > 0 && FarmPooledTokens[i].token1 > 0) {
         pooledTokens.push({
-          token0:  FarmPooledTokens[i].token0,
-          token1:  FarmPooledTokens[i].token1,
+          token0: FarmPooledTokens[i].token0,
+          token1: FarmPooledTokens[i].token1,
         });
       } else {
         pooledTokens.push({
