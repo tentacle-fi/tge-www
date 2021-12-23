@@ -245,10 +245,10 @@ export interface ICurrentStats {
 }
 
 export interface ICirculatingSupply {
-    heldByMultisig: number,
-    heldByUBQINK: number,
-    heldByGRANSUBQ: number,
-    heldByUBQESCH: number
+  heldByMultisig: number;
+  heldByUBQINK: number;
+  heldByGRANSUBQ: number;
+  heldByUBQESCH: number;
 }
 
 export const getCurrentStats = async (
@@ -359,30 +359,26 @@ export const shouldUpdateVal = function shouldUpdateVal(old_val: BigNumber | und
 };
 
 export const calculateCirculatingINK = async (provider: provider): Promise<ICirculatingSupply> => {
-    try {
-      const INKADDRESS = "0x7845fCbE28ac19ab7ec1C1D9674E34fdCB4917Db";
-      const INKMINTEDHOLDINGADDRESS = "0xB47D5874D2db5f398cfA0E53a5A020362F2AEAeF";
+  try {
+    const INKADDRESS = "0x7845fCbE28ac19ab7ec1C1D9674E34fdCB4917Db";
+    const INKMINTEDHOLDINGADDRESS = "0xB47D5874D2db5f398cfA0E53a5A020362F2AEAeF";
 
-      console.log('preparing to calculate circulating ink...');
-      let heldByDeployer = 0; // await getBalance( provider, INKADDRESS, INKMINTEDHOLDINGADDRESS );
-      let heldByUBQINK = 0;
-      let heldByGRANSUBQ = 0;
-      let heldByUBQESCH = 0;
+    console.log("preparing to calculate circulating ink...");
+    let heldByDeployer = 0; // await getBalance( provider, INKADDRESS, INKMINTEDHOLDINGADDRESS );
+    let heldByUBQINK = 0;
+    let heldByGRANSUBQ = 0;
+    let heldByUBQESCH = 0;
 
-        console.log('heldByDeployer:', heldByDeployer,
-                    'heldByUBQINK:', heldByUBQINK,
-                    'heldByGRANSUBQ:', heldByGRANSUBQ,
-                    'heldByUBQESCH:', heldByUBQESCH
-        );
+    console.log("heldByDeployer:", heldByDeployer, "heldByUBQINK:", heldByUBQINK, "heldByGRANSUBQ:", heldByGRANSUBQ, "heldByUBQESCH:", heldByUBQESCH);
 
-        return {
-          heldByMultisig: heldByDeployer,
-          heldByUBQINK: heldByUBQINK,
-          heldByGRANSUBQ: heldByGRANSUBQ,
-          heldByUBQESCH: heldByUBQESCH
-        } as ICirculatingSupply;
-      } catch (e) {
-        console.error("calculateCirculatingINK error", e);
-        throw e;
-      }
+    return {
+      heldByMultisig: heldByDeployer,
+      heldByUBQINK: heldByUBQINK,
+      heldByGRANSUBQ: heldByGRANSUBQ,
+      heldByUBQESCH: heldByUBQESCH,
+    } as ICirculatingSupply;
+  } catch (e) {
+    console.error("calculateCirculatingINK error", e);
+    throw e;
+  }
 };
