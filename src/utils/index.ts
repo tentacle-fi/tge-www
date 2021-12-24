@@ -242,13 +242,13 @@ export interface ICurrentStats {
     token0: number;
     token1: number;
   };
-}
-
-export interface ICirculatingSupply {
-  heldByMultisig: number;
-  heldByUBQINK: number;
-  heldByGRANSUBQ: number;
-  heldByUBQESCH: number;
+  circulatingSupply: {
+    heldByMultisig: BigNumber;
+    heldByUBQINK: BigNumber;
+    heldByGRANSUBQ: BigNumber;
+    heldByUBQESCH: BigNumber;
+    total: BigNumber;
+  };
 }
 
 export const getCurrentStats = async (
@@ -298,6 +298,38 @@ export const getCurrentStats = async (
     // console.log('')
     // }
 
+    const totalSupply = 88 * 1000 * 1000; // 88 million
+    const INKADDRESS = "0x7845fCbE28ac19ab7ec1C1D9674E34fdCB4917Db";
+
+    const INKMINTEDHOLDINGADDRESS = "0xB47D5874D2db5f398cfA0E53a5A020362F2AEAeF";
+    const UBQINKFARM = "0x6E142959F49d364b30F0478949EFfDcb58efFe44";
+    const GRANSINKFARM = "0xC4f628150EaDcA9864641e3BF65F8Ea4Fd75e23B";
+    const INKESCHFARM = "0x6E59E5cd333CE71D3AFDEdae09949729dC2fe4B3";
+
+    console.log("preparing to calculate circulating ink based on total supply:", totalSupply);
+
+    // Grab all the individual INK quantities
+    let heldByDeployer = await getBalanceAsBigNum(provider, INKADDRESS, INKMINTEDHOLDINGADDRESS);
+    let heldByUBQINK = await getBalanceAsBigNum(provider, INKADDRESS, UBQINKFARM);
+    let heldByGRANSUBQ = await getBalanceAsBigNum(provider, INKADDRESS, GRANSINKFARM);
+    let heldByUBQESCH = await getBalanceAsBigNum(provider, INKADDRESS, INKESCHFARM);
+
+    // Total them up, and subtract the totalSupply
+    let circulatingTotal = heldByDeployer.plus(heldByUBQINK).plus(heldByGRANSUBQ).plus(heldByUBQESCH).minus(totalSupply);
+
+    console.log(
+      "heldByDeployer:",
+      heldByDeployer,
+      "heldByUBQINK:",
+      heldByUBQINK,
+      "heldByGRANSUBQ:",
+      heldByGRANSUBQ,
+      "heldByUBQESCH:",
+      heldByUBQESCH,
+      "total:",
+      circulatingTotal
+    );
+
     return {
       poolTvl: poolTvl,
       farmApy: farmApy,
@@ -305,6 +337,13 @@ export const getCurrentStats = async (
       farmPooledTokens: {
         token0: farm_token0,
         token1: farm_token1,
+      },
+      circulatingSupply: {
+        heldByMultisig: heldByDeployer,
+        heldByUBQINK: heldByUBQINK,
+        heldByGRANSUBQ: heldByGRANSUBQ,
+        heldByUBQESCH: heldByUBQESCH,
+        total: circulatingTotal,
       },
     } as ICurrentStats;
   } catch (e) {
@@ -356,29 +395,4 @@ export const shouldUpdateVal = function shouldUpdateVal(old_val: BigNumber | und
     }
   }
   return false;
-};
-
-export const calculateCirculatingINK = async (provider: provider): Promise<ICirculatingSupply> => {
-  try {
-    const INKADDRESS = "0x7845fCbE28ac19ab7ec1C1D9674E34fdCB4917Db";
-    const INKMINTEDHOLDINGADDRESS = "0xB47D5874D2db5f398cfA0E53a5A020362F2AEAeF";
-
-    console.log("preparing to calculate circulating ink...");
-    let heldByDeployer = 0; // await getBalance( provider, INKADDRESS, INKMINTEDHOLDINGADDRESS );
-    let heldByUBQINK = 0;
-    let heldByGRANSUBQ = 0;
-    let heldByUBQESCH = 0;
-
-    console.log("heldByDeployer:", heldByDeployer, "heldByUBQINK:", heldByUBQINK, "heldByGRANSUBQ:", heldByGRANSUBQ, "heldByUBQESCH:", heldByUBQESCH);
-
-    return {
-      heldByMultisig: heldByDeployer,
-      heldByUBQINK: heldByUBQINK,
-      heldByGRANSUBQ: heldByGRANSUBQ,
-      heldByUBQESCH: heldByUBQESCH,
-    } as ICirculatingSupply;
-  } catch (e) {
-    console.error("calculateCirculatingINK error", e);
-    throw e;
-  }
 };
