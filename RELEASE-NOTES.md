@@ -30,7 +30,7 @@
 - Phase 2 farm testing
 - Mobile styling updates
 
-## 1.0.2-staging
+## 1.0.2
 - reload page on account change
 - Address page updates
 - Wallet modal fix very small balances
