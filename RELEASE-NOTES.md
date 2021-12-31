@@ -30,5 +30,13 @@
 - Phase 2 farm testing
 - Mobile styling updates
 
+## 1.0.2
+- reload page on account change
+- Address page updates
+- Wallet modal fix very small balances
+- change "cancel" to "close" in wallet modal
+- displayed values for token0/token1 in staked balance accuracy improved
+- ubq Price oracle timeframe expanded to reduce potential for missing the latest price
+
 ## Unreleased
-Nothing at this time
+nothing at this time

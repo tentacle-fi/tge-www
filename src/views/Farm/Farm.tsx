@@ -65,6 +65,23 @@ const StyledFloatingHelp = styled(InfoIcon)(({ theme }) => ({
 }));
 
 const Farm: React.FC = () => {
+  const generateFarms = useCallback((official: boolean) => {
+    let farms = [] as Array<React.ReactNode>;
+    let index = 0;
+
+    AvailableFarms.forEach((farm) => {
+      if (farm.official === official) {
+        farms.push(<YieldFarm farmKey={index} key={index.toString()} />);
+      }
+      index++;
+    });
+
+    return farms;
+  }, []);
+
+  const OfficialFarms = generateFarms(true);
+  const CommunityFarms = generateFarms(false);
+
   return (
     <Page>
       <Box textAlign="center">
@@ -80,15 +97,15 @@ const Farm: React.FC = () => {
         <Typography variant="h4" sx={{ left: "20px", marginTop: "20px" }}>
           Tentacle.Finance Farms <FloatingHelp tooltipText="Farms owned & operated by the Tentacle Finance DAO" />
         </Typography>
-        <YieldFarm farmKey={0} />
-        <YieldFarm farmKey={1} />
-        <YieldFarm farmKey={2} />
+
+        {OfficialFarms}
 
         <hr style={{ width: "80%", border: "1px solid #555", margin: "20px 0" }} />
         <Typography variant="h4">
           Community Farms <FloatingHelp tooltipText="Additional Ubiq farms provided for convenience" />
         </Typography>
-        <YieldFarm farmKey={3} />
+        <Typography variant="body1">Note: Community farms are not managed or maintained by the Tentacle.Finance DAO.</Typography>
+        {CommunityFarms}
       </>
     </Page>
   );
@@ -148,12 +165,12 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
             <img
               src={farm.tokenA.logo}
               alt={`${farm.tokenA.symbol} Logo`}
-              style={{ width: "80px", height: "80px", background: "white", borderRadius: "40px" }}
+              style={{ width: "50px", height: "50px", background: "white", borderRadius: "40px" }}
             />
             <img
               src={farm.tokenB.logo}
               alt={`${farm.tokenB.symbol} Logo`}
-              style={{ width: "80px", height: "80px", background: "white", borderRadius: "40px", marginRight: "-20px" }}
+              style={{ width: "50px", height: "50px", background: "white", borderRadius: "40px", marginRight: "-20px" }}
             />
 
             <Typography sx={{ marginTop: "10px" }}>{farm.name}</Typography>
