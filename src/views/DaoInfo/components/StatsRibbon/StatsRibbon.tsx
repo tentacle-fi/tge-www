@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 // import useUbiq from "hooks/useUbiq";
 
 import useFarming from "hooks/useFarming";
+import { getCurrentStats } from "utils";
 
 interface StatsRibbonProps {
   blockHeight?: string;

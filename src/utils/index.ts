@@ -298,7 +298,7 @@ export const getCurrentStats = async (
     // console.log('')
     // }
 
-    const totalSupply = 88 * 1000 * 1000; // 88 million
+    const totalSupply = new BigNumber(88 * 1000 * 1000); // 88 million
     const INKADDRESS = "0x7845fCbE28ac19ab7ec1C1D9674E34fdCB4917Db";
 
     const INKMINTEDHOLDINGADDRESS = "0xB47D5874D2db5f398cfA0E53a5A020362F2AEAeF";
@@ -313,9 +313,11 @@ export const getCurrentStats = async (
     let heldByUBQINK = await getBalanceAsBigNum(provider, INKADDRESS, UBQINKFARM);
     let heldByGRANSUBQ = await getBalanceAsBigNum(provider, INKADDRESS, GRANSINKFARM);
     let heldByUBQESCH = await getBalanceAsBigNum(provider, INKADDRESS, INKESCHFARM);
+    // const subtotal = bnToDec(heldByDeployer.plus(heldByUBQINK).plus(heldByGRANSUBQ).plus(heldByUBQESCH));
+    const subtotal = heldByDeployer.plus(heldByUBQINK).plus(heldByGRANSUBQ).plus(heldByUBQESCH).toString();
 
-    // Total them up, and subtract the totalSupply
-    let circulatingTotal = heldByDeployer.plus(heldByUBQINK).plus(heldByGRANSUBQ).plus(heldByUBQESCH).minus(totalSupply);
+    // Total them up, and subtract them from the totalSupply
+    let circulatingTotal = totalSupply.minus(subtotal);
 
     console.log(
       "heldByDeployer:",
@@ -326,8 +328,10 @@ export const getCurrentStats = async (
       heldByGRANSUBQ,
       "heldByUBQESCH:",
       heldByUBQESCH,
+      "subtotal:",
+      subtotal,
       "total:",
-      circulatingTotal
+      circulatingTotal.toString()
     );
 
     return {
