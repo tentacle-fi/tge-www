@@ -13,7 +13,7 @@ import {
   INK_GRANS_LPAddress,
   INK_ESCH_LPAddress,
   DAO_MULTISIG,
-  DAO_FARMING
+  DAO_FARMING,
 } from "farms/AvailableFarms";
 import { GAS } from "ubiq-sdk/utils";
 import ERC20ABI from "constants/abi/ERC20.json";
@@ -284,16 +284,21 @@ export interface IDaoHoldings {
 }
 
 export const getDaoHoldings = async (provider: provider): Promise<IDaoHoldings> => {
-
   // Get coin and token holdings from the DAO multisig address and farming address
   const ubqHoldings = (await getCoinBalanceAsBigNum(provider, DAO_MULTISIG)).plus(await getCoinBalanceAsBigNum(provider, DAO_FARMING));
-  const inkHoldings = (await getBalanceAsBigNum(provider, INK, DAO_MULTISIG)).plus(await getBalanceAsBigNum(provider, INK, DAO_FARMING));;
-  const eschHoldings = (await getBalanceAsBigNum(provider, ESCH, DAO_MULTISIG)).plus(await getBalanceAsBigNum(provider, ESCH, DAO_FARMING));;;
+  const inkHoldings = (await getBalanceAsBigNum(provider, INK, DAO_MULTISIG)).plus(await getBalanceAsBigNum(provider, INK, DAO_FARMING));
+  const eschHoldings = (await getBalanceAsBigNum(provider, ESCH, DAO_MULTISIG)).plus(await getBalanceAsBigNum(provider, ESCH, DAO_FARMING));
 
   // Get lp holdings from the DAO multisig address and farming address
-  const ubqInkHoldings = (await getBalanceAsBigNum(provider, INK_UBQ_LPAddress, DAO_MULTISIG)).plus(await getBalanceAsBigNum(provider, INK_UBQ_LPAddress, DAO_FARMING));
-  const gransInkHoldings = (await getBalanceAsBigNum(provider, INK_GRANS_LPAddress, DAO_MULTISIG)).plus(await getBalanceAsBigNum(provider, INK_GRANS_LPAddress, DAO_FARMING));
-  const inkEschHoldings = (await getBalanceAsBigNum(provider, INK_ESCH_LPAddress, DAO_MULTISIG)).plus(await getBalanceAsBigNum(provider, INK_ESCH_LPAddress, DAO_FARMING));
+  const ubqInkHoldings = (await getBalanceAsBigNum(provider, INK_UBQ_LPAddress, DAO_MULTISIG)).plus(
+    await getBalanceAsBigNum(provider, INK_UBQ_LPAddress, DAO_FARMING)
+  );
+  const gransInkHoldings = (await getBalanceAsBigNum(provider, INK_GRANS_LPAddress, DAO_MULTISIG)).plus(
+    await getBalanceAsBigNum(provider, INK_GRANS_LPAddress, DAO_FARMING)
+  );
+  const inkEschHoldings = (await getBalanceAsBigNum(provider, INK_ESCH_LPAddress, DAO_MULTISIG)).plus(
+    await getBalanceAsBigNum(provider, INK_ESCH_LPAddress, DAO_FARMING)
+  );
 
   return {
     ubq: ubqHoldings,
@@ -379,13 +384,12 @@ export const getDailyTransactions = async (provider: provider): Promise<IDailyTr
     inkUbqFarmResults = await UBQINKFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
     gransInkFarmResults = await GRANSINKFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
     inkEschFarmResults = await INKESCHFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
-
   } catch (e) {
     console.error("getDailyTransactions() threw error:", e);
   }
 
   return {
-    count: inkResults.length + inkUbqFarmResults.length + gransInkFarmResults.length + inkEschFarmResults.length
+    count: inkResults.length + inkUbqFarmResults.length + gransInkFarmResults.length + inkEschFarmResults.length,
   } as IDailyTransactions;
 };
 
