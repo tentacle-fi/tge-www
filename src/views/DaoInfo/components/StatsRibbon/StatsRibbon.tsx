@@ -78,11 +78,10 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
 
   return (
     <>
-      <Typography variant="h5">Stats Ribbon</Typography>
+      <Typography variant="h5">Ecosystem Stats</Typography>
       <StyledStack direction="row" spacing={10}>
         <Chip label={"Circulating INK: " + circulatingSupply} color="primary" variant="outlined" />
         <Chip label={"Ecosystem TVL: $" + ecosystemTvl} color="primary" variant="outlined" />
-        <Chip label={"24hr Vol: " + DAILYVOLUMEPLACEHOLDER} color="primary" variant="outlined" />
         <Chip label={"24hr TXs: " + dailyTransactions} color="primary" variant="outlined" />
       </StyledStack>
     </>

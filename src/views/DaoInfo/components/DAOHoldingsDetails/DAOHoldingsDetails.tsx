@@ -42,7 +42,7 @@ const DAOHoldingsDetails: React.FC = () => {
   return (
     <>
       <p></p>
-      <Typography variant="h5">DAO Holdings Details</Typography>
+      <Typography variant="h5">DAO Holdings</Typography>
 
       <StyledBox>
         <Typography align="center" variant="h6">

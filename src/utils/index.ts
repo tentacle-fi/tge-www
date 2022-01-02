@@ -374,6 +374,7 @@ export const getDailyTransactions = async (provider: provider): Promise<IDailyTr
   const currentBlock = await web3.eth.getBlockNumber();
 
   try {
+    // TODO: Perhaps we should just store these in available farms?
     const INKCONTRACT = getERC20Contract(provider, INK);
     const UBQINKFARMCONTRACT = getFarmContract(provider, INK_UBQ_FarmContract);
     const GRANSINKFARMCONTRACT = getFarmContract(provider, INK_GRANS_FarmContract);
@@ -384,6 +385,20 @@ export const getDailyTransactions = async (provider: provider): Promise<IDailyTr
     inkUbqFarmResults = await UBQINKFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
     gransInkFarmResults = await GRANSINKFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
     inkEschFarmResults = await INKESCHFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
+
+    // Not working yet
+    //
+    // // Collect swap volume information
+    // for( const singleEvent of inkResults){
+    //     // If it's a transfer related to the INK contract, someone sent INK
+    //     if ( singleEvent.event === "Transfer" && singleEvent.address === INK){
+    //         console.log("Event:", singleEvent.event, "of INK valued at", bnToDec(new BigNumber(singleEvent.returnValues.value)));
+    //         // This is a Shinobi router address
+    //         if( singleEvent.returnValues.to === "0xf3cE4655A44146C8EeFbf45651F6479F9d67a77a"){
+    //             console.log("Event is a swap")
+    //         }
+    //     }
+    // }
   } catch (e) {
     console.error("getDailyTransactions() threw error:", e);
   }

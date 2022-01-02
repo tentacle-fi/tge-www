@@ -24,7 +24,7 @@ const PriceRibbon: React.FC = () => {
   return (
     <>
       <p></p>
-      <Typography variant="h5">Price Ribbon</Typography>
+      <Typography variant="h5">Prices</Typography>
 
       <StyledBox>
         <Grid container sx={{ textAlign: "center" }} spacing={10}>
