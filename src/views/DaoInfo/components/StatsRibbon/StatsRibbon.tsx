@@ -10,6 +10,7 @@ import { useWallet } from "use-wallet";
 import useUbiq from "hooks/useUbiq";
 import useFarming from "hooks/useFarming";
 import { getCirculatingSupply } from "utils";
+import { AvailableFarms } from "farms/AvailableFarms";
 
 // sets up a formatter so with toFormat on big numbers, we get thousands separators
 BigNumber.config({ FORMAT: { groupSeparator: ",", groupSize: 3 } });
@@ -27,6 +28,7 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
   const { ethereum } = useWallet();
   const { BlockNum } = useUbiq();
   const [circulatingSupply, setCirculatingSupply] = useState<string>();
+  const [ecosystemTvl, setEcosystemTvl] = useState<string>();
 
   const fetchCirculatingSupply = useCallback(async () => {
     const circulatingSupply = await getCirculatingSupply(ethereum);
@@ -34,19 +36,32 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
     setCirculatingSupply(circulatingSupply.total.toFormat(0));
   }, [ethereum, setCirculatingSupply]);
 
+  const fetchEcosystemTvl = useCallback(async () => {
+    if (currentTvl === undefined) {
+      return;
+    }
+
+    let ecosystemTvlSubtotal = 0;
+    // TODO: use availableFarms here instead of this slice
+    console.log("currentTvl:", currentTvl);
+    for (const singleTvl of currentTvl.slice(0, 2)) {
+      console.log("singleTvl: $", singleTvl);
+      ecosystemTvlSubtotal += singleTvl;
+    }
+
+    const ecosystemTvlTotal = new BigNumber(ecosystemTvlSubtotal).toFormat(0);
+
+    setEcosystemTvl(ecosystemTvlTotal);
+  }, [setEcosystemTvl, currentTvl]);
+
   // Update circulating supply based on new block numbers
   useEffect(() => {
     fetchCirculatingSupply();
-  }, [BlockNum, fetchCirculatingSupply]);
+    fetchEcosystemTvl();
+  }, [BlockNum, fetchCirculatingSupply, fetchEcosystemTvl]);
 
   if (currentTvl === undefined) {
     return <></>;
-  }
-
-  // TODO: do a useEffect here too and write a setter/getter for tvl so it can fire on block updates too
-  let ecosystemTvl = 0;
-  for (const singleTvl of currentTvl.slice(0, 2)) {
-    ecosystemTvl += singleTvl;
   }
 
   return (

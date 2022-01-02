@@ -13,8 +13,6 @@ interface PriceRibbonProps {
   ubqPrice?: string;
 }
 
-const RATIOPLACEHOLDER = "10";
-
 const PriceRibbon: React.FC<PriceRibbonProps> = ({ ubqPrice }) => {
   console.log("ubqPrice passed: ", ubqPrice);
   const { tokenPrices } = useBalances();
@@ -34,7 +32,7 @@ const PriceRibbon: React.FC<PriceRibbonProps> = ({ ubqPrice }) => {
       <StyledStack direction="row" spacing={10}>
         <Chip label={"UBQ: $" + UBQPRICE.toFixed(2)} color="primary" />
         <Chip label={"INK: $" + INKPRICE.toFixed(4)} color="secondary" />
-        <Chip label={"Ratio: " + (INKPRICE / UBQPRICE).toFixed(4)} color="success" />
+        <Chip label={"Ratio: " + (INKPRICE / UBQPRICE).toFixed(4) + " UBQ per INK"} color="success" />
       </StyledStack>
     </>
   );
