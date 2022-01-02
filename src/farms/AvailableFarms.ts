@@ -3,6 +3,11 @@ import ubqLogo from "assets/ubq.png";
 import gransLogo from "assets/grans-flat.png";
 import eschLogo from "assets/esch-logo.png";
 
+// Significant addresses:
+
+export const DAO_MULTISIG = "0xCC7D76005bf1616e55cfDFF4cbfB5C29199C2808";
+export const DAO_FARMING = "0x2e21bA1c05b6f7090091d053A0d0cf9e986A1c12";
+
 // Token addresses:
 export const UBQ = "0x1fa6a37c64804c0d797ba6bc1955e50068fbf362"; // UBQ Token address (wUBQ technically)
 export const INK = "0x7845fCbE28ac19ab7ec1C1D9674E34fdCB4917Db";

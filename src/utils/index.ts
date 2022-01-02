@@ -4,7 +4,6 @@ import Web3 from "web3";
 import { provider, TransactionReceipt } from "web3-core";
 import { AbiItem } from "web3-utils";
 import {
-  UBQ,
   INK,
   ESCH,
   INK_UBQ_FarmContract,
@@ -13,6 +12,8 @@ import {
   INK_UBQ_LPAddress,
   INK_GRANS_LPAddress,
   INK_ESCH_LPAddress,
+  DAO_MULTISIG,
+  DAO_FARMING
 } from "farms/AvailableFarms";
 import { GAS } from "ubiq-sdk/utils";
 import ERC20ABI from "constants/abi/ERC20.json";
@@ -128,6 +129,12 @@ export const getCoinBalanceAsBigNum = async (provider: provider, userAddress: st
 export const getERC20Contract = (provider: provider, address: string) => {
   const web3 = new Web3(provider);
   const contract = new web3.eth.Contract(ERC20ABI.abi as unknown as AbiItem, address);
+  return contract;
+};
+
+export const getFarmContract = (provider: provider, address: string) => {
+  const web3 = new Web3(provider);
+  const contract = new web3.eth.Contract(ShinobiPoolERC20.abi as unknown as AbiItem, address);
   return contract;
 };
 
@@ -277,16 +284,16 @@ export interface IDaoHoldings {
 }
 
 export const getDaoHoldings = async (provider: provider): Promise<IDaoHoldings> => {
-  const INKMultisig = "0xCC7D76005bf1616e55cfDFF4cbfB5C29199C2808";
-  const INKFarmer = "";
 
-  const ubqHoldings = await getCoinBalanceAsBigNum(provider, INKMultisig);
-  const inkHoldings = await getBalanceAsBigNum(provider, INK, INKMultisig);
-  const eschHoldings = await getBalanceAsBigNum(provider, ESCH, INKMultisig);
+  // Get coin and token holdings from the DAO multisig address and farming address
+  const ubqHoldings = (await getCoinBalanceAsBigNum(provider, DAO_MULTISIG)).plus(await getCoinBalanceAsBigNum(provider, DAO_FARMING));
+  const inkHoldings = (await getBalanceAsBigNum(provider, INK, DAO_MULTISIG)).plus(await getBalanceAsBigNum(provider, INK, DAO_FARMING));;
+  const eschHoldings = (await getBalanceAsBigNum(provider, ESCH, DAO_MULTISIG)).plus(await getBalanceAsBigNum(provider, ESCH, DAO_FARMING));;;
 
-  const ubqInkHoldings = await getBalanceAsBigNum(provider, INK_UBQ_LPAddress, INKMultisig);
-  const gransInkHoldings = await getBalanceAsBigNum(provider, INK_GRANS_LPAddress, INKMultisig);
-  const inkEschHoldings = await getBalanceAsBigNum(provider, INK_ESCH_LPAddress, INKMultisig);
+  // Get lp holdings from the DAO multisig address and farming address
+  const ubqInkHoldings = (await getBalanceAsBigNum(provider, INK_UBQ_LPAddress, DAO_MULTISIG)).plus(await getBalanceAsBigNum(provider, INK_UBQ_LPAddress, DAO_FARMING));
+  const gransInkHoldings = (await getBalanceAsBigNum(provider, INK_GRANS_LPAddress, DAO_MULTISIG)).plus(await getBalanceAsBigNum(provider, INK_GRANS_LPAddress, DAO_FARMING));
+  const inkEschHoldings = (await getBalanceAsBigNum(provider, INK_ESCH_LPAddress, DAO_MULTISIG)).plus(await getBalanceAsBigNum(provider, INK_ESCH_LPAddress, DAO_FARMING));
 
   return {
     ubq: ubqHoldings,
@@ -340,6 +347,46 @@ export const getCirculatingSupply = async (provider: provider): Promise<ICircula
     heldByUBQESCH: heldByUBQESCH,
     total: circulatingTotal,
   } as ICirculatingSupply;
+};
+
+export interface IDailyTransactions {
+  count: number;
+}
+
+export const getDailyTransactions = async (provider: provider): Promise<IDailyTransactions> => {
+  if (provider === undefined || provider === null) {
+    return { count: 0 };
+  }
+  const web3 = new Web3(provider);
+
+  const oneDayInSeconds = 60 * 60 * 24;
+  const blockTime = 88;
+  const oneDayInBlocks = Math.floor(oneDayInSeconds / blockTime);
+  let inkResults = [];
+  let inkUbqFarmResults = [];
+  let gransInkFarmResults = [];
+  let inkEschFarmResults = [];
+  const currentBlock = await web3.eth.getBlockNumber();
+
+  try {
+    const INKCONTRACT = getERC20Contract(provider, INK);
+    const UBQINKFARMCONTRACT = getFarmContract(provider, INK_UBQ_FarmContract);
+    const GRANSINKFARMCONTRACT = getFarmContract(provider, INK_GRANS_FarmContract);
+    const INKESCHFARMCONTRACT = getFarmContract(provider, INK_ESCH_FarmContract);
+
+    // TODO: any way to make this more flexible using availablefarms?
+    inkResults = await INKCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
+    inkUbqFarmResults = await UBQINKFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
+    gransInkFarmResults = await GRANSINKFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
+    inkEschFarmResults = await INKESCHFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
+
+  } catch (e) {
+    console.error("getDailyTransactions() threw error:", e);
+  }
+
+  return {
+    count: inkResults.length + inkUbqFarmResults.length + gransInkFarmResults.length + inkEschFarmResults.length
+  } as IDailyTransactions;
 };
 
 export const getCurrentStats = async (

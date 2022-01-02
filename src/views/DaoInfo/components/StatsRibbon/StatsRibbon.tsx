@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import { useWallet } from "use-wallet";
 import useUbiq from "hooks/useUbiq";
 import useFarming from "hooks/useFarming";
-import { getCirculatingSupply } from "utils";
+import { getCirculatingSupply, getDailyTransactions } from "utils";
 import { AvailableFarms } from "farms/AvailableFarms";
 
 // sets up a formatter so with toFormat on big numbers, we get thousands separators
@@ -21,7 +21,6 @@ interface StatsRibbonProps {
 
 // Placeholders for now, until functions are written to store the appropriate values in state
 const DAILYVOLUMEPLACEHOLDER = "$65,039";
-const DAILYTXVOLUMEPLACEHOLDER = "400";
 
 const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
   const { currentTvl } = useFarming();
@@ -29,6 +28,13 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
   const { BlockNum } = useUbiq();
   const [circulatingSupply, setCirculatingSupply] = useState<string>();
   const [ecosystemTvl, setEcosystemTvl] = useState<string>();
+  const [dailyTransactions, setDailyTransactions] = useState<number>();
+
+  const fetchDailyTransactions = useCallback(async () => {
+    const dailyTransactions = await getDailyTransactions(ethereum);
+
+    setDailyTransactions(dailyTransactions.count);
+  }, [ethereum, setDailyTransactions]);
 
   const fetchCirculatingSupply = useCallback(async () => {
     const circulatingSupply = await getCirculatingSupply(ethereum);
@@ -61,6 +67,11 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
     fetchEcosystemTvl();
   }, [BlockNum, fetchCirculatingSupply, fetchEcosystemTvl]);
 
+  // Update daily transactions based on new block numbers
+  useEffect(() => {
+    fetchDailyTransactions();
+  }, [BlockNum, fetchDailyTransactions]);
+
   if (currentTvl === undefined) {
     return <></>;
   }
@@ -72,7 +83,7 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
         <Chip label={"Circulating INK: " + circulatingSupply} color="primary" />
         <Chip label={"Ecosystem TVL: $" + ecosystemTvl} color="secondary" />
         <Chip label={"24hr Vol: " + DAILYVOLUMEPLACEHOLDER} color="success" />
-        <Chip label={"24hr TXs: " + DAILYTXVOLUMEPLACEHOLDER} color="info" />
+        <Chip label={"24hr TXs: " + dailyTransactions} color="info" />
       </StyledStack>
     </>
   );
