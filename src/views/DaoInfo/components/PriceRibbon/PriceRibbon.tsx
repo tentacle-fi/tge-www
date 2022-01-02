@@ -19,9 +19,9 @@ const PriceRibbon: React.FC<PriceRibbonProps> = ({ ubqPrice }) => {
   console.log("ubqPrice passed: ", ubqPrice);
   const { tokenPrices } = useBalances();
 
-  if( tokenPrices === undefined ){
-      console.log('no tokenPrices available yet...')
-      return <></>
+  if (tokenPrices === undefined) {
+    console.log("no tokenPrices available yet...");
+    return <></>;
   }
 
   const UBQPRICE = tokenPrices[UBQ];
