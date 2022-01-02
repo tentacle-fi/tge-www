@@ -12,8 +12,7 @@ import useFarming from "hooks/useFarming";
 import { getCirculatingSupply } from "utils";
 
 // sets up a formatter so with toFormat on big numbers, we get thousands separators
-BigNumber.config({ FORMAT: { groupSeparator: ',',
-  groupSize: 3} })
+BigNumber.config({ FORMAT: { groupSeparator: ",", groupSize: 3 } });
 
 interface StatsRibbonProps {
   blockHeight?: string;
