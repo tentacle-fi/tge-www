@@ -46,3 +46,4 @@ DAO Info Page
 - daily transaction count added
 - prices added
 - DAO holdings added, including multisig and farm addresses
+- add mission statement
