@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect } from "react";
-import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
 import Grid from "@mui/material/Grid";
 import styled from "styled-components";
@@ -45,19 +44,19 @@ const DAOHoldingsDetails: React.FC = () => {
       <p></p>
       <Typography variant="h5">DAO Holdings Details</Typography>
 
-      <StyledBox sx={{ border: 1, padding: "12px" }}>
+      <StyledBox>
         <Typography align="center" variant="h6">
           Coins/Tokens
         </Typography>
         <Grid container sx={{ textAlign: "center" }} spacing={10}>
           <Grid xs={4} item>
-            <Chip label={"UBQ: " + daoHoldings.ubq.toFormat(0)} color="primary" />
+            <Chip label={"UBQ: " + daoHoldings.ubq.toFormat(0)} color="primary" variant="outlined" />
           </Grid>
           <Grid xs={4} item>
-            <Chip label={"INK: " + daoHoldings.ink.toFormat(0)} color="secondary" />
+            <Chip label={"INK: " + daoHoldings.ink.toFormat(0)} color="primary" variant="outlined" />
           </Grid>
           <Grid xs={4} item>
-            <Chip label={"ESCH: " + daoHoldings.esch.toFormat(0)} color="success" />
+            <Chip label={"ESCH: " + daoHoldings.esch.toFormat(0)} color="primary" variant="outlined" />
           </Grid>
         </Grid>
 
@@ -66,13 +65,13 @@ const DAOHoldingsDetails: React.FC = () => {
         </Typography>
         <Grid container sx={{ textAlign: "center" }} spacing={10}>
           <Grid xs={4} item>
-            <Chip label={"UBQ/INK: " + daoHoldings.lp.ubqInk.toFormat(4)} color="primary" />
+            <Chip label={"UBQ/INK: " + daoHoldings.lp.ubqInk.toFormat(4)} color="primary" variant="outlined" />
           </Grid>
           <Grid xs={4} item>
-            <Chip label={"GRANS/INK: " + daoHoldings.lp.gransInk.toFormat(4)} color="secondary" />
+            <Chip label={"GRANS/INK: " + daoHoldings.lp.gransInk.toFormat(4)} color="primary" variant="outlined" />
           </Grid>
           <Grid xs={4} item>
-            <Chip label={"INK/ESCH: " + daoHoldings.lp.inkEsch.toFormat(4)} color="success" />
+            <Chip label={"INK/ESCH: " + daoHoldings.lp.inkEsch.toFormat(4)} color="primary" variant="outlined" />
           </Grid>
         </Grid>
       </StyledBox>

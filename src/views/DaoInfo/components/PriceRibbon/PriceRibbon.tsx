@@ -1,6 +1,8 @@
 import React from "react";
-import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+
 import styled from "styled-components";
 // import { bnToDec, getShortDisplayBalance } from "utils";
 import Typography from "@mui/material/Typography";
@@ -23,19 +25,29 @@ const PriceRibbon: React.FC = () => {
     <>
       <p></p>
       <Typography variant="h5">Price Ribbon</Typography>
-      <StyledStack direction="row" spacing={10}>
-        <Chip label={"UBQ: $" + UBQPRICE.toFixed(2)} color="primary" />
-        <Chip label={"INK: $" + INKPRICE.toFixed(4)} color="secondary" />
-        <Chip label={"Ratio: " + (INKPRICE / UBQPRICE).toFixed(4) + " UBQ per INK"} color="success" />
-      </StyledStack>
+
+      <StyledBox>
+        <Grid container sx={{ textAlign: "center" }} spacing={10}>
+          <Grid xs={4} item>
+            <Chip label={"UBQ: $" + UBQPRICE.toFixed(2)} color="primary" variant="outlined" />
+          </Grid>
+          <Grid xs={4} item>
+            <Chip label={"INK: $" + INKPRICE.toFixed(4)} color="primary" variant="outlined" />
+          </Grid>
+          <Grid xs={4} item>
+            <Chip label={"Ratio: " + (INKPRICE / UBQPRICE).toFixed(4)} color="primary" variant="outlined" />
+          </Grid>
+        </Grid>
+      </StyledBox>
     </>
   );
 };
 
-const StyledStack = styled(Stack)`
+const StyledBox = styled(Box)`
   border-radius: 15px;
-  background: #2c2b3d;
   padding: 20px;
+  background: #2c2b3d;
+  text-align: center;
 `;
 
 export default React.memo(PriceRibbon);
