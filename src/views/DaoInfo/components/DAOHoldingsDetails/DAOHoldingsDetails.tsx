@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
 import styled from "styled-components";
@@ -7,24 +7,37 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 // import Tooltip from "@mui/material/Tooltip";
 // import useUbiq from "hooks/useUbiq";
+import { getDaoHoldings, IDaoHoldings } from "utils";
+import { useWallet } from "use-wallet";
+import useUbiq from "hooks/useUbiq";
+import { provider } from "web3-core";
+import BigNumber from "bignumber.js";
 
-interface DAOHoldingsDetailsProps {
-  ubqPrice?: string;
-}
+// sets up a formatter so with toFormat on big numbers, we get thousands separators
+BigNumber.config({ FORMAT: { groupSeparator: ",", groupSize: 3, decimalSeparator: "." } });
 
-// Coin/Token placeholders
-const UBQHELDPLACEHOLDER = "1,000";
-const INKHELDPLACEHOLDER = "100,000";
-const GRANSHELDPLACEHOLDER = "2.5";
-const ESCHHELDPLACEHOLDER = "75,000";
+const DAOHoldingsDetails: React.FC = () => {
+  const [daoHoldings, setDaoHoldings] = useState<IDaoHoldings>();
+  const { ethereum } = useWallet();
+  const { BlockNum } = useUbiq();
 
-// LP Placeholders
-const UBQINKLPPLACEHOLDER = "100";
-const GRANSINKLPPLACEHOLDER = "25";
-const ESCHINKLPPLACEHOLDER = "33.2";
+  const fetchDaoHoldings = useCallback(
+    async function (provider: provider) {
+      const currentHoldings = await getDaoHoldings(provider);
 
-const DAOHoldingsDetails: React.FC<DAOHoldingsDetailsProps> = ({ ubqPrice }) => {
-  console.log("ubqPrice passed: ", ubqPrice);
+      setDaoHoldings(currentHoldings);
+    },
+    [setDaoHoldings]
+  );
+
+  // Update holdings based on new block numbers
+  useEffect(() => {
+    fetchDaoHoldings(ethereum);
+  }, [BlockNum, fetchDaoHoldings, ethereum]);
+
+  if (daoHoldings === undefined) {
+    return <></>;
+  }
 
   return (
     <>
@@ -36,19 +49,18 @@ const DAOHoldingsDetails: React.FC<DAOHoldingsDetailsProps> = ({ ubqPrice }) => 
           Coins/Tokens
         </Typography>
         <StyledStack direction="row" spacing={10}>
-          <Chip label={"UBQ: " + UBQHELDPLACEHOLDER} color="primary" />
-          <Chip label={"INK: " + INKHELDPLACEHOLDER} color="secondary" />
-          <Chip label={"GRANS: " + GRANSHELDPLACEHOLDER} color="success" />
-          <Chip label={"ESCH: " + ESCHHELDPLACEHOLDER} color="success" />
+          <Chip label={"UBQ: " + daoHoldings.ubq.toFormat(0)} color="primary" />
+          <Chip label={"INK: " + daoHoldings.ink.toFormat(0)} color="secondary" />
+          <Chip label={"ESCH: " + daoHoldings.esch.toFormat(0)} color="success" />
         </StyledStack>
 
         <Typography align="center" variant="h6">
           LP Standing
         </Typography>
         <StyledStack direction="row" spacing={15}>
-          <Chip label={"UBQ/INK: " + UBQINKLPPLACEHOLDER} color="primary" />
-          <Chip label={"GRANS/INK: " + GRANSINKLPPLACEHOLDER} color="secondary" />
-          <Chip label={"ESCH/INK: " + ESCHINKLPPLACEHOLDER} color="success" />
+          <Chip label={"UBQ/INK: " + daoHoldings.lp.ubqInk.toFormat(4)} color="primary" />
+          <Chip label={"GRANS/INK: " + daoHoldings.lp.gransInk.toFormat(4)} color="secondary" />
+          <Chip label={"INK/ESCH: " + daoHoldings.lp.inkEsch.toFormat(4)} color="success" />
         </StyledStack>
       </Box>
     </>

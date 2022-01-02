@@ -47,7 +47,6 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
       // the Tentacle DAO so they don't count toward our TVL
       if (AvailableFarms[i].official) {
         ecosystemTvlSubtotal += currentTvl[i];
-        console.log("official currentTvl: $", currentTvl[i]);
       }
     }
 

@@ -3,7 +3,17 @@ import { ethers } from "ethers";
 import Web3 from "web3";
 import { provider, TransactionReceipt } from "web3-core";
 import { AbiItem } from "web3-utils";
-import { UBQ, INK, AvailableFarms } from "farms/AvailableFarms";
+import {
+  UBQ,
+  INK,
+  ESCH,
+  INK_UBQ_FarmContract,
+  INK_GRANS_FarmContract,
+  INK_ESCH_FarmContract,
+  INK_UBQ_LPAddress,
+  INK_GRANS_LPAddress,
+  INK_ESCH_LPAddress,
+} from "farms/AvailableFarms";
 import { GAS } from "ubiq-sdk/utils";
 import ERC20ABI from "constants/abi/ERC20.json";
 import ShinobiPoolERC20 from "ubiq-sdk/lib/clean_build/contracts/ShinobiPool.json";
@@ -255,22 +265,54 @@ export interface ICirculatingSupply {
   total: BigNumber;
 }
 
+export interface IDaoHoldings {
+  ubq: BigNumber;
+  ink: BigNumber;
+  esch: BigNumber;
+  lp: {
+    ubqInk: BigNumber;
+    gransInk: BigNumber;
+    inkEsch: BigNumber;
+  };
+}
+
+export const getDaoHoldings = async (provider: provider): Promise<IDaoHoldings> => {
+  const INKMultisig = "0xCC7D76005bf1616e55cfDFF4cbfB5C29199C2808";
+  const INKFarmer = "";
+
+  const ubqHoldings = await getCoinBalanceAsBigNum(provider, INKMultisig);
+  const inkHoldings = await getBalanceAsBigNum(provider, INK, INKMultisig);
+  const eschHoldings = await getBalanceAsBigNum(provider, ESCH, INKMultisig);
+
+  const ubqInkHoldings = await getBalanceAsBigNum(provider, INK_UBQ_LPAddress, INKMultisig);
+  const gransInkHoldings = await getBalanceAsBigNum(provider, INK_GRANS_LPAddress, INKMultisig);
+  const inkEschHoldings = await getBalanceAsBigNum(provider, INK_ESCH_LPAddress, INKMultisig);
+
+  return {
+    ubq: ubqHoldings,
+    ink: inkHoldings,
+    esch: eschHoldings,
+    lp: {
+      ubqInk: ubqInkHoldings,
+      gransInk: gransInkHoldings,
+      inkEsch: inkEschHoldings,
+    },
+  } as IDaoHoldings;
+};
+
 // Calculates the circulating INK supply based on the amount still held by
 // the DAO minting address plus a sum of all of the individual farm holdings
 export const getCirculatingSupply = async (provider: provider): Promise<ICirculatingSupply> => {
   const totalSupply = new BigNumber(88 * 1000 * 1000); // 88 million
 
+  // This address holds the minted INK which is yet to be distributed
   const INKMINTEDHOLDINGADDRESS = "0xB47D5874D2db5f398cfA0E53a5A020362F2AEAeF";
-  const UBQINKFARM = AvailableFarms[0].yieldfarm.address;
-  const GRANSINKFARM = AvailableFarms[1].yieldfarm.address;
-  const INKESCHFARM = AvailableFarms[2].yieldfarm.address;
 
   // Grab all the individual INK quantities
   let heldByDeployer = await getBalanceAsBigNum(provider, INK, INKMINTEDHOLDINGADDRESS);
-  let heldByUBQINK = await getBalanceAsBigNum(provider, INK, UBQINKFARM);
-  let heldByGRANSUBQ = await getBalanceAsBigNum(provider, INK, GRANSINKFARM);
-  let heldByUBQESCH = await getBalanceAsBigNum(provider, INK, INKESCHFARM);
-  // const subtotal = bnToDec(heldByDeployer.plus(heldByUBQINK).plus(heldByGRANSUBQ).plus(heldByUBQESCH));
+  let heldByUBQINK = await getBalanceAsBigNum(provider, INK, INK_UBQ_FarmContract);
+  let heldByGRANSUBQ = await getBalanceAsBigNum(provider, INK, INK_GRANS_FarmContract);
+  let heldByUBQESCH = await getBalanceAsBigNum(provider, INK, INK_ESCH_FarmContract);
   const subtotal = heldByDeployer.plus(heldByUBQINK).plus(heldByGRANSUBQ).plus(heldByUBQESCH).toString();
 
   // Total them up, and subtract them from the totalSupply

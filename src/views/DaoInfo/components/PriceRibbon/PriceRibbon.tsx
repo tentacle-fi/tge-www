@@ -9,16 +9,10 @@ import Typography from "@mui/material/Typography";
 import useBalances from "hooks/useBalances";
 import { UBQ, INK } from "farms/AvailableFarms";
 
-interface PriceRibbonProps {
-  ubqPrice?: string;
-}
-
-const PriceRibbon: React.FC<PriceRibbonProps> = ({ ubqPrice }) => {
-  console.log("ubqPrice passed: ", ubqPrice);
+const PriceRibbon: React.FC = () => {
   const { tokenPrices } = useBalances();
 
   if (tokenPrices === undefined) {
-    console.log("no tokenPrices available yet...");
     return <></>;
   }
 
