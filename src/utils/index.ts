@@ -3,9 +3,8 @@ import { ethers } from "ethers";
 import Web3 from "web3";
 import { provider, TransactionReceipt } from "web3-core";
 import { AbiItem } from "web3-utils";
-
+import { UBQ, INK, AvailableFarms } from "farms/AvailableFarms";
 import { GAS } from "ubiq-sdk/utils";
-
 import ERC20ABI from "constants/abi/ERC20.json";
 import ShinobiPoolERC20 from "ubiq-sdk/lib/clean_build/contracts/ShinobiPool.json";
 
@@ -256,19 +255,17 @@ export interface ICirculatingSupply {
 // the DAO minting address plus a sum of all of the individual farm holdings
 export const getCirculatingSupply = async (provider: provider): Promise<ICirculatingSupply> => {
   const totalSupply = new BigNumber(88 * 1000 * 1000); // 88 million
-  const INKADDRESS = "0x7845fCbE28ac19ab7ec1C1D9674E34fdCB4917Db";
 
-  // TODO: get these from availableFarms
   const INKMINTEDHOLDINGADDRESS = "0xB47D5874D2db5f398cfA0E53a5A020362F2AEAeF";
-  const UBQINKFARM = "0x6E142959F49d364b30F0478949EFfDcb58efFe44";
-  const GRANSINKFARM = "0xC4f628150EaDcA9864641e3BF65F8Ea4Fd75e23B";
-  const INKESCHFARM = "0x6E59E5cd333CE71D3AFDEdae09949729dC2fe4B3";
+  const UBQINKFARM = AvailableFarms[0].yieldfarm.address;
+  const GRANSINKFARM = AvailableFarms[1].yieldfarm.address;
+  const INKESCHFARM = AvailableFarms[2].yieldfarm.address;
 
   // Grab all the individual INK quantities
-  let heldByDeployer = await getBalanceAsBigNum(provider, INKADDRESS, INKMINTEDHOLDINGADDRESS);
-  let heldByUBQINK = await getBalanceAsBigNum(provider, INKADDRESS, UBQINKFARM);
-  let heldByGRANSUBQ = await getBalanceAsBigNum(provider, INKADDRESS, GRANSINKFARM);
-  let heldByUBQESCH = await getBalanceAsBigNum(provider, INKADDRESS, INKESCHFARM);
+  let heldByDeployer = await getBalanceAsBigNum(provider, INK, INKMINTEDHOLDINGADDRESS);
+  let heldByUBQINK = await getBalanceAsBigNum(provider, INK, UBQINKFARM);
+  let heldByGRANSUBQ = await getBalanceAsBigNum(provider, INK, GRANSINKFARM);
+  let heldByUBQESCH = await getBalanceAsBigNum(provider, INK, INKESCHFARM);
   // const subtotal = bnToDec(heldByDeployer.plus(heldByUBQINK).plus(heldByGRANSUBQ).plus(heldByUBQESCH));
   const subtotal = heldByDeployer.plus(heldByUBQINK).plus(heldByGRANSUBQ).plus(heldByUBQESCH).toString();
 

@@ -6,26 +6,35 @@ import styled from "styled-components";
 import Typography from "@mui/material/Typography";
 // import Tooltip from "@mui/material/Tooltip";
 // import useUbiq from "hooks/useUbiq";
+import useBalances from "hooks/useBalances";
+import { UBQ, INK } from "farms/AvailableFarms";
 
 interface PriceRibbonProps {
   ubqPrice?: string;
 }
 
-const UBQPRICEPLACEHOLDER = "$0.20";
-const INKPRICEPLACEHOLDER = "$0.02";
 const RATIOPLACEHOLDER = "10";
 
 const PriceRibbon: React.FC<PriceRibbonProps> = ({ ubqPrice }) => {
   console.log("ubqPrice passed: ", ubqPrice);
+  const { tokenPrices } = useBalances();
+
+  if( tokenPrices === undefined ){
+      console.log('no tokenPrices available yet...')
+      return <></>
+  }
+
+  const UBQPRICE = tokenPrices[UBQ];
+  const INKPRICE = tokenPrices[INK];
 
   return (
     <>
       <p></p>
       <Typography variant="h5">Price Ribbon</Typography>
       <StyledStack direction="row" spacing={10}>
-        <Chip label={"UBQ: " + UBQPRICEPLACEHOLDER} color="primary" />
-        <Chip label={"INK: " + INKPRICEPLACEHOLDER} color="secondary" />
-        <Chip label={"Ratio: " + RATIOPLACEHOLDER} color="success" />
+        <Chip label={"UBQ: $" + UBQPRICE.toFixed(2)} color="primary" />
+        <Chip label={"INK: $" + INKPRICE.toFixed(4)} color="secondary" />
+        <Chip label={"Ratio: " + (INKPRICE / UBQPRICE).toFixed(4)} color="success" />
       </StyledStack>
     </>
   );
