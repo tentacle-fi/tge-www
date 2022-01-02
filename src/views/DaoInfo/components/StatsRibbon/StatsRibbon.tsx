@@ -42,11 +42,13 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
     }
 
     let ecosystemTvlSubtotal = 0;
-    // TODO: use availableFarms here instead of this slice
-    console.log("currentTvl:", currentTvl);
-    for (const singleTvl of currentTvl.slice(0, 2)) {
-      console.log("singleTvl: $", singleTvl);
-      ecosystemTvlSubtotal += singleTvl;
+    for (let i = 0; i < currentTvl.length; i++) {
+      // We only want to total official pools, other pools aren't owned by
+      // the Tentacle DAO so they don't count toward our TVL
+      if (AvailableFarms[i].official) {
+        ecosystemTvlSubtotal += currentTvl[i];
+        console.log("official currentTvl: $", currentTvl[i]);
+      }
     }
 
     const ecosystemTvlTotal = new BigNumber(ecosystemTvlSubtotal).toFormat(0);
@@ -78,8 +80,8 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
 };
 
 const StyledStack = styled(Stack)`
-  borderradius: 100px;
-  background: purple;
+  border-radius: 15px;
+  background: #2c2b3d;
   padding: 20px;
 `;
 

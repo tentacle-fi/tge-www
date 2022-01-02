@@ -56,8 +56,8 @@ const DAOHoldingsDetails: React.FC<DAOHoldingsDetailsProps> = ({ ubqPrice }) => 
 };
 
 const StyledStack = styled(Stack)`
-  borderradius: 100px;
-  background: purple;
+  border-radius: 15px;
+  background: #2c2b3d;
   padding: 20px;
 `;
 
