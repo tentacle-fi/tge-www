@@ -1,4 +1,4 @@
-import { INK, GRANS, UBQ, ESCH } from "farms/AvailableFarms";
+import { INK } from "farms/AvailableFarms";
 
 export async function switchToUBQNetwork() {
   let ethereum = window.ethereum;
@@ -56,23 +56,12 @@ export async function switchToUBQNetwork() {
   }
 }
 
+// convenience function for the Help page
 export async function addInkToWallet() {
   await addTokenToWallet("INK", INK, "ink.png");
 }
 
-export async function addGransToWallet() {
-  await addTokenToWallet("GRANS", GRANS, "grans.png");
-}
-
-export async function addwUbqToWallet() {
-  await addTokenToWallet("wUBQ", UBQ, "ubq.png");
-}
-
-export async function addEschToWallet() {
-  await addTokenToWallet("ESCH", ESCH, "esch.png");
-}
-
-async function addTokenToWallet(tokenSymbol, tokenAddress, tokenIconUrl) {
+export async function addTokenToWallet(tokenSymbol, tokenAddress, tokenIconUrl) {
   let ethereum = window.ethereum;
   const tokenDecimals = 18;
 

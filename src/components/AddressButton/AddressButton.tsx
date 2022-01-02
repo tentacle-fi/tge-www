@@ -187,7 +187,7 @@ const StyledCopy = styled.span<StyledCopyProps>`
   -webkit-mask-image: url(${copy});
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-size: 12px;
-  background-color: ${(props) => (props.darkMode ? props.theme.colors.primary.main : props.theme.colors.grey[500])};
+  background-color: #fff;
   width: ${(props) => (!props.shinobi ? "32" : "50")}px;
   margin: 20px 0px 16px 5px;
   &:hover {
