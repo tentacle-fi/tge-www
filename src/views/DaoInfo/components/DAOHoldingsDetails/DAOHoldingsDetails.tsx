@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
+import Grid from "@mui/material/Grid";
 import styled from "styled-components";
 import Box from "@mui/material/Box";
 // import { bnToDec, getShortDisplayBalance } from "utils";
@@ -44,30 +45,42 @@ const DAOHoldingsDetails: React.FC = () => {
       <p></p>
       <Typography variant="h5">DAO Holdings Details</Typography>
 
-      <Box sx={{ border: 1, padding: "20px" }}>
+      <StyledBox sx={{ border: 1, padding: "12px" }}>
         <Typography align="center" variant="h6">
           Coins/Tokens
         </Typography>
-        <StyledStack direction="row" spacing={10}>
-          <Chip label={"UBQ: " + daoHoldings.ubq.toFormat(0)} color="primary" />
-          <Chip label={"INK: " + daoHoldings.ink.toFormat(0)} color="secondary" />
-          <Chip label={"ESCH: " + daoHoldings.esch.toFormat(0)} color="success" />
-        </StyledStack>
+        <Grid container sx={{ textAlign: "center" }} spacing={10}>
+          <Grid xs={4} item>
+            <Chip label={"UBQ: " + daoHoldings.ubq.toFormat(0)} color="primary" />
+          </Grid>
+          <Grid xs={4} item>
+            <Chip label={"INK: " + daoHoldings.ink.toFormat(0)} color="secondary" />
+          </Grid>
+          <Grid xs={4} item>
+            <Chip label={"ESCH: " + daoHoldings.esch.toFormat(0)} color="success" />
+          </Grid>
+        </Grid>
 
-        <Typography align="center" variant="h6">
+        <Typography sx={{ mt: "12px" }} align="center" variant="h6">
           LP Standing
         </Typography>
-        <StyledStack direction="row" spacing={15}>
-          <Chip label={"UBQ/INK: " + daoHoldings.lp.ubqInk.toFormat(4)} color="primary" />
-          <Chip label={"GRANS/INK: " + daoHoldings.lp.gransInk.toFormat(4)} color="secondary" />
-          <Chip label={"INK/ESCH: " + daoHoldings.lp.inkEsch.toFormat(4)} color="success" />
-        </StyledStack>
-      </Box>
+        <Grid container sx={{ textAlign: "center" }} spacing={10}>
+          <Grid xs={4} item>
+            <Chip label={"UBQ/INK: " + daoHoldings.lp.ubqInk.toFormat(4)} color="primary" />
+          </Grid>
+          <Grid xs={4} item>
+            <Chip label={"GRANS/INK: " + daoHoldings.lp.gransInk.toFormat(4)} color="secondary" />
+          </Grid>
+          <Grid xs={4} item>
+            <Chip label={"INK/ESCH: " + daoHoldings.lp.inkEsch.toFormat(4)} color="success" />
+          </Grid>
+        </Grid>
+      </StyledBox>
     </>
   );
 };
 
-const StyledStack = styled(Stack)`
+const StyledBox = styled(Box)`
   border-radius: 15px;
   background: #2c2b3d;
   padding: 20px;
