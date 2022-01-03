@@ -46,20 +46,20 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
   }, [ethereum, setCirculatingSupply]);
 
   const fetchCurrentMarketcap = useCallback(async () => {
-      if(tokenPrices === undefined){
-          return
-      }
+    if (tokenPrices === undefined) {
+      return;
+    }
 
-      if(circulatingSupply === undefined){
-          return
-      }
+    if (circulatingSupply === undefined) {
+      return;
+    }
 
-      // circulatingSupply comes with commas, strip them out so we can parseInt
-    const parsedCirculatingSupply = parseInt(circulatingSupply.replace(/,/g, ''));
+    // circulatingSupply comes with commas, strip them out so we can parseInt
+    const parsedCirculatingSupply = parseInt(circulatingSupply.replace(/,/g, ""));
     const mc = new BigNumber(tokenPrices[INK] * parsedCirculatingSupply).toFormat(0);
 
     setCurrentMarketcap(mc);
-}, [circulatingSupply, tokenPrices, setCurrentMarketcap]);
+  }, [circulatingSupply, tokenPrices, setCurrentMarketcap]);
 
   const fetchEcosystemTvl = useCallback(async () => {
     if (currentTvl === undefined) {
@@ -94,7 +94,7 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
   // Update market cap based on new block numbers
   useEffect(() => {
     fetchCurrentMarketcap();
-}, [BlockNum, fetchCurrentMarketcap]);
+  }, [BlockNum, fetchCurrentMarketcap]);
 
   if (currentTvl === undefined) {
     return <></>;
