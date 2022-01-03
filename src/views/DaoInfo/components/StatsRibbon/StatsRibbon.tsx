@@ -9,8 +9,9 @@ import Typography from "@mui/material/Typography";
 import { useWallet } from "use-wallet";
 import useUbiq from "hooks/useUbiq";
 import useFarming from "hooks/useFarming";
+import useBalances from "hooks/useBalances";
 import { getCirculatingSupply, getDailyTransactions } from "utils";
-import { AvailableFarms } from "farms/AvailableFarms";
+import { AvailableFarms, INK } from "farms/AvailableFarms";
 
 // sets up a formatter so with toFormat on big numbers, we get thousands separators
 BigNumber.config({ FORMAT: { groupSeparator: ",", groupSize: 3 } });
@@ -20,15 +21,17 @@ interface StatsRibbonProps {
 }
 
 // Placeholders for now, until functions are written to store the appropriate values in state
-const DAILYVOLUMEPLACEHOLDER = "$65,039";
+// const DAILYVOLUMEPLACEHOLDER = "$65,039";
 
 const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
   const { currentTvl } = useFarming();
   const { ethereum } = useWallet();
   const { BlockNum } = useUbiq();
+  const { tokenPrices } = useBalances();
   const [circulatingSupply, setCirculatingSupply] = useState<string>();
   const [ecosystemTvl, setEcosystemTvl] = useState<string>();
   const [dailyTransactions, setDailyTransactions] = useState<number>();
+  const [currentMarketcap, setCurrentMarketcap] = useState<string>();
 
   const fetchDailyTransactions = useCallback(async () => {
     const dailyTransactions = await getDailyTransactions(ethereum);
@@ -41,6 +44,22 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
 
     setCirculatingSupply(circulatingSupply.total.toFormat(0));
   }, [ethereum, setCirculatingSupply]);
+
+  const fetchCurrentMarketcap = useCallback(async () => {
+      if(tokenPrices === undefined){
+          return
+      }
+
+      if(circulatingSupply === undefined){
+          return
+      }
+
+      // circulatingSupply comes with commas, strip them out so we can parseInt
+    const parsedCirculatingSupply = parseInt(circulatingSupply.replace(/,/g, ''));
+    const mc = new BigNumber(tokenPrices[INK] * parsedCirculatingSupply).toFormat(0);
+
+    setCurrentMarketcap(mc);
+}, [circulatingSupply, tokenPrices, setCurrentMarketcap]);
 
   const fetchEcosystemTvl = useCallback(async () => {
     if (currentTvl === undefined) {
@@ -72,6 +91,11 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
     fetchDailyTransactions();
   }, [BlockNum, fetchDailyTransactions]);
 
+  // Update market cap based on new block numbers
+  useEffect(() => {
+    fetchCurrentMarketcap();
+}, [BlockNum, fetchCurrentMarketcap]);
+
   if (currentTvl === undefined) {
     return <></>;
   }
@@ -82,6 +106,7 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
       <StyledStack direction="row" spacing={10}>
         <Chip label={"Circulating INK: " + circulatingSupply} color="primary" variant="outlined" />
         <Chip label={"Ecosystem TVL: $" + ecosystemTvl} color="primary" variant="outlined" />
+        <Chip label={"MarketCap: $" + currentMarketcap} color="primary" variant="outlined" />
         <Chip label={"24hr TXs: " + dailyTransactions} color="primary" variant="outlined" />
       </StyledStack>
     </>
