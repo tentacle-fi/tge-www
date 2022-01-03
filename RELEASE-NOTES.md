@@ -47,3 +47,4 @@ DAO Info Page
 - prices added
 - DAO holdings added, including multisig and farm addresses
 - add mission statement
+- marketcap added
