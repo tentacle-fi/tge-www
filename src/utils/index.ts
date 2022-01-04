@@ -328,7 +328,7 @@ export const getCirculatingSupply = async (provider: provider): Promise<ICircula
   const subtotal = heldByDeployer.plus(heldByUBQINK).plus(heldByGRANSUBQ).plus(heldByUBQESCH).toString();
 
   // Total them up, and subtract them from the totalSupply
-  let circulatingTotal = totalSupply.minus(subtotal);
+  const circulatingTotal = totalSupply.minus(subtotal);
 
   // console.log(
   //   "heldByDeployer:",

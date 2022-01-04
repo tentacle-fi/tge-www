@@ -14,7 +14,6 @@ import { provider } from "web3-core";
 import BigNumber from "bignumber.js";
 import InfoIconWithTooltip from "components/InfoIconWithTooltip";
 
-
 // sets up a formatter so with toFormat on big numbers, we get thousands separators
 BigNumber.config({ FORMAT: { groupSeparator: ",", groupSize: 3, decimalSeparator: "." } });
 
@@ -34,6 +33,9 @@ const DAOHoldingsDetails: React.FC = () => {
 
   // Update holdings based on new block numbers
   useEffect(() => {
+    if (!ethereum) {
+      return;
+    }
     fetchDaoHoldings(ethereum);
   }, [BlockNum, fetchDaoHoldings, ethereum]);
 

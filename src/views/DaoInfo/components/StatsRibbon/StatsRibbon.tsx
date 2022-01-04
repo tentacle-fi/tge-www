@@ -46,11 +46,7 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
   }, [ethereum, setCirculatingSupply]);
 
   const fetchCurrentMarketcap = useCallback(async () => {
-    if (tokenPrices === undefined) {
-      return;
-    }
-
-    if (circulatingSupply === undefined) {
+    if (tokenPrices === undefined || circulatingSupply === undefined) {
       return;
     }
 
