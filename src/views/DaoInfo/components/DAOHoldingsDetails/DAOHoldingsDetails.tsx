@@ -12,6 +12,8 @@ import { useWallet } from "use-wallet";
 import useUbiq from "hooks/useUbiq";
 import { provider } from "web3-core";
 import BigNumber from "bignumber.js";
+import InfoIconWithTooltip from "components/InfoIconWithTooltip";
+
 
 // sets up a formatter so with toFormat on big numbers, we get thousands separators
 BigNumber.config({ FORMAT: { groupSeparator: ",", groupSize: 3, decimalSeparator: "." } });
@@ -46,8 +48,9 @@ const DAOHoldingsDetails: React.FC = () => {
 
       <StyledBox>
         <Typography align="center" variant="h6">
-          Coins/Tokens
+          Coins/Tokens <InfoIconWithTooltip tooltipText="test" />
         </Typography>
+
         <Grid container sx={{ textAlign: "center" }} spacing={10}>
           <Grid xs={4} item>
             <Chip label={"UBQ: " + daoHoldings.ubq.toFormat(0)} color="primary" variant="outlined" />
