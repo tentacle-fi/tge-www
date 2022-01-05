@@ -39,4 +39,5 @@
 - ubq Price oracle timeframe expanded to reduce potential for missing the latest price
 
 ## Unreleased
-nothing at this time
+- TGE1 Community Farm added
+- cleanup
