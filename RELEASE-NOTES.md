@@ -38,5 +38,9 @@
 - displayed values for token0/token1 in staked balance accuracy improved
 - ubq Price oracle timeframe expanded to reduce potential for missing the latest price
 
+## 1.0.3-staging
+- TGE1 Community Farm added
+- cleanup
+
 ## Unreleased
-nothing at this time
+Nothing at this time
