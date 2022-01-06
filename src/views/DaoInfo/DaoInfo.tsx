@@ -12,7 +12,7 @@ const subtitleText = "Various DAO stats to more easily analyze the Tentacle Fina
 const DaoInfo: React.FC = () => {
   return (
     <Page>
-      <PageHeader icon={<BarChartIcon sx={{ fontSize: "98px" }} />} title={"DAO Infoformation"} subtitle={subtitleText} />
+      <PageHeader icon={<BarChartIcon sx={{ fontSize: "98px" }} />} title={"DAO Information"} subtitle={subtitleText} />
       <Typography variant="h4">Mission Statement</Typography>
       <Typography variant="h6">
         <ol>
