@@ -45,8 +45,7 @@ const DAOHoldingsDetails: React.FC = () => {
 
   return (
     <>
-      <br/>
-
+      <br />
 
       <Typography variant="h5">DAO Holdings</Typography>
 
@@ -54,7 +53,7 @@ const DAOHoldingsDetails: React.FC = () => {
         <Typography align="center" variant="h6">
           Coins/Tokens <InfoIconWithTooltip tooltipText="test" />
         </Typography>
-        <br/>
+        <br />
         <Grid container sx={{ textAlign: "center" }} spacing={1}>
           <Grid xs={4} item>
             <Chip label={"UBQ: " + daoHoldings.ubq.toFormat(0)} color="primary" variant="outlined" />
@@ -70,7 +69,7 @@ const DAOHoldingsDetails: React.FC = () => {
         <Typography sx={{ mt: "12px" }} align="center" variant="h6">
           LP Standing
         </Typography>
-        <Grid container sx={{ textAlign: "center", clear: "both"}} spacing={1}>
+        <Grid container sx={{ textAlign: "center", clear: "both" }} spacing={1}>
           <Grid xs={4} item>
             <Chip label={"UBQ/INK: " + daoHoldings.lp.ubqInk.toFormat(4)} color="primary" variant="outlined" />
           </Grid>
@@ -81,14 +80,13 @@ const DAOHoldingsDetails: React.FC = () => {
             <Chip label={"INK/ESCH: " + daoHoldings.lp.inkEsch.toFormat(4)} color="primary" variant="outlined" />
           </Grid>
         </Grid>
-
       </StyledBox>
     </>
   );
 };
 
 const StyledBox = styled(Box)`
-  display:block;
+  display: block;
   border-radius: 15px;
   background: #2c2b3d;
   padding: 20px;

@@ -72,7 +72,7 @@ export const AvailableFarms: Array<IFarm> = [
     },
     tokenA: UBQ_token,
     tokenB: INK_token,
-    phase: "P1"
+    phase: "P1",
   },
   // GRANS/INK
   {
@@ -89,7 +89,7 @@ export const AvailableFarms: Array<IFarm> = [
     },
     tokenA: GRANS_token,
     tokenB: INK_token,
-    phase: "P2"
+    phase: "P2",
   },
   // ESCH/INK
   {
@@ -106,7 +106,7 @@ export const AvailableFarms: Array<IFarm> = [
     },
     tokenA: INK_token,
     tokenB: ESCH_token,
-    phase: "P2"
+    phase: "P2",
   },
   // COMMUNITY Pools/Farms
   // GRANS/UBQ
@@ -124,7 +124,7 @@ export const AvailableFarms: Array<IFarm> = [
     },
     tokenA: GRANS_token,
     tokenB: UBQ_token,
-    phase: ""
+    phase: "",
   },
 ];
 

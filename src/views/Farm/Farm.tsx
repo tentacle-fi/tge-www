@@ -139,24 +139,22 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
   }, [farmKey, isApproving, isApproved, onApprove, setConfirmModal]);
 
   const FarmLogosAndManageButton = useMemo(() => {
-
     const PhaseComponent = () => {
-      if(farm.phase === ""){
-        return <></>
+      if (farm.phase === "") {
+        return <></>;
       }
       return (
-        <div style={{position: "absolute", left: "-15px"}}>
-          <LabelIcon sx={{ position: "absolute", left: "0px", fontSize: "38px" }}  />
+        <div style={{ position: "absolute", left: "-15px" }}>
+          <LabelIcon sx={{ position: "absolute", left: "0px", fontSize: "38px" }} />
           <Typography sx={{ position: "absolute", left: "8px", top: "9px", fontSize: "14px" }}>{farm.phase}</Typography>
         </div>
-      )
-    }
+      );
+    };
 
     return (
       <Grid item xs={6} md={2}>
         <StyledItem sx={{ paddingTop: "20px", position: "relative" }}>
-
-        <PhaseComponent />
+          <PhaseComponent />
 
           <div style={{ height: "60%", minHeight: "130px" }}>
             <img
