@@ -39,4 +39,12 @@
 - ubq Price oracle timeframe expanded to reduce potential for missing the latest price
 
 ## Unreleased
-nothing at this time
+
+DAO Info Page
+- ecosystemTvl added
+- circulating INK added NOTE: Calculates based on harvested INK. IE, unharvested INK is not circulating based on this calculation.
+- daily transaction count added
+- prices added
+- DAO holdings added, including multisig and farm addresses
+- add mission statement
+- marketcap added

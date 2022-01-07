@@ -23,9 +23,9 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import Typography from "@mui/material/Typography";
 import Alert from "@mui/material/Alert";
 import SLink from "components/SLink";
-import InfoIcon from "@mui/icons-material/Info";
-import Tooltip from "@mui/material/Tooltip";
+import InfoIconWithTooltip from "components/InfoIconWithTooltip";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import LabelIcon from "@mui/icons-material/Label";
 
 interface YieldFarmProps {
   farmKey: number;
@@ -43,25 +43,6 @@ const StyledItem = styled(Paper)(({ theme }) => ({
 const StyledArrowIcon = styled(ArrowCircleUpIcon)(({ theme }) => ({
   color: theme.palette.secondary.main,
   rotate: "90deg",
-}));
-
-interface FloatingHelpProps {
-  tooltipText: string;
-}
-
-const FloatingHelp: React.FC<FloatingHelpProps> = ({ tooltipText }) => {
-  return (
-    <Tooltip title={tooltipText}>
-      <sup>
-        <StyledFloatingHelp />
-      </sup>
-    </Tooltip>
-  );
-};
-
-const StyledFloatingHelp = styled(InfoIcon)(({ theme }) => ({
-  color: theme.palette.secondary.main,
-  padding: theme.spacing(0),
 }));
 
 const Farm: React.FC = () => {
@@ -95,14 +76,14 @@ const Farm: React.FC = () => {
       </Box>
       <>
         <Typography variant="h4" sx={{ left: "20px", marginTop: "20px" }}>
-          Tentacle.Finance Farms <FloatingHelp tooltipText="Farms owned & operated by the Tentacle Finance DAO" />
+          Tentacle.Finance Farms <InfoIconWithTooltip tooltipText="Farms owned & operated by the Tentacle Finance DAO" />
         </Typography>
 
         {OfficialFarms}
 
         <hr style={{ width: "80%", border: "1px solid #555", margin: "20px 0" }} />
         <Typography variant="h4">
-          Community Farms <FloatingHelp tooltipText="Additional Ubiq farms provided for convenience" />
+          Community Farms <InfoIconWithTooltip tooltipText="Additional Ubiq farms provided for convenience" />
         </Typography>
         <Typography variant="body1">Note: Community farms are not managed or maintained by the Tentacle.Finance DAO.</Typography>
         {CommunityFarms}
@@ -158,9 +139,23 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
   }, [farmKey, isApproving, isApproved, onApprove, setConfirmModal]);
 
   const FarmLogosAndManageButton = useMemo(() => {
+    const PhaseComponent = () => {
+      if (farm.phase === "") {
+        return <></>;
+      }
+      return (
+        <div style={{ position: "absolute", left: "-15px" }}>
+          <LabelIcon sx={{ position: "absolute", left: "0px", fontSize: "38px" }} />
+          <Typography sx={{ position: "absolute", left: "8px", top: "9px", fontSize: "14px" }}>{farm.phase}</Typography>
+        </div>
+      );
+    };
+
     return (
       <Grid item xs={6} md={2}>
-        <StyledItem sx={{ paddingTop: "20px" }}>
+        <StyledItem sx={{ paddingTop: "20px", position: "relative" }}>
+          <PhaseComponent />
+
           <div style={{ height: "60%", minHeight: "130px" }}>
             <img
               src={farm.tokenA.logo}

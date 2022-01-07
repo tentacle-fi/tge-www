@@ -20,6 +20,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onDismiss, visible }) => {
           <StyledRouterLink to="/farm" onClick={onDismiss}>
             Farm
           </StyledRouterLink>
+          <StyledRouterLink to="/daoinfo" onClick={onDismiss}>
+            DAO
+          </StyledRouterLink>
           <StyledRouterLink to="/help" onClick={onDismiss}>
             Help
           </StyledRouterLink>
