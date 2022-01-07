@@ -45,13 +45,13 @@ const DAOHoldingsDetails: React.FC = () => {
 
   return (
     <>
-      <br />
+    <div style={{clear: "both", margin:"10px"}}></div>
 
       <Typography variant="h5">DAO Holdings</Typography>
 
       <StyledBox>
         <Typography align="center" variant="h6">
-          Coins/Tokens <InfoIconWithTooltip tooltipText="test" />
+          Coins/Tokens <InfoIconWithTooltip tooltipText="The DAO holds these coins and tokens" />
         </Typography>
         <br />
         <Grid container sx={{ textAlign: "center" }} spacing={1}>
@@ -67,8 +67,9 @@ const DAOHoldingsDetails: React.FC = () => {
         </Grid>
 
         <Typography sx={{ mt: "12px" }} align="center" variant="h6">
-          LP Standing
+          LP Standing <InfoIconWithTooltip tooltipText="The DAO holds this LP" />
         </Typography>
+        <br />
         <Grid container sx={{ textAlign: "center", clear: "both" }} spacing={1}>
           <Grid xs={4} item>
             <Chip label={"UBQ/INK: " + daoHoldings.lp.ubqInk.toFormat(4)} color="primary" variant="outlined" />
