@@ -45,7 +45,7 @@ const DAOHoldingsDetails: React.FC = () => {
 
   return (
     <>
-    <div style={{clear: "both", margin:"10px"}}></div>
+      <div style={{ clear: "both", margin: "10px" }}></div>
 
       <Typography variant="h5">DAO Holdings</Typography>
 
