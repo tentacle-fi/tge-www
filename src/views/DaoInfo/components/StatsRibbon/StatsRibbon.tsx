@@ -100,9 +100,9 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
     <>
       <Typography variant="h5">Ecosystem Stats</Typography>
       <StyledStack direction="row" spacing={10}>
-      <Tooltip title="Doesn't include un-harvested farming rewards">
-        <Chip label={"Circulating INK: " + circulatingSupply} color="primary" variant="outlined" />
-      </Tooltip>
+        <Tooltip title="Doesn't include un-harvested farming rewards">
+          <Chip label={"Circulating INK: " + circulatingSupply} color="primary" variant="outlined" />
+        </Tooltip>
         <Chip label={"Ecosystem TVL: $" + ecosystemTvl} color="primary" variant="outlined" />
         <Chip label={"MarketCap: $" + currentMarketcap} color="primary" variant="outlined" />
         <Chip label={"24hr TXs: " + dailyTransactions} color="primary" variant="outlined" />
