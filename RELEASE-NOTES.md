@@ -48,3 +48,4 @@ DAO Info Page
 - DAO holdings added, including multisig and farm addresses
 - add mission statement
 - marketcap added
+- ToS added to footer
