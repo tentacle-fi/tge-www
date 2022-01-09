@@ -41,6 +41,9 @@
 ## 1.0.3-staging
 - TGE1 Community Farm added
 - cleanup
+- update block timer to use new 22 second average target
+- update oracle block calculations to use new 22 second target
 
 ## Unreleased
-Nothing at this time
+nothing at this time
+
