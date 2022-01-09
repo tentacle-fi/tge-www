@@ -39,4 +39,5 @@
 - ubq Price oracle timeframe expanded to reduce potential for missing the latest price
 
 ## Unreleased
-nothing at this time
+- update block timer to use new 22 second average target
+- update oracle block calculations to use new 22 second target
