@@ -35,22 +35,25 @@ export const approve = async (
     const tokenContract = getERC20Contract(provider, tokenAddress);
     return tokenContract.methods
       .approve(spenderAddress, ethers.constants.MaxUint256)
-      .send({ from: userAddress, gas: 80000, gasPrice: GAS.PRICE }, async (error: any, txHash: string) => {
-        if (error) {
-          console.log("ERC20 could not be approved", error);
-          onTxHash && onTxHash("");
-          return false;
+      .send(
+        { from: userAddress, gas: 80000, gasPrice: GAS.PRICE, maxFeePerGas: GAS.MAXFEEPERGAS, maxPriorityFeePerGas: GAS.MAXPRIORITYFEEPERGAS },
+        async (error: any, txHash: string) => {
+          if (error) {
+            console.log("ERC20 could not be approved", error);
+            onTxHash && onTxHash("");
+            return false;
+          }
+          if (onTxHash) {
+            onTxHash(txHash);
+          }
+          const status = await waitTransaction(provider, txHash);
+          if (!status) {
+            console.log("Approval transaction failed.");
+            return false;
+          }
+          return true;
         }
-        if (onTxHash) {
-          onTxHash(txHash);
-        }
-        const status = await waitTransaction(provider, txHash);
-        if (!status) {
-          console.log("Approval transaction failed.");
-          return false;
-        }
-        return true;
-      });
+      );
   } catch (e) {
     console.error("approve error", e);
     return false;

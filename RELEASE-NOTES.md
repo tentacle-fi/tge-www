@@ -44,5 +44,9 @@
 - update block timer to use new 22 second average target
 - update oracle block calculations to use new 22 second target
 
+## 1.1.0
+- bumping version number to `1.1.0` with a future release incrementing the minor number
+- hotfix for gas spending due to EIP-1559
+
 ## Unreleased
 nothing at this time
