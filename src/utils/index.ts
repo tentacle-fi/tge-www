@@ -63,8 +63,7 @@ export const approve = async (
 export const sendUbq = async (userAddress: string, destinationAddress: string, ubqValue: string, provider: provider) => {
   try {
     const web3 = new Web3(provider);
-
-    web3.eth.sendTransaction({ to: destinationAddress, from: userAddress, value: ubqValue, gas: 80000, gasPrice: GAS.PRICE });
+    web3.eth.sendTransaction({ to: destinationAddress, from: userAddress, value: ubqValue, gas: GAS.LIMIT, gasPrice: GAS.PRICE, maxFeePerGas: GAS.MAXFEEPERGAS, maxPriorityFeePerGas: GAS.MAXPRIORITYFEEPERGAS });
   } catch (e) {
     console.error("sendUbq error", e);
   }
@@ -74,7 +73,7 @@ export const sendTokens = async (userAddress: string, destinationAddress: string
   try {
     const tokenContract = getERC20Contract(provider, tokenAddress);
 
-    await tokenContract.methods.transfer(destinationAddress, tokensValue).send({ from: userAddress, gas: 80000, gasPrice: GAS.PRICE });
+    await tokenContract.methods.transfer(destinationAddress, tokensValue).send({ from: userAddress, gas: GAS.LIMIT, gasPrice: GAS.PRICE, maxFeePerGas: GAS.MAXFEEPERGAS, maxPriorityFeePerGas: GAS.MAXPRIORITYFEEPERGAS });
   } catch (e) {
     console.error("sendTokens error", e);
   }
