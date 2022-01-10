@@ -38,7 +38,7 @@
 - displayed values for token0/token1 in staked balance accuracy improved
 - ubq Price oracle timeframe expanded to reduce potential for missing the latest price
 
-## 1.0.3-staging
+## 1.0.3
 - TGE1 Community Farm added
 - cleanup
 - update block timer to use new 22 second average target
@@ -46,4 +46,3 @@
 
 ## Unreleased
 nothing at this time
-
