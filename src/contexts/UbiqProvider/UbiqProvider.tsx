@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState, useCallback } from "react";
+import React, { createContext, useEffect, useState, useCallback, useRef } from "react";
 
 import { useWallet } from "use-wallet";
 
@@ -21,9 +21,10 @@ declare global {
 }
 
 const UbiqProvider: React.FC = ({ children }) => {
-  const { ethereum } = useWallet();
+  const { ethereum, account } = useWallet();
   const [ubiq, setUbiq] = useState<any>();
   const [BlockNum, setBlockNum] = useState(0);
+  const currentAccount = useRef("");
 
   const fetchCurrentBlock = useCallback(async (ubiqLib: any) => {
     if (!ubiqLib) {
@@ -58,6 +59,16 @@ const UbiqProvider: React.FC = ({ children }) => {
       };
     }
   }, [ethereum, fetchCurrentBlock]);
+
+  useEffect(() => {
+    if (account !== null) {
+      if (account !== currentAccount.current && currentAccount.current !== "") {
+        window.location.reload();
+      } else {
+        currentAccount.current = account;
+      }
+    }
+  }, [account]);
 
   return <Context.Provider value={{ ubiq, BlockNum }}>{children}</Context.Provider>;
 };

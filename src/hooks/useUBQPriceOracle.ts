@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { ethers } from "ethers";
 
-// TODO: UIP-16 will require this to be updated to 22 seconds
-const AVG_BLOCK_TIME_SEC = 88;
+// UIP-16 will require this to be updated to 22 seconds
+const AVG_BLOCK_TIME_SEC = 22;
 // how many blocks to fetch in the getLogs request. eg, 60 minutes of average blocks
-// this will only be wrong when a LOT of low block times are on-chain eg, the last hour of blocks are 1/2 the average block time
-const BLOCK_DEPTH_LOGS = Math.ceil((60 * 60) / AVG_BLOCK_TIME_SEC);
+// this will only be wrong when a LOT of low block times are on-chain eg, the last 4 hours of blocks are 1/4 the average block time
+const BLOCK_DEPTH_LOGS = Math.ceil((4 * 60 * 60) / AVG_BLOCK_TIME_SEC);
 const PROVIDER_URL = "https://rpc.octano.dev/";
 const ORACLE_ADDY = "0xaefF2F7644f1C615aDb309513c4CB564F44Bb68F";
 

@@ -56,7 +56,7 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
       <Separator />
       <ModalActions>
         <Button onClick={onDismiss} variant="contained">
-          Cancel
+          Close
         </Button>
         <Button onClick={handleSignOut} color="error">
           Sign Out

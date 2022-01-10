@@ -30,6 +30,23 @@
 - Phase 2 farm testing
 - Mobile styling updates
 
-## Unreleased
+## 1.0.2
+- reload page on account change
 - Address page updates
 - Wallet modal fix very small balances
+- change "cancel" to "close" in wallet modal
+- displayed values for token0/token1 in staked balance accuracy improved
+- ubq Price oracle timeframe expanded to reduce potential for missing the latest price
+
+## 1.0.3
+- TGE1 Community Farm added
+- cleanup
+- update block timer to use new 22 second average target
+- update oracle block calculations to use new 22 second target
+
+## 1.1.0
+- bumping version number to `1.1.0` with a future release incrementing the minor number
+- hotfix for gas spending due to EIP-1559
+
+## Unreleased
+nothing at this time
