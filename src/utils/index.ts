@@ -81,15 +81,13 @@ export const sendTokens = async (userAddress: string, destinationAddress: string
   try {
     const tokenContract = getERC20Contract(provider, tokenAddress);
 
-    await tokenContract.methods
-      .transfer(destinationAddress, tokensValue)
-      .send({
-        from: userAddress,
-        gas: GAS.LIMIT,
-        gasPrice: GAS.PRICE,
-        maxFeePerGas: GAS.MAXFEEPERGAS,
-        maxPriorityFeePerGas: GAS.MAXPRIORITYFEEPERGAS,
-      });
+    await tokenContract.methods.transfer(destinationAddress, tokensValue).send({
+      from: userAddress,
+      gas: GAS.LIMIT,
+      gasPrice: GAS.PRICE,
+      maxFeePerGas: GAS.MAXFEEPERGAS,
+      maxPriorityFeePerGas: GAS.MAXPRIORITYFEEPERGAS,
+    });
   } catch (e) {
     console.error("sendTokens error", e);
   }
