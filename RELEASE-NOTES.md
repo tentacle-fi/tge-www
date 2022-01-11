@@ -49,4 +49,4 @@
 - hotfix for gas spending due to EIP-1559
 
 ## Unreleased
-nothing at this time
+- fix for gas prices on donate button(s)
