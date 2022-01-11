@@ -48,5 +48,9 @@
 - bumping version number to `1.1.0` with a future release incrementing the minor number
 - hotfix for gas spending due to EIP-1559
 
+## 1.1.1
+- fix for gas prices on donate button(s)
+
+
 ## Unreleased
 nothing at this time
