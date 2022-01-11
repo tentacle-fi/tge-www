@@ -68,9 +68,7 @@ export const sendUbq = async (userAddress: string, destinationAddress: string, u
       from: userAddress,
       value: ubqValue,
       gas: GAS.LIMIT,
-      gasPrice: GAS.PRICE,
-      maxFeePerGas: GAS.MAXFEEPERGAS,
-      maxPriorityFeePerGas: GAS.MAXPRIORITYFEEPERGAS,
+      gasPrice: GAS.OLDGASPRICE,
     });
   } catch (e) {
     console.error("sendUbq error", e);
