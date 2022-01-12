@@ -27,8 +27,9 @@ const Provider: React.FC = ({ children }) => {
   }, []);
 
   const [stakedBalances, setstakedBalances] = useState<Array<BigNumber>>();
-  const [totalSupplyLP, settotalSupplyLP] = useState<Array<BigNumber>>();
+  const [totalFarmSupplyLP, settotalFarmSupplyLP] = useState<Array<BigNumber>>();
   const [lpPercents, setlpPercents] = useState<Array<BigNumber>>();
+  const [farmPoolRatios, setFarmPoolRatios] = useState<Array<BigNumber>>();
   const [earnedBalances, setearnedBalances] = useState<Array<BigNumber>>();
   const [FarmPooledTokens, setFarmPooledTokens] = useState<Array<IPooledTokens>>();
 
@@ -69,28 +70,53 @@ const Provider: React.FC = ({ children }) => {
     if (fetchedTotalSupplyLPThisBlock.current) return;
     fetchedTotalSupplyLPThisBlock.current = true;
 
-    let percents = [];
-    let totalSupply = [];
+    let farmToPoolLPRatios = [];
+    let userLpPercents = [];
+    let farmTotalSupply = [];
     for (let i = 0; i < AvailableFarms.length; i++) {
-      const bigTotalSupply = new BigNumber(await getPoolTotalSupply(ubiq.contracts.pools[i]));
+      const bigLPTotalSupply = new BigNumber(await getPoolTotalSupply(ubiq.contracts.lps[i]));
+
+      // get the Farm Contract lP Total tokens
+      const bigFarmTotalSupply = new BigNumber(await getPoolTotalSupply(ubiq.contracts.pools[i]));
       const stakedLpSupply = new BigNumber(await getStaked(ubiq.contracts.pools[i], account));
 
       let lpPercent = new BigNumber(0);
 
       if (stakedLpSupply !== undefined) {
-        lpPercent = stakedLpSupply.div(bigTotalSupply);
+        lpPercent = stakedLpSupply.div(bigFarmTotalSupply);
       }
 
-      percents.push(lpPercent);
-      totalSupply.push(bigTotalSupply);
+      let farmLPratio = new BigNumber(0);
+
+      if (bigLPTotalSupply !== undefined && bigFarmTotalSupply !== undefined) {
+        farmLPratio = bigFarmTotalSupply.div(bigLPTotalSupply);
+      }
+
+      userLpPercents.push(lpPercent);
+      farmTotalSupply.push(bigFarmTotalSupply);
+      farmToPoolLPRatios.push(farmLPratio);
+
+      // DEBUG:
+      // console.log("===")
+      // console.log('farm', AvailableFarms[i].name)
+      // console.log("bigFarmTotalSupply", bigFarmTotalSupply.toString())
+      // console.log("bigLPTotalSupply  ", bigLPTotalSupply.toString())
+      // console.log('farmLPratio', farmLPratio.toNumber())
     }
 
-    settotalSupplyLP(totalSupply);
-    setlpPercents(percents);
-  }, [settotalSupplyLP, setlpPercents, account, ubiq]);
+    settotalFarmSupplyLP(farmTotalSupply);
+    setlpPercents(userLpPercents);
+    setFarmPoolRatios(farmToPoolLPRatios);
+  }, [setFarmPoolRatios, settotalFarmSupplyLP, setlpPercents, account, ubiq]);
 
   const fetchCurrentStats = useCallback(async () => {
-    if (lpPercents === undefined || totalSupplyLP === undefined || lpTokenReserves === undefined || tokenPrices === undefined) {
+    if (
+      lpPercents === undefined ||
+      totalFarmSupplyLP === undefined ||
+      lpTokenReserves === undefined ||
+      tokenPrices === undefined ||
+      farmPoolRatios === undefined
+    ) {
       return;
     }
     if (fetchedStatsThisBlock.current) return;
@@ -114,8 +140,9 @@ const Provider: React.FC = ({ children }) => {
           lpTokenReserves[i],
           AvailableFarms[i].lp.address,
           AvailableFarms[i].yieldfarm.address,
-          totalSupplyLP[i],
-          lpPercents[i]
+          totalFarmSupplyLP[i], // farm contract total LP tokens supplied
+          lpPercents[i], // user address percent of LP tokens staked
+          farmPoolRatios[i]
         );
 
         apyAry.push(isNaN(stats.farmApy) ? 0 : stats.farmApy);
@@ -136,7 +163,7 @@ const Provider: React.FC = ({ children }) => {
     setCurrentAPY(apyAry);
     setCurrentTVL(tvlAry);
     setFarmPooledTokens(pooledInFarm);
-  }, [ethereum, lpTokenReserves, tokenPrices, lpPercents, totalSupplyLP]);
+  }, [ethereum, lpTokenReserves, tokenPrices, lpPercents, totalFarmSupplyLP, farmPoolRatios]);
 
   const setupPooledTokens = useCallback(() => {
     if (lpPercents === undefined || FarmPooledTokens === undefined) {
@@ -203,7 +230,7 @@ const Provider: React.FC = ({ children }) => {
         setConfirmModal: customTxModal,
         earnedBalances,
         stakedBalances,
-        totalSupplyLP,
+        totalFarmSupplyLP,
         lpPercents,
         currentApy: CurrentAPY,
         currentTvl: CurrentTVL,
