@@ -28,7 +28,7 @@ export const INK_GRANS_FarmContract = "0xC4f628150EaDcA9864641e3BF65F8Ea4Fd75e23
 export const INK_ESCH_LPAddress = "0x4030c26348628e1eeb11955c68e651c7027b04f9";
 export const INK_ESCH_FarmContract = "0x6E59E5cd333CE71D3AFDEdae09949729dC2fe4B3";
 
-export const UBQ_ESCH_LPAddress = "0xf102ad140b26c3c6af9e9358da9deaa27cb1dbea";
+// This farm uses the ESCH_UBQ_LPAddress from one of the community farms
 export const UBQ_ESCH_FarmContract = "0x2f161631b3622881EB7125f3243A4CF35271dE02";
 
 // Community Farms:
@@ -132,7 +132,7 @@ export const AvailableFarms: Array<IFarm> = [
       reward: INK_token,
     },
     lp: {
-      address: UBQ_ESCH_LPAddress,
+      address: ESCH_UBQ_LPAddress,
       url: "https://shinobi.ubiq.ninja/#/add/" + UBQ + "/" + ESCH,
     },
     tokenA: UBQ_token,
