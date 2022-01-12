@@ -54,6 +54,9 @@
 ## 1.2.0
 - ubq/esch farm added
 
-## Unreleased
+## 1.3.0
 - hotfix for staked token value calculations
 - updated TGE1 farm pair name
+
+## Unreleased
+nothing at this time
