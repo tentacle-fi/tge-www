@@ -51,6 +51,8 @@
 ## 1.1.1
 - fix for gas prices on donate button(s)
 
+## 1.2.0
+- ubq/esch farm added
 
 ## Unreleased
 nothing at this time
