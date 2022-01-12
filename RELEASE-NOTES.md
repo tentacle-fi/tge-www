@@ -54,5 +54,8 @@
 ## 1.2.0
 - ubq/esch farm added
 
-## Unreleased
+## 1.3.0
 - hotfix for staked token value calculations
+
+## Unreleased
+nothing at this time
