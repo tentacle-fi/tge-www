@@ -72,6 +72,7 @@ const Provider: React.FC = ({ children }) => {
     let percents = [];
     let totalSupply = [];
     for (let i = 0; i < AvailableFarms.length; i++) {
+      // get the Farm Contract lP Total tokens
       const bigTotalSupply = new BigNumber(await getPoolTotalSupply(ubiq.contracts.pools[i]));
       const stakedLpSupply = new BigNumber(await getStaked(ubiq.contracts.pools[i], account));
 
@@ -114,8 +115,8 @@ const Provider: React.FC = ({ children }) => {
           lpTokenReserves[i],
           AvailableFarms[i].lp.address,
           AvailableFarms[i].yieldfarm.address,
-          totalSupplyLP[i],
-          lpPercents[i]
+          totalSupplyLP[i], // farm contract total LP tokens supplied
+          lpPercents[i] // user address percent of LP tokens staked
         );
 
         apyAry.push(isNaN(stats.farmApy) ? 0 : stats.farmApy);

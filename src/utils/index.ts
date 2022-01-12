@@ -270,7 +270,7 @@ export const getCurrentStats = async (
   reserves: IReserves,
   poolLpTokenAddress: string,
   farmContractAddress: string,
-  totalSupplyLP: BigNumber,
+  totalFarmLPSupply: BigNumber,
   lpPercent: BigNumber
 ): Promise<ICurrentStats> => {
   try {
@@ -280,37 +280,38 @@ export const getCurrentStats = async (
     // a bug was found when using this with other farms. The error it fixes is approx 1 or 2% at times in established
     // farms. But the error it presents when the farms are very small or having little LP staked is closer to 98% error.
     // removing until a better solution can be found.
-    // const poolLpCalcRatio = bnToDec(totalSupplyLP) / Math.sqrt(reserves.token0 * reserves.token1);
-    // const farm_token0 = (bnToDec(totalSupplyLP) * poolLpCalcRatio) / Math.sqrt(reserves.ratio1over0);
-    // const farm_token1 = (bnToDec(totalSupplyLP) * poolLpCalcRatio) / Math.sqrt(reserves.ratio0over1);
+    // const poolLpCalcRatio = bnToDec(totalFarmLPSupply) / Math.sqrt(reserves.token0 * reserves.token1);
+    // const farm_token0 = (bnToDec(totalFarmLPSupply) * poolLpCalcRatio) / Math.sqrt(reserves.ratio1over0);
+    // const farm_token1 = (bnToDec(totalFarmLPSupply) * poolLpCalcRatio) / Math.sqrt(reserves.ratio0over1);
 
-    const farm_token0 = bnToDec(totalSupplyLP) / Math.sqrt(reserves.ratio1over0);
-    const farm_token1 = bnToDec(totalSupplyLP) / Math.sqrt(reserves.ratio0over1);
-    const account_token0 = lpPercent.toNumber() * reserves.token0;
-    const account_token1 = lpPercent.toNumber() * reserves.token1;
+    const farm_token0 = bnToDec(totalFarmLPSupply) * Math.sqrt(reserves.ratio0over1);
+    const farm_token1 = bnToDec(totalFarmLPSupply) * Math.sqrt(reserves.ratio1over0);
+    const account_token0 = lpPercent.toNumber() * farm_token0;
+    const account_token1 = lpPercent.toNumber() * farm_token1;
     const farmTvl = farm_token0 * token0Price + farm_token1 * token1Price;
     const farmApy = ((rewardTokenPrice * dailyTokenRewardEmissions * 365) / farmTvl) * 100;
 
     // DEBUG: all the log statements for debug that make sense to have. if statement filters the info by address to reduce noise/mistakes
-    // if (poolLpTokenAddress === "0x2cd09d8c0484dfb32eb2f23ead45f14c7602921b") {
-    // console.log("token0 price", token0Price);
-    // console.log("token1 price", token1Price);
-    // console.log("token0", reserves.token0);
-    // console.log("token1", reserves.token1);
-    // console.log('lpPercent', lpPercent.toNumber())
-    // console.log('token0 / token1', reserves.ratio0over1)
-    // console.log("totalSupplylp", bnToDec(totalSupplyLP));
-    // console.log("est lp supply", Math.sqrt(reserves.token0 * reserves.token1));
-    // console.log("lp ratio", poolLpCalcRatio);
-    // console.log("pool tvl", poolTvl);
-    // console.log("");
-    // console.log("poolLpTokenAddress", poolLpTokenAddress);
-    // console.log("bnToDec(totalSupplyLP)", bnToDec(totalSupplyLP));
-    // console.log("farm token0", farm_token0);
-    // console.log("farm token1", farm_token1);
-    // console.log("farm tvl", farmTvl);
-    // console.log("farm apy", farmApy);
-    // console.log('')
+    // if (farmContractAddress === "0x2f161631b3622881EB7125f3243A4CF35271dE02") {
+    //   console.log('=======')
+    //   console.log("token0 price", token0Price);
+    //   console.log("token1 price", token1Price);
+    //   console.log("token0", reserves.token0);
+    //   console.log("token1", reserves.token1);
+    //   console.log('lpPercent', lpPercent.toNumber())
+    //   console.log('token0 / token1', reserves.ratio0over1)
+    //   console.log("totalFarmLPSupply", bnToDec(totalFarmLPSupply));
+    //   console.log("est lp supply", Math.sqrt(reserves.token0 * reserves.token1));
+    //   // console.log("lp ratio", poolLpCalcRatio);
+    //   console.log("pool tvl", poolTvl);
+    //   console.log("");
+    //   console.log("poolLpTokenAddress", poolLpTokenAddress);
+    //   console.log("farmContractAddress", farmContractAddress)
+    //   console.log("farm token0", farm_token0);
+    //   console.log("farm token1", farm_token1);
+    //   console.log("farm tvl", farmTvl);
+    //   console.log("farm apy", farmApy);
+    //   console.log('')
     // }
 
     return {
