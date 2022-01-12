@@ -155,9 +155,9 @@ export const AvailableFarms: Array<IFarm> = [
     tokenA: GRANS_token,
     tokenB: UBQ_token,
   },
-  // ESCH/UBQ -> reward TGE1
+  // UBQ/ESCH -> reward TGE1
   {
-    name: `${ESCH_token.symbol}/${UBQ_token.symbol}`,
+    name: `${UBQ_token.symbol}/${ESCH_token.symbol}`,
     official: false,
     yieldfarm: {
       address: TGE1_ESCH_UBQ_FarmContract,

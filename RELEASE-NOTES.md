@@ -56,3 +56,4 @@
 
 ## Unreleased
 - hotfix for staked token value calculations
+- updated TGE1 farm pair name
