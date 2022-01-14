@@ -38,6 +38,26 @@
 - displayed values for token0/token1 in staked balance accuracy improved
 - ubq Price oracle timeframe expanded to reduce potential for missing the latest price
 
+## 1.0.3
+- TGE1 Community Farm added
+- cleanup
+- update block timer to use new 22 second average target
+- update oracle block calculations to use new 22 second target
+
+## 1.1.0
+- bumping version number to `1.1.0` with a future release incrementing the minor number
+- hotfix for gas spending due to EIP-1559
+
+## 1.1.1
+- fix for gas prices on donate button(s)
+
+## 1.2.0
+- ubq/esch farm added
+
+## 1.3.0
+- hotfix for staked token value calculations
+- updated TGE1 farm pair name
+
 ## Unreleased
 
 DAO Info Page
