@@ -44,7 +44,7 @@
 - update block timer to use new 22 second average target
 - update oracle block calculations to use new 22 second target
 
-## Unreleased
+## Alpha
 
 - add farm tier label to the Tentacle farms (tier 1, tier 2, etc...)
 
@@ -57,3 +57,7 @@ DAO Info Page
 - add mission statement
 - marketcap added
 - ToS added to footer
+
+## unreleased
+
+- added tooltip to tier label
