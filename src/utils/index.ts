@@ -9,6 +9,7 @@ import {
   INK_UBQ_FarmContract,
   INK_GRANS_FarmContract,
   INK_ESCH_FarmContract,
+  INK_UBQ_ESCH_FarmContract,
   INK_UBQ_LPAddress,
   INK_GRANS_LPAddress,
   INK_ESCH_LPAddress,
@@ -393,12 +394,14 @@ export const getDailyTransactions = async (provider: provider): Promise<IDailyTr
     const UBQINKFARMCONTRACT = getFarmContract(provider, INK_UBQ_FarmContract);
     const GRANSINKFARMCONTRACT = getFarmContract(provider, INK_GRANS_FarmContract);
     const INKESCHFARMCONTRACT = getFarmContract(provider, INK_ESCH_FarmContract);
+    const INKUBQESCHFARMCONTRACT = getFarmContract(provider, INK_UBQ_ESCH_FarmContract);
 
     // TODO: any way to make this more flexible using availablefarms?
     inkResults = await INKCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
     inkUbqFarmResults = await UBQINKFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
     gransInkFarmResults = await GRANSINKFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
     inkEschFarmResults = await INKESCHFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
+    inkUbqEschFarmResults = await INKUBQESCHFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
 
     // Not working yet
     //
@@ -418,7 +421,7 @@ export const getDailyTransactions = async (provider: provider): Promise<IDailyTr
   }
 
   return {
-    count: inkResults.length + inkUbqFarmResults.length + gransInkFarmResults.length + inkEschFarmResults.length,
+    count: inkResults.length + inkUbqFarmResults.length + gransInkFarmResults.length + inkEschFarmResults.length + inkUbqEschFarmResults.length,
   } as IDailyTransactions;
 };
 
