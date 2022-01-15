@@ -379,7 +379,7 @@ export const getDailyTransactions = async (provider: provider): Promise<IDailyTr
   const web3 = new Web3(provider);
 
   const oneDayInSeconds = 60 * 60 * 24;
-  const blockTime = 88;
+  const blockTime = 22;
   const oneDayInBlocks = Math.floor(oneDayInSeconds / blockTime);
   let inkResults = [];
   let inkUbqFarmResults = [];

@@ -60,6 +60,8 @@
 
 ## Unreleased
 
+- add farm tier label to the Tentacle farms (tier 1, tier 2, etc...)
+
 DAO Info Page
 - ecosystemTvl added
 - circulating INK added NOTE: Calculates based on harvested INK. IE, unharvested INK is not circulating based on this calculation.
@@ -68,3 +70,4 @@ DAO Info Page
 - DAO holdings added, including multisig and farm addresses
 - add mission statement
 - marketcap added
+- ToS added to footer
