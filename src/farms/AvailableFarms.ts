@@ -145,7 +145,7 @@ export const AvailableFarms: Array<IFarm> = [
     },
     tokenA: UBQ_token,
     tokenB: ESCH_token,
-    phase: "T3"
+    phase: "T3",
   },
   // COMMUNITY Pools/Farms
   // GRANS/UBQ
