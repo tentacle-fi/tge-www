@@ -386,6 +386,7 @@ export const getDailyTransactions = async (provider: provider): Promise<IDailyTr
   let inkUbqFarmResults = [];
   let gransInkFarmResults = [];
   let inkEschFarmResults = [];
+  let inkUbqEschFarmResults = [];
   const currentBlock = await web3.eth.getBlockNumber();
 
   try {
