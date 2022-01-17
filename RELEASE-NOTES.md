@@ -61,3 +61,4 @@ DAO Info Page
 ## unreleased
 
 - added tooltip to tier label
+- adjusted dao info page text (summary)
