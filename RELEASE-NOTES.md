@@ -47,6 +47,8 @@
 ## Alpha
 
 - add farm tier label to the Tentacle farms (tier 1, tier 2, etc...)
+- added tooltip to tier label
+- adjusted dao info page text (summary)
 
 DAO Info Page
 - ecosystemTvl added
@@ -59,6 +61,4 @@ DAO Info Page
 - ToS added to footer
 
 ## unreleased
-
-- added tooltip to tier label
-- adjusted dao info page text (summary)
+nothing at this time
