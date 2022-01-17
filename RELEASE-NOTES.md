@@ -48,5 +48,15 @@
 - bumping version number to `1.1.0` with a future release incrementing the minor number
 - hotfix for gas spending due to EIP-1559
 
+## 1.1.1
+- fix for gas prices on donate button(s)
+
+## 1.2.0
+- ubq/esch farm added
+
+## 1.3.0
+- hotfix for staked token value calculations
+- updated TGE1 farm pair name
+
 ## Unreleased
 nothing at this time
