@@ -66,7 +66,7 @@ const UnHarvested: React.FC<UnHarvestProps> = React.memo(({ farmKey, earnedBalan
 
       setConfirmModal(true);
       setisHarvesting(true);
-      const p = harvest(ubiq, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
+      await harvest(ubiq, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
         if (txHash === "") {
           setisHarvesting(false);
         }
@@ -83,13 +83,10 @@ const UnHarvested: React.FC<UnHarvestProps> = React.memo(({ farmKey, earnedBalan
       });
 
       if (!all) {
-        await p;
-
         setConfirmModal(false);
-        setisHarvesting(false);
       }
 
-      return p;
+      setisHarvesting(false);
     },
     [account, setConfirmModal, setisHarvesting, ubiq, farmKey]
   );
