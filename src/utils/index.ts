@@ -3,9 +3,19 @@ import { ethers } from "ethers";
 import Web3 from "web3";
 import { provider, TransactionReceipt } from "web3-core";
 import { AbiItem } from "web3-utils";
-
+import {
+  INK,
+  ESCH,
+  INK_UBQ_FarmContract,
+  INK_GRANS_FarmContract,
+  INK_ESCH_FarmContract,
+  INK_UBQ_LPAddress,
+  INK_GRANS_LPAddress,
+  INK_ESCH_LPAddress,
+  DAO_MULTISIG,
+  DAO_FARMING,
+} from "farms/AvailableFarms";
 import { GAS } from "ubiq-sdk/utils";
-
 import ERC20ABI from "constants/abi/ERC20.json";
 import ShinobiPoolERC20 from "ubiq-sdk/lib/clean_build/contracts/ShinobiPool.json";
 
@@ -133,6 +143,12 @@ export const getCoinBalanceAsBigNum = async (provider: provider, userAddress: st
 export const getERC20Contract = (provider: provider, address: string) => {
   const web3 = new Web3(provider);
   const contract = new web3.eth.Contract(ERC20ABI.abi as unknown as AbiItem, address);
+  return contract;
+};
+
+export const getFarmContract = (provider: provider, address: string) => {
+  const web3 = new Web3(provider);
+  const contract = new web3.eth.Contract(ShinobiPoolERC20.abi as unknown as AbiItem, address);
   return contract;
 };
 
@@ -277,6 +293,150 @@ export interface ICurrentStats {
     token1: number;
   };
 }
+
+export interface ICirculatingSupply {
+  heldByMultisig: BigNumber;
+  heldByUBQINK: BigNumber;
+  heldByGRANSUBQ: BigNumber;
+  heldByUBQESCH: BigNumber;
+  total: BigNumber;
+}
+
+export interface IDaoHoldings {
+  ubq: BigNumber;
+  ink: BigNumber;
+  esch: BigNumber;
+  lp: {
+    ubqInk: BigNumber;
+    gransInk: BigNumber;
+    inkEsch: BigNumber;
+  };
+}
+
+export const getDaoHoldings = async (provider: provider): Promise<IDaoHoldings> => {
+  // Get coin and token holdings from the DAO multisig address and farming address
+  const ubqHoldings = (await getCoinBalanceAsBigNum(provider, DAO_MULTISIG)).plus(await getCoinBalanceAsBigNum(provider, DAO_FARMING));
+  const inkHoldings = (await getBalanceAsBigNum(provider, INK, DAO_MULTISIG)).plus(await getBalanceAsBigNum(provider, INK, DAO_FARMING));
+  const eschHoldings = (await getBalanceAsBigNum(provider, ESCH, DAO_MULTISIG)).plus(await getBalanceAsBigNum(provider, ESCH, DAO_FARMING));
+
+  // Get lp holdings from the DAO multisig address and farming address
+  const ubqInkHoldings = (await getBalanceAsBigNum(provider, INK_UBQ_LPAddress, DAO_MULTISIG)).plus(
+    await getBalanceAsBigNum(provider, INK_UBQ_LPAddress, DAO_FARMING)
+  );
+  const gransInkHoldings = (await getBalanceAsBigNum(provider, INK_GRANS_LPAddress, DAO_MULTISIG)).plus(
+    await getBalanceAsBigNum(provider, INK_GRANS_LPAddress, DAO_FARMING)
+  );
+  const inkEschHoldings = (await getBalanceAsBigNum(provider, INK_ESCH_LPAddress, DAO_MULTISIG)).plus(
+    await getBalanceAsBigNum(provider, INK_ESCH_LPAddress, DAO_FARMING)
+  );
+
+  return {
+    ubq: ubqHoldings,
+    ink: inkHoldings,
+    esch: eschHoldings,
+    lp: {
+      ubqInk: ubqInkHoldings,
+      gransInk: gransInkHoldings,
+      inkEsch: inkEschHoldings,
+    },
+  } as IDaoHoldings;
+};
+
+// Calculates the circulating INK supply based on the amount still held by
+// the DAO minting address plus a sum of all of the individual farm holdings
+export const getCirculatingSupply = async (provider: provider): Promise<ICirculatingSupply> => {
+  const totalSupply = new BigNumber(88 * 1000 * 1000); // 88 million
+
+  // This address holds the minted INK which is yet to be distributed
+  const INKMINTEDHOLDINGADDRESS = "0xB47D5874D2db5f398cfA0E53a5A020362F2AEAeF";
+
+  // Grab all the individual INK quantities
+  let heldByDeployer = await getBalanceAsBigNum(provider, INK, INKMINTEDHOLDINGADDRESS);
+  let heldByUBQINK = await getBalanceAsBigNum(provider, INK, INK_UBQ_FarmContract);
+  let heldByGRANSUBQ = await getBalanceAsBigNum(provider, INK, INK_GRANS_FarmContract);
+  let heldByUBQESCH = await getBalanceAsBigNum(provider, INK, INK_ESCH_FarmContract);
+  const subtotal = heldByDeployer.plus(heldByUBQINK).plus(heldByGRANSUBQ).plus(heldByUBQESCH).toString();
+
+  // Total them up, and subtract them from the totalSupply
+  const circulatingTotal = totalSupply.minus(subtotal);
+
+  // console.log(
+  //   "heldByDeployer:",
+  //   heldByDeployer,
+  //   "heldByUBQINK:",
+  //   heldByUBQINK,
+  //   "heldByGRANSUBQ:",
+  //   heldByGRANSUBQ,
+  //   "heldByUBQESCH:",
+  //   heldByUBQESCH,
+  //   "subtotal:",
+  //   subtotal,
+  //   "total:",
+  //   circulatingTotal.toString()
+  // );
+
+  return {
+    heldByMultisig: heldByDeployer,
+    heldByUBQINK: heldByUBQINK,
+    heldByGRANSUBQ: heldByGRANSUBQ,
+    heldByUBQESCH: heldByUBQESCH,
+    total: circulatingTotal,
+  } as ICirculatingSupply;
+};
+
+export interface IDailyTransactions {
+  count: number;
+}
+
+export const getDailyTransactions = async (provider: provider): Promise<IDailyTransactions> => {
+  if (provider === undefined || provider === null) {
+    return { count: 0 };
+  }
+  const web3 = new Web3(provider);
+
+  const oneDayInSeconds = 60 * 60 * 24;
+  const blockTime = 22;
+  const oneDayInBlocks = Math.floor(oneDayInSeconds / blockTime);
+  let inkResults = [];
+  let inkUbqFarmResults = [];
+  let gransInkFarmResults = [];
+  let inkEschFarmResults = [];
+  const currentBlock = await web3.eth.getBlockNumber();
+
+  try {
+    // TODO: Perhaps we should just store these in available farms?
+    const INKCONTRACT = getERC20Contract(provider, INK);
+    const UBQINKFARMCONTRACT = getFarmContract(provider, INK_UBQ_FarmContract);
+    const GRANSINKFARMCONTRACT = getFarmContract(provider, INK_GRANS_FarmContract);
+    const INKESCHFARMCONTRACT = getFarmContract(provider, INK_ESCH_FarmContract);
+
+    // TODO: any way to make this more flexible using availablefarms?
+    inkResults = await INKCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
+    inkUbqFarmResults = await UBQINKFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
+    gransInkFarmResults = await GRANSINKFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
+    inkEschFarmResults = await INKESCHFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
+
+    // Not working yet
+    //
+    // // Collect swap volume information
+    // for( const singleEvent of inkResults){
+    //     // If it's a transfer related to the INK contract, someone sent INK
+    //     if ( singleEvent.event === "Transfer" && singleEvent.address === INK){
+    //         console.log("Event:", singleEvent.event, "of INK valued at", bnToDec(new BigNumber(singleEvent.returnValues.value)));
+    //         // This is a Shinobi router address
+    //         if( singleEvent.returnValues.to === "0xf3cE4655A44146C8EeFbf45651F6479F9d67a77a"){
+    //             console.log("Event is a swap")
+    //         }
+    //     }
+    // }
+  } catch (e) {
+    console.error("getDailyTransactions() threw error:", e);
+  }
+
+  return {
+    count: inkResults.length + inkUbqFarmResults.length + gransInkFarmResults.length + inkEschFarmResults.length,
+  } as IDailyTransactions;
+};
 
 export const getCurrentStats = async (
   provider: provider,

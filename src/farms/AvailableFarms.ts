@@ -4,6 +4,11 @@ import gransLogo from "assets/tokens/grans-flat.png";
 import eschLogo from "assets/tokens/esch-logo.png";
 import tge1Logo from "assets/tokens/tge1.png";
 
+// Significant addresses:
+
+export const DAO_MULTISIG = "0xCC7D76005bf1616e55cfDFF4cbfB5C29199C2808";
+export const DAO_FARMING = "0x2e21bA1c05b6f7090091d053A0d0cf9e986A1c12";
+
 // Token addresses:
 export const Logos = {
   ink: inkLogo,
@@ -89,6 +94,7 @@ export const AvailableFarms: Array<IFarm> = [
     },
     tokenA: UBQ_token,
     tokenB: INK_token,
+    phase: "T1",
   },
   // GRANS/INK
   {
@@ -105,6 +111,7 @@ export const AvailableFarms: Array<IFarm> = [
     },
     tokenA: GRANS_token,
     tokenB: INK_token,
+    phase: "T2",
   },
   // ESCH/INK
   {
@@ -121,6 +128,7 @@ export const AvailableFarms: Array<IFarm> = [
     },
     tokenA: INK_token,
     tokenB: ESCH_token,
+    phase: "T2",
   },
   // UBQ/ESCH
   {
@@ -137,6 +145,7 @@ export const AvailableFarms: Array<IFarm> = [
     },
     tokenA: UBQ_token,
     tokenB: ESCH_token,
+    phase: "T3",
   },
   // COMMUNITY Pools/Farms
   // GRANS/UBQ
@@ -154,6 +163,7 @@ export const AvailableFarms: Array<IFarm> = [
     },
     tokenA: GRANS_token,
     tokenB: UBQ_token,
+    phase: "",
   },
   // UBQ/ESCH -> reward TGE1
   {
@@ -170,6 +180,7 @@ export const AvailableFarms: Array<IFarm> = [
     },
     tokenA: UBQ_token,
     tokenB: ESCH_token,
+    phase: "",
   },
 ];
 
@@ -234,4 +245,6 @@ export interface IFarm {
   tokenA: IToken;
   // the Token1 token
   tokenB: IToken;
+  // the phase of the farm (for INK farms only)
+  phase: string;
 }

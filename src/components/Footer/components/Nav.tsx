@@ -24,6 +24,9 @@ const Nav: React.FC = () => {
       <SLink external href="https://medium.com/@tentaclefinance">
         Medium
       </SLink>
+      <SLink external href="https://github.com/tentacle-fi/tentacle-legal/blob/main/ToS/General.md">
+        ToS
+      </SLink>
     </StyledNav>
   );
 };
