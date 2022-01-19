@@ -6,21 +6,24 @@ import octoLogo from "assets/octo_purple.png";
 const Logo: React.FC = () => {
   return (
     <StyledLogo to="/">
-      <img src={octoLogo} alt="Tentacle Finance Logo" style={{ width: 55 }} />
+      <img src={octoLogo} alt="Tentacle Finance Logo" style={{ width: "auto", height: 68 }} />
 
-      <StyledText>Tentacle.Finance</StyledText>
+      <StyledText>
+        Tentacle
+        <br />
+        Finance
+      </StyledText>
     </StyledLogo>
   );
 };
 
 const StyledLogo = styled(Link)`
-  align-items: left;
+  align-items: center;
   display: flex;
-  flex-direction: column;
-  justify-content: left;
+  flex-direction: row;
   margin: 0 0 0 15px;
-  min-height: 44px;
-  min-width: 55px;
+  min-height: 72px;
+  min-width: 72px;
   padding: 0;
   text-decoration: none;
 
@@ -33,7 +36,7 @@ const StyledText = styled.span`
   color: ${(props) => props.theme.textColor};
   font-size: 18px;
   font-weight: 700;
-  margin-left: ${(props) => props.theme.spacing[2]}px;
+  margin-left: 0px;
   @media (max-width: 980px) {
     display: none;
   }
