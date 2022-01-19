@@ -44,8 +44,21 @@
 - update block timer to use new 22 second average target
 - update oracle block calculations to use new 22 second target
 
-## Alpha
+## 1.1.0
+- bumping version number to `1.1.0` with a future release incrementing the minor number
+- hotfix for gas spending due to EIP-1559
 
+## 1.1.1
+- fix for gas prices on donate button(s)
+
+## 1.2.0
+- ubq/esch farm added
+
+## 1.3.0
+- hotfix for staked token value calculations
+- updated TGE1 farm pair name
+
+## Alpha
 - add farm tier label to the Tentacle farms (tier 1, tier 2, etc...)
 - added tooltip to tier label
 - adjusted dao info page text (summary)
@@ -60,5 +73,6 @@ DAO Info Page
 - marketcap added
 - ToS added to footer
 
-## unreleased
+
+## Unreleased
 nothing at this time

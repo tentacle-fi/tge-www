@@ -33,6 +33,9 @@ export const INK_GRANS_FarmContract = "0xC4f628150EaDcA9864641e3BF65F8Ea4Fd75e23
 export const INK_ESCH_LPAddress = "0x4030c26348628e1eeb11955c68e651c7027b04f9";
 export const INK_ESCH_FarmContract = "0x6E59E5cd333CE71D3AFDEdae09949729dC2fe4B3";
 
+// This farm uses the ESCH_UBQ_LPAddress from one of the community farms
+export const INK_UBQ_ESCH_FarmContract = "0x2f161631b3622881EB7125f3243A4CF35271dE02";
+
 // Community Farms:
 export const GRANS_UBQ_LPAddress = "0x6321c294f34c2cdaf61012ac4f3588a527f4d990";
 export const GRANS_UBQ_FarmContract = "0x9969A0123c7e7553dac5390221e321C05630d102";
@@ -127,6 +130,23 @@ export const AvailableFarms: Array<IFarm> = [
     tokenB: ESCH_token,
     phase: "T2",
   },
+  // UBQ/ESCH
+  {
+    name: `${UBQ_token.symbol}/${ESCH_token.symbol}`,
+    official: true,
+    yieldfarm: {
+      address: INK_UBQ_ESCH_FarmContract,
+      start_time: 1642262400 * 1000,
+      reward: INK_token,
+    },
+    lp: {
+      address: ESCH_UBQ_LPAddress,
+      url: "https://shinobi.ubiq.ninja/#/add/" + UBQ + "/" + ESCH,
+    },
+    tokenA: UBQ_token,
+    tokenB: ESCH_token,
+    phase: "T3",
+  },
   // COMMUNITY Pools/Farms
   // GRANS/UBQ
   {
@@ -145,9 +165,9 @@ export const AvailableFarms: Array<IFarm> = [
     tokenB: UBQ_token,
     phase: "",
   },
-  // ESCH/UBQ -> reward TGE1
+  // UBQ/ESCH -> reward TGE1
   {
-    name: `${ESCH_token.symbol}/${UBQ_token.symbol}`,
+    name: `${UBQ_token.symbol}/${ESCH_token.symbol}`,
     official: false,
     yieldfarm: {
       address: TGE1_ESCH_UBQ_FarmContract,
