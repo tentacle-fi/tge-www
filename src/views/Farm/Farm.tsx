@@ -24,6 +24,7 @@ import Typography from "@mui/material/Typography";
 import Alert from "@mui/material/Alert";
 import SLink from "components/SLink";
 import InfoIconWithTooltip from "components/InfoIconWithTooltip";
+import Tooltip from "@mui/material/Tooltip";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import LabelIcon from "@mui/icons-material/Label";
 
@@ -144,10 +145,12 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
         return <></>;
       }
       return (
-        <div style={{ position: "absolute", left: "-15px" }}>
-          <LabelIcon sx={{ position: "absolute", left: "0px", fontSize: "38px" }} />
-          <Typography sx={{ position: "absolute", left: "8px", top: "9px", fontSize: "14px" }}>{farm.phase}</Typography>
-        </div>
+        <Tooltip title='Farm "Tier", see Medium introduction article for more info.'>
+          <div style={{ position: "absolute", left: "-15px" }}>
+            <LabelIcon sx={{ position: "absolute", left: "0px", fontSize: "38px" }} />
+            <Typography sx={{ position: "absolute", left: "8px", top: "9px", fontSize: "14px" }}>{farm.phase}</Typography>
+          </div>
+        </Tooltip>
       );
     };
 

@@ -58,7 +58,10 @@
 - hotfix for staked token value calculations
 - updated TGE1 farm pair name
 
-## Unreleased
+## Alpha
+- add farm tier label to the Tentacle farms (tier 1, tier 2, etc...)
+- added tooltip to tier label
+- adjusted dao info page text (summary)
 
 - add farm tier label to the Tentacle farms (tier 1, tier 2, etc...)
 
@@ -71,3 +74,6 @@ DAO Info Page
 - add mission statement
 - marketcap added
 - ToS added to footer
+
+## Unreleased
+nothing at this time

@@ -7,7 +7,7 @@ import PriceRibbon from "./components/PriceRibbon";
 import DAOHoldingsDetails from "./components/DAOHoldingsDetails";
 import Typography from "@mui/material/Typography";
 
-const subtitleText = "Various DAO stats to more easily analyze the Tentacle Finance ecosystem at a glance.";
+const subtitleText = "Tentacle Finance is the first DAO on the Ubiq network, check out some of our stats below!";
 
 const DaoInfo: React.FC = () => {
   return (
