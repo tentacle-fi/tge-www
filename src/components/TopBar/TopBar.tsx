@@ -1,7 +1,5 @@
 import React from "react";
-import Box from "@mui/material/Box";
 import styled from "styled-components";
-
 import Logo from "components/Logo";
 import MenuIcon from "components/icons/Menu";
 import Nav from "./components/Nav";
@@ -15,7 +13,6 @@ interface TopBarProps {
 const TopBar: React.FC<TopBarProps> = ({ onPresentMobileMenu }) => {
   return (
     <StyledTopBar>
-      <Box sx={{ margin: "0 5px 0 5px" }}>
         <StyledTopBarInner>
           <StyledLogoWrapper>
             <Logo />
@@ -30,13 +27,12 @@ const TopBar: React.FC<TopBarProps> = ({ onPresentMobileMenu }) => {
             <MenuIcon />
           </StyledMenuButton>
         </StyledTopBarInner>
-      </Box>
     </StyledTopBar>
   );
 };
 
 const StyledLogoWrapper = styled.div`
-  width: 156px;
+  margin-left: 5px;
   @media (max-width: 530px) {
     margin-left: 10px;
   }
@@ -58,6 +54,7 @@ const StyledTopBarInner = styled.div`
   align-items: center;
   display: flex;
   height: 72px;
+  margin-right: 5px;
   justify-content: space-between;
   max-width: ${(props) => props.theme.siteWidth}px;
   width: 100%;
@@ -76,7 +73,6 @@ const StyledAccountButtonWrapper = styled.div`
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  width: 360px;
   @media (max-width: 400px) {
     justify-content: center;
     width: auto;
