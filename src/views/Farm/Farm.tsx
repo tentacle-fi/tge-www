@@ -17,7 +17,7 @@ import UnstakeModal from "./components/Stake/components/UnstakeModal";
 import BlockIcon from "@mui/icons-material/Block";
 import SettingsIcon from "@mui/icons-material/Settings";
 import useUbiq from "hooks/useUbiq";
-import { redeem, harvest } from "ubiq-sdk/utils";
+import { redeem } from "ubiq-sdk/utils";
 import useApproval from "hooks/useApproval";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import Typography from "@mui/material/Typography";
@@ -82,12 +82,10 @@ const Farm: React.FC = () => {
   const OfficialFarms = generateFarms(true);
   const CommunityFarms = generateFarms(false);
 
-  const { account } = useWallet();
-  const { ubiq } = useUbiq();
-  const { setConfirmModal, earnedBalances } = useFarming();
+  const { earnedBalances, farmFns } = useFarming();
 
   const harvestAllShortcut = useCallback(async () => {
-    if (!ubiq?.contracts?.pools || !earnedBalances) return;
+    if (!farmFns || !earnedBalances) return;
 
     const farmIndexesWithBalances = [] as number[];
 
@@ -97,32 +95,18 @@ const Farm: React.FC = () => {
       }
     });
 
+    let promises = [];
     for (let i = 0; i < farmIndexesWithBalances.length; i++) {
-      await (async () => {
-        setConfirmModal(true, `Please confirm harvesting in your wallet`);
+      const harvestFn = farmFns?.harvest[farmIndexesWithBalances[i]];
+      if (harvestFn === undefined || typeof harvestFn !== "function") {
+        continue;
+      }
 
-        if (farmIndexesWithBalances.length === i + 1) {
-          // this is the last one
-          await harvest(ubiq, account, ubiq.contracts.pools[farmIndexesWithBalances[i]], (txHash: string) => {
-            if (txHash === "") {
-            }
-
-            setConfirmModal(false);
-          }).catch((err) => {
-            if (err.code === 4001) {
-              console.log("Wallet: User cancelled");
-            } else {
-              console.error("Error caught:", err);
-            }
-          });
-
-          setConfirmModal(false);
-        } else {
-          harvest(ubiq, account, ubiq.contracts.pools[farmIndexesWithBalances[i]]);
-        }
-      })();
+      promises.push(harvestFn(i + 1 < farmIndexesWithBalances.length));
     }
-  }, [account, setConfirmModal, ubiq, earnedBalances]);
+
+    Promise.all(promises);
+  }, [farmFns, earnedBalances]);
 
   return (
     <Page>
@@ -337,6 +321,7 @@ const HarvestAll: React.FC<HarvestAllProps> = React.memo(({ farmKey }) => {
 
   const handleRedeem = useCallback(async () => {
     if (!ubiq?.contracts) return;
+    console.log("handleRedeem");
     setConfirmModal(true);
     setisRedeeming(false);
     await redeem(ubiq, account, ubiq.contracts.pools[farmKey], (txHash: string) => {

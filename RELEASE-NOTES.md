@@ -62,3 +62,4 @@
 - build version shown in footer
 - links to charts added
 - mobile style updates
+- Harvest all button to trigger a harvest for each farm with an unharvested balance
