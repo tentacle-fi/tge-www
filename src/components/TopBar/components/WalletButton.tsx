@@ -48,7 +48,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
     if (status === "connected") {
       return (
         <Tooltip title="Connected to Ubiq Network!">
-          <Button size="medium" variant="contained">
+          <Button variant="contained">
             <WifiIcon />
           </Button>
         </Tooltip>
@@ -57,7 +57,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
     if (status === "error") {
       return (
         <Tooltip title="Network Error, click to switch to Ubiq Network">
-          <Button size="small" color="error" onClick={handleSwitchNetwork}>
+          <Button color="error" onClick={handleSwitchNetwork}>
             <SignalWifiStatusbarConnectedNoInternet4Icon />
           </Button>
         </Tooltip>
@@ -139,7 +139,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
 
   return (
     <>
-      <ButtonGroup>
+      <ButtonGroup size="small">
         <ConnectedElements />
         <ConnectionStatusIndicator />
         {!userAccount ? (
@@ -150,7 +150,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
           </Tooltip>
         ) : (
           <Tooltip title="View account details">
-            <Button onClick={handleWalletClick} size="medium" variant="contained" startIcon={<AccountBalanceWalletIcon />}>
+            <Button onClick={handleWalletClick} variant="contained" startIcon={<AccountBalanceWalletIcon />}>
               {userAccount.substring(0, 6) + "..." + userAccount.substring(38)}
             </Button>
           </Tooltip>

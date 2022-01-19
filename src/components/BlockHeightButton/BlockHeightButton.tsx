@@ -47,7 +47,7 @@ const BlockHeightButton: React.FC = () => {
 
   return (
     <Tooltip title="Block height">
-      <Button size="medium" variant="contained">
+      <Button variant="contained">
         <WidgetsIcon sx={{ fontSize: "14px" }} />
         {BlockNum}
 

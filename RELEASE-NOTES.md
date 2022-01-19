@@ -59,4 +59,6 @@
 - updated TGE1 farm pair name
 
 ## Unreleased
-nothing at this time
+- build version shown in footer
+- links to charts added
+- mobile style updates
