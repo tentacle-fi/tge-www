@@ -51,10 +51,11 @@ const StyledTopBar = styled.div`
 `;
 
 const StyledTopBarInner = styled.div`
+  margin-left: auto;
+  margin-right: auto;
   align-items: center;
   display: flex;
   height: 72px;
-  margin-right: 5px;
   justify-content: space-between;
   max-width: ${(props) => props.theme.siteWidth}px;
   width: 100%;
