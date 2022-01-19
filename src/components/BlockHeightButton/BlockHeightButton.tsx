@@ -48,9 +48,10 @@ const BlockHeightButton: React.FC = () => {
   return (
     <Tooltip title="Block height">
       <Button variant="contained">
-        <WidgetsIcon sx={{ fontSize: "14px" }} />
-        {BlockNum}
-
+        <Box sx={{ "@media (max-width: 350px)": { display: "none" } }}>
+          <WidgetsIcon sx={{ fontSize: "14px" }} />
+          {BlockNum}
+        </Box>
         <CircularProgressWithLabel
           value={blockTimeCounter}
           sx={{ color: blockTimeCounter > 22 ? (blockTimeCounter > 66 ? "red" : "blue") : "black" }}
