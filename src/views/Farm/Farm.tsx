@@ -125,9 +125,11 @@ const Farm: React.FC = () => {
         </Typography>
 
         <Box sx={{ width: "100%", textAlign: "right", marginRight: "10%" }}>
-          <Button variant="contained" size="large" onClick={harvestAllShortcut}>
-            Harvest All
-          </Button>
+          <Tooltip title="Click to harvest all available rewards!">
+            <Button variant="contained" size="large" onClick={harvestAllShortcut}>
+              Harvest All
+            </Button>
+          </Tooltip>
         </Box>
 
         {OfficialFarms}

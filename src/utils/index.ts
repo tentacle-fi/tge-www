@@ -206,6 +206,22 @@ export const getDailyRewardRate = async (provider: provider, tokenAddress: strin
   }
 };
 
+const isRewardsPaused = async (provider: provider, contractAddress: string): Promise<boolean> => {
+  try {
+    const web3 = new Web3(provider);
+    const tokenContract = new web3.eth.Contract(ShinobiPoolERC20.abi as unknown as AbiItem, contractAddress);
+    const pausedCall: boolean = await tokenContract.methods.paused().call();
+    const periodFinish = await tokenContract.methods.periodFinish().call();
+
+    const paused = pausedCall === true || periodFinish < Math.ceil(Date.now() / 1000);
+
+    return paused;
+  } catch (e) {
+    console.error("isRewardsPaused error", e);
+    return true;
+  }
+};
+
 export const getTokenPrice = async (
   provider: provider,
   oraclePrice: number,
@@ -275,6 +291,7 @@ export const getCurrentStats = async (
   farmToPoolLPRatio: BigNumber
 ): Promise<ICurrentStats> => {
   try {
+    const isPaused = await isRewardsPaused(provider, farmContractAddress);
     const dailyTokenRewardEmissions = await getDailyRewardRate(provider, farmContractAddress);
     const poolTvl = reserves.token0 * token0Price + reserves.token1 * token1Price;
     const farm_token0 = farmToPoolLPRatio.toNumber() * reserves.token0;
@@ -309,7 +326,7 @@ export const getCurrentStats = async (
 
     return {
       poolTvl: poolTvl,
-      farmApy: farmApy,
+      farmApy: isPaused === true ? 0 : farmApy,
       farmTvl: farmTvl,
       accountPooledTokens: {
         token0: account_token0,

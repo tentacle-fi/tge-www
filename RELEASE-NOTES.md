@@ -63,3 +63,4 @@
 - links to charts added
 - mobile style updates
 - Harvest all button to trigger a harvest for each farm with an unharvested balance
+- APY is now 0% when contract `isPaused` or current date is after `periodFinish`
