@@ -10,7 +10,7 @@ const Nav: React.FC = () => {
   return (
     <StyledNav>
       <SLink external href="https://charts.tentacle.finance/charts">
-        <Button variant="outlined" startIcon={<img alt="Tentacle Finance logo" src={TentacleLogo} height="25" />}   endIcon={<CandlestickChartIcon />}>
+        <Button variant="outlined" startIcon={<img alt="Tentacle Finance logo" src={TentacleLogo} height="25" />} endIcon={<CandlestickChartIcon />}>
           Charts
         </Button>
       </SLink>

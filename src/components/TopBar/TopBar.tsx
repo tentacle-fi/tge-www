@@ -13,20 +13,20 @@ interface TopBarProps {
 const TopBar: React.FC<TopBarProps> = ({ onPresentMobileMenu }) => {
   return (
     <StyledTopBar>
-        <StyledTopBarInner>
-          <StyledLogoWrapper>
-            <Logo />
-          </StyledLogoWrapper>
-          <StyledNavWrapper>
-            <Nav />
-          </StyledNavWrapper>
-          <StyledAccountButtonWrapper>
-            <WalletButton blockHeightButton={<BlockHeightButton />} />
-          </StyledAccountButtonWrapper>
-          <StyledMenuButton onClick={onPresentMobileMenu}>
-            <MenuIcon />
-          </StyledMenuButton>
-        </StyledTopBarInner>
+      <StyledTopBarInner>
+        <StyledLogoWrapper>
+          <Logo />
+        </StyledLogoWrapper>
+        <StyledNavWrapper>
+          <Nav />
+        </StyledNavWrapper>
+        <StyledAccountButtonWrapper>
+          <WalletButton blockHeightButton={<BlockHeightButton />} />
+        </StyledAccountButtonWrapper>
+        <StyledMenuButton onClick={onPresentMobileMenu}>
+          <MenuIcon />
+        </StyledMenuButton>
+      </StyledTopBarInner>
     </StyledTopBar>
   );
 };
