@@ -5,7 +5,7 @@ import styled from "styled-components";
 import BigNumber from "bignumber.js";
 // import { bnToDec, getShortDisplayBalance } from "utils";
 import Typography from "@mui/material/Typography";
-// import Tooltip from "@mui/material/Tooltip";
+import Tooltip from "@mui/material/Tooltip";
 import { useWallet } from "use-wallet";
 import useUbiq from "hooks/useUbiq";
 import useFarming from "hooks/useFarming";
@@ -100,7 +100,9 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
     <>
       <Typography variant="h5">Ecosystem Stats</Typography>
       <StyledStack direction="row" spacing={10}>
-        <Chip label={"Circulating INK: " + circulatingSupply} color="primary" variant="outlined" />
+        <Tooltip title="Doesn't include un-harvested farming rewards">
+          <Chip label={"Circulating INK: " + circulatingSupply} color="primary" variant="outlined" />
+        </Tooltip>
         <Chip label={"Ecosystem TVL: $" + ecosystemTvl} color="primary" variant="outlined" />
         <Chip label={"MarketCap: $" + currentMarketcap} color="primary" variant="outlined" />
         <Chip label={"24hr TXs: " + dailyTransactions} color="primary" variant="outlined" />

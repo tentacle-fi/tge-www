@@ -4,10 +4,7 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 
 import styled from "styled-components";
-// import { bnToDec, getShortDisplayBalance } from "utils";
 import Typography from "@mui/material/Typography";
-// import Tooltip from "@mui/material/Tooltip";
-// import useUbiq from "hooks/useUbiq";
 import useBalances from "hooks/useBalances";
 import { UBQ, INK } from "farms/AvailableFarms";
 
