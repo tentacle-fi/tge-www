@@ -63,8 +63,6 @@
 - added tooltip to tier label
 - adjusted dao info page text (summary)
 
-- add farm tier label to the Tentacle farms (tier 1, tier 2, etc...)
-
 DAO Info Page
 - ecosystemTvl added
 - circulating INK added NOTE: Calculates based on harvested INK. IE, unharvested INK is not circulating based on this calculation.
