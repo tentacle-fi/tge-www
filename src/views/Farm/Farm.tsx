@@ -64,6 +64,32 @@ const Farm: React.FC = () => {
   const OfficialFarms = generateFarms(true);
   const CommunityFarms = generateFarms(false);
 
+  const { earnedBalances, farmFns } = useFarming();
+
+  const harvestAllShortcut = useCallback(async () => {
+    if (!farmFns || !earnedBalances) return;
+
+    const farmIndexesWithBalances = [] as number[];
+
+    earnedBalances.forEach((balance, index) => {
+      if (balance.isGreaterThan(0)) {
+        farmIndexesWithBalances.push(index);
+      }
+    });
+
+    let promises = [];
+    for (let i = 0; i < farmIndexesWithBalances.length; i++) {
+      const harvestFn = farmFns?.harvest[farmIndexesWithBalances[i]];
+      if (harvestFn === undefined || typeof harvestFn !== "function") {
+        continue;
+      }
+
+      promises.push(harvestFn(i + 1 < farmIndexesWithBalances.length));
+    }
+
+    Promise.all(promises);
+  }, [farmFns, earnedBalances]);
+
   return (
     <Page>
       <Box textAlign="center">
@@ -79,6 +105,14 @@ const Farm: React.FC = () => {
         <Typography variant="h4" sx={{ left: "20px", marginTop: "20px" }}>
           Tentacle.Finance Farms <InfoIconWithTooltip tooltipText="Farms owned & operated by the Tentacle Finance DAO" />
         </Typography>
+
+        <Box sx={{ width: "100%", textAlign: "right", marginRight: "10%" }}>
+          <Tooltip title="Click to harvest all available rewards!">
+            <Button variant="contained" size="large" onClick={harvestAllShortcut}>
+              Harvest All
+            </Button>
+          </Tooltip>
+        </Box>
 
         {OfficialFarms}
 
@@ -146,7 +180,7 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
       }
       return (
         <Tooltip title='Farm "Tier", see Medium introduction article for more info.'>
-          <div style={{ position: "absolute", left: "-15px" }}>
+          <div style={{ height: "20px", position: "absolute", left: "-15px" }}>
             <LabelIcon sx={{ position: "absolute", left: "0px", fontSize: "38px" }} />
             <Typography sx={{ position: "absolute", left: "8px", top: "9px", fontSize: "14px" }}>{farm.phase}</Typography>
           </div>
@@ -287,6 +321,7 @@ const HarvestAll: React.FC<HarvestAllProps> = React.memo(({ farmKey }) => {
 
   const handleRedeem = useCallback(async () => {
     if (!ubiq?.contracts) return;
+    console.log("handleRedeem");
     setConfirmModal(true);
     setisRedeeming(false);
     await redeem(ubiq, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
@@ -307,9 +342,7 @@ const HarvestAll: React.FC<HarvestAllProps> = React.memo(({ farmKey }) => {
 
   return (
     <LoadingButton
-      onClick={() => {
-        handleRedeem();
-      }}
+      onClick={handleRedeem}
       endIcon={<BlockIcon />}
       loading={isRedeeming}
       loadingPosition="end"

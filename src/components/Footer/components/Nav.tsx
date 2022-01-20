@@ -1,10 +1,19 @@
 import React from "react";
 import styled from "styled-components";
+import TentacleLogo from "assets/octo_purple.png";
+import CandlestickChartIcon from "@mui/icons-material/CandlestickChart";
+import Button from "@mui/material/Button";
 import SLink from "components/SLink";
 
 const Nav: React.FC = () => {
   return (
     <StyledNav>
+      <SLink external href="https://charts.tentacle.finance/charts">
+        <Button variant="outlined" startIcon={<img alt="Tentacle Finance logo" src={TentacleLogo} height="25" />} endIcon={<CandlestickChartIcon />}>
+          Charts
+        </Button>
+      </SLink>
+
       <SLink href="/addresses">Addresses</SLink>
       <SLink external href="https://twitter.com/TentacleFinance">
         Twitter
@@ -22,13 +31,19 @@ const Nav: React.FC = () => {
   );
 };
 
-const StyledNav = styled.nav`
-  align-items: center;
-  display: flex;
+const StyledNav = styled("nav")({
+  alignItems: "center",
+  display: "flex",
+  flexWrap: "wrap",
+  width: "100%",
 
-  * {
-    padding: 20px;
-  }
-`;
+  a: {
+    padding: " 20px",
+    color: "#888",
+  },
+  "a:hover": {
+    color: "#555",
+  },
+});
 
 export default Nav;

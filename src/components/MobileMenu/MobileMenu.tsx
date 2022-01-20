@@ -1,7 +1,11 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
-
 import { NavLink } from "react-router-dom";
+import CloseIcon from "@mui/icons-material/Close";
+import TentacleLogo from "assets/octo_purple.png";
+import CandlestickChartIcon from "@mui/icons-material/CandlestickChart";
+import Button from "@mui/material/Button";
+import SLink from "components/SLink";
 
 interface MobileMenuProps {
   onDismiss: () => void;
@@ -14,12 +18,27 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onDismiss, visible }) => {
       <StyledMobileMenuWrapper>
         <StyledBackdrop onClick={onDismiss} />
         <StyledMobileMenu>
+          <Button variant="text" size="large" sx={{ padding: "20px 40px", position: "absolute", top: "5%", right: "5%" }} onClick={onDismiss}>
+            <CloseIcon />
+            close
+          </Button>
           <StyledRouterLink to="/" onClick={onDismiss}>
             Home
           </StyledRouterLink>
           <StyledRouterLink to="/farm" onClick={onDismiss}>
             Farm
           </StyledRouterLink>
+
+          <SLink external href="https://charts.tentacle.finance/charts">
+            <Button
+              sx={{ marginTop: "15px", marginBottom: "15px" }}
+              variant="outlined"
+              startIcon={<img alt="Tentacle Finance logo" src={TentacleLogo} height="25" />}
+              endIcon={<CandlestickChartIcon />}
+            >
+              Charts
+            </Button>
+          </SLink>
           <StyledRouterLink to="/daoinfo" onClick={onDismiss}>
             DAO
           </StyledRouterLink>
@@ -77,7 +96,9 @@ const StyledMobileMenu = styled.div`
   top: 0;
   left: 100%;
   bottom: 0;
-  width: calc(100% - 48px);
+  text-align: center;
+  max-width: 90%;
+  min-width: 250px;
 `;
 
 const StyledRouterLink = styled(NavLink)`
