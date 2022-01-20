@@ -180,7 +180,7 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
       }
       return (
         <Tooltip title='Farm "Tier", see Medium introduction article for more info.'>
-          <div style={{ position: "absolute", left: "-15px" }}>
+          <div style={{ height: '20px', position: "absolute", left: "-15px" }}>
             <LabelIcon sx={{ position: "absolute", left: "0px", fontSize: "38px" }} />
             <Typography sx={{ position: "absolute", left: "8px", top: "9px", fontSize: "14px" }}>{farm.phase}</Typography>
           </div>
