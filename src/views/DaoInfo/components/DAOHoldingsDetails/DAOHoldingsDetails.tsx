@@ -52,13 +52,13 @@ const DAOHoldingsDetails: React.FC = () => {
         </Typography>
         <br />
         <Grid container sx={{ textAlign: "center" }} spacing={1}>
-          <Grid xs={4} item>
+          <Grid xs={12} sm={12} md={4} item>
             <Chip label={"UBQ: " + daoHoldings.ubq.toFormat(0)} color="primary" variant="outlined" />
           </Grid>
-          <Grid xs={4} item>
+          <Grid xs={12} sm={12} md={4} item>
             <Chip label={"INK: " + daoHoldings.ink.toFormat(0)} color="primary" variant="outlined" />
           </Grid>
-          <Grid xs={4} item>
+          <Grid xs={12} sm={12} md={4} item>
             <Chip label={"ESCH: " + daoHoldings.esch.toFormat(0)} color="primary" variant="outlined" />
           </Grid>
         </Grid>
@@ -68,13 +68,13 @@ const DAOHoldingsDetails: React.FC = () => {
         </Typography>
         <br />
         <Grid container sx={{ textAlign: "center", clear: "both" }} spacing={1}>
-          <Grid xs={4} item>
+          <Grid xs={12} sm={12} md={4} item>
             <Chip label={"UBQ/INK: " + daoHoldings.lp.ubqInk.toFormat(4)} color="primary" variant="outlined" />
           </Grid>
-          <Grid xs={4} item>
+          <Grid xs={12} sm={12} md={4} item>
             <Chip label={"GRANS/INK: " + daoHoldings.lp.gransInk.toFormat(4)} color="primary" variant="outlined" />
           </Grid>
-          <Grid xs={4} item>
+          <Grid xs={12} sm={12} md={4} item>
             <Chip label={"INK/ESCH: " + daoHoldings.lp.inkEsch.toFormat(4)} color="primary" variant="outlined" />
           </Grid>
         </Grid>
@@ -89,7 +89,6 @@ const StyledBox = styled(Box)`
   background: #2c2b3d;
   padding: 20px;
   width: 60%;
-  min-width: 550px;
 `;
 
 export default React.memo(DAOHoldingsDetails);

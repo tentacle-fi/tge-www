@@ -25,13 +25,13 @@ const PriceRibbon: React.FC = () => {
 
       <StyledBox>
         <Grid container sx={{ textAlign: "center" }} spacing={10}>
-          <Grid xs={4} item>
+          <Grid xs={12} sm={12} md={4} item>
             <Chip label={"UBQ: $" + UBQPRICE.toFixed(2)} color="primary" variant="outlined" />
           </Grid>
-          <Grid xs={4} item>
+          <Grid xs={12} sm={12} md={4} item>
             <Chip label={"INK: $" + INKPRICE.toFixed(4)} color="primary" variant="outlined" />
           </Grid>
-          <Grid xs={4} item>
+          <Grid xs={12} sm={12} md={4} item>
             <Chip label={"Ratio: " + (INKPRICE / UBQPRICE).toFixed(4)} color="primary" variant="outlined" />
           </Grid>
         </Grid>
@@ -45,6 +45,7 @@ const StyledBox = styled(Box)`
   padding: 20px;
   background: #2c2b3d;
   text-align: center;
+  width: 50%;
 `;
 
 export default React.memo(PriceRibbon);
