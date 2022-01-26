@@ -1,8 +1,6 @@
 import React from "react";
 import Chip from "@mui/material/Chip";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-
 import styled from "styled-components";
 import Typography from "@mui/material/Typography";
 import useBalances from "hooks/useBalances";
@@ -24,28 +22,29 @@ const PriceRibbon: React.FC = () => {
       <Typography variant="h5">Prices</Typography>
 
       <StyledBox>
-        <Grid container sx={{ textAlign: "center" }} spacing={10}>
-          <Grid xs={12} sm={12} md={4} item>
-            <Chip label={"UBQ: $" + UBQPRICE.toFixed(2)} color="primary" variant="outlined" />
-          </Grid>
-          <Grid xs={12} sm={12} md={4} item>
-            <Chip label={"INK: $" + INKPRICE.toFixed(4)} color="primary" variant="outlined" />
-          </Grid>
-          <Grid xs={12} sm={12} md={4} item>
-            <Chip label={"Ratio: " + (INKPRICE / UBQPRICE).toFixed(4)} color="primary" variant="outlined" />
-          </Grid>
-        </Grid>
+        <Chip label={"UBQ: $" + UBQPRICE.toFixed(2)} color="primary" variant="outlined" />
+        <Chip label={"INK: $" + INKPRICE.toFixed(4)} color="primary" variant="outlined" />
+        <Chip label={"Ratio: " + (INKPRICE / UBQPRICE).toFixed(4)} color="primary" variant="outlined" />
       </StyledBox>
     </>
   );
 };
 
 const StyledBox = styled(Box)`
+  display: flex;
+  justify-content: center;
+  gap: 8%;
   border-radius: 15px;
-  padding: 20px;
   background: #2c2b3d;
-  text-align: center;
+  padding: 20px;
   width: 50%;
+  position: relative;
+  min-width: 650px;
+
+  @media (max-width: 850px) {
+    flex-direction: column;
+    min-width: 600px;
+  }
 `;
 
 export default React.memo(PriceRibbon);

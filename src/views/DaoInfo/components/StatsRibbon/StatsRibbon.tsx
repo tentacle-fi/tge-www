@@ -1,6 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
 import Chip from "@mui/material/Chip";
-import Grid from "@mui/material/Grid";
 import styled from "styled-components";
 import BigNumber from "bignumber.js";
 import Typography from "@mui/material/Typography";
@@ -97,33 +96,34 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
     <>
       <Typography variant="h5">Ecosystem Stats</Typography>
       <StyledBox>
-        <Grid container sx={{ textAlign: "center" }}>
-          <Grid xs={12} lg={3} item>
-            <Tooltip title="Doesn't include un-harvested farming rewards">
-              <Chip label={"Circulating INK: " + circulatingSupply} color="primary" variant="outlined" />
-            </Tooltip>
-          </Grid>
-          <Grid xs={12} lg={3} item>
-            <Chip label={"Ecosystem TVL: $" + ecosystemTvl} color="primary" variant="outlined" />
-          </Grid>
-          <Grid xs={12} lg={3} item>
-            <Chip label={"MarketCap: $" + currentMarketcap} color="primary" variant="outlined" />
-          </Grid>
-          <Grid xs={12} lg={3} item>
-            <Chip label={"24hr TXs: " + dailyTransactions} color="primary" variant="outlined" />
-          </Grid>
-        </Grid>
+          <Tooltip title="Doesn't include un-harvested farming rewards">
+            <Chip label={"Circulating INK: " + circulatingSupply} color="primary" variant="outlined" />
+          </Tooltip>
+          <Chip label={"Ecosystem TVL: $" + ecosystemTvl} color="primary" variant="outlined" />
+          <Chip label={"MarketCap: $" + currentMarketcap} color="primary" variant="outlined" />
+          <Chip label={"24hr TXs: " + dailyTransactions} color="primary" variant="outlined" />
       </StyledBox>
     </>
   );
 };
 
 const StyledBox = styled(Box)`
-  display: block;
+  display: flex;
+  justify-content: center;
+  gap: 4%;
   border-radius: 15px;
   background: #2c2b3d;
   padding: 20px;
   width: 60%;
+  position: relative;
+  min-width: 850px;
+
+  @media (max-width: 850px) {
+      flex-direction: column;
+      min-width: 600px;
+  }
+
+
 `;
 
 export default React.memo(StatsRibbon);
