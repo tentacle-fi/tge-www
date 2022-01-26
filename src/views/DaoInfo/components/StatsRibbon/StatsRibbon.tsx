@@ -96,12 +96,12 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
     <>
       <Typography variant="h5">Ecosystem Stats</Typography>
       <StyledBox>
-          <Tooltip title="Doesn't include un-harvested farming rewards">
-            <Chip label={"Circulating INK: " + circulatingSupply} color="primary" variant="outlined" />
-          </Tooltip>
-          <Chip label={"Ecosystem TVL: $" + ecosystemTvl} color="primary" variant="outlined" />
-          <Chip label={"MarketCap: $" + currentMarketcap} color="primary" variant="outlined" />
-          <Chip label={"24hr TXs: " + dailyTransactions} color="primary" variant="outlined" />
+        <Tooltip title="Doesn't include un-harvested farming rewards">
+          <Chip label={"Circulating INK: " + circulatingSupply} color="primary" variant="outlined" />
+        </Tooltip>
+        <Chip label={"Ecosystem TVL: $" + ecosystemTvl} color="primary" variant="outlined" />
+        <Chip label={"MarketCap: $" + currentMarketcap} color="primary" variant="outlined" />
+        <Chip label={"24hr TXs: " + dailyTransactions} color="primary" variant="outlined" />
       </StyledBox>
     </>
   );
@@ -119,11 +119,9 @@ const StyledBox = styled(Box)`
   min-width: 850px;
 
   @media (max-width: 850px) {
-      flex-direction: column;
-      min-width: 600px;
+    flex-direction: column;
+    min-width: 600px;
   }
-
-
 `;
 
 export default React.memo(StatsRibbon);

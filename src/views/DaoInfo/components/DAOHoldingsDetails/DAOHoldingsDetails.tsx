@@ -43,7 +43,9 @@ const DAOHoldingsDetails: React.FC = () => {
     <>
       <div style={{ clear: "both", margin: "10px" }}></div>
 
-      <Typography variant="h5">DAO Holdings <InfoIconWithTooltip tooltipText="The DAO holds these coins and tokens" /></Typography>
+      <Typography variant="h5">
+        DAO Holdings <InfoIconWithTooltip tooltipText="The DAO holds these coins and tokens" />
+      </Typography>
       <br />
       <StyledBox>
         <Chip label={"UBQ: " + daoHoldings.ubq.toFormat(0)} color="primary" variant="outlined" />
