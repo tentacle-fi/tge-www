@@ -78,5 +78,8 @@
 - marketcap added
 - ToS added to footer
 
+## 1.4.1-staging
+- mobile styling of DAO info page
+
 ## Unreleased
 nothing at this time
