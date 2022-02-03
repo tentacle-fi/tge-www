@@ -100,7 +100,7 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
           <Chip label={"Circulating INK: " + circulatingSupply} color="primary" variant="outlined" />
         </Tooltip>
         <Chip label={"Ecosystem TVL: $" + ecosystemTvl} color="primary" variant="outlined" />
-        <Tooltip title={"Fully Diluted: $" + new BigNumber(tokenPrices[INK]).times(88000000)}>
+        <Tooltip title={"Fully Diluted: $" + new BigNumber(tokenPrices[INK]).times(88 * 1000000)}>
           <Chip label={"MarketCap: $" + currentMarketcap} color="primary" variant="outlined" />
         </Tooltip>
         <Chip label={"24hr TXs: " + dailyTransactions} color="primary" variant="outlined" />
