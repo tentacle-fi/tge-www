@@ -88,7 +88,7 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
     fetchCurrentMarketcap();
   }, [BlockNum, fetchCurrentMarketcap]);
 
-  if (currentTvl === undefined) {
+  if (currentTvl === undefined || tokenPrices === undefined) {
     return <></>;
   }
 
@@ -100,7 +100,9 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
           <Chip label={"Circulating INK: " + circulatingSupply} color="primary" variant="outlined" />
         </Tooltip>
         <Chip label={"Ecosystem TVL: $" + ecosystemTvl} color="primary" variant="outlined" />
-        <Chip label={"MarketCap: $" + currentMarketcap} color="primary" variant="outlined" />
+        <Tooltip title={"Fully Diluted: $" + new BigNumber(tokenPrices[INK] * 88 * 1000000).toFormat(0)}>
+          <Chip label={"MarketCap: $" + currentMarketcap} color="primary" variant="outlined" />
+        </Tooltip>
         <Chip label={"24hr TXs: " + dailyTransactions} color="primary" variant="outlined" />
       </StyledBox>
     </>
