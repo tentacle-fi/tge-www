@@ -134,9 +134,9 @@ const spliceEvery = (data: string, nChars: number): Array<string> => {
     return [data];
   }
 
-  const result = data.match(new RegExp(`.{1,${nChars}}`, 'g'));
+  const result = data.match(new RegExp(`.{1,${nChars}}`, "g"));
 
-  console.log('result', data.length)
+  console.log("result", data.length);
 
   if (result === null) {
     return [data];
@@ -166,7 +166,7 @@ const getTxDetails = async (rpcProvider: any, txHash: string): Promise<ITxDetail
       hash: tx.hash,
       nonce: tx.nonce,
       // ...inputData,
-      data: tx.data
+      data: tx.data,
     },
     block: {
       timestamp: block.timestamp,

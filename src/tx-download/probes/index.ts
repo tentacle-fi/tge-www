@@ -1,17 +1,15 @@
+import { ITxDetail } from "../interfaces";
 
-import {ITxDetail} from "../interfaces"
-
-import Gas from './Gas'
+import Gas from "./Gas";
 
 const explore = (txDetails: Array<ITxDetail>) => {
-
   // run each probe on all txs, return all results
 
-  return Gas(txDetails)
-}
+  return Gas(txDetails);
+};
 
 const Default = {
-  explore
-}
+  explore,
+};
 
-export default Default
+export default Default;

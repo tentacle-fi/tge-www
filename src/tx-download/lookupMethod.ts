@@ -42,8 +42,8 @@ const methods: Array<IMethod> = [
     id: "7ff36ab5",
   },
   {
-    name: 'swapETHForExactTokens(...)',
-    id: 'fb3bdb41'
+    name: "swapETHForExactTokens(...)",
+    id: "fb3bdb41",
   },
   {
     name: "approve(...)",

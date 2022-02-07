@@ -16,8 +16,8 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
   const [scanProgressTotal, setScanProgressTotal] = useState(0);
 
   const handleStart = useCallback(async () => {
-    if(account === null){
-      return
+    if (account === null) {
+      return;
     }
     setScanProgress(0);
     setScanProgressTotal(0);
