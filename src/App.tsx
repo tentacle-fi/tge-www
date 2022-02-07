@@ -16,6 +16,7 @@ import Home from "views/Home";
 import Addresses from "views/Addresses";
 import Help from "views/Help";
 import DaoInfo from "views/DaoInfo";
+import TxDownload from "views/TxDownload";
 
 const App: React.FC = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -40,6 +41,7 @@ const App: React.FC = () => {
             <Route path="/addresses" element={<Addresses />} />
             <Route path="/help" element={<Help />} />
             <Route path="/daoinfo" element={<DaoInfo />} />
+            <Route path="/tx-download" element={<TxDownload />} />
           </Routes>
         </div>
       </Providers>

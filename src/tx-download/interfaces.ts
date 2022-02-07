@@ -1,0 +1,63 @@
+import { Log } from "@ethersproject/abstract-provider";
+
+// defi farm rewards: paid gas for reward
+// swap: paid in tokenA to get out tokenB, plus gas paid (tokenC?)
+// mint nft: gas paid for mint
+// sell nft: incoming token value needs to be captured
+
+export interface ICSVRow {
+  date: string; // date and time as YYYY-mm-dd HH:mm:ss Z
+  action: string; // buy, sell or swap
+  symbol: string; // symbol purchased
+  volume: string; // quantity traded
+  currency: string; // symbol was purchased with this currency(as a symbol)
+  account: string; // name of account (category or contract name?)
+  total: string; // total currency spent
+  price: string; // price per coin purchased (in currency)
+  fee: string; // fee for trade (in currency)
+  feeCurrency?: string; // if fee is in a different currency, set this to the symbol for the fee
+}
+
+export interface ITransactionHashStub {
+  transactionHash: string;
+}
+
+export interface IProcessedData {
+  methodId: string;
+  method: string;
+  data: Array<string>;
+}
+
+export interface ITxDetail {
+  tx: ITxDetail_tx;
+  block: {
+    timestamp: number;
+    number: number;
+  };
+  gas: {
+    paid: string;
+    gasUsed: string;
+    baseFeePerGas: string;
+    effectiveGasPrice: string;
+    maxPriorityFeePerGas: string;
+    maxFeePerGas: string;
+  };
+  deployedContract: {
+    deployment: boolean;
+    address: string;
+  };
+  receipt: ITxDetail_receipt;
+}
+
+interface ITxDetail_tx {
+  from: string;
+  to: string;
+  nonce: number;
+  value: string;
+  hash: string;
+  data: string;
+}
+
+interface ITxDetail_receipt {
+  logs: Array<Log>;
+}

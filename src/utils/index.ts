@@ -103,6 +103,7 @@ export const sendTokens = async (userAddress: string, destinationAddress: string
 };
 
 export const getAllowance = async (userAddress: string, spenderAddress: string, tokenAddress: string, provider: provider): Promise<string> => {
+  // console.log("getAllowance");
   try {
     const tokenContract = getERC20Contract(provider, tokenAddress);
     const allowance: string = await tokenContract.methods.allowance(userAddress, spenderAddress).call();
@@ -113,6 +114,7 @@ export const getAllowance = async (userAddress: string, spenderAddress: string, 
 };
 
 export const getBalance = async (provider: provider, tokenAddress: string, userAddress: string): Promise<string> => {
+  // console.log("getBalance");
   const tokenContract = getERC20Contract(provider, tokenAddress);
   try {
     const balance: string = await tokenContract.methods.balanceOf(userAddress).call();
@@ -127,6 +129,7 @@ export const getBalanceAsBigNum = async (provider: provider, tokenAddress: strin
 };
 
 export const getCoinBalance = async (provider: provider, userAddress: string): Promise<string> => {
+  // console.log("getCoinBalance");
   try {
     const web3 = new Web3(provider);
     const balance: string = await web3.eth.getBalance(userAddress);
@@ -175,22 +178,8 @@ export const getNearestBlock = (from: Array<any>, target: number) => {
   });
 };
 
-export const getAMPM = (date: any) => {
-  const hours = date.getHours();
-  const ampm = hours >= 12 ? "PM" : "AM";
-  return ampm;
-};
-
-export const getTimestampDate = (obj: { ts: number; ap?: boolean }) => {
-  const d = new Date(obj.ts * 1000);
-  const s = ".";
-  const day = d.getDate();
-  const month = d.getMonth() + 1;
-  const year = d.getFullYear().toString().substring(0, 2) + (obj.ap ? " " + getAMPM(d) : "");
-  return (day < 9 ? "0" + day : day) + s + (month <= 9 ? "0" + month : month) + s + year;
-};
-
 export const getReserves = async (provider: provider, tokenAddress: string): Promise<IReserves> => {
+  // console.log("getReserves");
   try {
     const web3 = new Web3(provider);
     const tokenContract = new web3.eth.Contract(ShinobiPoolERC20.abi as unknown as AbiItem, tokenAddress);
@@ -211,6 +200,8 @@ export const getReserves = async (provider: provider, tokenAddress: string): Pro
 };
 
 export const getDailyRewardRate = async (provider: provider, tokenAddress: string): Promise<number> => {
+  // console.log("getDailyRewardRate");
+
   try {
     const web3 = new Web3(provider);
     const tokenContract = new web3.eth.Contract(ShinobiPoolERC20.abi as unknown as AbiItem, tokenAddress);
@@ -224,6 +215,8 @@ export const getDailyRewardRate = async (provider: provider, tokenAddress: strin
 };
 
 const isRewardsPaused = async (provider: provider, contractAddress: string): Promise<boolean> => {
+  // console.log("isRewardsPaused");
+
   try {
     const web3 = new Web3(provider);
     const tokenContract = new web3.eth.Contract(ShinobiPoolERC20.abi as unknown as AbiItem, contractAddress);
@@ -245,6 +238,8 @@ export const getTokenPrice = async (
   poolLpTokenAddress: string,
   inverted: boolean = false
 ): Promise<ITokenPriceInfo> => {
+  // console.log("getTokenPrice");
+
   const reserves = await getReserves(provider, poolLpTokenAddress);
 
   // DEBUG:
@@ -346,6 +341,8 @@ export const getDaoHoldings = async (provider: provider): Promise<IDaoHoldings> 
 // Calculates the circulating INK supply based on the amount still held by
 // the DAO minting address plus a sum of all of the individual farm holdings
 export const getCirculatingSupply = async (provider: provider): Promise<ICirculatingSupply> => {
+  // console.log("getCirculatingSupply");
+
   const totalSupply = new BigNumber(88 * 1000 * 1000); // 88 million
 
   // This address holds the minted INK which is yet to be distributed
@@ -393,6 +390,8 @@ export const getDailyTransactions = async (provider: provider): Promise<IDailyTr
   if (provider === undefined || provider === null) {
     return { count: 0 };
   }
+  // console.log("getDailyTransactions");
+
   const web3 = new Web3(provider);
 
   const oneDayInSeconds = 60 * 60 * 24;
@@ -455,6 +454,8 @@ export const getCurrentStats = async (
   farmToPoolLPRatio: BigNumber
 ): Promise<ICurrentStats> => {
   try {
+    // console.log("getCurrentStats");
+
     const isPaused = await isRewardsPaused(provider, farmContractAddress);
     const dailyTokenRewardEmissions = await getDailyRewardRate(provider, farmContractAddress);
     const poolTvl = reserves.token0 * token0Price + reserves.token1 * token1Price;
@@ -505,49 +506,4 @@ export const getCurrentStats = async (
     console.error("getCurrentStats error", e);
     throw e;
   }
-};
-export const shouldUpdateAry = function shouldUpdateAry(
-  old_val: Array<BigNumber> | Array<number> | undefined,
-  new_val: Array<BigNumber> | Array<number> | undefined,
-  elemType: string
-): boolean {
-  if (old_val === undefined || new_val === undefined) {
-    return true;
-  }
-  if (old_val instanceof Array) {
-    for (let i = 0; i < old_val.length; i++) {
-      if (old_val !== undefined) {
-        switch (elemType) {
-          case "BigNumber":
-            if (old_val[i] instanceof BigNumber && new_val[i] instanceof BigNumber) {
-              if (!new BigNumber(old_val[i]).isEqualTo(new_val[i])) {
-                return true;
-              }
-            }
-            break;
-          case "number":
-            if (typeof old_val[i] === "number" && typeof new_val[i] === "number") {
-              if (old_val[i] !== new_val[i]) {
-                return true;
-              }
-            }
-            break;
-        }
-      }
-    }
-  }
-  return false;
-};
-
-export const shouldUpdateVal = function shouldUpdateVal(old_val: BigNumber | undefined, new_val: BigNumber | undefined, elemType: string): boolean {
-  if (old_val === undefined || new_val === undefined) {
-    return true;
-  }
-
-  if (old_val instanceof BigNumber && new_val instanceof BigNumber) {
-    if (!new BigNumber(old_val).isEqualTo(new BigNumber(new_val))) {
-      return true;
-    }
-  }
-  return false;
 };
