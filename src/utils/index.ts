@@ -3,7 +3,6 @@ import { ethers } from "ethers";
 import Web3 from "web3";
 import { provider, TransactionReceipt } from "web3-core";
 import { AbiItem } from "web3-utils";
-
 import { GAS } from "ubiq-sdk/utils";
 
 import ERC20ABI from "constants/abi/ERC20.json";
@@ -101,18 +100,24 @@ export const getAllowance = async (userAddress: string, spenderAddress: string, 
   }
 };
 
-export const getBalance = async (provider: provider, tokenAddress: string, userAddress: string): Promise<string> => {
+export const getBalance = async (provider: provider, tokenAddress: string, userAddress: string, atBlockHeight?: number): Promise<string> => {
   const tokenContract = getERC20Contract(provider, tokenAddress);
   try {
-    const balance: string = await tokenContract.methods.balanceOf(userAddress).call();
+    const balance: string = await tokenContract.methods.balanceOf(userAddress).call(null, atBlockHeight);
     return balance;
   } catch (e) {
+    console.error("getBalance", e);
     return "0";
   }
 };
 
-export const getBalanceAsBigNum = async (provider: provider, tokenAddress: string, userAddress: string): Promise<BigNumber> => {
-  return new BigNumber(await getBalance(provider, tokenAddress, userAddress)).dividedBy(new BigNumber(10).pow(18));
+export const getBalanceAsBigNum = async (
+  provider: provider,
+  tokenAddress: string,
+  userAddress: string,
+  atBlockHeight?: number
+): Promise<BigNumber> => {
+  return new BigNumber(await getBalance(provider, tokenAddress, userAddress, atBlockHeight)).dividedBy(new BigNumber(10).pow(18));
 };
 
 export const getCoinBalance = async (provider: provider, userAddress: string): Promise<string> => {
@@ -201,7 +206,6 @@ export const getDailyRewardRate = async (provider: provider, tokenAddress: strin
     const rate: number = rewards * 60 * 60 * 24;
     return rate;
   } catch (e) {
-    console.error("getDailyRewardRate error", e);
     return -1;
   }
 };

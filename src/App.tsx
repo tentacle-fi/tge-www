@@ -15,6 +15,7 @@ import Farm from "views/Farm";
 import Home from "views/Home";
 import Addresses from "views/Addresses";
 import Help from "views/Help";
+import Vote from "views/Vote";
 
 const App: React.FC = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -38,6 +39,7 @@ const App: React.FC = () => {
             <Route path="/farm" element={<Farm />} />
             <Route path="/addresses" element={<Addresses />} />
             <Route path="/help" element={<Help />} />
+            <Route path="/vote" element={<Vote />} />
           </Routes>
         </div>
       </Providers>
