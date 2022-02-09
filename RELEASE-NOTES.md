@@ -78,9 +78,10 @@
 - marketcap added
 - ToS added to footer
 
-## 1.4.2-staging
+## 1.4.3-staging
 - mobile styling of DAO info page
 - add ubq weth farm
+- show fully diluted marketcap while hovering over marketcap
 
 ## Unreleased
-- show fully diluted marketcap while hovering over marketcap
+nothing at this time
