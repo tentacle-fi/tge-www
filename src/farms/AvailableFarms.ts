@@ -79,12 +79,11 @@ const TGE1_token: IToken = {
 };
 
 const WETH_token: IToken = {
-    symbol: "wETH",
-    logo: wethLogo,
-    publicLogo: "weth.png",
-    address: WETH,
-
-}
+  symbol: "wETH",
+  logo: wethLogo,
+  publicLogo: "weth.png",
+  address: WETH,
+};
 
 export const AvailableFarms: Array<IFarm> = [
   // UBQ/INK
