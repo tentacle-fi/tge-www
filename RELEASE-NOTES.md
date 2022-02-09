@@ -82,4 +82,4 @@
 - mobile styling of DAO info page
 
 ## Unreleased
-nothing at this time
+- add ubq weth farm
