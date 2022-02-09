@@ -59,4 +59,4 @@
 - updated TGE1 farm pair name
 
 ## Unreleased
-nothing at this time
+- add ubq weth farm
