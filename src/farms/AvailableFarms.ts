@@ -156,7 +156,7 @@ export const AvailableFarms: Array<IFarm> = [
     official: true,
     yieldfarm: {
       address: UBQ_WETH_FarmContract,
-      start_time: 1642262400 * 1000,
+      start_time: 1644890743 * 1000,
       reward: INK_token,
     },
     lp: {
