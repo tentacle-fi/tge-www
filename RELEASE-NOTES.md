@@ -83,3 +83,4 @@
 
 ## Unreleased
 - show fully diluted marketcap while hovering over marketcap
+- add ubq weth farm
