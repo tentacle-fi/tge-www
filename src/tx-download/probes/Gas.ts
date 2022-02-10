@@ -1,5 +1,7 @@
 import { ITxDetail } from "../interfaces";
 
+// TODO: decide if this Probe is useful or not
+
 const Gas = (allTxs: Array<ITxDetail>) => {
   let results = [];
   let total = 0;

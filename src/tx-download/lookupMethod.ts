@@ -38,32 +38,44 @@ const methods: Array<IMethod> = [
     id: "3d18b912",
   },
   {
-    name: "swapExactETHForTokens(...)",
+    name: "stake(...)",
+    id: "a694fc3a",
+  },
+  {
+    name: "swapExactETHForTokens(...)", // TODO
     id: "7ff36ab5",
+  },
+  {
+    name: "swapTokensForExactETH(...)",
+    id: "4a25d94a",
   },
   {
     name: "swapETHForExactTokens(...)",
     id: "fb3bdb41",
   },
   {
-    name: "approve(...)",
+    name: "approve(...)", // TODO
     id: "095ea7b3",
   },
   {
-    name: "addLiquidityETH(...)",
+    name: "addLiquidityETH(...)", // TODO - WIP
     id: "f305d719",
   },
   {
-    name: "stake(...)",
-    id: "a694fc3a",
-  },
-  {
-    name: "TokenGallery::mintCollection?()",
+    name: "TokenGallery::mintCollection?()", // TODO
     id: "4757382c",
   },
   {
-    name: "TokenGallery::mintNFT?()",
+    name: "TokenGallery::mintNFT?()", // TODO
     id: "dd615fcd",
+  },
+  {
+    name: "TokenGallery::soldNFTForUBQ()",
+    id: "243adbdd",
+  },
+  {
+    name: "TokenGallery::soldNFTForERC20()",
+    id: "cae9ca51",
   },
 ];
 

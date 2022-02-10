@@ -8,14 +8,15 @@ import { Log } from "@ethersproject/abstract-provider";
 export interface ICSVRow {
   date: string; // date and time as YYYY-mm-dd HH:mm:ss Z
   action: string; // buy, sell or swap
-  symbol: string; // symbol purchased
-  volume: string; // quantity traded
-  currency: string; // symbol was purchased with this currency(as a symbol)
+  symbol: string; // symbol purchased or sold
+  volume: string; // quantity of symbol/token purchased/(swapped/traded)
+  currency: string; // string symbol of the currency/token used to purchase the `symbol` property above
   account: string; // name of account (category or contract name?)
-  total: string; // total currency spent
+  total: string; // total currency spent to buy/sell/swap `volume` property above
   price: string; // price per coin purchased (in currency)
   fee: string; // fee for trade (in currency)
   feeCurrency?: string; // if fee is in a different currency, set this to the symbol for the fee
+  txHash: string; // transaction hash
 }
 
 export interface ITransactionHashStub {
@@ -29,6 +30,7 @@ export interface IProcessedData {
 }
 
 export interface ITxDetail {
+  processed: boolean;
   tx: ITxDetail_tx;
   block: {
     timestamp: number;

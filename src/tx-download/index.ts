@@ -1,12 +1,26 @@
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
-import { Log, TransactionReceipt, TransactionResponse } from "@ethersproject/abstract-provider";
+import { Log } from "@ethersproject/abstract-provider";
+// import {TransactionReceipt, TransactionResponse } from "@ethersproject/abstract-provider"// for debug
 import lookupMethod from "./lookupMethod";
-import { ITransactionHashStub, IProcessedData, ITxDetail } from "./interfaces";
+import { ITransactionHashStub, IProcessedData, ITxDetail, ICSVRow } from "./interfaces";
+import Probes from "./probes";
+import { formatTopic } from "./probes/tools";
+
+// ================================================================================
+//
+//  TESTING ONLY!!!!!
+//
+import DOXXED_JSON from "./DOXXED.json";
+import NFT_DOXXED from "./NFT_DOXXED.json";
+// ================================================================================
 
 export const scanStart = async (address: string, progressCb: Function) => {
   const rpcProvider = new ethers.providers.JsonRpcProvider("https://rpc.octano.dev/");
 
+  address = address.toLowerCase();
+
+  /*
   // Prod:
   const results = await getLogs(rpcProvider, address, numToHex(1776000))
 
@@ -14,21 +28,69 @@ export const scanStart = async (address: string, progressCb: Function) => {
     const filtered = filterLogs(results);
     const allTxs = getAllTxDetails(rpcProvider, filtered, progressCb);
 
-    return allTxs;
+    return Probes.explore(address, allTxs);
   }
+  */
+
+  console.error("missing NONCEs!", verifyNonceSequential(address, DOXXED_JSON as Array<ITxDetail>).length);
+  return Probes.explore(address, DOXXED_JSON as Array<ITxDetail>);
+
+  // console.error("missing NONCEs!", verifyNonceSequential(address, NFT_DOXXED as Array<ITxDetail>).length);
+  // return Probes.explore(address, NFT_DOXXED as Array<ITxDetail>);
 };
 
-// const verifyNonceSequential = (list: Array<ITxDetail>)=>{
-//   let verified = true
-//
-//   // TODO: sort the list first, by nonce
-//
-//   for(let i = 0; i < list.length; i++){
-//
-//   }
-//
-//   return verified
-// }
+const verifyNonceSequential = (walletAddress: string, list: Array<ITxDetail>): Array<number> => {
+  let sorted = list
+    .filter((tx) => {
+      // filter out only txs originated from our walletAddress
+      // so the nonce counting can be accurate
+      return tx.tx.from.toLowerCase() === walletAddress;
+    })
+    .map((tx) => tx.tx.nonce);
+
+  console.log("sorted", sorted.length);
+
+  sorted.sort((a: number, b: number) => {
+    if (a < b) {
+      return -1;
+    }
+    return 1;
+  });
+
+  if (sorted.length < 2) {
+    console.error("verifyNonceSequential() - not enough transactions to verify requires > 1");
+    return sorted;
+  }
+
+  let start = sorted[0];
+  let missing = [];
+  for (let i = 1; i < sorted.length; i++) {
+    if (start + 1 !== sorted[i]) {
+      console.log(start + 1, sorted[i]);
+
+      missing.push(start + 1);
+    }
+    start++;
+  }
+
+  return missing;
+};
+
+export const resultsToCSV = (columns: Array<string>, results: Array<ICSVRow>): string => {
+  let str = "";
+  for (let i = 0; i < results.length; i++) {
+    let row = "";
+    for (const prop of columns) {
+      if (row !== "") {
+        row += ",";
+      }
+      row += results[i][prop as keyof ICSVRow];
+    }
+    str += row + "\n";
+  }
+
+  return str;
+};
 
 const numToHex = (n: number): string => {
   return "0x" + n.toString(16);
@@ -47,11 +109,12 @@ export const filterLogs = (list: Array<Log> | Array<ITransactionHashStub>): Arra
 };
 
 // TODO: extend to use a custom rpc provider
-const getLogs = async (rpcProvider: any, originatingAddress: string, fromBlockHex: string) => {
-  fromBlockHex = fromBlockHex === undefined ? "0x0" : fromBlockHex;
+const getLogs = async (rpcProvider: any, originatingAddress: string, fromBlockHex: string = "0x0", toBlockHex: string = "latest") => {
+  // fromBlockHex = fromBlockHex === undefined ? "0x0" : fromBlockHex;
   const filterBase = {
     fromBlock: fromBlockHex,
-    toBlock: "latest",
+    toBlock: toBlockHex,
+    address: null, // null === any address
   };
   const filter = {
     ...filterBase,
@@ -62,20 +125,16 @@ const getLogs = async (rpcProvider: any, originatingAddress: string, fromBlockHe
     topics: [null, null, formatTopic(originatingAddress)],
   };
 
+  const filter3 = {
+    ...filterBase,
+    topics: [null, null, null, formatTopic(originatingAddress)],
+  };
+
   try {
-    return [...(await rpcProvider.getLogs(filter)), ...(await rpcProvider.getLogs(filter2))];
+    return [...(await rpcProvider.getLogs(filter)), ...(await rpcProvider.getLogs(filter2)), ...(await rpcProvider.getLogs(filter3))];
   } catch (e) {
     console.error("getlogs error", e);
   }
-};
-
-const formatTopic = (input: string): string => {
-  const padChars = "0000000000000000000000000000000000000000000000000000000000000000";
-  if (input.length > 0) {
-    return "0x" + (padChars + input.replace("0x", "")).slice(-64);
-  }
-
-  return "0x" + padChars;
 };
 
 // TODO: time each call and slow the loop if calls are happening too rapidly (target max of 2hz)
@@ -156,9 +215,8 @@ const getTxDetails = async (rpcProvider: any, txHash: string): Promise<ITxDetail
   console.log("receipt", receipt);
   console.log("block", block);
 
-  // const inputData = processInputData(tx.data);
-
   return {
+    processed: false,
     tx: {
       from: tx.from,
       to: tx.to,

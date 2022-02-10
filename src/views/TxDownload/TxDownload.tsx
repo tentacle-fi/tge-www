@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
 import { useWallet } from "use-wallet";
-import { scanStart, filterLogs, getAllTxDetails } from "tx-download";
+import { scanStart, getAllTxDetails, resultsToCSV } from "tx-download";
 
 interface TxDownloadProps {}
 
@@ -28,10 +28,17 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
       setScanProgressTotal(total);
     });
 
-    console.log("results", "total", results?.length);
+    // console.log("results", "total", results?.length);
 
     if (results !== undefined) {
-      setScanResults(JSON.stringify(results, null, 2));
+      // setScanResults(JSON.stringify(results, null, 2));
+      // return
+
+      console.log("results", "processed:", results.raw.filter((tx) => tx.processed === true).length, "out of", results.raw.length);
+
+      // TODO: find a better way to pull the names from the ICSVRow interface at compile time (DRY the code)
+      const headerCSV = ["date", "action", "total", "currency", "volume", "symbol", "account", "price", "fee", "feeCurrency", "txHash"];
+      setScanResults(headerCSV.join(",") + "\n" + resultsToCSV(headerCSV, [...results.swap, ...results.tg, ...results.farm]));
     }
   }, [account]);
 
