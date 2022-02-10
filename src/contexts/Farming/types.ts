@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 
-import { IPooledTokens } from "hooks/useFarming";
+import { IPooledTokens, IFarmingFns } from "hooks/useFarming";
 
 export interface ContextValues {
   earnedBalances?: Array<BigNumber>; // rewards earned but not harvested
@@ -13,4 +13,7 @@ export interface ContextValues {
   currentApy?: Array<number>; // Farming Pool APY calculated
   currentTvl?: Array<number>; // Farming Pool TVL (total value locked/lp'd) at current prices
   PooledTokens?: Array<IPooledTokens>; // The 'estimated' tokens pooled inside of the accounts LP tokens
+
+  farmFns?: IFarmingFns | undefined; // contains an object with each property being a function to call from the UI
+  setFarmFns?: React.Dispatch<React.SetStateAction<IFarmingFns | undefined>>; // setter function
 }

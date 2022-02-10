@@ -1,12 +1,26 @@
 import React from "react";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
+import TentacleLogo from "assets/octo_purple.png";
+import CandlestickChartIcon from "@mui/icons-material/CandlestickChart";
+import Button from "@mui/material/Button";
+import SLink from "components/SLink";
 
 const Nav: React.FC = () => {
   return (
     <StyledNav>
+      <SLink external href="https://charts.tentacle.finance/charts">
+        <Button
+          sx={{ marginRight: "15px" }}
+          variant="outlined"
+          startIcon={<img alt="Tentacle Finance logo" src={TentacleLogo} height="25" />}
+          endIcon={<CandlestickChartIcon />}
+        >
+          Charts
+        </Button>
+      </SLink>
       <StyledRouterLink to="/farm">Farm</StyledRouterLink>
-      <StyledRouterLink to="/help">Help</StyledRouterLink>
+      <StyledRouterLink to="/daoinfo">DAO</StyledRouterLink>
     </StyledNav>
   );
 };
