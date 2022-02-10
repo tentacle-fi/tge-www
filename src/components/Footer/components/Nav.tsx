@@ -1,47 +1,49 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
 import styled from "styled-components";
+import TentacleLogo from "assets/octo_purple.png";
+import CandlestickChartIcon from "@mui/icons-material/CandlestickChart";
+import Button from "@mui/material/Button";
+import SLink from "components/SLink";
 
 const Nav: React.FC = () => {
   return (
     <StyledNav>
-      <StyledRouterLink to="/addresses">Addresses</StyledRouterLink>
-      <StyledLink href="https://twitter.com/TentacleFinance" target="_blank">
+      <SLink external href="https://charts.tentacle.finance/charts">
+        <Button variant="outlined" startIcon={<img alt="Tentacle Finance logo" src={TentacleLogo} height="25" />} endIcon={<CandlestickChartIcon />}>
+          Charts
+        </Button>
+      </SLink>
+
+      <SLink href="/addresses">Addresses</SLink>
+      <SLink external href="https://twitter.com/TentacleFinance">
         Twitter
-      </StyledLink>
-      <StyledLink href="https://discord.gg/CbTa6Z2JYM" target="_blank">
+      </SLink>
+      <SLink external href="https://discord.gg/CbTa6Z2JYM">
         Discord
-      </StyledLink>
-      <StyledLink href="https://medium.com/@tentaclefinance" target="_blank">
+      </SLink>
+      <SLink external href="https://medium.com/@tentaclefinance">
         Medium
-      </StyledLink>
+      </SLink>
+      <SLink external href="https://github.com/tentacle-fi/tentacle-legal/blob/main/ToS/General.md">
+        ToS
+      </SLink>
     </StyledNav>
   );
 };
 
-const StyledNav = styled.nav`
-  align-items: center;
-  display: flex;
-`;
+const StyledNav = styled("nav")({
+  alignItems: "center",
+  display: "flex",
+  flexWrap: "wrap",
+  width: "100%",
 
-const StyledLink = styled.a`
-  color: ${(props) => props.theme.colors.grey[500]};
-  padding-left: ${(props) => props.theme.spacing[3]}px;
-  padding-right: ${(props) => props.theme.spacing[3]}px;
-  text-decoration: none;
-  &:hover {
-    color: ${(props) => props.theme.colors.grey[600]};
-  }
-`;
-
-const StyledRouterLink = styled(NavLink)`
-  color: ${(props) => props.theme.colors.grey[500]};
-  padding-left: ${(props) => props.theme.spacing[3]}px;
-  padding-right: ${(props) => props.theme.spacing[3]}px;
-  text-decoration: none;
-  &:hover {
-    color: ${(props) => props.theme.colors.grey[600]};
-  }
-`;
+  a: {
+    padding: " 20px",
+    color: "#888",
+  },
+  "a:hover": {
+    color: "#555",
+  },
+});
 
 export default Nav;

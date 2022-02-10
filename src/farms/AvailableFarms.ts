@@ -3,6 +3,12 @@ import ubqLogo from "assets/tokens/ubq.png";
 import gransLogo from "assets/tokens/grans-flat.png";
 import eschLogo from "assets/tokens/esch-logo.png";
 import tge1Logo from "assets/tokens/tge1.png";
+import wethLogo from "assets/tokens/weth.png";
+
+// Significant addresses:
+
+export const DAO_MULTISIG = "0xCC7D76005bf1616e55cfDFF4cbfB5C29199C2808";
+export const DAO_FARMING = "0x2e21bA1c05b6f7090091d053A0d0cf9e986A1c12";
 
 // Token addresses:
 export const Logos = {
@@ -17,6 +23,7 @@ export const INK = "0x7845fCbE28ac19ab7ec1C1D9674E34fdCB4917Db";
 export const GRANS = "0x0826180a4c981d5095cb5c48bb2a098a44cf6f73";
 export const ESCH = "0xcf3222b7fda7a7563b9e1e6c966bead04ac23c36";
 export const TGE1 = "0xcf823eb6f62a30EDB005B91383e2fa364dd753Dc";
+export const WETH = "0xa8cf68b59a616c260dd88fd1ea61fbb864f7e485";
 
 // INK Farms:
 export const INK_UBQ_LPAddress = "0x1ea388d8dcf980a95967228b1dfcea1692dbe25d";
@@ -30,6 +37,9 @@ export const INK_ESCH_FarmContract = "0x6E59E5cd333CE71D3AFDEdae09949729dC2fe4B3
 
 // This farm uses the ESCH_UBQ_LPAddress from one of the community farms
 export const INK_UBQ_ESCH_FarmContract = "0x2f161631b3622881EB7125f3243A4CF35271dE02";
+
+export const UBQ_WETH_LPAddress = "0xd3108cfa56fdd7e8d9bd2ce28bdd500d14dcee24";
+export const UBQ_WETH_FarmContract = "0xE547f1F58C2c70bff713663515f8Da8daa2A2e56";
 
 // Community Farms:
 export const GRANS_UBQ_LPAddress = "0x6321c294f34c2cdaf61012ac4f3588a527f4d990";
@@ -73,6 +83,13 @@ const TGE1_token: IToken = {
   address: TGE1,
 };
 
+const WETH_token: IToken = {
+  symbol: "wETH",
+  logo: wethLogo,
+  publicLogo: "weth.png",
+  address: WETH,
+};
+
 export const AvailableFarms: Array<IFarm> = [
   // UBQ/INK
   {
@@ -89,6 +106,7 @@ export const AvailableFarms: Array<IFarm> = [
     },
     tokenA: UBQ_token,
     tokenB: INK_token,
+    phase: "T1",
   },
   // GRANS/INK
   {
@@ -105,6 +123,7 @@ export const AvailableFarms: Array<IFarm> = [
     },
     tokenA: GRANS_token,
     tokenB: INK_token,
+    phase: "T2",
   },
   // ESCH/INK
   {
@@ -121,6 +140,7 @@ export const AvailableFarms: Array<IFarm> = [
     },
     tokenA: INK_token,
     tokenB: ESCH_token,
+    phase: "T2",
   },
   // UBQ/ESCH
   {
@@ -137,6 +157,24 @@ export const AvailableFarms: Array<IFarm> = [
     },
     tokenA: UBQ_token,
     tokenB: ESCH_token,
+    phase: "T3",
+  },
+  // UBQ/wETH
+  {
+    name: `${UBQ_token.symbol}/${WETH_token.symbol}`,
+    official: true,
+    yieldfarm: {
+      address: UBQ_WETH_FarmContract,
+      start_time: 1644890743 * 1000,
+      reward: INK_token,
+    },
+    lp: {
+      address: UBQ_WETH_LPAddress,
+      url: "https://shinobi.ubiq.ninja/#/add/" + UBQ + "/" + WETH,
+    },
+    tokenA: UBQ_token,
+    tokenB: WETH_token,
+    phase: "T3",
   },
   // COMMUNITY Pools/Farms
   // GRANS/UBQ
@@ -154,6 +192,7 @@ export const AvailableFarms: Array<IFarm> = [
     },
     tokenA: GRANS_token,
     tokenB: UBQ_token,
+    phase: "",
   },
   // UBQ/ESCH -> reward TGE1
   {
@@ -170,6 +209,7 @@ export const AvailableFarms: Array<IFarm> = [
     },
     tokenA: UBQ_token,
     tokenB: ESCH_token,
+    phase: "",
   },
 ];
 
@@ -234,4 +274,6 @@ export interface IFarm {
   tokenA: IToken;
   // the Token1 token
   tokenB: IToken;
+  // the phase of the farm (for INK farms only)
+  phase: string;
 }

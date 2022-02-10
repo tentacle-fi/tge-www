@@ -8,7 +8,7 @@ import { getPoolTotalSupply, getEarned, getStaked } from "ubiq-sdk/utils";
 import Context from "./Context";
 import { getCurrentStats } from "utils";
 import useBalances from "hooks/useBalances";
-import { IPooledTokens } from "hooks/useFarming";
+import { IPooledTokens, IFarmingFns } from "hooks/useFarming";
 
 const Provider: React.FC = ({ children }) => {
   const [confirmTxModalIsOpen, setConfirmTxModalIsOpen] = useState(false);
@@ -20,24 +20,25 @@ const Provider: React.FC = ({ children }) => {
   const [CurrentTVL, setCurrentTVL] = useState<Array<number>>();
   const [PooledTokens, setPooledTokens] = useState<Array<IPooledTokens>>();
 
-  const farmingStartTimes = useMemo(() => {
-    return AvailableFarms.map((x) => {
-      return x.yieldfarm.start_time;
-    });
-  }, []);
-
   const [stakedBalances, setstakedBalances] = useState<Array<BigNumber>>();
   const [totalFarmSupplyLP, settotalFarmSupplyLP] = useState<Array<BigNumber>>();
   const [lpPercents, setlpPercents] = useState<Array<BigNumber>>();
   const [farmPoolRatios, setFarmPoolRatios] = useState<Array<BigNumber>>();
   const [earnedBalances, setearnedBalances] = useState<Array<BigNumber>>();
   const [FarmPooledTokens, setFarmPooledTokens] = useState<Array<IPooledTokens>>();
+  const [farmFns, setFarmFns] = useState<IFarmingFns | undefined>();
 
   const fetchedEarnedBalancesThisBlock = useRef(false);
   const fetchedStakedBalancesThisBlock = useRef(false);
   const fetchedTotalSupplyLPThisBlock = useRef(false);
   const fetchedStatsThisBlock = useRef(false);
   const setupPooledTokensThisBlock = useRef(false);
+
+  const farmingStartTimes = useMemo(() => {
+    return AvailableFarms.map((x) => {
+      return x.yieldfarm.start_time;
+    });
+  }, []);
 
   const fetchearnedBalances = useCallback(async () => {
     if (!account || !ubiq) return;
@@ -235,6 +236,9 @@ const Provider: React.FC = ({ children }) => {
         currentApy: CurrentAPY,
         currentTvl: CurrentTVL,
         PooledTokens: PooledTokens,
+
+        farmFns,
+        setFarmFns,
       }}
     >
       {children}

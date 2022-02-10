@@ -58,5 +58,30 @@
 - hotfix for staked token value calculations
 - updated TGE1 farm pair name
 
+## 1.4.0
+- add farm tier label to the Tentacle farms (tier 1, tier 2, etc...)
+- added tooltip to tier label
+- adjusted dao info page text (summary)
+- build version shown in footer
+- links to charts added
+- mobile style updates
+- Harvest all button to trigger a harvest for each farm with an unharvested balance
+- APY is now 0% when contract `isPaused` or current date is after `periodFinish`
+
+#### DAO Info Page
+- ecosystemTvl added
+- circulating INK added NOTE: Calculates based on harvested INK. IE, unharvested INK is not circulating based on this calculation.
+- daily transaction count added
+- prices added
+- DAO holdings added, including multisig and farm addresses
+- add mission statement
+- marketcap added
+- ToS added to footer
+
+## 1.4.3
+- mobile styling of DAO info page
+- add ubq weth farm
+- show fully diluted marketcap while hovering over marketcap
+
 ## Unreleased
 nothing at this time

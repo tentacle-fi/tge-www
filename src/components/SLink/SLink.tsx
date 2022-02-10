@@ -1,14 +1,12 @@
 import React from "react";
 import Link from "@mui/material/Link";
 import { Link as RouterLink } from "react-router-dom";
-
-interface SLinkProps {
-  children?: React.ReactNode;
-  external?: boolean;
-  href: string;
-}
+import { SLinkProps } from "./index";
 
 const SLink: React.FC<SLinkProps> = ({ children, external, href }) => {
+  if (href === undefined) {
+    return <>HREF property undefined, set the SLink 'href' property to fix.</>;
+  }
   if (external) {
     return (
       <Link target="_blank" rel="noreferrer" href={href}>
@@ -18,7 +16,10 @@ const SLink: React.FC<SLinkProps> = ({ children, external, href }) => {
   }
 
   if (href.indexOf("http") === 0 || href.indexOf("https") === 0) {
-    console.error('SLink expects full URLs to use the `external="true"` or `external` shorthand property. Did you want this to be an external link?');
+    console.error(
+      'SLink expects full URLs to use the `external="true"` or `external` shorthand property. Did you want this to be an external link?',
+      href
+    );
   }
 
   return (
