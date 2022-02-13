@@ -100,6 +100,21 @@ export const getAllowance = async (userAddress: string, spenderAddress: string, 
   }
 };
 
+export const getEarnedAt = async (
+  provider: provider,
+  farmContractAddress: string,
+  userAddress: string,
+  atBlockHeight?: number
+): Promise<BigNumber> => {
+  const tokenContract = getShinobiContract(provider, farmContractAddress);
+  try {
+    return new BigNumber(await tokenContract.methods.earned(userAddress).call(null, atBlockHeight)).dividedBy(new BigNumber(10).pow(18));
+  } catch (e) {
+    console.error("getEarned", e);
+    return new BigNumber(0);
+  }
+};
+
 export const getBalance = async (provider: provider, tokenAddress: string, userAddress: string, atBlockHeight?: number): Promise<string> => {
   const tokenContract = getERC20Contract(provider, tokenAddress);
   try {
@@ -138,6 +153,12 @@ export const getCoinBalanceAsBigNum = async (provider: provider, userAddress: st
 export const getERC20Contract = (provider: provider, address: string) => {
   const web3 = new Web3(provider);
   const contract = new web3.eth.Contract(ERC20ABI.abi as unknown as AbiItem, address);
+  return contract;
+};
+
+export const getShinobiContract = (provider: provider, address: string) => {
+  const web3 = new Web3(provider);
+  const contract = new web3.eth.Contract(ShinobiPoolERC20.abi as unknown as AbiItem, address);
   return contract;
 };
 
@@ -180,8 +201,7 @@ export const getTimestampDate = (obj: { ts: number; ap?: boolean }) => {
 
 export const getReserves = async (provider: provider, tokenAddress: string): Promise<IReserves> => {
   try {
-    const web3 = new Web3(provider);
-    const tokenContract = new web3.eth.Contract(ShinobiPoolERC20.abi as unknown as AbiItem, tokenAddress);
+    const tokenContract = getShinobiContract(provider, tokenAddress);
     const { _reserve0, _reserve1, _blockTimestampLast } = await tokenContract.methods.getReserves().call();
 
     const ret = {
@@ -200,8 +220,7 @@ export const getReserves = async (provider: provider, tokenAddress: string): Pro
 
 export const getDailyRewardRate = async (provider: provider, tokenAddress: string): Promise<number> => {
   try {
-    const web3 = new Web3(provider);
-    const tokenContract = new web3.eth.Contract(ShinobiPoolERC20.abi as unknown as AbiItem, tokenAddress);
+    const tokenContract = getShinobiContract(provider, tokenAddress);
     const rewards = bnToDec(new BigNumber(await tokenContract.methods.rewardRate().call()));
     const rate: number = rewards * 60 * 60 * 24;
     return rate;

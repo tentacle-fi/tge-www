@@ -1,58 +1,41 @@
 import Web3 from "web3";
 import { provider } from "web3-core";
-import { getBalanceAsBigNum } from "./index";
+import { getBalanceAsBigNum, getEarnedAt } from "./index";
 import { AbiItem } from "web3-utils";
 import { IFarm, INK } from "farms/AvailableFarms";
 import { GAS } from "ubiq-sdk/utils";
 import VotingABI from "constants/abi/Voting.json";
+
+export interface IVoteDetails {
+  title: string;
+  options: Array<string>;
+  desc: string;
+  startBlock: number;
+  endBlock: number;
+  contractAddress: string;
+}
 
 // get all voting power for the wallet address, at the specified block height
 export const getVotingPower = async (
   provider: provider,
   walletAddress: string,
   availableFarms: Array<IFarm>,
-  voteContractAddress: string
+  voteDetails: IVoteDetails
 ): Promise<number> => {
   try {
-    const votingBlockHeight = (await getVoteStartEndBlocks(provider, voteContractAddress)).startBlock;
-    if (votingBlockHeight <= 0 || !votingBlockHeight) {
-      throw new Error("votingBlockHeight not valid");
-    }
-
-    let totalVotePower = await getBalanceAsBigNum(provider, INK, walletAddress, votingBlockHeight);
+    let totalVotePower = await getBalanceAsBigNum(provider, INK, walletAddress, voteDetails.startBlock);
 
     const officialFarms = availableFarms.filter((farm) => farm.official === true);
     for (const farm of officialFarms) {
-      const lpBal = await getBalanceAsBigNum(provider, farm.lp.address, walletAddress, votingBlockHeight);
-      const stakeBal = await getBalanceAsBigNum(provider, farm.yieldfarm.address, walletAddress, votingBlockHeight);
-      totalVotePower = totalVotePower.plus(lpBal).plus(stakeBal);
+      const lpBal = await getBalanceAsBigNum(provider, farm.lp.address, walletAddress, voteDetails.startBlock);
+      const stakeBal = await getBalanceAsBigNum(provider, farm.yieldfarm.address, walletAddress, voteDetails.startBlock);
+      const unharvestedBal = await getEarnedAt(provider, farm.yieldfarm.address, walletAddress, voteDetails.startBlock);
+      totalVotePower = totalVotePower.plus(lpBal).plus(stakeBal).plus(unharvestedBal);
     }
 
     return totalVotePower.toNumber();
   } catch (e) {
-    return -1;
-  }
-};
-
-export interface IVoteStartEnd {
-  startBlock: number;
-  endBlock: number;
-}
-
-export const getVoteStartEndBlocks = async (provider: provider, voteContractAddress: string): Promise<IVoteStartEnd> => {
-  const contract = getVoteContract(provider, voteContractAddress);
-  try {
-    const startBlock = await contract.methods.startBlock().call();
-    const endBlock = await contract.methods.endBlock().call();
-    return {
-      startBlock,
-      endBlock,
-    };
-  } catch (e) {
-    return {
-      startBlock: 0,
-      endBlock: 0,
-    };
+    return 0;
   }
 };
 
@@ -68,7 +51,6 @@ export const getTotalVoters = async (provider: provider, voteContractAddress: st
 };
 
 export interface IVote {
-  //[key: string]: number;
   option: number;
   address: string;
 }
@@ -77,13 +59,18 @@ export const getWalletVote = async (walletAddress: string, provider: provider, v
   const contract = getVoteContract(provider, voteContractAddress);
   try {
     const vote = await contract.methods.votes(walletAddress).call();
-    console.log("getWalletVote vote", vote);
+    // console.log("getWalletVote vote", vote);
     return vote;
   } catch (e) {
     console.error("getWalletVote", e);
     return 0;
   }
 };
+
+interface IGetVotersResult {
+  sender: string;
+  candidate: string;
+}
 
 export const getVotes = async (provider: provider, voteContractAddress: string): Promise<Array<IVote>> => {
   const contract = getVoteContract(provider, voteContractAddress);
@@ -94,19 +81,18 @@ export const getVotes = async (provider: provider, voteContractAddress: string):
     if (totalVoters < 1) {
       throw new Error("RPC::getTotalVoters() no voters yet");
     }
-    const votesObj = await contract.methods.getVoters(0, totalVoters).call();
+    const votes = await contract.methods.getVoters(0, totalVoters).call();
 
-    if (votesObj?._voters === undefined || votesObj?._candidates === undefined) {
-      throw new Error("RPC::getVoters() no results returned");
+    if (!votes) {
+      throw new Error("RPC:getVoters() no results returned");
     }
 
-    let votes = votesObj._voters.map((voter: string, i: number) => {
+    return votes.map((v: IGetVotersResult) => {
       return {
-        option: parseInt(votesObj._candidates[i]),
-        address: voter,
+        option: parseInt(v.candidate),
+        address: v.sender,
       };
     });
-    return votes;
   } catch (e) {
     console.error("getVotes", e);
     return [];
@@ -136,7 +122,7 @@ export const getVoteDetails = async (provider: provider, voteContractAddress: st
   const contract = getVoteContract(provider, voteContractAddress);
   try {
     const details = await contract.methods.getVoteDetails().call();
-    console.log("getVoteDetails", details);
+    // console.log("getVoteDetails", details);
     return details;
   } catch (e) {
     console.error("getVoteDetails", e);
