@@ -19,7 +19,7 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
   const { account, ethereum } = useWallet();
   const [votingPower, setVotingPower] = useState("0");
   const [myWalletVote, setMyWalletVote] = useState(1);
-  const [vote, setVote] = useState<IVoteDetails>()
+  const [vote, setVote] = useState<IVoteDetails>();
 
   const fetchVotingPower = useCallback(async () => {
     if (!ethereum || !account || AvailableFarms.length < 1) {
@@ -36,9 +36,9 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
   //   console.log("fetchVotes", await getVotes(ethereum, voteAddress));
   // }, [ethereum, voteAddress]);
 
-  const fetchVoteDetails = useCallback(async()=>{
-    console.log('getVoteDetails', await getVoteDetails(ethereum, voteAddress))
-  }, [])
+  const fetchVoteDetails = useCallback(async () => {
+    console.log("getVoteDetails", await getVoteDetails(ethereum, voteAddress));
+  }, []);
 
   const fetchMyVote = useCallback(async () => {
     if (!ethereum || !account) {
@@ -59,9 +59,9 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
     [ethereum, account, voteAddress]
   );
 
-  useEffect(()=>{
-    fetchVoteDetails()
-  }, [fetchVoteDetails])
+  useEffect(() => {
+    fetchVoteDetails();
+  }, [fetchVoteDetails]);
 
   useEffect(() => {
     fetchVotingPower();
@@ -75,8 +75,8 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
     fetchMyVote();
   }, [fetchMyVote]);
 
-  if(vote === undefined){
-    return (<></>)
+  if (vote === undefined) {
+    return <></>;
   }
 
   return (

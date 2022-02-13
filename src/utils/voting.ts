@@ -142,9 +142,7 @@ export const getVoteDetails = async (provider: provider, voteContractAddress: st
     console.error("getVoteDetails", e);
     return;
   }
-}
-
-
+};
 
 const getVoteContract = (provider: provider, voteContractAddress: string) => {
   const web3 = new Web3(provider);
