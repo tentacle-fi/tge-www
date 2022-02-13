@@ -58,7 +58,7 @@
 - hotfix for staked token value calculations
 - updated TGE1 farm pair name
 
-## 1.4.0-staging
+## 1.4.0
 - add farm tier label to the Tentacle farms (tier 1, tier 2, etc...)
 - added tooltip to tier label
 - adjusted dao info page text (summary)
@@ -77,6 +77,11 @@
 - add mission statement
 - marketcap added
 - ToS added to footer
+
+## 1.4.3
+- mobile styling of DAO info page
+- add ubq weth farm
+- show fully diluted marketcap while hovering over marketcap
 
 ## Unreleased
 nothing at this time

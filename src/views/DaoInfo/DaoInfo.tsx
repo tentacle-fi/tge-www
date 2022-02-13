@@ -6,13 +6,13 @@ import StatsRibbon from "./components/StatsRibbon";
 import PriceRibbon from "./components/PriceRibbon";
 import DAOHoldingsDetails from "./components/DAOHoldingsDetails";
 import Typography from "@mui/material/Typography";
+import { useWallet } from "use-wallet";
 
 const subtitleText = "Tentacle Finance is the first DAO on the Ubiq network, check out some of our stats below!";
 
-const DaoInfo: React.FC = () => {
+const MissionStatement = () => {
   return (
-    <Page>
-      <PageHeader icon={<BarChartIcon sx={{ fontSize: "98px" }} />} title={"DAO Information"} subtitle={subtitleText} />
+    <>
       <Typography variant="h4">Mission Statement</Typography>
       <Typography variant="h6">
         <ol>
@@ -21,6 +21,28 @@ const DaoInfo: React.FC = () => {
           <li>Embed tentacles of finance into as many projects and networks as possible</li>
         </ol>
       </Typography>
+    </>
+  );
+};
+
+const DaoInfo: React.FC = () => {
+  const { status } = useWallet();
+
+  if (status === "disconnected") {
+    return (
+      <Page>
+        <PageHeader icon={<BarChartIcon sx={{ fontSize: "98px" }} />} title={"DAO Information"} subtitle={subtitleText} />
+        <MissionStatement />
+        <hr style={{ width: "60%" }} />
+        <Typography variant="h5">Please connect your wallet to see statistics.</Typography>
+      </Page>
+    );
+  }
+
+  return (
+    <Page>
+      <PageHeader icon={<BarChartIcon sx={{ fontSize: "98px" }} />} title={"DAO Information"} subtitle={subtitleText} />
+      <MissionStatement />
       <StatsRibbon />
       <PriceRibbon />
       <DAOHoldingsDetails />

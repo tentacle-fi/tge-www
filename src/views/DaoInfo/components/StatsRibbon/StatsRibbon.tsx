@@ -1,9 +1,7 @@
 import React, { useCallback, useState, useEffect } from "react";
-import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
 import styled from "styled-components";
 import BigNumber from "bignumber.js";
-// import { bnToDec, getShortDisplayBalance } from "utils";
 import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
 import { useWallet } from "use-wallet";
@@ -12,16 +10,14 @@ import useFarming from "hooks/useFarming";
 import useBalances from "hooks/useBalances";
 import { getCirculatingSupply, getDailyTransactions } from "utils";
 import { AvailableFarms, INK } from "farms/AvailableFarms";
+import Box from "@mui/material/Box";
 
 // sets up a formatter so with toFormat on big numbers, we get thousands separators
-BigNumber.config({ FORMAT: { groupSeparator: ",", groupSize: 3 } });
+BigNumber.config({ FORMAT: { groupSeparator: ",", groupSize: 3, decimalSeparator: "." } });
 
 interface StatsRibbonProps {
   blockHeight?: string;
 }
-
-// Placeholders for now, until functions are written to store the appropriate values in state
-// const DAILYVOLUMEPLACEHOLDER = "$65,039";
 
 const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
   const { currentTvl } = useFarming();
@@ -92,29 +88,42 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
     fetchCurrentMarketcap();
   }, [BlockNum, fetchCurrentMarketcap]);
 
-  if (currentTvl === undefined) {
+  if (currentTvl === undefined || tokenPrices === undefined) {
     return <></>;
   }
 
   return (
     <>
       <Typography variant="h5">Ecosystem Stats</Typography>
-      <StyledStack direction="row" spacing={10}>
+      <StyledBox>
         <Tooltip title="Doesn't include un-harvested farming rewards">
           <Chip label={"Circulating INK: " + circulatingSupply} color="primary" variant="outlined" />
         </Tooltip>
         <Chip label={"Ecosystem TVL: $" + ecosystemTvl} color="primary" variant="outlined" />
-        <Chip label={"MarketCap: $" + currentMarketcap} color="primary" variant="outlined" />
+        <Tooltip title={"Fully Diluted: $" + new BigNumber(tokenPrices[INK]).times(88 * 1000000).toFormat(0)}>
+          <Chip label={"MarketCap: $" + currentMarketcap} color="primary" variant="outlined" />
+        </Tooltip>
         <Chip label={"24hr TXs: " + dailyTransactions} color="primary" variant="outlined" />
-      </StyledStack>
+      </StyledBox>
     </>
   );
 };
 
-const StyledStack = styled(Stack)`
+const StyledBox = styled(Box)`
+  display: flex;
+  justify-content: center;
+  gap: 4%;
   border-radius: 15px;
   background: #2c2b3d;
   padding: 20px;
+  width: 60%;
+  position: relative;
+  min-width: 850px;
+
+  @media (max-width: 850px) {
+    flex-direction: column;
+    min-width: 600px;
+  }
 `;
 
 export default React.memo(StatsRibbon);
