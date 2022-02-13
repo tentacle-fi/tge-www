@@ -284,6 +284,7 @@ export interface IReserves {
 export interface ICurrentStats {
   poolTvl: number;
   farmApy: number;
+  farmApr: number;
   farmTvl: number;
   accountPooledTokens: {
     token0: number;
@@ -463,11 +464,15 @@ export const getCurrentStats = async (
     const account_token0 = lpPercent.toNumber() * farm_token0;
     const account_token1 = lpPercent.toNumber() * farm_token1;
     const farmTvl = farm_token0 * token0Price + farm_token1 * token1Price;
-    const farmApy = ((rewardTokenPrice * dailyTokenRewardEmissions * 365) / farmTvl) * 100;
+    const DAYS_IN_YR = 365;
+    const farmApr = ((rewardTokenPrice * dailyTokenRewardEmissions * DAYS_IN_YR) / farmTvl) * 100;
+    const farmApy = (Math.pow(1 + farmApr / 100 / DAYS_IN_YR, DAYS_IN_YR) - 1) * 100;
 
     // DEBUG: all the log statements for debug that make sense to have. if statement filters the info by address to reduce noise/mistakes
     // if (farmContractAddress === "0x2f161631b3622881EB7125f3243A4CF35271dE02") {
     // console.log('=======')
+    // console.log("daily emissions", dailyTokenRewardEmissions);
+    // console.log("token price", rewardTokenPrice);
     // console.log("token0 price", token0Price);
     // console.log("token1 price", token1Price);
     // console.log("token0", reserves.token0);
@@ -480,10 +485,11 @@ export const getCurrentStats = async (
     // console.log("pool tvl", poolTvl);
     // console.log("");
     // console.log("poolLpTokenAddress", poolLpTokenAddress);
-    // console.log("farmContractAddress", farmContractAddress)
+    // console.log("farmContractAddress", farmContractAddress);
     // console.log("farm token0", farm_token0);
     // console.log("farm token1", farm_token1);
     // console.log("farm tvl", farmTvl);
+    // console.log("farm apr", farmApr);
     // console.log("farm apy", farmApy);
     // console.log('')
     // }
@@ -491,6 +497,7 @@ export const getCurrentStats = async (
     return {
       poolTvl: poolTvl,
       farmApy: isPaused === true ? 0 : farmApy,
+      farmApr: isPaused === true ? 0 : farmApr,
       farmTvl: farmTvl,
       accountPooledTokens: {
         token0: account_token0,
