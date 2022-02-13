@@ -132,6 +132,20 @@ export const submitVote = async (provider: provider, walletAddress: string, vote
   }
 };
 
+export const getVoteDetails = async (provider: provider, voteContractAddress: string): Promise<IVoteDetails | undefined> => {
+  const contract = getVoteContract(provider, voteContractAddress);
+  try {
+    const details = await contract.methods.getVoteDetails().call();
+    console.log("getVoteDetails", details);
+    return details;
+  } catch (e) {
+    console.error("getVoteDetails", e);
+    return;
+  }
+}
+
+
+
 const getVoteContract = (provider: provider, voteContractAddress: string) => {
   const web3 = new Web3(provider);
   const contract = new web3.eth.Contract(VotingABI as unknown as AbiItem, voteContractAddress);

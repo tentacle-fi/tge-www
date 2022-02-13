@@ -3,7 +3,7 @@ export interface IVoteDetails {
   options: Array<string>;
   shortDesc: string;
   fullDesc: string;
-  contractAddress: string;
+  // contractAddress: string;
 }
 
 export { default } from "./VotingBooth";

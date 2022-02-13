@@ -8,38 +8,44 @@ import FormControl from "@mui/material/FormControl";
 import Button from "@mui/material/Button";
 import { AvailableFarms } from "farms/AvailableFarms";
 import { useWallet } from "use-wallet";
-import { submitVote, getVotingPower, getVotes, getWalletVote } from "utils/voting";
+import { submitVote, getVotingPower, getVoteDetails, getWalletVote } from "utils/voting";
 
 interface IVotingBoothProps {
-  vote: IVoteDetails;
+  // vote: IVoteDetails;
+  voteAddress: string;
 }
 
-const VotingBooth: React.FC<IVotingBoothProps> = ({ vote }) => {
+const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
   const { account, ethereum } = useWallet();
   const [votingPower, setVotingPower] = useState("0");
   const [myWalletVote, setMyWalletVote] = useState(1);
+  const [vote, setVote] = useState<IVoteDetails>()
 
   const fetchVotingPower = useCallback(async () => {
     if (!ethereum || !account || AvailableFarms.length < 1) {
       return;
     }
 
-    setVotingPower((await getVotingPower(ethereum, account, AvailableFarms, vote.contractAddress)).toFixed(0));
-  }, [account, ethereum, vote.contractAddress]);
+    setVotingPower((await getVotingPower(ethereum, account, AvailableFarms, voteAddress)).toFixed(0));
+  }, [account, ethereum, voteAddress]);
 
-  const fetchVotes = useCallback(async () => {
-    if (!ethereum) {
-      return;
-    }
-    console.log("fetchVotes", await getVotes(ethereum, vote.contractAddress));
-  }, [ethereum, vote.contractAddress]);
+  // const fetchVotes = useCallback(async () => {
+  //   if (!ethereum) {
+  //     return;
+  //   }
+  //   console.log("fetchVotes", await getVotes(ethereum, voteAddress));
+  // }, [ethereum, voteAddress]);
+
+  const fetchVoteDetails = useCallback(async()=>{
+    console.log('getVoteDetails', await getVoteDetails(ethereum, voteAddress))
+  }, [])
 
   const fetchMyVote = useCallback(async () => {
     if (!ethereum || !account) {
       return;
     }
-    setMyWalletVote(await getWalletVote(account, ethereum, vote.contractAddress));
-  }, [ethereum, vote.contractAddress, account]);
+    setMyWalletVote(await getWalletVote(account, ethereum, voteAddress));
+  }, [ethereum, voteAddress, account]);
 
   const submitSelection = useCallback(
     (voteOption: number) => {
@@ -48,22 +54,30 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ vote }) => {
         return;
       }
 
-      submitVote(ethereum, account, voteOption, vote.contractAddress);
+      submitVote(ethereum, account, voteOption, voteAddress);
     },
-    [ethereum, account, vote.contractAddress]
+    [ethereum, account, voteAddress]
   );
+
+  useEffect(()=>{
+    fetchVoteDetails()
+  }, [fetchVoteDetails])
 
   useEffect(() => {
     fetchVotingPower();
   }, [fetchVotingPower]);
 
-  useEffect(() => {
-    fetchVotes();
-  }, [fetchVotes]);
+  // useEffect(() => {
+  //   fetchVotes();
+  // }, [fetchVotes]);
 
   useEffect(() => {
     fetchMyVote();
   }, [fetchMyVote]);
+
+  if(vote === undefined){
+    return (<></>)
+  }
 
   return (
     <>
