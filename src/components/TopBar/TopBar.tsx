@@ -1,8 +1,5 @@
 import React from "react";
-
-import { Container } from "react-neu";
 import styled from "styled-components";
-
 import Logo from "components/Logo";
 import MenuIcon from "components/icons/Menu";
 import Nav from "./components/Nav";
@@ -16,30 +13,32 @@ interface TopBarProps {
 const TopBar: React.FC<TopBarProps> = ({ onPresentMobileMenu }) => {
   return (
     <StyledTopBar>
-      <Container size="lg">
-        <StyledTopBarInner>
-          <StyledLogoWrapper>
-            <Logo />
-          </StyledLogoWrapper>
-          <StyledNavWrapper>
-            <Nav />
-          </StyledNavWrapper>
-          <StyledAccountButtonWrapper>
-            <WalletButton blockHeightButton={<BlockHeightButton />} />
-          </StyledAccountButtonWrapper>
-          <StyledMenuButton onClick={onPresentMobileMenu}>
-            <MenuIcon />
-          </StyledMenuButton>
-        </StyledTopBarInner>
-      </Container>
+      <StyledTopBarInner>
+        <StyledLogoWrapper>
+          <Logo />
+        </StyledLogoWrapper>
+        <StyledNavWrapper>
+          <Nav />
+        </StyledNavWrapper>
+        <StyledAccountButtonWrapper>
+          <WalletButton blockHeightButton={<BlockHeightButton />} />
+        </StyledAccountButtonWrapper>
+        <StyledMenuButton onClick={onPresentMobileMenu}>
+          <MenuIcon />
+        </StyledMenuButton>
+      </StyledTopBarInner>
     </StyledTopBar>
   );
 };
 
 const StyledLogoWrapper = styled.div`
-  width: 156px;
-  @media (max-width: 400px) {
-    width: auto;
+  margin-left: 5px;
+  @media (max-width: 530px) {
+    margin-left: 10px;
+  }
+
+  @media (max-width: 430px) {
+    display: none;
   }
 `;
 
@@ -52,6 +51,8 @@ const StyledTopBar = styled.div`
 `;
 
 const StyledTopBarInner = styled.div`
+  margin-left: auto;
+  margin-right: auto;
   align-items: center;
   display: flex;
   height: 72px;
@@ -64,7 +65,7 @@ const StyledNavWrapper = styled.div`
   display: flex;
   flex: 1;
   justify-content: center;
-  @media (max-width: 600px) {
+  @media (max-width: 830px) {
     display: none;
   }
 `;
@@ -73,7 +74,6 @@ const StyledAccountButtonWrapper = styled.div`
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  width: 256px;
   @media (max-width: 400px) {
     justify-content: center;
     width: auto;
@@ -83,11 +83,11 @@ const StyledAccountButtonWrapper = styled.div`
 const StyledMenuButton = styled.button`
   background: none;
   border: 0;
-  margin: 0;
+  margin: 0 0 0 10px;
   outline: 0;
   padding: 0;
   display: none;
-  @media (max-width: 600px) {
+  @media (max-width: 830px) {
     align-items: center;
     display: flex;
     height: 44px;

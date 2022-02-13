@@ -58,30 +58,55 @@ const UnHarvested: React.FC<UnHarvestProps> = React.memo(({ farmKey, earnedBalan
 
   const { status, account } = useWallet();
   const { ubiq } = useUbiq();
-  const { setConfirmModal } = useFarming();
+  const { setConfirmModal, setFarmFns } = useFarming();
 
-  const handleHarvest = useCallback(async () => {
-    if (!ubiq?.contracts?.pools) return;
+  const handleHarvest = useCallback(
+    async (all: boolean = false) => {
+      if (!ubiq?.contracts?.pools) return;
 
-    setConfirmModal(true);
-    setisHarvesting(true);
-    await harvest(ubiq, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
-      if (txHash === "") {
-        setisHarvesting(false);
+      setConfirmModal(true);
+      setisHarvesting(true);
+      await harvest(ubiq, account, ubiq.contracts.pools[farmKey], (txHash: string) => {
+        if (txHash === "") {
+          setisHarvesting(false);
+        }
+
+        if (!all) {
+          setConfirmModal(false);
+        }
+      }).catch((err) => {
+        if (err.code === 4001) {
+          console.log("Wallet: User cancelled");
+        } else {
+          console.error("Error caught:", err);
+        }
+      });
+
+      if (!all) {
+        setConfirmModal(false);
       }
 
-      setConfirmModal(false);
-    }).catch((err) => {
-      if (err.code === 4001) {
-        console.log("Wallet: User cancelled");
-      } else {
-        console.error("Error caught:", err);
-      }
+      setisHarvesting(false);
+    },
+    [account, setConfirmModal, setisHarvesting, ubiq, farmKey]
+  );
+
+  useEffect(() => {
+    if (handleHarvest === undefined || setFarmFns === undefined) {
+      return;
+    }
+    setFarmFns((prevState) => {
+      let h = {
+        ...prevState?.harvest,
+      };
+      h[farmKey] = handleHarvest;
+
+      return {
+        ...prevState,
+        harvest: h,
+      };
     });
-
-    setConfirmModal(false);
-    setisHarvesting(false);
-  }, [account, setConfirmModal, setisHarvesting, ubiq, farmKey]);
+  }, [handleHarvest, setFarmFns, farmKey]);
 
   const HarvestAction = useMemo(() => {
     if (status !== "connected") {
