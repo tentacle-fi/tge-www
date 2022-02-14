@@ -424,7 +424,6 @@ export const getDailyTransactions = async (provider: provider): Promise<IDailyTr
     inkUbqEschFarmResults = await INKUBQESCHFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
     ubqWethFarmResults = await UBQWETHFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
 
-
     // Not working yet
     //
     // // Collect swap volume information
