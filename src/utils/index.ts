@@ -10,6 +10,7 @@ import {
   INK_GRANS_FarmContract,
   INK_ESCH_FarmContract,
   INK_UBQ_ESCH_FarmContract,
+  UBQ_WETH_FarmContract,
   INK_UBQ_LPAddress,
   INK_GRANS_LPAddress,
   INK_ESCH_LPAddress,
@@ -403,6 +404,7 @@ export const getDailyTransactions = async (provider: provider): Promise<IDailyTr
   let gransInkFarmResults = [];
   let inkEschFarmResults = [];
   let inkUbqEschFarmResults = [];
+  let ubqWethFarmResults = [];
   const currentBlock = await web3.eth.getBlockNumber();
 
   try {
@@ -412,6 +414,7 @@ export const getDailyTransactions = async (provider: provider): Promise<IDailyTr
     const GRANSINKFARMCONTRACT = getFarmContract(provider, INK_GRANS_FarmContract);
     const INKESCHFARMCONTRACT = getFarmContract(provider, INK_ESCH_FarmContract);
     const INKUBQESCHFARMCONTRACT = getFarmContract(provider, INK_UBQ_ESCH_FarmContract);
+    const UBQWETHFARMCONTRACT = getFarmContract(provider, UBQ_WETH_FarmContract);
 
     // TODO: any way to make this more flexible using availablefarms?
     inkResults = await INKCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
@@ -419,6 +422,8 @@ export const getDailyTransactions = async (provider: provider): Promise<IDailyTr
     gransInkFarmResults = await GRANSINKFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
     inkEschFarmResults = await INKESCHFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
     inkUbqEschFarmResults = await INKUBQESCHFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
+    ubqWethFarmResults = await UBQWETHFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
+
 
     // Not working yet
     //
