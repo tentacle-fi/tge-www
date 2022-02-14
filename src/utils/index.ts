@@ -442,7 +442,13 @@ export const getDailyTransactions = async (provider: provider): Promise<IDailyTr
   }
 
   return {
-    count: inkResults.length + inkUbqFarmResults.length + gransInkFarmResults.length + inkEschFarmResults.length + inkUbqEschFarmResults.length + ubqWethFarmResults.length,
+    count:
+      inkResults.length +
+      inkUbqFarmResults.length +
+      gransInkFarmResults.length +
+      inkEschFarmResults.length +
+      inkUbqEschFarmResults.length +
+      ubqWethFarmResults.length,
   } as IDailyTransactions;
 };
 
