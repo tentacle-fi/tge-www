@@ -37,10 +37,14 @@ const ResourceLinks = () => {
           aria-expanded={open ? "true" : undefined}
           onClick={handleClickListItem}
         >
-          <ListItemText secondary={options[selectedIndex]} />
+          <ListItemText
+            // setting bgcolor here causes the nav label to have it's text background color changed
+            secondary={options[selectedIndex]}
+          />
         </ListItem>
       </List>
       <Menu
+        // setting bgcolor here makes the whole screen that color when the menu is opened
         id="lock-menu"
         anchorEl={anchorEl}
         open={open}
