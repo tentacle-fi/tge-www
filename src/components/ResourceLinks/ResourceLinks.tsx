@@ -4,6 +4,8 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 // Sets the menu items (element zero is the menu's nav label)
 const options = ["Resources", "Nomics", "Test Entry"];
@@ -41,6 +43,9 @@ const ResourceLinks = () => {
             // setting bgcolor here causes the nav label to have it's text background color changed
             secondary={options[selectedIndex]}
           />
+          <ListItemIcon>
+            <KeyboardArrowDownIcon />
+          </ListItemIcon>
         </ListItem>
       </List>
       <Menu
