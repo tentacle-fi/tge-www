@@ -1,10 +1,9 @@
 import * as React from "react";
-import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import ListItemIcon from "@mui/material/ListItemIcon";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 // Sets the menu items
@@ -28,14 +27,14 @@ const LabelMenuItem: React.FC<LabelMenuItemProps> = ({ text }) => {
 
 const ResourceLinks = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  // const [selectedIndex, setSelectedIndex] = React.useState(0);
   const open = Boolean(anchorEl);
   const handleClickListItem = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleMenuItemClick = (event: React.MouseEvent<HTMLElement>, index: number) => {
-    setSelectedIndex(index);
+    // setSelectedIndex(index);
     setAnchorEl(null);
   };
 
@@ -44,26 +43,18 @@ const ResourceLinks = () => {
   };
 
   return (
-    <div>
-      <List component="nav" sx={{ bgcolor: "#0c001c" }}>
-        <ListItem
-          // setting bgcolor here causes a slight strobe color effect on menu click
-          button
-          id="lock-button"
-          aria-haspopup="listbox"
-          aria-controls="lock-menu"
-          aria-expanded={open ? "true" : undefined}
-          onClick={handleClickListItem}
-        >
-          <ListItemText
-            // setting bgcolor here causes the nav label to have it's text background color changed
-            primary={"Resources"}
-          >
-            <KeyboardArrowDownIcon color="primary" />
-          </ListItemText>
-          <ListItemIcon></ListItemIcon>
-        </ListItem>
-      </List>
+    <>
+      <Button
+        // setting bgcolor here causes a slight strobe color effect on menu click
+        id="lock-button"
+        aria-haspopup="listbox"
+        aria-controls="lock-menu"
+        aria-expanded={open ? "true" : undefined}
+        onClick={handleClickListItem}
+        endIcon={<KeyboardArrowDownIcon color="primary" />}
+      >
+        <Typography sx={{ fontSize: "30px", fontWeight: "700" }}>Resources</Typography>
+      </Button>
       <Menu
         // setting bgcolor here makes the whole screen that color when the menu is opened
         variant="menu"
@@ -93,7 +84,7 @@ const ResourceLinks = () => {
           Test Second Cat
         </MenuItem>
       </Menu>
-    </div>
+    </>
   );
 };
 
