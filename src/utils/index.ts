@@ -211,10 +211,10 @@ export const getTimestampDate = (obj: { ts: number; ap?: boolean }) => {
   return (day < 9 ? "0" + day : day) + s + (month <= 9 ? "0" + month : month) + s + year;
 };
 
-export const getReserves = async (provider: provider, tokenAddress: string): Promise<IReserves> => {
+export const getReserves = async (provider: provider, tokenAddress: string, atBlockHeight?: number): Promise<IReserves> => {
   try {
     const tokenContract = getFarmContract(provider, tokenAddress);
-    const { _reserve0, _reserve1, _blockTimestampLast } = await tokenContract.methods.getReserves().call();
+    const { _reserve0, _reserve1, _blockTimestampLast } = await tokenContract.methods.getReserves().call(null, atBlockHeight);
 
     const ret = {
       token0: bnToDec(new BigNumber(_reserve0)),
