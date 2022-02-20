@@ -17,6 +17,7 @@ const Provider: React.FC = ({ children }) => {
   const { account, ethereum } = useWallet();
   const { lpTokenReserves, tokenPrices } = useBalances();
   const [CurrentAPY, setCurrentAPY] = useState<Array<number>>();
+  const [CurrentAPR, setCurrentAPR] = useState<Array<number>>();
   const [CurrentTVL, setCurrentTVL] = useState<Array<number>>();
   const [PooledTokens, setPooledTokens] = useState<Array<IPooledTokens>>();
 
@@ -125,6 +126,7 @@ const Provider: React.FC = ({ children }) => {
     fetchedStatsThisBlock.current = true;
 
     let apyAry = [];
+    let aprAry = [];
     let tvlAry = [];
     let pooledInFarm = [];
 
@@ -148,12 +150,14 @@ const Provider: React.FC = ({ children }) => {
         );
 
         apyAry.push(isNaN(stats.farmApy) ? 0 : stats.farmApy);
+        aprAry.push(isNaN(stats.farmApr) ? 0 : stats.farmApr);
         tvlAry.push(stats.farmTvl);
         pooledInFarm.push(stats.accountPooledTokens);
       } catch (e) {
         console.error("fetchCurrentStats error", e);
 
         apyAry.push(0);
+        aprAry.push(0);
         tvlAry.push(0);
         pooledInFarm.push({
           token0: 0,
@@ -163,6 +167,7 @@ const Provider: React.FC = ({ children }) => {
     }
 
     setCurrentAPY(apyAry);
+    setCurrentAPR(aprAry);
     setCurrentTVL(tvlAry);
     setFarmPooledTokens(pooledInFarm);
   }, [ethereum, lpTokenReserves, tokenPrices, lpPercents, totalFarmSupplyLP, farmPoolRatios]);
@@ -253,6 +258,7 @@ const Provider: React.FC = ({ children }) => {
         totalFarmSupplyLP,
         lpPercents,
         currentApy: CurrentAPY,
+        currentApr: CurrentAPR,
         currentTvl: CurrentTVL,
         PooledTokens: PooledTokens,
 
