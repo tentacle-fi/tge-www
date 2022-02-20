@@ -45,7 +45,7 @@ const ResourceLinks = () => {
 
   return (
     <div>
-      <List component="nav" aria-label="Resources" sx={{ bgcolor: "white" }}>
+      <List component="nav" sx={{ bgcolor: "#0c001c" }}>
         <ListItem
           // setting bgcolor here causes a slight strobe color effect on menu click
           button
@@ -57,11 +57,11 @@ const ResourceLinks = () => {
         >
           <ListItemText
             // setting bgcolor here causes the nav label to have it's text background color changed
-            secondary={options[selectedIndex]}
-          />
-          <ListItemIcon>
-            <KeyboardArrowDownIcon />
-          </ListItemIcon>
+            primary={"Resources"}
+          >
+            <KeyboardArrowDownIcon color="primary" />
+          </ListItemText>
+          <ListItemIcon></ListItemIcon>
         </ListItem>
       </List>
       <Menu
