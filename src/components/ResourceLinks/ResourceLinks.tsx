@@ -6,6 +6,7 @@ import SLink from "components/SLink";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { styled } from "@mui/material/styles";
 
 // this data structure should support label tagging too...
 const options = [
@@ -38,6 +39,16 @@ const options = [
   },
 ];
 
+const StyledMenu = styled(Menu)(({ theme }) => ({
+  ".MuiMenu-paper": {
+    background: "#000",
+  },
+
+  ".MuiMenuItem-root:hover": {
+    background: "#333",
+  },
+}));
+
 const ResourceLinks = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   // const [selectedIndex, setSelectedIndex] = React.useState(0);
@@ -55,11 +66,12 @@ const ResourceLinks = () => {
     setAnchorEl(null);
   };
 
+// Creates the label + link entries in the menu
   const MyMenuItems = options.map((category, index) => {
     const links = category.links.map((link, index) => {
       return (
         <MenuItem
-          sx={{ color: "white", bgcolor: "black" }} // for menu items
+          sx={{ color: "white", bgcolor: "black" }}
           key={"menu-item-" + index}
           onClick={(event) => handleMenuItemClick(event, index)}
         >
@@ -93,9 +105,9 @@ const ResourceLinks = () => {
         onClick={handleClickListItem}
         endIcon={<KeyboardArrowDownIcon color="primary" />}
       >
-        <Typography sx={{ fontSize: "30px", fontWeight: "700" }}>Resources</Typography>
+        <Typography sx={{ fontSize: "30px", fontWeight: "700" }}>Links</Typography>
       </Button>
-      <Menu
+      <StyledMenu
         // setting bgcolor here makes the whole screen that color when the menu is opened
         variant="menu"
         id="lock-menu"
@@ -108,7 +120,7 @@ const ResourceLinks = () => {
         }}
       >
         {MyMenuItems}
-      </Menu>
+      </StyledMenu>
     </>
   );
 };
