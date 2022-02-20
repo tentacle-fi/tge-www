@@ -8,6 +8,16 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 // Sets the menu items
 const options = ["Nomics", "Test Entry"];
+// const options = [
+//         {
+//             name: "Nomics",
+//             url: "google.com"
+//         },
+//         {
+//             name: "Test Entry",
+//             url: "gmail.com"
+//         }
+// ];
 
 interface LabelMenuItemProps {
   text: string;
