@@ -39,14 +39,13 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
       return;
     }
     const listOfVotes = await getVotes(ethereum, vote.contractAddress);
-    // console.log("listOfVotes", listOfVotes);
 
     let results = vote.options.map((v, i) => {
       return 0;
     });
 
     for (let i = 0; i < listOfVotes.length; i++) {
-      results[listOfVotes[i].option - 1] += await getVotingPower(ethereum, account, AvailableFarms, vote);
+      results[listOfVotes[i].option - 1] += await getVotingPower(ethereum, listOfVotes[i].address, AvailableFarms, vote);
     }
 
     setVoteResults(results);
@@ -76,7 +75,6 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
 
   const submitSelection = useCallback(
     (voteOption: number) => {
-      console.log("voteOption", voteOption);
       if (!ethereum || !account || voteOption === 0) {
         return;
       }
