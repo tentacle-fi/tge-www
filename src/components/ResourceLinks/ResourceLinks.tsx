@@ -19,7 +19,7 @@ const LabelMenuItem: React.FC<LabelMenuItemProps> = ({ text }) => {
     <ListItem
       // setting bgcolor here causes a slight strobe color effect on menu click
       id={"item-label-" + text}
-      sx={{ bgcolor: "gray" }}
+      sx={{ bgcolor: "gray", justifyContent: "center" }}
     >
       {text}
     </ListItem>
