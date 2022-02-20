@@ -1,6 +1,7 @@
+import BigNumber from "bignumber.js";
 import Web3 from "web3";
 import { provider } from "web3-core";
-import { getBalanceAsBigNum, getEarnedAt } from "./index";
+import { getBalanceAsBigNum, getReserves, getERC20Contract } from "./index";
 import { AbiItem } from "web3-utils";
 import { IFarm, INK } from "farms/AvailableFarms";
 import { GAS } from "ubiq-sdk/utils";
@@ -25,17 +26,61 @@ export const getVotingPower = async (
   try {
     let totalVotePower = await getBalanceAsBigNum(provider, INK, walletAddress, voteDetails.startBlock);
 
-    const officialFarms = availableFarms.filter((farm) => farm.official === true);
+    const officialFarms = availableFarms.filter((farm) => farm.tokenA.address === INK || farm.tokenB.address === INK);
+
     for (const farm of officialFarms) {
-      const lpBal = await getBalanceAsBigNum(provider, farm.lp.address, walletAddress, voteDetails.startBlock);
-      const stakeBal = await getBalanceAsBigNum(provider, farm.yieldfarm.address, walletAddress, voteDetails.startBlock);
-      const unharvestedBal = await getEarnedAt(provider, farm.yieldfarm.address, walletAddress, voteDetails.startBlock);
-      totalVotePower = totalVotePower.plus(lpBal).plus(stakeBal).plus(unharvestedBal);
+      totalVotePower = totalVotePower.plus(await getInkFromLP(provider, farm, walletAddress, voteDetails.startBlock));
     }
 
     return totalVotePower.toNumber();
   } catch (e) {
     return 0;
+  }
+};
+
+// get the INK from lp at a given block height, return the total as a number
+const getInkFromLP = async (provider: provider, farm: IFarm, walletAddress: string, atBlockHeight: number): Promise<number> => {
+  const unstakedLPBal = await getBalanceAsBigNum(provider, farm.lp.address, walletAddress, atBlockHeight);
+  const stakeLPBal = await getBalanceAsBigNum(provider, farm.yieldfarm.address, walletAddress, atBlockHeight);
+
+  if (unstakedLPBal.isEqualTo(0) && stakeLPBal.isEqualTo(0)) {
+    return 0;
+  }
+
+  const reserves = await getReserves(provider, farm.lp.address, atBlockHeight);
+  const lpTotalSupply = await getTotalSupply(provider, farm.lp.address, atBlockHeight);
+
+  let reserveValue = 0;
+  if (farm.tokenA.address === INK) {
+    reserveValue = reserves.token0;
+  } else if (farm.tokenB.address === INK) {
+    reserveValue = reserves.token1;
+  } else {
+    return 0;
+  }
+
+  let totalInk = 0;
+
+  if (!unstakedLPBal.isEqualTo(0)) {
+    totalInk += unstakedLPBal.div(lpTotalSupply).times(reserveValue).toNumber();
+  }
+
+  if (!stakeLPBal.isEqualTo(0)) {
+    totalInk += stakeLPBal.div(lpTotalSupply).times(reserveValue).toNumber();
+  }
+
+  return totalInk;
+};
+
+const getTotalSupply = async (provider: provider, contractAddress: string, atBlockHeight: number): Promise<BigNumber> => {
+  const contract = getERC20Contract(provider, contractAddress);
+
+  try {
+    let totalSupply = new BigNumber(await contract.methods.totalSupply().call(null, atBlockHeight)).dividedBy(new BigNumber(10).pow(18));
+    return totalSupply;
+  } catch (e) {
+    console.error("getInkTotalSupply", e);
+    return new BigNumber(0);
   }
 };
 
