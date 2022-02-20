@@ -84,4 +84,4 @@
 - show fully diluted marketcap while hovering over marketcap
 
 ## Unreleased
-nothing at this time
+- APR and APY updates
