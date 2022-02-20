@@ -84,4 +84,5 @@
 - show fully diluted marketcap while hovering over marketcap
 
 ## Unreleased
+- add weth to daily transactions on DAO Info
 - APR and APY updates

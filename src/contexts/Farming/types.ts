@@ -17,4 +17,6 @@ export interface ContextValues {
 
   farmFns?: IFarmingFns | undefined; // contains an object with each property being a function to call from the UI
   setFarmFns?: React.Dispatch<React.SetStateAction<IFarmingFns | undefined>>; // setter function
+
+  inkTotalSupply: number;
 }

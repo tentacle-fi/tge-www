@@ -6,7 +6,7 @@ import useUbiq from "hooks/useUbiq";
 import { AvailableFarms } from "farms/AvailableFarms";
 import { getPoolTotalSupply, getEarned, getStaked } from "ubiq-sdk/utils";
 import Context from "./Context";
-import { getCurrentStats } from "utils";
+import { getCurrentStats, getInkTotalSupply } from "utils";
 import useBalances from "hooks/useBalances";
 import { IPooledTokens, IFarmingFns } from "hooks/useFarming";
 
@@ -28,6 +28,7 @@ const Provider: React.FC = ({ children }) => {
   const [earnedBalances, setearnedBalances] = useState<Array<BigNumber>>();
   const [FarmPooledTokens, setFarmPooledTokens] = useState<Array<IPooledTokens>>();
   const [farmFns, setFarmFns] = useState<IFarmingFns | undefined>();
+  const [inkTotalSupply, setInkTotalSupply] = useState<number>(0);
 
   const fetchedEarnedBalancesThisBlock = useRef(false);
   const fetchedStakedBalancesThisBlock = useRef(false);
@@ -217,6 +218,17 @@ const Provider: React.FC = ({ children }) => {
     }
   }, []);
 
+  const fetchInkTotalSupply = useCallback(
+    async (provider) => {
+      if (!provider) {
+        return;
+      }
+
+      setInkTotalSupply(await getInkTotalSupply(provider));
+    },
+    [setInkTotalSupply]
+  );
+
   useEffect(() => {
     fetchedEarnedBalancesThisBlock.current = false;
     fetchedStakedBalancesThisBlock.current = false;
@@ -228,6 +240,13 @@ const Provider: React.FC = ({ children }) => {
   useEffect(() => {
     fetchBalances();
   }, [BlockNum, fetchBalances]);
+
+  useEffect(() => {
+    if (!ethereum) {
+      return;
+    }
+    fetchInkTotalSupply(ethereum);
+  }, [ethereum, fetchInkTotalSupply]);
 
   return (
     <Context.Provider
@@ -245,6 +264,8 @@ const Provider: React.FC = ({ children }) => {
 
         farmFns,
         setFarmFns,
+
+        inkTotalSupply,
       }}
     >
       {children}
