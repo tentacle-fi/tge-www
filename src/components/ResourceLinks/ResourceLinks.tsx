@@ -7,8 +7,24 @@ import Menu from "@mui/material/Menu";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
-// Sets the menu items (element zero is the menu's nav label)
-const options = ["Resources", "Nomics", "Test Entry"];
+// Sets the menu items
+const options = ["Nomics", "Test Entry"];
+
+interface LabelMenuItemProps {
+  text: string;
+}
+
+const LabelMenuItem: React.FC<LabelMenuItemProps> = ({ text }) => {
+  return (
+    <ListItem
+      // setting bgcolor here causes a slight strobe color effect on menu click
+      id={"item-label-" + text}
+      sx={{ bgcolor: "gray" }}
+    >
+      {text}
+    </ListItem>
+  );
+};
 
 const ResourceLinks = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -50,6 +66,7 @@ const ResourceLinks = () => {
       </List>
       <Menu
         // setting bgcolor here makes the whole screen that color when the menu is opened
+        variant="menu"
         id="lock-menu"
         anchorEl={anchorEl}
         open={open}
@@ -59,17 +76,22 @@ const ResourceLinks = () => {
           role: "listbox",
         }}
       >
+        <LabelMenuItem text="Marketcap" />
         {options.map((option, index) => (
           <MenuItem
-            sx={{ color: "white", background: "black" }} // sets text color for menu items
+            sx={{ color: "white", bgcolor: "black" }} // for menu items
             key={option}
-            disabled={index === 0}
-            selected={index === selectedIndex}
             onClick={(event) => handleMenuItemClick(event, index)}
           >
             {option}
           </MenuItem>
         ))}
+        <LabelMenuItem text="A Second Category" />
+        <MenuItem
+          sx={{ color: "white", bgcolor: "black" }} // for menu items
+        >
+          Test Second Cat
+        </MenuItem>
       </Menu>
     </div>
   );
