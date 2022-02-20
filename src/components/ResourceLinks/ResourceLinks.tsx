@@ -66,15 +66,11 @@ const ResourceLinks = () => {
     setAnchorEl(null);
   };
 
-// Creates the label + link entries in the menu
+  // Creates the label + link entries in the menu
   const MyMenuItems = options.map((category, index) => {
     const links = category.links.map((link, index) => {
       return (
-        <MenuItem
-          sx={{ color: "white", bgcolor: "black" }}
-          key={"menu-item-" + index}
-          onClick={(event) => handleMenuItemClick(event, index)}
-        >
+        <MenuItem sx={{ color: "white", bgcolor: "black" }} key={"menu-item-" + index} onClick={(event) => handleMenuItemClick(event, index)}>
           {
             <SLink external href={link.url}>
               {link.name}
