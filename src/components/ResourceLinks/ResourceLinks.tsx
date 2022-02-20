@@ -2,48 +2,41 @@ import * as React from "react";
 import ListItem from "@mui/material/ListItem";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
+import SLink from "components/SLink";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
-// Sets the menu items
-const options = ["Nomics"];
-
 // this data structure should support label tagging too...
-// const options = [
-//
-//     // categories
-//     {
-//         categoryName: "Marketcap",
-//         links:
-//         [
-//             {
-//                 name: "Nomics",
-//                 url: "google.com"
-//             },
-//             {
-//                 name: "Test Entry",
-//                 url: "gmail.com"
-//             }
-//         ]
-//     }
-// ];
-
-interface LabelMenuItemProps {
-  text: string;
-}
-
-const LabelMenuItem: React.FC<LabelMenuItemProps> = ({ text }) => {
-  return (
-    <ListItem
-      // setting bgcolor here causes a slight strobe color effect on menu click
-      id={"item-label-" + text}
-      sx={{ bgcolor: "gray", justifyContent: "center" }}
-    >
-      {text}
-    </ListItem>
-  );
-};
+const options = [
+  // categories
+  {
+    categoryName: "Marketcap",
+    links: [
+      {
+        name: "Nomics",
+        url: "https://nomics.com/assets/ink4-tentacle-finance",
+      },
+    ],
+  },
+  {
+    categoryName: "Socials",
+    links: [
+      {
+        name: "Twitter",
+        url: "https://twitter.com/TentacleFinance",
+      },
+      {
+        name: "Medium",
+        url: "https://medium.com/@tentaclefinance",
+      },
+      {
+        name: "Discord",
+        url: "https://discord.gg/CbTa6Z2JYM",
+      },
+    ],
+  },
+];
 
 const ResourceLinks = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -61,6 +54,33 @@ const ResourceLinks = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const MyMenuItems = options.map((category, index) => {
+    const links = category.links.map((link, index) => {
+      return (
+        <MenuItem
+          sx={{ color: "white", bgcolor: "black" }} // for menu items
+          key={"menu-item-" + index}
+          onClick={(event) => handleMenuItemClick(event, index)}
+        >
+          {
+            <SLink external href={link.url}>
+              {link.name}
+            </SLink>
+          }
+        </MenuItem>
+      );
+    });
+
+    return (
+      <>
+        <ListItem id={"item-label-" + index} sx={{ bgcolor: "gray", justifyContent: "center" }}>
+          {category.categoryName}
+        </ListItem>
+        {links}
+      </>
+    );
+  });
 
   return (
     <>
@@ -87,27 +107,7 @@ const ResourceLinks = () => {
           role: "listbox",
         }}
       >
-        <LabelMenuItem text="Marketcap" />
-        {options.map((option, index) => (
-          <MenuItem
-            sx={{ color: "white", bgcolor: "black" }} // for menu items
-            key={option}
-            onClick={(event) => handleMenuItemClick(event, index)}
-          >
-            {option}
-          </MenuItem>
-        ))}
-        <LabelMenuItem text="Social" />
-        <MenuItem
-          sx={{ color: "white", bgcolor: "black" }} // for menu items
-        >
-          Medium
-        </MenuItem>
-        <MenuItem
-          sx={{ color: "white", bgcolor: "black" }} // for menu items
-        >
-          Twitter
-        </MenuItem>
+        {MyMenuItems}
       </Menu>
     </>
   );
