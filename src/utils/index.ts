@@ -465,8 +465,9 @@ export const getCurrentStats = async (
     const account_token1 = lpPercent.toNumber() * farm_token1;
     const farmTvl = farm_token0 * token0Price + farm_token1 * token1Price;
     const DAYS_IN_YR = 365;
+    const APY_COMPOUNDS = DAYS_IN_YR * 2;
     const farmApr = ((rewardTokenPrice * dailyTokenRewardEmissions * DAYS_IN_YR) / farmTvl) * 100;
-    const farmApy = (Math.pow(1 + farmApr / 100 / DAYS_IN_YR, DAYS_IN_YR) - 1) * 100;
+    const farmApy = (Math.pow(1 + farmApr / 100 / APY_COMPOUNDS, APY_COMPOUNDS) - 1) * 100;
 
     // DEBUG: all the log statements for debug that make sense to have. if statement filters the info by address to reduce noise/mistakes
     // if (farmContractAddress === "0x2f161631b3622881EB7125f3243A4CF35271dE02") {
