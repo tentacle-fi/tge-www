@@ -7,16 +7,26 @@ import Typography from "@mui/material/Typography";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 // Sets the menu items
-const options = ["Nomics", "Test Entry"];
+const options = ["Nomics"];
+
+// this data structure should support label tagging too...
 // const options = [
-//         {
-//             name: "Nomics",
-//             url: "google.com"
-//         },
-//         {
-//             name: "Test Entry",
-//             url: "gmail.com"
-//         }
+//
+//     // categories
+//     {
+//         categoryName: "Marketcap",
+//         links:
+//         [
+//             {
+//                 name: "Nomics",
+//                 url: "google.com"
+//             },
+//             {
+//                 name: "Test Entry",
+//                 url: "gmail.com"
+//             }
+//         ]
+//     }
 // ];
 
 interface LabelMenuItemProps {
@@ -87,11 +97,16 @@ const ResourceLinks = () => {
             {option}
           </MenuItem>
         ))}
-        <LabelMenuItem text="A Second Category" />
+        <LabelMenuItem text="Social" />
         <MenuItem
           sx={{ color: "white", bgcolor: "black" }} // for menu items
         >
-          Test Second Cat
+          Medium
+        </MenuItem>
+        <MenuItem
+          sx={{ color: "white", bgcolor: "black" }} // for menu items
+        >
+          Twitter
         </MenuItem>
       </Menu>
     </>
