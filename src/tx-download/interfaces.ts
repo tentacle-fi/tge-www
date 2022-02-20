@@ -5,6 +5,22 @@ import { Log } from "@ethersproject/abstract-provider";
 // mint nft: gas paid for mint
 // sell nft: incoming token value needs to be captured
 
+export interface ITransferCSVRow {
+  txHash: string;
+  timestamp: number;
+  date: string;
+  block: number;
+  fee: string;
+  feeSymbol: string;
+  from: string; // address who sent the value
+  to: string; // address who received the value
+  value: string; // total number of token/coin transferred
+  valueUSD: string; // historical price of token transferred
+  tokenSymbol: string; // transferred value token/coin symbol
+  tokenAddress: string; // transferred value token/coin address
+  reason: string; // essentially a notes section, with methoid?
+}
+
 export interface ICSVRow {
   date: string; // date and time as YYYY-mm-dd HH:mm:ss Z
   action: string; // buy, sell or swap

@@ -1,18 +1,86 @@
-import { ITxDetail, ICSVRow } from "../interfaces";
-import { bnToDecStr, bnTohex, tsFormat, tokenLookupSymbol, testMethodId, Transfer_Event } from "./tools";
+import { ITxDetail, ITransferCSVRow } from "../interfaces";
+import { bnToDecStr, bnTohex, tsFormat, formatTopic, tokenLookupSymbol, testMethodId, Transfer_Event } from "./tools";
 
 // create a list of txs that are processed but don't fall into other categories
 // may not return info for the CSV but another way to display info
 
-const Unknown = (allTxs: Array<ITxDetail>): Array<ICSVRow> => {
-  let results = [] as Array<ICSVRow>;
+const Unknown = (walletAddress: string, allTxs: Array<ITxDetail>): Array<ITransferCSVRow> => {
+  let results = [] as Array<ITransferCSVRow>;
+
+  // tx[]
+  //    events[]
+  //      processed = true/false
+  // find transfers, withdrawls, deposits, etc - standard erc20 functions
+  // try to lookup (in a custom processor set) of why this transaction happened (find context). this is not for determining value, but to find the service this is related with
+
+  // Transfer:
+  //  to
+  //  from
+  //  token
+  //  value
 
   for (let i = 0; i < allTxs.length; i++) {
-    if (allTxs[i].processed === true) {
-      continue;
+    // if (allTxs[i].processed === true) {
+    //   continue;
+    // }
+
+    const details = {
+      txHash: allTxs[i].tx.hash,
+      fee: allTxs[i].gas.paid,
+      feeSymbol: "UBQ",
+      timestamp: allTxs[i].block.timestamp,
+      date: tsFormat(allTxs[i].block.timestamp),
+      block: allTxs[i].block.number,
+    };
+
+    let transfers = findTransfers(walletAddress, allTxs[i]);
+    if (transfers?.length > 0) {
+      allTxs[i].processed = true;
+
+      transfers.forEach((transfer) => {
+        results.push({
+          ...transfer,
+          ...details,
+        });
+      });
     }
   }
+
+  console.log(
+    "unprocessed",
+    allTxs.filter((tx) => tx?.processed !== true)
+  );
+
   return results;
+};
+
+// process transaction, looking for walletAddress within any Transfer event to/from
+// return array of matching transfers, mapped to the necessary values for CSV
+const findTransfers = (walletAddress: string, tx: ITxDetail) => {
+  const topicWalletAddress = formatTopic(walletAddress);
+  const transferEvents = tx.receipt.logs.filter((log) => log?.topics?.[0]?.toLowerCase() === Transfer_Event);
+
+  // console.log('transferEvents', transferEvents)
+
+  const walletAddressTransfers = transferEvents
+    .filter((t) => {
+      return t.topics[1].toLowerCase() === topicWalletAddress || t.topics[2].toLowerCase() === topicWalletAddress;
+    })
+    .map((transfer) => {
+      return {
+        from: bnTohex(transfer.topics[1]),
+        to: bnTohex(transfer.topics[2]),
+        value: bnToDecStr(transfer.data),
+        valueUSD: "", // TODO: fill this in with hitorical USD data
+        tokenSymbol: tokenLookupSymbol(transfer.address),
+        tokenAddress: transfer.address,
+        reason: "", // TODO: fill this with the tx methodid or other context, if found
+      };
+    });
+
+  // console.log("toAddressTransfers", toAddressTransfers);
+
+  return walletAddressTransfers;
 };
 
 // addLiquidityETH = send in two tokens and get transferred one kind of LP token

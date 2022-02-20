@@ -37,8 +37,31 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
       console.log("results", "processed:", results.raw.filter((tx) => tx.processed === true).length, "out of", results.raw.length);
 
       // TODO: find a better way to pull the names from the ICSVRow interface at compile time (DRY the code)
-      const headerCSV = ["date", "action", "total", "currency", "volume", "symbol", "account", "price", "fee", "feeCurrency", "txHash"];
-      setScanResults(headerCSV.join(",") + "\n" + resultsToCSV(headerCSV, [...results.swap, ...results.tg, ...results.farm]));
+      // const headerCSV = ["date", "action", "total", "currency", "volume", "symbol", "account", "price", "fee", "feeCurrency", "txHash"];
+      const headerCSV = [
+        "txHash",
+        "timestamp",
+        "date",
+        "block",
+        "fee",
+        "feeSymbol",
+        "from",
+        "to",
+        "value",
+        "valueUSD",
+        "tokenSymbol",
+        "tokenAddress",
+        "reason",
+      ];
+      setScanResults(
+        headerCSV.join(",") +
+          "\n" +
+          resultsToCSV(headerCSV, [
+            ...results.swap,
+            // ...results.tg,
+            // ...results.farm
+          ])
+      );
     }
   }, [account]);
 

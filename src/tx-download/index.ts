@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { Log } from "@ethersproject/abstract-provider";
 // import {TransactionReceipt, TransactionResponse } from "@ethersproject/abstract-provider"// for debug
 import lookupMethod from "./lookupMethod";
-import { ITransactionHashStub, IProcessedData, ITxDetail, ICSVRow } from "./interfaces";
+import { ITransactionHashStub, IProcessedData, ITxDetail, ITransferCSVRow } from "./interfaces";
 import Probes from "./probes";
 import { formatTopic } from "./probes/tools";
 
@@ -76,7 +76,7 @@ const verifyNonceSequential = (walletAddress: string, list: Array<ITxDetail>): A
   return missing;
 };
 
-export const resultsToCSV = (columns: Array<string>, results: Array<ICSVRow>): string => {
+export const resultsToCSV = (columns: Array<string>, results: Array<ITransferCSVRow>): string => {
   let str = "";
   for (let i = 0; i < results.length; i++) {
     let row = "";
@@ -84,7 +84,7 @@ export const resultsToCSV = (columns: Array<string>, results: Array<ICSVRow>): s
       if (row !== "") {
         row += ",";
       }
-      row += results[i][prop as keyof ICSVRow];
+      row += results[i][prop as keyof ITransferCSVRow];
     }
     str += row + "\n";
   }
