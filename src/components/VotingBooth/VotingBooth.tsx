@@ -24,7 +24,7 @@ const LinearProgressWithLabel = (props: LinearProgressProps & { value: number })
       </Box>
     </Box>
   );
-}
+};
 
 interface IVotingBoothProps {
   // vote: IVoteDetails;
