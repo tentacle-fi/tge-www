@@ -86,6 +86,7 @@
 ## 1.5.0-staging
 - add weth to daily transactions on DAO Info
 - APR and APY updates
+- add "more" link for additional resource links in main nav
 
 ## Unreleased
-- add "more" link for additional resource links in main nav
+nothing at this time
