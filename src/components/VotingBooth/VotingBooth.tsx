@@ -7,11 +7,24 @@ import FormControl from "@mui/material/FormControl";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 import { AvailableFarms } from "farms/AvailableFarms";
-import StarIcon from "@mui/icons-material/Star";
-import Tooltip from "@mui/material/Tooltip";
 import useUbiq from "hooks/useUbiq";
 import { useWallet } from "use-wallet";
 import { submitVote, getVotingPower, getVotes, getVoteDetails, getWalletVote, IVoteDetails } from "utils/voting";
+import LinearProgress, { LinearProgressProps } from "@mui/material/LinearProgress";
+import Box from "@mui/material/Box";
+
+function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
+  return (
+    <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Box sx={{ width: "100%", mr: 1 }}>
+        <LinearProgress variant="determinate" {...props} />
+      </Box>
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="body2" color="white">{`${Math.round(props.value)}%`}</Typography>
+      </Box>
+    </Box>
+  );
+}
 
 interface IVotingBoothProps {
   // vote: IVoteDetails;
@@ -144,9 +157,11 @@ const VoteFormComponent: React.FC<IVoteFormProps> = ({ results, vote, myWalletVo
     // style the leading voted candidate (option)
     let winningResultIndex = -1;
     let winningResultTally = 0;
+    let weightTotal = 0;
 
     if (results !== undefined) {
       for (let i = 0; i < results.length; i++) {
+        weightTotal += results[i];
         if (results[i] > winningResultTally) {
           winningResultTally = results[i];
           winningResultIndex = i;
@@ -163,13 +178,13 @@ const VoteFormComponent: React.FC<IVoteFormProps> = ({ results, vote, myWalletVo
       return (
         <div key={i} style={{ display: "flex", flexDirection: "row", gap: "25px" }}>
           <Typography variant="body1" sx={{ width: "100px", textAlign: "right", lineHeight: "42px" }}>
-            {winningResultIndex === i && (
-              <Tooltip title={`Leading option`}>
-                <StarIcon sx={{ lineHeight: "42px", fontSize: "18px", margin: "8px 8px 0 0" }} />
-              </Tooltip>
-            )}
             {tally.toFixed(0)}
           </Typography>
+          <LinearProgressWithLabel
+            color={i === winningResultIndex ? "primary" : "warning"}
+            value={(tally / weightTotal) * 100}
+            sx={{ width: "100px" }}
+          />
           <FormControlLabel value={i} control={<Radio />} label={option} />
         </div>
       );
