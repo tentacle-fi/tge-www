@@ -40,8 +40,6 @@ export const getDeployedVotingContracts = async () => {
     return [];
   }
 
-  console.log("getDeployedVotingContracts", logs);
-
   return logs.map((log) => log.address);
 };
 

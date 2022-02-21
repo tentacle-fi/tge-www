@@ -33,6 +33,7 @@ interface IVotingBoothProps {
 
 const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
   const { account, ethereum } = useWallet();
+  const { BlockNum } = useUbiq();
 
   const [votingPower, setVotingPower] = useState("0");
   const [myWalletVote, setMyWalletVote] = useState(1);
@@ -107,7 +108,7 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
 
   useEffect(() => {
     fetchVotes();
-  }, [fetchVotes]);
+  }, [fetchVotes, BlockNum]);
 
   useEffect(() => {
     fetchMyVote();
@@ -145,13 +146,13 @@ const VoteFormComponent: React.FC<IVoteFormProps> = ({ results, vote, myWalletVo
   const [selectedValue, setSelectedValue] = useState(0);
   const { BlockNum } = useUbiq();
 
-  useEffect(() => {
-    setSelectedValue(myWalletVote - 1);
-  }, [myWalletVote]);
-
   const handleSelectionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedValue(parseInt((event.target as HTMLInputElement).value)); // index + 1, contract rejects 0 votes
   };
+
+  useEffect(() => {
+    setSelectedValue(myWalletVote - 1);
+  }, [myWalletVote]);
 
   const Radios = () => {
     // style the leading voted candidate (option)
