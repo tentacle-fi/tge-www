@@ -88,4 +88,4 @@
 - APR and APY updates
 
 ## Unreleased
-nothing at this time
+- add "more" link for additional resource links in main nav
