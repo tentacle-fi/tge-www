@@ -83,5 +83,8 @@
 - add ubq weth farm
 - show fully diluted marketcap while hovering over marketcap
 
+## 1.5.0-alpha
+- voting implemented
+
 ## Unreleased
 - add weth to daily transactions on DAO Info

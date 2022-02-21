@@ -13,7 +13,7 @@ import { submitVote, getVotingPower, getVotes, getVoteDetails, getWalletVote, IV
 import LinearProgress, { LinearProgressProps } from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 
-function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
+const LinearProgressWithLabel = (props: LinearProgressProps & { value: number }) => {
   return (
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <Box sx={{ width: "100%", mr: 1 }}>
