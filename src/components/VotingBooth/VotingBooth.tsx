@@ -200,7 +200,7 @@ const VoteFormComponent: React.FC<IVoteFormProps> = ({ results, vote, myWalletVo
   };
 
   return (
-    <FormControl sx={{ background: "#333", margin: "20px", padding: "15px", borderRadius: "20px" }}>
+    <FormControl sx={{ background: "#333", margin: "20px", padding: "15px", borderRadius: "20px", minWidth: "320px" }}>
       <VoteStatus />
       <Typography variant="h4">Vote</Typography>
       <hr style={{ width: "95%", borderColor: "#888" }} />

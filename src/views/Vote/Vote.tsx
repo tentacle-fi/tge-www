@@ -1,15 +1,23 @@
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 import Page from "components/Page";
 import PageHeader from "components/PageHeader";
 import HowToVoteIcon from "@mui/icons-material/HowToVote";
 import VotingBooth from "components/VotingBooth";
-
-// TODO: pull the contract addresses from github or on-chain...
-const allVotes = ["0x9ADBf4bE59b32254B2cfB05802396DDC305D7130"];
+import { getDeployedVotingContracts } from "utils/voting";
 
 const Vote: React.FC = () => {
-  const Votes = allVotes.map((v, i) => {
+  const [allVotes, setAllVotes] = useState<Array<string>>();
+
+  const fetchAllVotes = useCallback(async () => {
+    setAllVotes(await getDeployedVotingContracts());
+  }, []);
+
+  useEffect(() => {
+    fetchAllVotes();
+  }, [fetchAllVotes]);
+
+  const Votes = allVotes?.map((v, i) => {
     return <VotingBooth key={i} voteAddress={v} />;
   });
 

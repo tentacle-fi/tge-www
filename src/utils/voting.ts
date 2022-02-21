@@ -5,6 +5,7 @@ import { getBalanceAsBigNum, getReserves, getERC20Contract } from "./index";
 import { AbiItem } from "web3-utils";
 import { IFarm, INK } from "farms/AvailableFarms";
 import { GAS } from "ubiq-sdk/utils";
+import { ethers } from "ethers";
 import VotingABI from "constants/abi/Voting.json";
 
 export interface IVoteDetails {
@@ -15,6 +16,34 @@ export interface IVoteDetails {
   endBlock: number;
   contractAddress: string;
 }
+
+export const getDeployedVotingContracts = async () => {
+  const jsonProvider = new ethers.providers.JsonRpcProvider("https://rpc.octano.dev/");
+
+  const votingBlock = 1956670;
+
+  const filter = {
+    fromBlock: "0x" + votingBlock.toString(16),
+    toBlock: "latest",
+    topics: [
+      "0x72f75ba1650fa7ceb2c124d613d20013e0d38a4dc90e9f6557dcaf313b6eae4f", // onNewBallot() event
+    ],
+  };
+  let logs;
+  try {
+    logs = await jsonProvider.getLogs(filter);
+  } catch (e) {
+    console.error("getDeployedVotingContracts error", e);
+  }
+
+  if (logs === undefined) {
+    return [];
+  }
+
+  console.log("getDeployedVotingContracts", logs);
+
+  return logs.map((log) => log.address);
+};
 
 // get all voting power for the wallet address, at the specified block height
 export const getVotingPower = async (
