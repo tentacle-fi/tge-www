@@ -6,7 +6,7 @@ import useUbiq from "hooks/useUbiq";
 import { AvailableFarms } from "farms/AvailableFarms";
 import { getPoolTotalSupply, getEarned, getStaked } from "ubiq-sdk/utils";
 import Context from "./Context";
-import { getCurrentStats } from "utils";
+import { getCurrentStats, getInkTotalSupply } from "utils";
 import useBalances from "hooks/useBalances";
 import { IPooledTokens, IFarmingFns } from "hooks/useFarming";
 
@@ -17,6 +17,7 @@ const Provider: React.FC = ({ children }) => {
   const { account, ethereum } = useWallet();
   const { lpTokenReserves, tokenPrices } = useBalances();
   const [CurrentAPY, setCurrentAPY] = useState<Array<number>>();
+  const [CurrentAPR, setCurrentAPR] = useState<Array<number>>();
   const [CurrentTVL, setCurrentTVL] = useState<Array<number>>();
   const [PooledTokens, setPooledTokens] = useState<Array<IPooledTokens>>();
 
@@ -27,6 +28,7 @@ const Provider: React.FC = ({ children }) => {
   const [earnedBalances, setearnedBalances] = useState<Array<BigNumber>>();
   const [FarmPooledTokens, setFarmPooledTokens] = useState<Array<IPooledTokens>>();
   const [farmFns, setFarmFns] = useState<IFarmingFns | undefined>();
+  const [inkTotalSupply, setInkTotalSupply] = useState<number>(0);
 
   const fetchedEarnedBalancesThisBlock = useRef(false);
   const fetchedStakedBalancesThisBlock = useRef(false);
@@ -124,6 +126,7 @@ const Provider: React.FC = ({ children }) => {
     fetchedStatsThisBlock.current = true;
 
     let apyAry = [];
+    let aprAry = [];
     let tvlAry = [];
     let pooledInFarm = [];
 
@@ -147,12 +150,14 @@ const Provider: React.FC = ({ children }) => {
         );
 
         apyAry.push(isNaN(stats.farmApy) ? 0 : stats.farmApy);
+        aprAry.push(isNaN(stats.farmApr) ? 0 : stats.farmApr);
         tvlAry.push(stats.farmTvl);
         pooledInFarm.push(stats.accountPooledTokens);
       } catch (e) {
         console.error("fetchCurrentStats error", e);
 
         apyAry.push(0);
+        aprAry.push(0);
         tvlAry.push(0);
         pooledInFarm.push({
           token0: 0,
@@ -162,6 +167,7 @@ const Provider: React.FC = ({ children }) => {
     }
 
     setCurrentAPY(apyAry);
+    setCurrentAPR(aprAry);
     setCurrentTVL(tvlAry);
     setFarmPooledTokens(pooledInFarm);
   }, [ethereum, lpTokenReserves, tokenPrices, lpPercents, totalFarmSupplyLP, farmPoolRatios]);
@@ -212,6 +218,17 @@ const Provider: React.FC = ({ children }) => {
     }
   }, []);
 
+  const fetchInkTotalSupply = useCallback(
+    async (provider) => {
+      if (!provider) {
+        return;
+      }
+
+      setInkTotalSupply(await getInkTotalSupply(provider));
+    },
+    [setInkTotalSupply]
+  );
+
   useEffect(() => {
     fetchedEarnedBalancesThisBlock.current = false;
     fetchedStakedBalancesThisBlock.current = false;
@@ -224,6 +241,13 @@ const Provider: React.FC = ({ children }) => {
     fetchBalances();
   }, [BlockNum, fetchBalances]);
 
+  useEffect(() => {
+    if (!ethereum) {
+      return;
+    }
+    fetchInkTotalSupply(ethereum);
+  }, [ethereum, fetchInkTotalSupply]);
+
   return (
     <Context.Provider
       value={{
@@ -234,11 +258,14 @@ const Provider: React.FC = ({ children }) => {
         totalFarmSupplyLP,
         lpPercents,
         currentApy: CurrentAPY,
+        currentApr: CurrentAPR,
         currentTvl: CurrentTVL,
         PooledTokens: PooledTokens,
 
         farmFns,
         setFarmFns,
+
+        inkTotalSupply,
       }}
     >
       {children}
