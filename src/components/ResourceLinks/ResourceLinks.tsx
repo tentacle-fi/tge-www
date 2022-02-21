@@ -95,13 +95,14 @@ const ResourceLinks = () => {
       <Button
         // setting bgcolor here causes a slight strobe color effect on menu click
         id="lock-button"
+        sx={{ fontStyle: "normal" }}
         aria-haspopup="listbox"
         aria-controls="lock-menu"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClickListItem}
         endIcon={<KeyboardArrowDownIcon color="primary" />}
       >
-        <Typography sx={{ fontSize: "30px", fontWeight: "700" }}>Links</Typography>
+        <Typography sx={{ fontSize: "30px", fontWeight: "700" }}>More</Typography>
       </Button>
       <StyledMenu
         // setting bgcolor here makes the whole screen that color when the menu is opened
