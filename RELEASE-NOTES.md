@@ -84,4 +84,4 @@
 - show fully diluted marketcap while hovering over marketcap
 
 ## Unreleased
-nothing at this time
+- add weth to daily transactions on DAO Info
