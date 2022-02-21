@@ -84,4 +84,4 @@
 - show fully diluted marketcap while hovering over marketcap
 
 ## Unreleased
-nothing at this time
+- add "more" link for additional resource links in main nav
