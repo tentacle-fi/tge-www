@@ -2,7 +2,7 @@ import React from "react";
 
 import Page from "components/Page";
 import PageHeader from "components/PageHeader";
-
+import HowToVoteIcon from "@mui/icons-material/HowToVote";
 import VotingBooth from "components/VotingBooth";
 
 // TODO: pull the contract addresses from github or on-chain...
@@ -15,7 +15,7 @@ const Vote: React.FC = () => {
 
   return (
     <Page>
-      <PageHeader icon="" title="Tentacle.Finance Vote" subtitle="On-chain voting via smart contracts!" />
+      <PageHeader icon={<HowToVoteIcon sx={{ fontSize: "96px" }} />} title="Tentacle.Finance Vote" subtitle="On-chain voting via smart contracts!" />
 
       {Votes}
     </Page>
