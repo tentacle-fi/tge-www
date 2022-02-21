@@ -18,9 +18,9 @@ export interface IVoteDetails {
 }
 
 export const getDeployedVotingContracts = async () => {
-  const jsonProvider = new ethers.providers.JsonRpcProvider("https://rpc.octano.dev/");
-
   const votingBlock = 1956670;
+
+  const jsonProvider = new ethers.providers.JsonRpcProvider("https://rpc.octano.dev/");
 
   const filter = {
     fromBlock: "0x" + votingBlock.toString(16),
@@ -40,7 +40,7 @@ export const getDeployedVotingContracts = async () => {
     return [];
   }
 
-  return logs.map((log) => log.address);
+  return logs.map((log) => log.address).reverse();
 };
 
 // get all voting power for the wallet address, at the specified block height
