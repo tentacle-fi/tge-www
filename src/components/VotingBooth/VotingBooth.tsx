@@ -20,7 +20,7 @@ function LinearProgressWithLabel(props: LinearProgressProps & { value: number })
         <LinearProgress variant="determinate" {...props} />
       </Box>
       <Box sx={{ minWidth: 35 }}>
-        <Typography variant="body2" color="white">{`${Math.round(props.value)}%`}</Typography>
+        <Typography variant="body2" color="white">{`${Math.round(isNaN(props?.value) ? 0 : props.value)}%`}</Typography>
       </Box>
     </Box>
   );
