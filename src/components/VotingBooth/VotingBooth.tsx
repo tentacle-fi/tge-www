@@ -13,6 +13,8 @@ import { submitVote, getVotingPower, getVotes, getVoteDetails, getWalletVote, IV
 import LinearProgress, { LinearProgressProps } from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import useFarming from "hooks/useFarming";
+import Alert from "@mui/material/Alert";
 
 const LinearProgressWithLabel = (props: LinearProgressProps & { value: number }) => {
   return (
@@ -34,6 +36,7 @@ interface IVotingBoothProps {
 
 const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
   const { account, ethereum } = useWallet();
+  const { setConfirmModal } = useFarming();
   const { BlockNum } = useUbiq();
 
   const [votingPower, setVotingPower] = useState("0");
@@ -42,6 +45,7 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
   const [voteResults, setVoteResults] = useState<Array<number>>();
   const [isVoting, setIsVoting] = useState(false);
   const [hasVoted, setHasVoted] = useState(false);
+  const [voteError, setVoteError] = useState("");
 
   const fetchVotingPower = useCallback(async () => {
     if (!ethereum || !account || AvailableFarms.length < 1 || vote === undefined) {
@@ -98,15 +102,23 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
 
   const submitSelection = useCallback(
     async (voteOption: number) => {
-      if (!ethereum || !account || voteOption === 0) {
+      if (voteOption === 0) {
+        setVoteError("Select a candidate first!");
         return;
       }
 
+      if (!ethereum || !account) {
+        return;
+      }
+      setVoteError("");
+
+      setConfirmModal(true);
       setIsVoting(true);
       await submitVote(ethereum, account, voteOption, voteAddress);
       setIsVoting(false);
+      setConfirmModal(false);
     },
-    [ethereum, account, voteAddress]
+    [ethereum, account, voteAddress, setConfirmModal]
   );
 
   useEffect(() => {
@@ -140,6 +152,7 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
       </Typography>
 
       <VoteFormComponent
+        voteError={voteError}
         hasVoted={hasVoted}
         isVoting={isVoting}
         results={voteResults}
@@ -161,9 +174,10 @@ interface IVoteFormProps {
   results?: Array<number>;
   isVoting: boolean;
   hasVoted: boolean;
+  voteError: string;
 }
 
-const VoteFormComponent: React.FC<IVoteFormProps> = ({ hasVoted, isVoting, results, vote, myWalletVote, votingPower, submitFn }) => {
+const VoteFormComponent: React.FC<IVoteFormProps> = ({ voteError, hasVoted, isVoting, results, vote, myWalletVote, votingPower, submitFn }) => {
   const [selectedValue, setSelectedValue] = useState(0);
   const { BlockNum } = useUbiq();
 
@@ -272,6 +286,8 @@ const VoteFormComponent: React.FC<IVoteFormProps> = ({ hasVoted, isVoting, resul
       {hasVoted === true && (
         <Typography variant="body1">Thank you for voting! Check back after the vote has finished to get the final results.</Typography>
       )}
+
+      {voteError !== "" && <Alert severity="error">{voteError}</Alert>}
     </FormControl>
   );
 };
