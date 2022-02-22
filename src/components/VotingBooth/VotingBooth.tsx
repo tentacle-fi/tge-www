@@ -12,6 +12,9 @@ import { useWallet } from "use-wallet";
 import { submitVote, getVotingPower, getVotes, getVoteDetails, getWalletVote, IVoteDetails } from "utils/voting";
 import LinearProgress, { LinearProgressProps } from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import useFarming from "hooks/useFarming";
+import Alert from "@mui/material/Alert";
 
 const LinearProgressWithLabel = (props: LinearProgressProps & { value: number }) => {
   return (
@@ -33,12 +36,16 @@ interface IVotingBoothProps {
 
 const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
   const { account, ethereum } = useWallet();
+  const { setConfirmModal } = useFarming();
   const { BlockNum } = useUbiq();
 
   const [votingPower, setVotingPower] = useState("0");
   const [myWalletVote, setMyWalletVote] = useState(1);
   const [vote, setVote] = useState<IVoteDetails>();
   const [voteResults, setVoteResults] = useState<Array<number>>();
+  const [isVoting, setIsVoting] = useState(false);
+  const [hasVoted, setHasVoted] = useState(false);
+  const [voteError, setVoteError] = useState("");
 
   const fetchVotingPower = useCallback(async () => {
     if (!ethereum || !account || AvailableFarms.length < 1 || vote === undefined) {
@@ -81,21 +88,37 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
   }, [ethereum, voteAddress]);
 
   const fetchMyVote = useCallback(async () => {
-    if (!ethereum || !account) {
+    if (!ethereum || !account || !voteAddress) {
       return;
     }
-    setMyWalletVote(await getWalletVote(account, ethereum, voteAddress));
+    const myVote = await getWalletVote(account, ethereum, voteAddress);
+
+    if (myVote > 0) {
+      setHasVoted(true);
+    }
+
+    setMyWalletVote(myVote);
   }, [ethereum, voteAddress, account]);
 
   const submitSelection = useCallback(
-    (voteOption: number) => {
-      if (!ethereum || !account || voteOption === 0) {
+    async (voteOption: number) => {
+      if (voteOption === 0) {
+        setVoteError("Select a candidate first!");
         return;
       }
 
-      submitVote(ethereum, account, voteOption, voteAddress);
+      if (!ethereum || !account) {
+        return;
+      }
+      setVoteError("");
+
+      setConfirmModal(true);
+      setIsVoting(true);
+      await submitVote(ethereum, account, voteOption, voteAddress);
+      setIsVoting(false);
+      setConfirmModal(false);
     },
-    [ethereum, account, voteAddress]
+    [ethereum, account, voteAddress, setConfirmModal]
   );
 
   useEffect(() => {
@@ -128,7 +151,16 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
         {vote.desc}
       </Typography>
 
-      <VoteFormComponent results={voteResults} myWalletVote={myWalletVote} votingPower={votingPower} vote={vote} submitFn={submitSelection} />
+      <VoteFormComponent
+        voteError={voteError}
+        hasVoted={hasVoted}
+        isVoting={isVoting}
+        results={voteResults}
+        myWalletVote={myWalletVote}
+        votingPower={votingPower}
+        vote={vote}
+        submitFn={submitSelection}
+      />
     </>
   );
 };
@@ -140,9 +172,12 @@ interface IVoteFormProps {
   vote: IVoteDetails | undefined;
   submitFn: Function;
   results?: Array<number>;
+  isVoting: boolean;
+  hasVoted: boolean;
+  voteError: string;
 }
 
-const VoteFormComponent: React.FC<IVoteFormProps> = ({ results, vote, myWalletVote, votingPower, submitFn }) => {
+const VoteFormComponent: React.FC<IVoteFormProps> = ({ voteError, hasVoted, isVoting, results, vote, myWalletVote, votingPower, submitFn }) => {
   const [selectedValue, setSelectedValue] = useState(0);
   const { BlockNum } = useUbiq();
 
@@ -177,17 +212,23 @@ const VoteFormComponent: React.FC<IVoteFormProps> = ({ results, vote, myWalletVo
       }
 
       return (
-        <div key={i} style={{ display: "flex", flexDirection: "row", gap: "25px" }}>
-          <Typography variant="body1" sx={{ width: "100px", textAlign: "right", lineHeight: "42px" }}>
-            {tally.toFixed(0)}
-          </Typography>
-          <LinearProgressWithLabel
-            color={i === winningResultIndex ? "primary" : "warning"}
-            value={(tally / weightTotal) * 100}
-            sx={{ width: "100px" }}
-          />
-          <FormControlLabel value={i} control={<Radio />} label={option} />
-        </div>
+        <React.Fragment key={i}>
+          <Grid item xs={4}>
+            <Typography variant="body1" sx={{ textAlign: "right", lineHeight: "42px" }}>
+              {tally.toFixed(0)}
+            </Typography>
+          </Grid>
+
+          <Grid item xs={4}>
+            <Box sx={{ padding: "10px" }}>
+              <LinearProgressWithLabel color={i === winningResultIndex ? "primary" : "warning"} value={(tally / weightTotal) * 100} />
+            </Box>
+          </Grid>
+
+          <Grid item xs={4}>
+            <FormControlLabel value={i} control={<Radio />} label={option} />
+          </Grid>
+        </React.Fragment>
       );
     });
 
@@ -195,7 +236,11 @@ const VoteFormComponent: React.FC<IVoteFormProps> = ({ results, vote, myWalletVo
       return <></>;
     }
 
-    return <>{RBButtons}</>;
+    return (
+      <Grid container justifyContent="center" alignItems="center" spacing={2}>
+        {RBButtons}
+      </Grid>
+    );
   };
 
   const VoteStatus = () => {
@@ -222,13 +267,27 @@ const VoteFormComponent: React.FC<IVoteFormProps> = ({ results, vote, myWalletVo
       <hr style={{ width: "95%", borderColor: "#888" }} />
 
       <RadioGroup defaultValue={0} value={selectedValue} onChange={handleSelectionChange}>
-        <Radios />
+        <div style={{ minWidth: "320px", width: "100%" }}>
+          <Radios />
+        </div>
       </RadioGroup>
       {vote !== undefined && BlockNum >= vote.startBlock && BlockNum < vote.endBlock && (
         <Button sx={{ marginTop: "20px" }} variant="contained" onClick={() => submitFn(selectedValue + 1)}>
           Vote with {votingPower}!
         </Button>
       )}
+
+      {isVoting === false && hasVoted === false && (
+        <Typography variant="h5" sx={{ textAlign: "center", padding: "15px" }}>
+          Don't forget to cast your vote!
+        </Typography>
+      )}
+
+      {hasVoted === true && (
+        <Typography variant="body1">Thank you for voting! Check back after the vote has finished to get the final results.</Typography>
+      )}
+
+      {voteError !== "" && <Alert severity="error">{voteError}</Alert>}
     </FormControl>
   );
 };
