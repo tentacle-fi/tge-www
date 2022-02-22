@@ -40,6 +40,8 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
   const [myWalletVote, setMyWalletVote] = useState(1);
   const [vote, setVote] = useState<IVoteDetails>();
   const [voteResults, setVoteResults] = useState<Array<number>>();
+  const [isVoting, setIsVoting] = useState(false);
+  const [hasVoted, setHasVoted] = useState(false);
 
   const fetchVotingPower = useCallback(async () => {
     if (!ethereum || !account || AvailableFarms.length < 1 || vote === undefined) {
@@ -82,19 +84,27 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
   }, [ethereum, voteAddress]);
 
   const fetchMyVote = useCallback(async () => {
-    if (!ethereum || !account) {
+    if (!ethereum || !account || !voteAddress) {
       return;
     }
-    setMyWalletVote(await getWalletVote(account, ethereum, voteAddress));
+    const myVote = await getWalletVote(account, ethereum, voteAddress);
+
+    if (myVote > 0) {
+      setHasVoted(true);
+    }
+
+    setMyWalletVote(myVote);
   }, [ethereum, voteAddress, account]);
 
   const submitSelection = useCallback(
-    (voteOption: number) => {
+    async (voteOption: number) => {
       if (!ethereum || !account || voteOption === 0) {
         return;
       }
 
-      submitVote(ethereum, account, voteOption, voteAddress);
+      setIsVoting(true);
+      await submitVote(ethereum, account, voteOption, voteAddress);
+      setIsVoting(false);
     },
     [ethereum, account, voteAddress]
   );
@@ -129,7 +139,15 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
         {vote.desc}
       </Typography>
 
-      <VoteFormComponent results={voteResults} myWalletVote={myWalletVote} votingPower={votingPower} vote={vote} submitFn={submitSelection} />
+      <VoteFormComponent
+        hasVoted={hasVoted}
+        isVoting={isVoting}
+        results={voteResults}
+        myWalletVote={myWalletVote}
+        votingPower={votingPower}
+        vote={vote}
+        submitFn={submitSelection}
+      />
     </>
   );
 };
@@ -141,9 +159,11 @@ interface IVoteFormProps {
   vote: IVoteDetails | undefined;
   submitFn: Function;
   results?: Array<number>;
+  isVoting: boolean;
+  hasVoted: boolean;
 }
 
-const VoteFormComponent: React.FC<IVoteFormProps> = ({ results, vote, myWalletVote, votingPower, submitFn }) => {
+const VoteFormComponent: React.FC<IVoteFormProps> = ({ hasVoted, isVoting, results, vote, myWalletVote, votingPower, submitFn }) => {
   const [selectedValue, setSelectedValue] = useState(0);
   const { BlockNum } = useUbiq();
 
@@ -178,7 +198,7 @@ const VoteFormComponent: React.FC<IVoteFormProps> = ({ results, vote, myWalletVo
       }
 
       return (
-        <>
+        <React.Fragment key={i}>
           <Grid item xs={4}>
             <Typography variant="body1" sx={{ textAlign: "right", lineHeight: "42px" }}>
               {tally.toFixed(0)}
@@ -194,7 +214,7 @@ const VoteFormComponent: React.FC<IVoteFormProps> = ({ results, vote, myWalletVo
           <Grid item xs={4}>
             <FormControlLabel value={i} control={<Radio />} label={option} />
           </Grid>
-        </>
+        </React.Fragment>
       );
     });
 
@@ -241,6 +261,16 @@ const VoteFormComponent: React.FC<IVoteFormProps> = ({ results, vote, myWalletVo
         <Button sx={{ marginTop: "20px" }} variant="contained" onClick={() => submitFn(selectedValue + 1)}>
           Vote with {votingPower}!
         </Button>
+      )}
+
+      {isVoting === false && hasVoted === false && (
+        <Typography variant="h5" sx={{ textAlign: "center", padding: "15px" }}>
+          Don't forget to cast your vote!
+        </Typography>
+      )}
+
+      {hasVoted === true && (
+        <Typography variant="body1">Thank you for voting! Check back after the vote has finished to get the final results.</Typography>
       )}
     </FormControl>
   );
