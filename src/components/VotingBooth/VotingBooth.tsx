@@ -12,6 +12,7 @@ import { useWallet } from "use-wallet";
 import { submitVote, getVotingPower, getVotes, getVoteDetails, getWalletVote, IVoteDetails } from "utils/voting";
 import LinearProgress, { LinearProgressProps } from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 
 const LinearProgressWithLabel = (props: LinearProgressProps & { value: number }) => {
   return (
@@ -177,17 +178,23 @@ const VoteFormComponent: React.FC<IVoteFormProps> = ({ results, vote, myWalletVo
       }
 
       return (
-        <div key={i} style={{ display: "flex", flexDirection: "row", gap: "25px" }}>
-          <Typography variant="body1" sx={{ width: "100px", textAlign: "right", lineHeight: "42px" }}>
-            {tally.toFixed(0)}
-          </Typography>
-          <LinearProgressWithLabel
-            color={i === winningResultIndex ? "primary" : "warning"}
-            value={(tally / weightTotal) * 100}
-            sx={{ width: "100px" }}
-          />
-          <FormControlLabel value={i} control={<Radio />} label={option} />
-        </div>
+        <>
+          <Grid item xs={4}>
+            <Typography variant="body1" sx={{ textAlign: "right", lineHeight: "42px" }}>
+              {tally.toFixed(0)}
+            </Typography>
+          </Grid>
+
+          <Grid item xs={4}>
+            <Box sx={{ padding: "10px" }}>
+              <LinearProgressWithLabel color={i === winningResultIndex ? "primary" : "warning"} value={(tally / weightTotal) * 100} />
+            </Box>
+          </Grid>
+
+          <Grid item xs={4}>
+            <FormControlLabel value={i} control={<Radio />} label={option} />
+          </Grid>
+        </>
       );
     });
 
@@ -195,7 +202,11 @@ const VoteFormComponent: React.FC<IVoteFormProps> = ({ results, vote, myWalletVo
       return <></>;
     }
 
-    return <>{RBButtons}</>;
+    return (
+      <Grid container justifyContent="center" alignItems="center" spacing={2}>
+        {RBButtons}
+      </Grid>
+    );
   };
 
   const VoteStatus = () => {
@@ -222,7 +233,9 @@ const VoteFormComponent: React.FC<IVoteFormProps> = ({ results, vote, myWalletVo
       <hr style={{ width: "95%", borderColor: "#888" }} />
 
       <RadioGroup defaultValue={0} value={selectedValue} onChange={handleSelectionChange}>
-        <Radios />
+        <div style={{ minWidth: "320px", width: "100%" }}>
+          <Radios />
+        </div>
       </RadioGroup>
       {vote !== undefined && BlockNum >= vote.startBlock && BlockNum < vote.endBlock && (
         <Button sx={{ marginTop: "20px" }} variant="contained" onClick={() => submitFn(selectedValue + 1)}>
