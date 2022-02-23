@@ -86,5 +86,9 @@
 ## 1.5.0-alpha
 - voting implemented
 
+## 1.5.1-alpha
+- add "connect wallet" msg when not connected
+- modify explanation text
+
 ## Unreleased
 - add weth to daily transactions on DAO Info
