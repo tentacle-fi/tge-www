@@ -1,6 +1,6 @@
 {
   "name": "ubiq-tge-www",
-  "version": "1.5.0-alpha",
+  "version": "1.5.1-alpha",
   "private": true,
   "scripts": {
     "start": "BROWSER=none react-scripts start",
