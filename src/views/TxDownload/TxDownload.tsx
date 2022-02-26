@@ -85,7 +85,7 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
         Progress: {scanProgress} / {scanProgressTotal}
       </Typography>
 
-      <div style={{ overflow: "scroll", width: "90%", height: "80vh", border: "1px solid #fff" }}>
+      <div style={{ overflow: "scroll", width: "90%", height: "10vh", border: "1px solid #fff" }}>
         <pre>{scanResults}</pre>
       </div>
       <TxTable transactions={scanResultsObject} />
