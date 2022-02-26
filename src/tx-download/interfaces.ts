@@ -5,6 +5,10 @@ import { Log } from "@ethersproject/abstract-provider";
 // mint nft: gas paid for mint
 // sell nft: incoming token value needs to be captured
 
+export interface IDatagridResults extends ITransferCSVRow {
+  id: number;
+}
+
 export interface ITransferCSVRow {
   txHash: string;
   timestamp: number;
