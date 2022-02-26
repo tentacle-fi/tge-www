@@ -91,7 +91,8 @@ const Donate: React.FC = () => {
       <Typography variant="h4">Donate today!</Typography>
       <Typography variant="h5">Will you help Us build a better UBQ network?</Typography>
       <Typography variant="body1" style={{ textAlign: "center" }}>
-        Tentacle.finance is dedicated to continual growth and development on the Ubiq network. Donate Today to help the DAO extend its tentacles into other networks and projects!
+        Tentacle.finance is dedicated to continual growth and development on the Ubiq network. Donate Today to help the DAO extend its tentacles into
+        other networks and projects!
       </Typography>
 
       <Box
