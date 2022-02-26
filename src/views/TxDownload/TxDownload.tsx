@@ -30,8 +30,8 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
 
     if (results !== undefined) {
       // DEBUG: show JSON output of the results object
-      setScanResults(JSON.stringify(results, null, 2));
-      return
+      // setScanResults(JSON.stringify(results, null, 2));
+      // return;
 
       // DEBUG: show CSV output
       console.log(

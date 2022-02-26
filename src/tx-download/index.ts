@@ -20,10 +20,10 @@ export const scanStart = async (address: string, progressCb: Function) => {
 
   address = address.toLowerCase();
 
-
+  /*
   // Prod:
   // TODO: iterate over 12 block steps from the start of year selected block, to end of year block
-  const results = await getLogs(rpcProvider, address, numToHex(1729478), numToHex(1761149)) //numToHex(1776000))
+  const results = await getLogs(rpcProvider, address, numToHex(1729478), numToHex(1761149)); //numToHex(1776000))
 
   if (results !== undefined) {
     const filtered = filterLogs(results);
@@ -31,8 +31,7 @@ export const scanStart = async (address: string, progressCb: Function) => {
 
     return Probes.explore(address, allTxs);
   }
-
-
+*/
   // console.error("missing NONCEs!", verifyNonceSequential(address, NFT_DOXXED as Array<ITxDetail>).length);
   return Probes.explore(address, NFT_DOXXED as Array<ITxDetail>);
 };
