@@ -7,6 +7,7 @@ import { Log } from "@ethersproject/abstract-provider";
 
 export interface IDatagridResults extends ITransferCSVRow {
   id: number;
+  flex?: number;
 }
 
 export interface ITransferCSVRow {

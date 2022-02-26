@@ -6,7 +6,6 @@ import Typography from "@mui/material/Typography";
 import { useWallet } from "use-wallet";
 import { scanStart, getAllTxDetails, resultsToCSV } from "tx-download";
 import { IDatagridResults } from "tx-download/interfaces";
-
 interface TxDownloadProps {}
 
 const TxDownload: React.FC<TxDownloadProps> = () => {
@@ -58,6 +57,7 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
         "tokenAddress",
         "reason",
       ];
+
       setScanResults(
         headerCSV.join(",") +
           "\n" +
@@ -67,13 +67,18 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
             // ...results.farm
           ])
       );
+
       setScanResultsObject(
         results.swap.map((element, index) => {
-          return { id: index, ...element };
+          return { id: index, ...element, txHash: trimHex(element.txHash), from: trimHex(element.from), to: trimHex(element.to) };
         })
       );
     }
   }, [account]);
+
+  function trimHex(hexString: string) {
+    return hexString.substring(0, 5) + "..." + hexString.substring(hexString.length - 4);
+  }
 
   return (
     <Page>
