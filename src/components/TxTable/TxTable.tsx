@@ -3,18 +3,22 @@ import styled from "styled-components";
 import { DataGrid, GridRowsProp, GridColDef, GridColumnMenu, GridColumnMenuProps } from "@mui/x-data-grid";
 import { IDatagridResults } from "tx-download/interfaces";
 
-const outputColumns = [
+// Sets datagrid's default column width when not specified per-column
+const DefaultColumnWidth = 100;
+const DefaultFlex = 0.5;
+
+export const OutputColumns = [
   { short: "id", long: "id" },
   { short: "txHash", long: "Tx Hash" },
   { short: "timestamp", long: "Timestamp" },
   { short: "date", long: "Date" },
   { short: "block", long: "Block" },
   { short: "fee", long: "Fee" },
-  { short: "feeSymbol", long: "Fee Symbol" },
+  { short: "feeSymbol", long: "Symbol" },
   { short: "from", long: "From" },
   { short: "to", long: "To" },
   { short: "value", long: "Value" },
-  { short: "valueUSD", long: "USD Value" },
+  { short: "valueUSD", long: "USD" },
   { short: "tokenSymbol", long: "Token Symbol" },
   { short: "tokenAddress", long: "Token Address" },
   { short: "reason", long: "Reason" },
@@ -25,8 +29,7 @@ function makeColumns(columnObj: any) {
 
   try {
     columns = columnObj.map((element: any) => {
-      console.log("element:", element);
-      return { field: element.short, headerName: element.long, width: 100 };
+      return { field: element.short, headerName: element.long, flex: element.flex || DefaultFlex };
     });
   } catch (e) {
     console.error("makeColumns() threw error:", e);
@@ -35,7 +38,7 @@ function makeColumns(columnObj: any) {
   return columns;
 }
 
-const columns: GridColDef[] = makeColumns(outputColumns);
+const columns: GridColDef[] = makeColumns(OutputColumns);
 
 interface TxTableProps {
   transactions?: Array<IDatagridResults>;
