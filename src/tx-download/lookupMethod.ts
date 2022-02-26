@@ -48,8 +48,8 @@ const methods: Array<IMethod> = [
     id: "a694fc3a",
   },
   {
-    name: 'transfer(...)',
-    id: 'a9059cbb'
+    name: "transfer(...)",
+    id: "a9059cbb",
   },
   {
     name: "swapExactETHForTokens(...)", // TODO
@@ -57,15 +57,15 @@ const methods: Array<IMethod> = [
   },
   {
     name: "swapTokensForExactTokens", // TODO
-    id: "8803dbee"
+    id: "8803dbee",
   },
   {
-    name: 'swapExactTokensForTokens(...)', // TODO
-    id: '38ed1739'
+    name: "swapExactTokensForTokens(...)", // TODO
+    id: "38ed1739",
   },
   {
-    name: 'swapTokensForExactETH(...)',
-    id: '4a25d94a'
+    name: "swapTokensForExactETH(...)",
+    id: "4a25d94a",
   },
   {
     name: "swapETHForExactTokens(...)",
@@ -81,7 +81,7 @@ const methods: Array<IMethod> = [
   },
   {
     name: "addLiquidity(...)", // TODO
-    id: "e8e33700"
+    id: "e8e33700",
   },
   {
     name: "TokenGallery::mintCollection?()", // TODO
@@ -92,17 +92,17 @@ const methods: Array<IMethod> = [
     id: "dd615fcd",
   },
   {
-    name: 'TokenGallery::soldNFTForUBQ()',
-    id: '243adbdd'
+    name: "TokenGallery::soldNFTForUBQ()",
+    id: "243adbdd",
   },
   {
-    name: 'TokenGallery::soldNFTForERC20()',
-    id: 'cae9ca51'
+    name: "TokenGallery::soldNFTForERC20()",
+    id: "cae9ca51",
   },
   {
-    name: 'Enmaku::withdraw(...)', // TODO
-    id: '21a0adb6'
-  }
+    name: "Enmaku::withdraw(...)", // TODO
+    id: "21a0adb6",
+  },
 ];
 
 export default lookupMethod;

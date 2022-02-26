@@ -6,7 +6,7 @@
 import { ITxDetail } from "../interfaces";
 import { bnToDecStr, bnTohex, tokenLookupSymbol, tsFormat, testMethodId, Transfer_Event, Withdrawl_Event } from "./tools";
 
-const Shinobi = (walletAddress:string, allTxs: Array<ITxDetail>) => {
+const Shinobi = (walletAddress: string, allTxs: Array<ITxDetail>) => {
   let results = [];
 
   for (let i = 0; i < allTxs.length; i++) {
@@ -39,20 +39,19 @@ const Shinobi = (walletAddress:string, allTxs: Array<ITxDetail>) => {
       });
     }
 
-    let transfers = tokenTransfer(walletAddress, allTxs[i])
-    if(transfers){
-      allTxs[i].processed = true
+    let transfers = tokenTransfer(walletAddress, allTxs[i]);
+    if (transfers) {
+      allTxs[i].processed = true;
 
       results.push({
         ...transfers,
-        ...details
-      })
+        ...details,
+      });
     }
   }
 
   return results;
 };
-
 
 // swapTokensForExactETH = swap(trade) token(s) for UBQ(ETH)
 // 1. find Withdrawl event within receipt.logs where topics[0] === (Withdrawl Event methodId)
@@ -138,34 +137,32 @@ const swapETHForExactTokens = (tx: ITxDetail) => {
 //    - topics[2] === address the transfer is to
 //    - data is the value of the transfer
 //    - address is the token transferred
-const tokenTransfer = (walletAddress:string, tx: ITxDetail) => {
+const tokenTransfer = (walletAddress: string, tx: ITxDetail) => {
   try {
     testMethodId(tx, "0xa9059cbb");
 
-  const transferEvent = tx.receipt.logs.filter((log) => log?.topics?.[0]?.toLowerCase() === Transfer_Event);
+    const transferEvent = tx.receipt.logs.filter((log) => log?.topics?.[0]?.toLowerCase() === Transfer_Event);
 
-  let transferFromAddress = bnTohex(transferEvent[0].topics[1])
-  let transferToAddress = bnTohex(transferEvent[0].topics[2])
-  let transferValue = bnToDecStr(transferEvent[0].data)
-  let tokenAddressSymbol = tokenLookupSymbol(transferEvent[0].address)
+    let transferFromAddress = bnTohex(transferEvent[0].topics[1]);
+    let transferToAddress = bnTohex(transferEvent[0].topics[2]);
+    let transferValue = bnToDecStr(transferEvent[0].data);
+    let tokenAddressSymbol = tokenLookupSymbol(transferEvent[0].address);
 
-  // TODO: review the values here to align them with the CSV goals
-  return {
-    action: transferFromAddress.toLowerCase() === walletAddress ? "TRANSFER_OUT" : "TRANSFER_IN",
-    symbol: tokenAddressSymbol,
-    volume: transferValue,
-    currency: "",
-    total: "",
-    price: "",
-    account: "TRANSFER_TO:" + transferToAddress,
-  };
-
+    // TODO: review the values here to align them with the CSV goals
+    return {
+      action: transferFromAddress.toLowerCase() === walletAddress ? "TRANSFER_OUT" : "TRANSFER_IN",
+      symbol: tokenAddressSymbol,
+      volume: transferValue,
+      currency: "",
+      total: "",
+      price: "",
+      account: "TRANSFER_TO:" + transferToAddress,
+    };
   } catch (e: any) {
     if (e?.message.indexOf("testMethodId()") !== 0) {
       console.error("swapETHForExactTokens probe error", e?.message);
     }
   }
-}
-
+};
 
 export default Shinobi;
