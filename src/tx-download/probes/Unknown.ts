@@ -20,9 +20,9 @@ const Unknown = (walletAddress: string, allTxs: Array<ITxDetail>): Array<ITransf
   //  value
 
   for (let i = 0; i < allTxs.length; i++) {
-    // if (allTxs[i].processed === true) {
-    //   continue;
-    // }
+    if (allTxs[i].processed === true) {
+      continue;
+    }
 
     const details = {
       txHash: allTxs[i].tx.hash,
@@ -44,12 +44,28 @@ const Unknown = (walletAddress: string, allTxs: Array<ITxDetail>): Array<ITransf
         });
       });
     }
-  }
 
-  console.log(
-    "unprocessed",
-    allTxs.filter((tx) => tx?.processed !== true)
-  );
+    let approve = findApprove(walletAddress, allTxs[i]);
+    if (approve) {
+      allTxs[i].processed = true;
+      results.push({
+        ...approve,
+        ...details,
+      });
+    }
+
+    let deposits = findDeposit(walletAddress, allTxs[i]);
+    if (deposits !== undefined && deposits?.length > 0) {
+      allTxs[i].processed = true;
+
+      deposits.forEach((deposit) => {
+        results.push({
+          ...deposit,
+          ...details,
+        });
+      });
+    }
+  }
 
   return results;
 };
@@ -71,7 +87,7 @@ const findTransfers = (walletAddress: string, tx: ITxDetail) => {
         from: bnTohex(transfer.topics[1]),
         to: bnTohex(transfer.topics[2]),
         value: bnToDecStr(transfer.data),
-        valueUSD: "", // TODO: fill this in with hitorical USD data
+        valueUSD: "", // TODO: fill this in with historical USD data
         tokenSymbol: tokenLookupSymbol(transfer.address),
         tokenAddress: transfer.address,
         reason: "", // TODO: fill this with the tx methodid or other context, if found
@@ -81,6 +97,56 @@ const findTransfers = (walletAddress: string, tx: ITxDetail) => {
   // console.log("toAddressTransfers", toAddressTransfers);
 
   return walletAddressTransfers;
+};
+
+const findApprove = (walletAddress: string, tx: ITxDetail) => {
+  try {
+    testMethodId(tx, "0x095ea7b3");
+
+    const contractApprovedAddress = tx.receipt.logs[0].address;
+
+    return {
+      from: walletAddress,
+      to: "",
+      value: "0", // no value is sent for an approval
+      valueUSD: "0",
+      tokenSymbol: tokenLookupSymbol(contractApprovedAddress),
+      tokenAddress: contractApprovedAddress,
+      reason: "Approve()",
+    };
+  } catch (e: any) {
+    if (e?.message.indexOf("testMethodId()") !== 0) {
+      console.error("findApproves probe error", e?.message);
+    }
+  }
+};
+
+const findDeposit = (walletAddress: string, tx: ITxDetail) => {
+  try {
+    const Deposit_Event = "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c";
+
+    const depositEvents = tx.receipt.logs.filter((log) => log?.topics?.[0]?.toLowerCase() === Deposit_Event);
+
+    let deposits = depositEvents
+      .filter((depo) => depo.topics[1] === formatTopic(walletAddress))
+      .map((depo) => {
+        return {
+          from: walletAddress,
+          to: depo.address,
+          value: bnToDecStr(depo.data),
+          valueUSD: "", // TODO: calculate this from historical data
+          tokenSymbol: "UBQ",
+          tokenAddress: "UBQ", // always UBQ for Deposits
+          reason: "Deposit()",
+        };
+      });
+
+    return deposits;
+  } catch (e: any) {
+    if (e?.message.indexOf("testMethodId()") !== 0) {
+      console.error("findApproves probe error", e?.message);
+    }
+  }
 };
 
 // addLiquidityETH = send in two tokens and get transferred one kind of LP token

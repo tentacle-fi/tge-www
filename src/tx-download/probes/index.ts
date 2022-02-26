@@ -14,7 +14,7 @@ const explore = (walletAddress: string, txDetails: Array<ITxDetail>) => {
     raw: txDetails,
     // swap: Shinobi(txDetails),
     // farm: Farming(txDetails),
-    // tg: TokenGallery(walletAddress, txDetails),
+    tg: TokenGallery(walletAddress, txDetails),
     swap: Unknown(walletAddress, txDetails),
   };
 };

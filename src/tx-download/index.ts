@@ -5,7 +5,7 @@ import { Log } from "@ethersproject/abstract-provider";
 import lookupMethod from "./lookupMethod";
 import { ITransactionHashStub, IProcessedData, ITxDetail, ITransferCSVRow } from "./interfaces";
 import Probes from "./probes";
-import { formatTopic } from "./probes/tools";
+import { formatTopic, spliceEvery } from "./probes/tools";
 
 // ================================================================================
 //
@@ -177,28 +177,6 @@ const processInputData = (data: string | undefined): IProcessedData => {
   }
 
   return results;
-};
-
-// splice a string into an array of strings every N chars
-// NOTE: @data string is not expected to have the preceding 0x for a hex value
-const spliceEvery = (data: string, nChars: number): Array<string> => {
-  if (nChars <= 0) {
-    throw new Error(`ERROR: spliceEvery(data:${data}, nChars:${nChars}) called with nChars <= 0`);
-  }
-
-  if (data.length < nChars) {
-    return [data];
-  }
-
-  const result = data.match(new RegExp(`.{1,${nChars}}`, "g"));
-
-  console.log("result", data.length);
-
-  if (result === null) {
-    return [data];
-  }
-
-  return result;
 };
 
 const getTxDetails = async (rpcProvider: any, txHash: string): Promise<ITxDetail> => {

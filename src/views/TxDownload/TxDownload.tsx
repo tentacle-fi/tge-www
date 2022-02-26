@@ -62,7 +62,7 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
           "\n" +
           resultsToCSV(headerCSV, [
             ...results.swap,
-            // ...results.tg,
+            ...results.tg,
             // ...results.farm
           ])
       );

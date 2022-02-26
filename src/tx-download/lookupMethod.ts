@@ -72,7 +72,7 @@ const methods: Array<IMethod> = [
     id: "fb3bdb41",
   },
   {
-    name: "approve(...)", // TODO
+    name: "approve(...)",
     id: "095ea7b3",
   },
   {
