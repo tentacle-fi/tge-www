@@ -28,12 +28,13 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
       setScanProgressTotal(total);
     });
 
-    // console.log("results", "total", results?.length);
-
     if (results !== undefined) {
+      // DEBUG: show JSON output of the results object
       // setScanResults(JSON.stringify(results, null, 2));
       // return
 
+      // DEBUG: show CSV output
+      console.log('unprocessed results', results.raw.filter((tx) => tx.processed !== true))
       console.log("results", "processed:", results.raw.filter((tx) => tx.processed === true).length, "out of", results.raw.length);
 
       // TODO: find a better way to pull the names from the ICSVRow interface at compile time (DRY the code)
