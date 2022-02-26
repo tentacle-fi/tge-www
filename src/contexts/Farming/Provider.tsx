@@ -261,10 +261,8 @@ const Provider: React.FC = ({ children }) => {
         currentApr: CurrentAPR,
         currentTvl: CurrentTVL,
         PooledTokens: PooledTokens,
-
         farmFns,
         setFarmFns,
-
         inkTotalSupply,
       }}
     >

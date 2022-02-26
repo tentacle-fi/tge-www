@@ -8,9 +8,7 @@ import Typography from "@mui/material/Typography";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { styled } from "@mui/material/styles";
 
-// this data structure should support label tagging too...
-const options = [
-  // categories
+const DropdownOptions = [
   {
     categoryName: "Marketcap",
     links: [
@@ -51,14 +49,12 @@ const StyledMenu = styled(Menu)(({ theme }) => ({
 
 const ResourceLinks = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  // const [selectedIndex, setSelectedIndex] = React.useState(0);
   const open = Boolean(anchorEl);
   const handleClickListItem = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleMenuItemClick = (event: React.MouseEvent<HTMLElement>, index: number) => {
-    // setSelectedIndex(index);
     setAnchorEl(null);
   };
 
@@ -66,8 +62,8 @@ const ResourceLinks = () => {
     setAnchorEl(null);
   };
 
-  // Creates the label + link entries in the menu
-  const MyMenuItems = options.map((category, index) => {
+  // dynamically generates dropdown list based on DropdownOptions
+  const MyMenuItems = DropdownOptions.map((category, index) => {
     const links = category.links.map((link, index) => {
       return (
         <MenuItem sx={{ color: "white", bgcolor: "black" }} key={"menu-item-" + index} onClick={(event) => handleMenuItemClick(event, index)}>
