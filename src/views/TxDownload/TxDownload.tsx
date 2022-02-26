@@ -1,17 +1,18 @@
 import React, { useCallback, useState } from "react";
 import Page from "components/Page";
+import TxTable from "components/TxTable";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-
 import { useWallet } from "use-wallet";
 import { scanStart, getAllTxDetails, resultsToCSV } from "tx-download";
+import { IDatagridResults } from "tx-download/interfaces";
 
 interface TxDownloadProps {}
 
 const TxDownload: React.FC<TxDownloadProps> = () => {
   const { account } = useWallet();
-
   const [scanResults, setScanResults] = useState("");
+  const [scanResultsObject, setScanResultsObject] = useState<Array<IDatagridResults>>();
   const [scanProgress, setScanProgress] = useState(0);
   const [scanProgressTotal, setScanProgressTotal] = useState(0);
 
@@ -66,6 +67,11 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
             // ...results.farm
           ])
       );
+      setScanResultsObject(
+        results.swap.map((element, index) => {
+          return { id: index, ...element };
+        })
+      );
     }
   }, [account]);
 
@@ -82,6 +88,7 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
       <div style={{ overflow: "scroll", width: "90%", height: "80vh", border: "1px solid #fff" }}>
         <pre>{scanResults}</pre>
       </div>
+      <TxTable transactions={scanResultsObject} />
     </Page>
   );
 };
