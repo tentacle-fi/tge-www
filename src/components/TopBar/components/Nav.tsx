@@ -5,6 +5,7 @@ import TentacleLogo from "assets/octo_purple.png";
 import CandlestickChartIcon from "@mui/icons-material/CandlestickChart";
 import Button from "@mui/material/Button";
 import SLink from "components/SLink";
+import ResourceLinks from "components/ResourceLinks";
 
 const Nav: React.FC = () => {
   return (
@@ -21,6 +22,7 @@ const Nav: React.FC = () => {
       </SLink>
       <StyledRouterLink to="/farm">Farm</StyledRouterLink>
       <StyledRouterLink to="/daoinfo">DAO</StyledRouterLink>
+      <ResourceLinks />
     </StyledNav>
   );
 };
