@@ -83,7 +83,7 @@
 - add ubq weth farm
 - show fully diluted marketcap while hovering over marketcap
 
-## 1.5.0-staging
+## 1.5.0
 - add weth to daily transactions on DAO Info
 - APR and APY updates
 - add "more" link for additional resource links in main nav
