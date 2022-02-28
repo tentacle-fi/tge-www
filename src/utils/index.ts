@@ -32,27 +32,29 @@ export const approve = async (
 ): Promise<boolean> => {
   try {
     const tokenContract = getERC20Contract(provider, tokenAddress);
+
+    const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+
+    gas.gas = 80000; // set custom low gas fee for this operation (approve)
+
     return tokenContract.methods
       .approve(spenderAddress, ethers.constants.MaxUint256)
-      .send(
-        { from: userAddress, gas: 80000, gasPrice: GAS.PRICE, maxFeePerGas: GAS.MAXFEEPERGAS, maxPriorityFeePerGas: GAS.MAXPRIORITYFEEPERGAS },
-        async (error: any, txHash: string) => {
-          if (error) {
-            console.log("ERC20 could not be approved", error);
-            onTxHash && onTxHash("");
-            return false;
-          }
-          if (onTxHash) {
-            onTxHash(txHash);
-          }
-          const status = await waitTransaction(provider, txHash);
-          if (!status) {
-            console.log("Approval transaction failed.");
-            return false;
-          }
-          return true;
+      .send({ from: userAddress, ...gas }, async (error: any, txHash: string) => {
+        if (error) {
+          console.log("ERC20 could not be approved", error);
+          onTxHash && onTxHash("");
+          return false;
         }
-      );
+        if (onTxHash) {
+          onTxHash(txHash);
+        }
+        const status = await waitTransaction(provider, txHash);
+        if (!status) {
+          console.log("Approval transaction failed.");
+          return false;
+        }
+        return true;
+      });
   } catch (e) {
     console.error("approve error", e);
     return false;
@@ -62,14 +64,15 @@ export const approve = async (
 export const sendUbq = async (userAddress: string, destinationAddress: string, ubqValue: string, provider: provider) => {
   try {
     const web3 = new Web3(provider);
+
+    const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+
+    console.log("isSparrow");
     web3.eth.sendTransaction({
       to: destinationAddress,
       from: userAddress,
       value: ubqValue,
-      gas: GAS.LIMIT,
-      gasPrice: GAS.PRICE,
-      maxFeePerGas: GAS.MAXFEEPERGAS,
-      maxPriorityFeePerGas: GAS.MAXPRIORITYFEEPERGAS,
+      ...gas,
     });
   } catch (e) {
     console.error("sendUbq error", e);
@@ -80,12 +83,11 @@ export const sendTokens = async (userAddress: string, destinationAddress: string
   try {
     const tokenContract = getERC20Contract(provider, tokenAddress);
 
+    const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+
     await tokenContract.methods.transfer(destinationAddress, tokensValue).send({
       from: userAddress,
-      gas: GAS.LIMIT,
-      gasPrice: GAS.PRICE,
-      maxFeePerGas: GAS.MAXFEEPERGAS,
-      maxPriorityFeePerGas: GAS.MAXPRIORITYFEEPERGAS,
+      ...gas,
     });
   } catch (e) {
     console.error("sendTokens error", e);
