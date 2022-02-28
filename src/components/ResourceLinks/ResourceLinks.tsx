@@ -68,7 +68,7 @@ const ResourceLinks = () => {
       return (
         <MenuItem sx={{ color: "white", bgcolor: "black" }} key={"menu-item-" + index} onClick={(event) => handleMenuItemClick(event, index)}>
           {
-            <SLink external href={link.url}>
+            <SLink external href={link.url} key={"slink-" + index}>
               {link.name}
             </SLink>
           }
@@ -77,12 +77,12 @@ const ResourceLinks = () => {
     });
 
     return (
-      <>
-        <ListItem id={"item-label-" + index} sx={{ bgcolor: "gray", justifyContent: "center" }}>
+      <div key={"div" + index}>
+        <ListItem key={"list-item-" + index} sx={{ bgcolor: "gray", justifyContent: "center" }}>
           {category.categoryName}
         </ListItem>
         {links}
-      </>
+      </div>
     );
   });
 
@@ -97,6 +97,7 @@ const ResourceLinks = () => {
         aria-expanded={open ? "true" : undefined}
         onClick={handleClickListItem}
         endIcon={<KeyboardArrowDownIcon color="primary" />}
+        key={"test"}
       >
         <Typography sx={{ fontSize: "30px", fontWeight: "700" }}>More</Typography>
       </Button>
