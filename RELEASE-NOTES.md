@@ -87,6 +87,7 @@
 - add weth to daily transactions on DAO Info
 - APR and APY updates
 - add "more" link for additional resource links in main nav
+- hotfix monoceros fee handling
 
 ## Unreleased
 nothing at this time
