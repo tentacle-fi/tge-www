@@ -92,4 +92,4 @@
 - hotfix monoceros fee handling
 
 ## Unreleased
-nothing at this time
+- Monoceros hard fork gas price updates

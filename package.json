@@ -72,7 +72,7 @@
     "shinobi-sdk": "^3.0.4",
     "styled-components": "^5.3.3",
     "use-wallet": "https://github.com/tentacle-fi/use-wallet.git",
-    "web3": "^1.6.1"
+    "web3": "1.7.0"
   },
   "devDependencies": {
     "@types/react-router-dom": "^5.3.2",
