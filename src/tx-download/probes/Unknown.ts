@@ -90,7 +90,7 @@ const findTransfers = (walletAddress: string, tx: ITxDetail) => {
         valueUSD: "", // TODO: fill this in with historical USD data
         tokenSymbol: tokenLookupSymbol(transfer.address),
         tokenAddress: transfer.address,
-        reason: "", // TODO: fill this with the tx methodid or other context, if found
+        reason: "Transfer", // TODO: fill this with the tx methodid or other context, if found
       };
     });
 

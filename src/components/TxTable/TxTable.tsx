@@ -1,14 +1,28 @@
 import React from "react";
 import styled from "styled-components";
-import { DataGrid, GridRowsProp, GridColDef, GridColumnMenu, GridColumnMenuProps } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridRowsProp,
+  GridColDef,
+  GridColumnMenu,
+  GridColumnMenuProps,
+  GridCellParams,
+  MuiEvent,
+  gridPageCountSelector,
+  gridPageSelector,
+  gridPageSizeSelector,
+  useGridApiContext,
+  useGridSelector,
+} from "@mui/x-data-grid";
 import { IDatagridResults } from "tx-download/interfaces";
+import TablePagination from "@mui/material/TablePagination";
 
 // Sets datagrid's default column width when not specified per-column
 const DefaultColumnWidth = 100;
 const DefaultFlex = 0.5;
 
 export const OutputColumns = [
-  { short: "id", long: "id" },
+  { short: "id", long: "Row" },
   { short: "txHash", long: "Tx Hash" },
   { short: "timestamp", long: "Timestamp" },
   { short: "date", long: "Date" },
@@ -44,57 +58,34 @@ interface TxTableProps {
   transactions?: Array<IDatagridResults>;
 }
 
-export function CustomColumnMenuComponent(props: GridColumnMenuProps & { color: string }) {
-  const { hideMenu, currentColumn, color, ...other } = props;
-  return <StyledGridColumnMenu hideMenu={hideMenu} currentColumn={currentColumn} ownerState={{ color }} {...other} />;
-}
-
 const TxTable: React.FC<TxTableProps> = ({ transactions }) => {
-  const itemsPerPage = 10;
+  const itemsPerPage = 25;
 
   return (
     <>
       <div style={{ height: "50vh", width: "95%", padding: "10px" }}>
-        <StyledDataGrid
+        <DataGrid
           pageSize={itemsPerPage}
           rowHeight={38}
-          rows={transactions as GridRowsProp}
+          rows={transactions === undefined ? [] : (transactions as GridRowsProp)}
           columns={columns}
-          components={{
-            ColumnMenu: CustomColumnMenuComponent,
+          // components={{
+          //   ColumnMenu: CustomColumnMenuComponent,
+          //   Pagination: CustomPagination,
+          // }}
+          onCellDoubleClick={(params, event) => {
+            // disable double click to edit field
+            event.defaultMuiPrevented = true;
+          }}
+          onCellClick={(params: GridCellParams, event: MuiEvent<React.MouseEvent>) => {
+            event.defaultMuiPrevented = true;
+            // console.log('on click', params)
+            // TODO: here is where a popup or other UI element can show the specific details highlighted
           }}
         />
       </div>
     </>
   );
 };
-
-const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
-  ".MuiDataGrid-cell": {
-    color: "#fff",
-  },
-
-  ".MuiDataGrid-columnHeader": {
-    color: "#fff",
-  },
-  ".MuiSvgIcon-root": { color: "#fff" },
-
-  ".MuiTablePagination-root": { color: "#fff" },
-
-  ".MuiDataGrid-overlay": {
-    backgroundColor: "#333",
-    color: "#fff",
-  },
-}));
-
-const StyledGridColumnMenu = styled(GridColumnMenu)<{
-  ownerState: { color: string };
-}>(({ theme, ownerState }) => ({
-  background: "#001c2b",
-
-  borderRadius: "10px",
-
-  ".MuiMenuItem-root": { color: "#fff" },
-}));
 
 export default React.memo(TxTable);

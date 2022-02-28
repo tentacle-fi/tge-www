@@ -4,6 +4,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { UseWalletProvider } from "use-wallet";
 
+import type {} from "@mui/x-data-grid/themeAugmentation";
 import MobileMenu from "components/MobileMenu";
 import TopBar from "components/TopBar";
 
@@ -62,6 +63,64 @@ const Providers: React.FC = ({ children }) => {
 
   // DOCS: https://mui.com/customization/palette/#palette-colors
   const muiTheme = createTheme({
+    components: {
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            background: "#001c2b",
+            color: "#fff",
+            borderRadius: "10px",
+          },
+        },
+      },
+      MuiDataGrid: {
+        styleOverrides: {
+          overlay: {
+            backgroundColor: "#222",
+            color: "#fff",
+          },
+          columnHeader: {
+            color: "#fff",
+          },
+          sortIcon: {
+            color: "#fff",
+          },
+          menuIcon: {
+            "*": { color: "#fff" },
+          },
+          cell: {
+            color: "#fff",
+          },
+          selectedRowCount: {
+            color: "#fff",
+          },
+        },
+      },
+      MuiTablePagination: {
+        styleOverrides: {
+          root: {
+            color: "#fff",
+          },
+          selectIcon: {
+            color: "#fff",
+          },
+          actions: {
+            "& .MuiSvgIcon-root": {
+              color: "#fff",
+            },
+          },
+        },
+      },
+      MuiMenuItem: {
+        styleOverrides: {
+          root: {
+            "&:hover": {
+              background: "#000",
+            },
+          },
+        },
+      },
+    },
     palette: {
       primary: {
         main: "#06d6a0",
