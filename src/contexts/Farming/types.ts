@@ -11,9 +11,12 @@ export interface ContextValues {
   setConfirmModal: (isOpen: boolean, message?: string) => void; // display a modal and a given string message, or hide the modal
 
   currentApy?: Array<number>; // Farming Pool APY calculated
+  currentApr?: Array<number>; // Farming Pool APR calculated
   currentTvl?: Array<number>; // Farming Pool TVL (total value locked/lp'd) at current prices
   PooledTokens?: Array<IPooledTokens>; // The 'estimated' tokens pooled inside of the accounts LP tokens
 
   farmFns?: IFarmingFns | undefined; // contains an object with each property being a function to call from the UI
   setFarmFns?: React.Dispatch<React.SetStateAction<IFarmingFns | undefined>>; // setter function
+
+  inkTotalSupply: number;
 }

@@ -30,7 +30,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
     return getFullDisplayBalance(LPBalances !== undefined ? LPBalances[farmKey] : new BigNumber(0), 0);
   }, [LPBalances, farmKey]);
 
-  const { farmingStartTimes, stakedBalances, lpPercents, currentApy, currentTvl, PooledTokens } = useFarming();
+  const { farmingStartTimes, stakedBalances, lpPercents, currentApy, currentApr, currentTvl, PooledTokens } = useFarming();
 
   const formattedStakedBalance = useCallback(async () => {
     if (stakedBalances !== undefined && stakedBalances[farmKey] && bnToDec(stakedBalances[farmKey]) > 0) {
@@ -91,16 +91,16 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
     return `$ ${currentTvl[farmKey].toFixed(0)}`;
   }, [currentTvl, farmKey]);
 
-  const formattedApy = useCallback(() => {
-    if (currentApy === undefined) {
+  const formattedAprApy = useCallback(() => {
+    if (currentApy === undefined || currentApr === undefined) {
       return "";
     }
-    if (currentApy[farmKey] > 1) {
-      return `${currentApy[farmKey].toFixed(0)}%`;
+    if (currentApr[farmKey] > 1) {
+      return `${currentApr[farmKey].toFixed(0)}% / ${currentApy[farmKey].toFixed(0)}%`;
     }
 
-    return `${currentApy[farmKey].toFixed(3)}%`;
-  }, [currentApy, farmKey]);
+    return `${currentApr[farmKey].toFixed(3)}% / ${currentApy[farmKey].toFixed(3)}%`;
+  }, [currentApr, currentApy, farmKey]);
 
   useEffect(() => {
     formattedStakedBalance();
@@ -152,7 +152,7 @@ const Stake: React.FC<StakeProps> = ({ children, farmKey }) => {
           <Grid container spacing={1}>
             <FarmInfo farmKey={farmKey} labelText="Prices:" stakeBalance={stakeBalance} contents={formattedTokenPrices()} />
             <FarmInfo farmKey={farmKey} labelText="TVL:" stakeBalance={stakeBalance} contents={formattedTvl()} />
-            <FarmInfo farmKey={farmKey} labelText="APY:" stakeBalance={stakeBalance} contents={formattedApy()} />
+            <FarmInfo farmKey={farmKey} labelText="APR/APY:" stakeBalance={stakeBalance} contents={formattedAprApy()} />
             <FarmInfo
               farmKey={farmKey}
               labelText="Unstaked:"
