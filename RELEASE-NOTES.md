@@ -89,4 +89,4 @@
 - add "more" link for additional resource links in main nav
 
 ## Unreleased
-nothing at this time
+- Monoceros hard fork gas price updates

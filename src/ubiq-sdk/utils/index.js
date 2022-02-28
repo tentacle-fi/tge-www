@@ -11,8 +11,8 @@ export const GAS = {
   // TODO: remove this and replace with maxFeePerGas where used when sendTransaction supports EIP-1559
   OLDGASPRICE: (81 * 1000000000).toString() /*gwei*/,
   PRICE: (80 * 1000000000).toString() /*gwei*/,
-  MAXFEEPERGAS: (200 * 1000000000).toString() /*gwei*/,
-  MAXPRIORITYFEEPERGAS: (81 * 1000000000).toString() /*gwei*/,
+  MAXFEEPERGAS: (81 * 1000000000).toString() /*gwei*/,
+  MAXPRIORITYFEEPERGAS: (1 * 1000000000).toString() /*gwei*/,
 };
 
 export const getPoolTotalSupply = async (poolContract) => {
