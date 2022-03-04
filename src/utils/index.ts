@@ -20,6 +20,8 @@ import { GAS } from "ubiq-sdk/utils";
 import ERC20ABI from "constants/abi/ERC20.json";
 import ShinobiPoolERC20 from "ubiq-sdk/lib/clean_build/contracts/ShinobiPool.json";
 
+export const TxConfirmationBlocks = 2; // number of blocks to wait to consider a tx mined
+
 export const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
@@ -505,5 +507,63 @@ export const getCurrentStats = async (
   } catch (e) {
     console.error("getCurrentStats error", e);
     throw e;
+  }
+};
+
+export const sendUbqEthers = async (userAddress: string, destinationAddress: string, ubqValue: number, provider: any) => {
+  console.log("sending a tx from:", userAddress, "to:", destinationAddress, "with value:", ubqValue);
+  let signer;
+
+  // provider and signer are separate, so we need to fetch the signer (metamask)
+  try {
+    signer = provider.getSigner();
+  } catch (e) {
+    console.error("sendUbqEthers() threw error while getting signer:", e, signer);
+    return;
+  }
+
+  const preparedTx = {
+    from: userAddress,
+    to: destinationAddress,
+    value: ethers.utils.parseUnits(ubqValue.toString()).toHexString(),
+  };
+
+  let signedTx;
+
+  try {
+    signedTx = await signer.sendTransaction(preparedTx);
+  } catch (e) {
+    console.error("sendUbqEthers() threw error while signing or waiting:", e, signedTx);
+    return;
+  }
+
+  // return just the hash
+  return signedTx.hash;
+};
+
+export const waitForTransaction = async (provider: any, txHash: string) => {
+  let txResult;
+  try {
+    txResult = await provider.waitForTransaction(txHash, TxConfirmationBlocks);
+  } catch (e) {
+    console.error("waitForTransaction() failed with error:", e);
+    return null;
+  }
+
+  return txResult;
+};
+
+export const checkReceipt = async (provider: any, txHash: string) => {
+  let receiptResult;
+  try {
+    receiptResult = await provider.getTransactionReceipt(txHash);
+    // console.log("receipt:", receiptResult)
+
+    if (receiptResult) {
+      return receiptResult.confirmations;
+    }
+    return -1; // if there's not a receipt yet that's a special case we check for
+  } catch (e) {
+    console.error("checkReceipt() threw error:", e);
   }
 };

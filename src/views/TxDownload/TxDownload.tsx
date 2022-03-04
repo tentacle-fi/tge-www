@@ -1,12 +1,23 @@
 import React, { useCallback, useState } from "react";
 import Page from "components/Page";
 import TxTable from "components/TxTable";
+import PayButton from "components/PayButton";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useWallet } from "use-wallet";
 import { scanStart, getAllTxDetails, resultsToCSV } from "tx-download";
 import { IDatagridResults } from "tx-download/interfaces";
 interface TxDownloadProps {}
+
+const Introduction = () => {
+
+    return (
+        <>
+        <Typography variant="h4">Welcome to Tx Download!</Typography>
+        <Typography sx={{ width: "80%"}} variant="h5">Tx Download will help you download transaction history to aid with recordkeeping, tax reporting, and more. To get started, connect the wallet account you wish to download history for.</Typography>
+        </>
+    )
+}
 
 const TxDownload: React.FC<TxDownloadProps> = () => {
   const { account } = useWallet();
@@ -82,6 +93,8 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
 
   return (
     <Page>
+    <Introduction />
+    <PayButton paymentValue={100} paymentSymbol={"UBQ"} />
       <Button variant="outlined" onClick={handleStart}>
         Start Scan
       </Button>
