@@ -37,7 +37,7 @@ const OnboardingSteps = () => {
   return (
     <Grid sx={{ display: "flex", justifyContent: "center" }} container direction="row">
       <Grid item>
-        <Typography sx={{ mt: "10px" }} variant="h6">
+        <Typography sx={{ mt: "10px", textAlign: "center" }} variant="h6">
           Process
         </Typography>
         <List sx={{ justifyContent: "center" }} dense={true}>
