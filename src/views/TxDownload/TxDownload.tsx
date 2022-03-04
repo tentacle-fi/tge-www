@@ -7,6 +7,9 @@ import Typography from "@mui/material/Typography";
 import { useWallet } from "use-wallet";
 import { scanStart, getAllTxDetails, resultsToCSV } from "tx-download";
 import { IDatagridResults } from "tx-download/interfaces";
+import Box from "@mui/material/Box";
+import LinearProgress from "@mui/material/LinearProgress";
+
 interface TxDownloadProps {}
 
 const Introduction = () => {
@@ -18,6 +21,18 @@ const Introduction = () => {
         account you wish to download history for.
       </Typography>
     </>
+  );
+};
+
+interface ScanProgressBarProps {
+  progress: number;
+}
+
+const ScanProgressBar: React.FC<ScanProgressBarProps> = ({ progress }) => {
+  return (
+    <Box sx={{ width: "80%", marginTop: "10px", marginBottom: "10px" }}>
+      <LinearProgress variant="buffer" value={progress} />
+    </Box>
   );
 };
 
@@ -100,6 +115,8 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
       <Button variant="outlined" onClick={handleStart}>
         Start Scan
       </Button>
+
+      <ScanProgressBar progress={(scanProgress / scanProgressTotal) * 100} />
 
       <Typography variant="body1">
         Progress: {scanProgress} / {scanProgressTotal}
