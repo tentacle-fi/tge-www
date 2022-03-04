@@ -5,25 +5,23 @@ import useEvm from "hooks/useEvmProvider";
 import { sendUbqEthers, waitForTransaction, checkReceipt } from "utils";
 import { TxConfirmationBlocks } from "utils";
 import Typography from "@mui/material/Typography";
-import CircularProgress from '@mui/material/CircularProgress';
-import Stack from '@mui/material/Stack';
+import CircularProgress from "@mui/material/CircularProgress";
+import Stack from "@mui/material/Stack";
 
 // const INK = "0x7845fCbE28ac19ab7ec1C1D9674E34fdCB4917Db";
 const DAO = "0xCC7D76005bf1616e55cfDFF4cbfB5C29199C2808"; // DAO Multisig address
 
 interface ConfirmationProgressProps {
-    progress: number
+  progress: number;
 }
 
-const ConfirmationProgress: React.FC<ConfirmationProgressProps> = ({progress}) => {
-
+const ConfirmationProgress: React.FC<ConfirmationProgressProps> = ({ progress }) => {
   return (
     <Stack spacing={2} direction="row">
       <CircularProgress variant="determinate" value={progress} />
     </Stack>
   );
-}
-
+};
 
 interface PayButtonProps {
   paymentValue: number;
@@ -86,7 +84,7 @@ const PayButton: React.FC<PayButtonProps> = ({ paymentValue, paymentSymbol }) =>
           setIsConfirmed(true);
         }
         setConfirmCount(receiptConfirmations);
-        console.log("confirm count:", receiptConfirmations, "TxConfirmationBlocks:", TxConfirmationBlocks)
+        console.log("confirm count:", receiptConfirmations, "TxConfirmationBlocks:", TxConfirmationBlocks);
       } catch (e) {
         console.error("fetchTxReciept() threw error:", e);
       }
@@ -111,17 +109,17 @@ const PayButton: React.FC<PayButtonProps> = ({ paymentValue, paymentSymbol }) =>
   if (!paymentTx) {
     return (
       <>
-        <Button sx={{mt:"10px"}} onClick={() => handlePayment(paymentSymbol, paymentValue)} variant="outlined">
+        <Button sx={{ mt: "10px" }} onClick={() => handlePayment(paymentSymbol, paymentValue)} variant="outlined">
           Pay Now
         </Button>
-        <Typography sx={{mt:"5px"}}>Click to Pay</Typography>
+        <Typography sx={{ mt: "5px" }}>Click to Pay</Typography>
       </>
     );
   }
 
   let isNullReceipt = false;
-  if(confirmCount === -1){
-      isNullReceipt = true;
+  if (confirmCount === -1) {
+    isNullReceipt = true;
   }
 
   // Payment sent, awaiting confirmations
@@ -132,7 +130,7 @@ const PayButton: React.FC<PayButtonProps> = ({ paymentValue, paymentSymbol }) =>
       <Typography>
         Confirms: {isNullReceipt ? 0 : confirmCount} of {TxConfirmationBlocks}
       </Typography>
-      <ConfirmationProgress progress={isNullReceipt ? 0 : confirmCount / TxConfirmationBlocks * 100} />
+      <ConfirmationProgress progress={isNullReceipt ? 0 : (confirmCount / TxConfirmationBlocks) * 100} />
     </>
   );
 };
