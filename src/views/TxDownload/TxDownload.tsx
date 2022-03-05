@@ -70,7 +70,7 @@ interface ScanProgressBarProps {
 const ScanProgressBar: React.FC<ScanProgressBarProps> = ({ progress }) => {
   return (
     <Box sx={{ width: "80%", marginTop: "10px", marginBottom: "10px" }}>
-      <LinearProgress variant="buffer" value={progress} />
+      <LinearProgress variant="determinate" value={progress} />
     </Box>
   );
 };

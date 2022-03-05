@@ -11,6 +11,7 @@ import TopBar from "components/TopBar";
 import { BalancesProvider } from "contexts/Balances";
 import { FarmingProvider } from "contexts/Farming";
 import UbiqProvider from "contexts/UbiqProvider";
+import { PaymentProcessorProvider } from "contexts/PaymentProcessor";
 
 import Farm from "views/Farm";
 import Home from "views/Home";
@@ -187,7 +188,9 @@ const Providers: React.FC = ({ children }) => {
         >
           <UbiqProvider>
             <BalancesProvider>
-              <FarmingProvider>{children}</FarmingProvider>
+              <PaymentProcessorProvider>
+                <FarmingProvider>{children}</FarmingProvider>
+              </PaymentProcessorProvider>
             </BalancesProvider>
           </UbiqProvider>
         </UseWalletProvider>
