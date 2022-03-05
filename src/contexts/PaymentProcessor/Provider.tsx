@@ -36,7 +36,7 @@ const PaymentProcessor: React.FC = ({ children }) => {
     async (whatToSend: string, amount: number) => {
       if (!account || !provider) {
         console.log("missing provider or account");
-        console.log("account:", account, "provider:", provider)
+        console.log("account:", account, "provider:", provider);
 
         return;
       }
