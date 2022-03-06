@@ -8,9 +8,10 @@ import type {} from "@mui/x-data-grid/themeAugmentation";
 import MobileMenu from "components/MobileMenu";
 import TopBar from "components/TopBar";
 
+import EvmProvider from "contexts/EvmProvider";
+import UbiqProvider from "contexts/UbiqProvider";
 import { BalancesProvider } from "contexts/Balances";
 import { FarmingProvider } from "contexts/Farming";
-import UbiqProvider from "contexts/UbiqProvider";
 import { PaymentProcessorProvider } from "contexts/PaymentProcessor";
 
 import Farm from "views/Farm";
@@ -186,13 +187,15 @@ const Providers: React.FC = ({ children }) => {
             },
           }}
         >
-          <UbiqProvider>
-            <BalancesProvider>
-              <PaymentProcessorProvider>
-                <FarmingProvider>{children}</FarmingProvider>
-              </PaymentProcessorProvider>
-            </BalancesProvider>
-          </UbiqProvider>
+          <EvmProvider>
+            <UbiqProvider>
+              <BalancesProvider>
+                <PaymentProcessorProvider>
+                  <FarmingProvider>{children}</FarmingProvider>
+                </PaymentProcessorProvider>
+              </BalancesProvider>
+            </UbiqProvider>
+          </EvmProvider>
         </UseWalletProvider>
       </ThemeProvider>
     </NEUThemeProvider>
