@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import Page from "components/Page";
 import TxTable from "components/TxTable";
 import PayButton from "components/PayButton";
+import OnboardingProgress from "components/OnboardingProgress";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
@@ -150,7 +151,8 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
   return (
     <Page>
       <Introduction />
-      <PayButton paymentValue={100} paymentSymbol={"UBQ"} />
+      <OnboardingProgress />
+      <PayButton paymentValue={0.001} paymentSymbol={"UBQ"} />
       <Button variant="outlined" onClick={handleStart}>
         Start Scan
       </Button>
