@@ -94,11 +94,11 @@ const OnboardingProgress: React.FC<OnboardingProgressProps> = () => {
               Back
             </Button>
             <Box sx={{ flex: "1 1 auto" }} />
-            {(
+            {
               <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
                 Skip
               </Button>
-            )}
+            }
             <Button onClick={handleNext}>{activeStep === steps.length - 1 ? "Finish" : "Next"}</Button>
           </Box>
         </React.Fragment>
