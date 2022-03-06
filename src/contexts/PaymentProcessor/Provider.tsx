@@ -11,7 +11,7 @@ const PaymentProcessor: React.FC = ({ children }) => {
   const [paymentTx, setPaymentTx] = useState("");
   const [isConfirmed, setIsConfirmed] = useState(false);
   const { BlockNum, provider } = useEvm();
-  const { account, ethereum } = useWallet();
+  const { account } = useWallet();
   const [confirmCount, setConfirmCount] = useState(-1);
 
   const fetchTxReciept = useCallback(
@@ -36,17 +36,14 @@ const PaymentProcessor: React.FC = ({ children }) => {
     async (whatToSend: string, amount: number) => {
       if (!account || !provider) {
         console.log("missing provider or account");
-        console.log("account:", account, "provider:", provider);
-
+        console.log("account:", account, "provider:", provider, BlockNum);
         return;
       }
 
       try {
         console.log("preparing to send", amount, "UBQ");
-
         let sendTxHash;
         let finalSendResult;
-
         switch (whatToSend) {
           case "INK":
             // sendTokens(account, DAO, value, INK);
@@ -69,7 +66,7 @@ const PaymentProcessor: React.FC = ({ children }) => {
         console.error("unable to send tokens", e);
       }
     },
-    [account, provider]
+    [account, provider, BlockNum]
   );
 
   useEffect(() => {
