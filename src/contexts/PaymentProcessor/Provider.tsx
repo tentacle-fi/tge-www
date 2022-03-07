@@ -57,7 +57,7 @@ const PaymentProcessor: React.FC = ({ children }) => {
             setPaymentTx(sendTxHash);
             // wait for the tx to get mined
             finalSendResult = await waitForTransaction(provider, sendTxHash);
-            console.log(finalSendResult);
+            console.log("finaleSendResult:", finalSendResult);
             break;
           default:
             throw new Error("Unknown token type to send!");

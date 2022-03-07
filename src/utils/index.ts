@@ -532,8 +532,17 @@ export const sendUbqEthers = async (userAddress: string, destinationAddress: str
 
   try {
     signedTx = await signer.sendTransaction(preparedTx);
-  } catch (e) {
-    console.error("sendUbqEthers() threw error while signing or waiting:", e, signedTx);
+  } catch (e: any) {
+    if (e.code === -32603) {
+      console.error("Insufficient Funds, need:", ubqValue, "code: ", e.code);
+      alert(`Insufficient funds. This action costs ${ubqValue} UBQ plus gas.`);
+      return;
+    }
+    console.error(
+      "sendUbqEthers() threw unexpected error while signing or waiting, please lookup this error and write a routine for it:",
+      e,
+      signedTx
+    );
     return;
   }
 

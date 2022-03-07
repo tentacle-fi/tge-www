@@ -4,6 +4,7 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
+import ButtonGroup from "@mui/material/ButtonGroup";
 import Typography from "@mui/material/Typography";
 import { IOnboardingProgressProps } from "./";
 
@@ -39,7 +40,6 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ steps }) => {
     <Box sx={{ width: "80%" }}>
       <Stepper sx={{ width: "80%", margin: "auto" }} activeStep={activeStep}>
         {steps.map((label, index) => {
-          // console.log(label.text + label.runFn);
           const stepProps: { executeStep?: () => void } = {};
           const labelProps: {
             optional?: React.ReactNode;
@@ -61,14 +61,13 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ steps }) => {
         </>
       ) : (
         <>
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-            <Button color="inherit" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }}>
+          <ButtonGroup sx={{ mt: 5 }}>
+            <Button color="inherit" disabled={activeStep === 0} onClick={handleBack}>
               Back
             </Button>
-            <Box sx={{ flex: "1 1 auto" }} />
 
             <Button onClick={() => handleNext(activeStep)}>{activeStep === steps.length - 1 ? "Finish" : "Next"}</Button>
-          </Box>
+          </ButtonGroup>
         </>
       )}
     </Box>
