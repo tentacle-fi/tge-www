@@ -42,10 +42,10 @@ const OnboardingSteps = () => {
           Process
         </Typography>
         <List sx={{ justifyContent: "center" }} dense={true}>
-        <ListItem>
-          <SmallCheck />
-          Connect the address you wish to scan
-        </ListItem>
+          <ListItem>
+            <SmallCheck />
+            Connect the address you wish to scan
+          </ListItem>
           <ListItem>
             <SmallCheck />
             Pay {DownloadPrice} UBQ
