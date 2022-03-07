@@ -8,14 +8,6 @@ import { formatTopic } from "./probes/tools";
 
 import { lookupBlocksForYear } from "./blockchain";
 
-// ================================================================================
-//
-//  TESTING ONLY!!!!!
-//
-import DOXXED_JSON from "./DOXXED.json";
-import NFT_DOXXED from "./NFT_DOXXED.json";
-// ================================================================================
-
 export const scanStart = async (address: string, year: number, progress1Cb: Function, progress2Cb: Function) => {
   const rpcProvider = new ethers.providers.JsonRpcProvider("https://rpc.octano.dev/");
 
@@ -55,8 +47,6 @@ export const scanStart = async (address: string, year: number, progress1Cb: Func
       return Probes.explore(address, allTxs);
     }
   }
-  // console.error("missing NONCEs!", verifyNonceSequential(address, NFT_DOXXED as Array<ITxDetail>).length);
-  // return Probes.explore(address, NFT_DOXXED as Array<ITxDetail>);
 };
 
 const verifyNonceSequential = (walletAddress: string, list: Array<ITxDetail>): Array<number> => {

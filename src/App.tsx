@@ -66,6 +66,15 @@ const Providers: React.FC = ({ children }) => {
   // DOCS: https://mui.com/customization/palette/#palette-colors
   const muiTheme = createTheme({
     components: {
+      MuiStepLabel: {
+        styleOverrides: {
+          labelContainer: {
+            "*": {
+              color: "#fff !important",
+            },
+          },
+        },
+      },
       MuiPaper: {
         styleOverrides: {
           root: {

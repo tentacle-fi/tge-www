@@ -7,6 +7,14 @@ import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Typography from "@mui/material/Typography";
 import { IOnboardingProgressProps } from "./";
+import { styled } from "@mui/material/styles";
+import { StepIconProps } from "@mui/material/StepIcon";
+import StepConnector, { stepConnectorClasses } from "@mui/material/StepConnector";
+import ElectricalServicesIcon from "@mui/icons-material/ElectricalServices";
+import PriceCheckIcon from "@mui/icons-material/PriceCheck";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import DownloadIcon from "@mui/icons-material/Download";
+import FlagIcon from "@mui/icons-material/Flag";
 
 const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ steps }) => {
   const [activeStep, setActiveStep] = React.useState(0);
@@ -36,9 +44,74 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ steps }) => {
     setActiveStep(0);
   };
 
+  const ColorlibStepIconRoot = styled("div")<{
+    ownerState: { completed?: boolean; active?: boolean };
+  }>(({ theme, ownerState }) => ({
+    backgroundColor: theme.palette.mode === "dark" ? theme.palette.grey[700] : "#ccc",
+    zIndex: 1,
+    color: "#000",
+    width: 50,
+    height: 50,
+    display: "flex",
+    borderRadius: "50%",
+    justifyContent: "center",
+    alignItems: "center",
+    ...(ownerState.active && {
+      background: "#9f7ef7", // light purple
+      // backgroundImage:'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
+      boxShadow: "0 4px 10px 0 rgba(0,0,0,.25)",
+    }),
+    ...(ownerState.completed && {
+      background: "#06d6a0", // green
+      // backgroundImage:        'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
+    }),
+  }));
+
+  function ColorlibStepIcon(props: StepIconProps) {
+    const { active, completed, className } = props;
+
+    const icons: { [index: string]: React.ReactElement } = {
+      1: <ElectricalServicesIcon />,
+      2: <PriceCheckIcon />,
+      3: <PlayArrowIcon />,
+      4: <DownloadIcon />,
+      5: <FlagIcon />,
+    };
+
+    return (
+      <ColorlibStepIconRoot ownerState={{ completed, active }} className={className}>
+        {icons[String(props.icon)]}
+      </ColorlibStepIconRoot>
+    );
+  }
+
+  const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
+    [`&.${stepConnectorClasses.alternativeLabel}`]: {
+      top: 22,
+    },
+    [`&.${stepConnectorClasses.active}`]: {
+      [`& .${stepConnectorClasses.line}`]: {
+        background: "#784af4", // purple
+        //backgroundImage:'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
+      },
+    },
+    [`&.${stepConnectorClasses.completed}`]: {
+      [`& .${stepConnectorClasses.line}`]: {
+        background: "#06d6a0", // green
+        // backgroundImage:          'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
+      },
+    },
+    [`& .${stepConnectorClasses.line}`]: {
+      height: 3,
+      border: 0,
+      backgroundColor: theme.palette.mode === "dark" ? theme.palette.grey[800] : "#eaeaf0",
+      borderRadius: 1,
+    },
+  }));
+
   return (
     <Box sx={{ width: "80%" }}>
-      <Stepper sx={{ width: "80%", margin: "auto" }} activeStep={activeStep}>
+      <Stepper alternativeLabel sx={{ width: "100%", margin: "auto" }} activeStep={activeStep} connector={<ColorlibConnector />}>
         {steps.map((label, index) => {
           const stepProps: { executeStep?: () => void } = {};
           const labelProps: {
@@ -46,7 +119,9 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ steps }) => {
           } = {};
           return (
             <Step key={label.text} {...stepProps}>
-              <StepLabel {...labelProps}>{label.text}</StepLabel>
+              <StepLabel StepIconComponent={ColorlibStepIcon} {...labelProps}>
+                {label.text}
+              </StepLabel>
             </Step>
           );
         })}
@@ -61,8 +136,8 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ steps }) => {
         </>
       ) : (
         <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <ButtonGroup sx={{ margin: "10px" }}>
-            <Button color="inherit" disabled={activeStep === 0} onClick={handleBack}>
+          <ButtonGroup variant="outlined" sx={{ margin: "10px" }}>
+            <Button disabled={activeStep === 0} onClick={handleBack}>
               Back
             </Button>
 
