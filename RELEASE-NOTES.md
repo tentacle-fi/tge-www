@@ -93,8 +93,7 @@
 
 ## 1.6.0-alpha
 - voting implemented
-- add "connect wallet" msg when not connected
-- modify explanation text
+- tx download history implemented
 
 ## Unreleased
-- Monoceros hard fork gas price updates
+nothing at this time
