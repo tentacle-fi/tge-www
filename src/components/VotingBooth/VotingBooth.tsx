@@ -13,8 +13,8 @@ import { submitVote, getVotingPower, getVotes, getVoteDetails, getWalletVote, IV
 import LinearProgress, { LinearProgressProps } from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import useEvm from "hooks/useEvmProvider"
 import Alert from "@mui/material/Alert";
-import useEvm from "hooks/useEvmProvider";
 
 const LinearProgressWithLabel = (props: LinearProgressProps & { value: number }) => {
   return (
@@ -36,6 +36,7 @@ interface IVotingBoothProps {
 
 const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
   const { account, ethereum } = useWallet();
+  // const { setConfirmModal } = useFarming();
   const { setConfirmModal } = useEvm();
   const { BlockNum } = useUbiq();
 

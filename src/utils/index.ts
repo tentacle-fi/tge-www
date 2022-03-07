@@ -34,27 +34,29 @@ export const approve = async (
 ): Promise<boolean> => {
   try {
     const tokenContract = getERC20Contract(provider, tokenAddress);
+
+    const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+
+    gas.gas = 80000; // set custom low gas fee for this operation (approve)
+
     return tokenContract.methods
       .approve(spenderAddress, ethers.constants.MaxUint256)
-      .send(
-        { from: userAddress, gas: 80000, gasPrice: GAS.PRICE, maxFeePerGas: GAS.MAXFEEPERGAS, maxPriorityFeePerGas: GAS.MAXPRIORITYFEEPERGAS },
-        async (error: any, txHash: string) => {
-          if (error) {
-            console.log("ERC20 could not be approved", error);
-            onTxHash && onTxHash("");
-            return false;
-          }
-          if (onTxHash) {
-            onTxHash(txHash);
-          }
-          const status = await waitTransaction(provider, txHash);
-          if (!status) {
-            console.log("Approval transaction failed.");
-            return false;
-          }
-          return true;
+      .send({ from: userAddress, ...gas }, async (error: any, txHash: string) => {
+        if (error) {
+          console.log("ERC20 could not be approved", error);
+          onTxHash && onTxHash("");
+          return false;
         }
-      );
+        if (onTxHash) {
+          onTxHash(txHash);
+        }
+        const status = await waitTransaction(provider, txHash);
+        if (!status) {
+          console.log("Approval transaction failed.");
+          return false;
+        }
+        return true;
+      });
   } catch (e) {
     console.error("approve error", e);
     return false;
@@ -64,12 +66,15 @@ export const approve = async (
 export const sendUbq = async (userAddress: string, destinationAddress: string, ubqValue: string, provider: provider) => {
   try {
     const web3 = new Web3(provider);
+
+    const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+
+    console.log("isSparrow");
     web3.eth.sendTransaction({
       to: destinationAddress,
       from: userAddress,
       value: ubqValue,
-      gas: GAS.LIMIT,
-      gasPrice: GAS.OLDGASPRICE,
+      ...gas,
     });
   } catch (e) {
     console.error("sendUbq error", e);
@@ -80,12 +85,11 @@ export const sendTokens = async (userAddress: string, destinationAddress: string
   try {
     const tokenContract = getERC20Contract(provider, tokenAddress);
 
+    const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+
     await tokenContract.methods.transfer(destinationAddress, tokensValue).send({
       from: userAddress,
-      gas: GAS.LIMIT,
-      gasPrice: GAS.PRICE,
-      maxFeePerGas: GAS.MAXFEEPERGAS,
-      maxPriorityFeePerGas: GAS.MAXPRIORITYFEEPERGAS,
+      ...gas,
     });
   } catch (e) {
     console.error("sendTokens error", e);
@@ -300,6 +304,7 @@ export interface IReserves {
 export interface ICurrentStats {
   poolTvl: number;
   farmApy: number;
+  farmApr: number;
   farmTvl: number;
   accountPooledTokens: {
     token0: number;
@@ -430,20 +435,6 @@ export const getDailyTransactions = async (provider: provider): Promise<IDailyTr
     }
   }
 
-  // Not working yet
-  //
-  // // Collect swap volume information
-  // for( const singleEvent of inkResults){
-  //     // If it's a transfer related to the INK contract, someone sent INK
-  //     if ( singleEvent.event === "Transfer" && singleEvent.address === INK){
-  //         console.log("Event:", singleEvent.event, "of INK valued at", bnToDec(new BigNumber(singleEvent.returnValues.value)));
-  //         // This is a Shinobi router address
-  //         if( singleEvent.returnValues.to === "0xf3cE4655A44146C8EeFbf45651F6479F9d67a77a"){
-  //             console.log("Event is a swap")
-  //         }
-  //     }
-  // }
-
   return {
     count: totalTxs,
   } as IDailyTransactions;
@@ -472,11 +463,16 @@ export const getCurrentStats = async (
     const account_token0 = lpPercent.toNumber() * farm_token0;
     const account_token1 = lpPercent.toNumber() * farm_token1;
     const farmTvl = farm_token0 * token0Price + farm_token1 * token1Price;
-    const farmApy = ((rewardTokenPrice * dailyTokenRewardEmissions * 365) / farmTvl) * 100;
+    const DAYS_IN_YR = 365;
+    const APY_COMPOUNDS = DAYS_IN_YR * 2;
+    const farmApr = ((rewardTokenPrice * dailyTokenRewardEmissions * DAYS_IN_YR) / farmTvl) * 100;
+    const farmApy = (Math.pow(1 + farmApr / 100 / APY_COMPOUNDS, APY_COMPOUNDS) - 1) * 100;
 
     // DEBUG: all the log statements for debug that make sense to have. if statement filters the info by address to reduce noise/mistakes
     // if (farmContractAddress === "0x2f161631b3622881EB7125f3243A4CF35271dE02") {
     // console.log('=======')
+    // console.log("daily emissions", dailyTokenRewardEmissions);
+    // console.log("token price", rewardTokenPrice);
     // console.log("token0 price", token0Price);
     // console.log("token1 price", token1Price);
     // console.log("token0", reserves.token0);
@@ -489,10 +485,11 @@ export const getCurrentStats = async (
     // console.log("pool tvl", poolTvl);
     // console.log("");
     // console.log("poolLpTokenAddress", poolLpTokenAddress);
-    // console.log("farmContractAddress", farmContractAddress)
+    // console.log("farmContractAddress", farmContractAddress);
     // console.log("farm token0", farm_token0);
     // console.log("farm token1", farm_token1);
     // console.log("farm tvl", farmTvl);
+    // console.log("farm apr", farmApr);
     // console.log("farm apy", farmApy);
     // console.log('')
     // }
@@ -500,6 +497,7 @@ export const getCurrentStats = async (
     return {
       poolTvl: poolTvl,
       farmApy: isPaused === true ? 0 : farmApy,
+      farmApr: isPaused === true ? 0 : farmApr,
       farmTvl: farmTvl,
       accountPooledTokens: {
         token0: account_token0,

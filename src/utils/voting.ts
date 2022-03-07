@@ -17,8 +17,12 @@ export interface IVoteDetails {
   contractAddress: string;
 }
 
+const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+
+gas.gas = 80000; // set custom low gas fee for this operation (approve)
+
 export const getDeployedVotingContracts = async () => {
-  const votingBlock = 1956670;
+  const votingBlock = 2000000; // arbitrary vote start block to avoid excessive rpc use
 
   const jsonProvider = new ethers.providers.JsonRpcProvider("https://rpc.octano.dev/");
 
@@ -178,7 +182,7 @@ export const submitVote = async (provider: provider, walletAddress: string, vote
     await contract.methods
       .vote(voteOption.toString())
       .send(
-        { from: walletAddress, gas: GAS.LIMIT, gasPrice: GAS.PRICE, maxFeePerGas: GAS.MAXFEEPERGAS, maxPriorityFeePerGas: GAS.MAXPRIORITYFEEPERGAS },
+        { from: walletAddress, ...gas },
         async (error: any, txHash: string) => {
           console.log("submitVote callback", error, txHash);
         }
