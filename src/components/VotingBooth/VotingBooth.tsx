@@ -13,7 +13,7 @@ import { submitVote, getVotingPower, getVotes, getVoteDetails, getWalletVote, IV
 import LinearProgress, { LinearProgressProps } from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import useEvm from "hooks/useEvmProvider"
+import useEvm from "hooks/useEvmProvider";
 import Alert from "@mui/material/Alert";
 
 const LinearProgressWithLabel = (props: LinearProgressProps & { value: number }) => {

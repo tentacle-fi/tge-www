@@ -40,20 +40,20 @@ const DropdownOptions = [
     ],
   },
   {
-      categoryName: "DAO Products",
-      links: [
-          {
-              name: "Tx Download",
-              url: "/tx-download",
-              type: "internal",
-          },
-          {
-              name: "Governance",
-              url: "/vote",
-              type: "internal",
-          }
-      ]
-  }
+    categoryName: "DAO Products",
+    links: [
+      {
+        name: "Tx Download",
+        url: "/tx-download",
+        type: "internal",
+      },
+      {
+        name: "Governance",
+        url: "/governance",
+        type: "internal",
+      },
+    ],
+  },
 ];
 
 const StyledMenu = styled(Menu)(({ theme }) => ({

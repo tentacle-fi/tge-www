@@ -76,7 +76,7 @@ const Instructions = () => {
   );
 };
 
-const Vote: React.FC = () => {
+const Governance: React.FC = () => {
   const { status } = useWallet();
 
   const [allVotes, setAllVotes] = useState<Array<string>>();
@@ -117,4 +117,4 @@ const Vote: React.FC = () => {
   );
 };
 
-export default React.memo(Vote);
+export default React.memo(Governance);

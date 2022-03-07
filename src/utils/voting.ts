@@ -179,14 +179,9 @@ export const submitVote = async (provider: provider, walletAddress: string, vote
   try {
     const contract = getVoteContract(provider, voteContractAddress);
 
-    await contract.methods
-      .vote(voteOption.toString())
-      .send(
-        { from: walletAddress, ...gas },
-        async (error: any, txHash: string) => {
-          console.log("submitVote callback", error, txHash);
-        }
-      );
+    await contract.methods.vote(voteOption.toString()).send({ from: walletAddress, ...gas }, async (error: any, txHash: string) => {
+      console.log("submitVote callback", error, txHash);
+    });
 
     return true;
   } catch (e) {
