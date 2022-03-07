@@ -37,7 +37,7 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ steps }) => {
 
   return (
     <Box sx={{ width: "80%" }}>
-      <Stepper sx={{ width: "80%" }} activeStep={activeStep}>
+      <Stepper sx={{ width: "80%", margin: "auto" }} activeStep={activeStep}>
         {steps.map((label, index) => {
           // console.log(label.text + label.runFn);
           const stepProps: { executeStep?: () => void } = {};
