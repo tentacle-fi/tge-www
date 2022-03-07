@@ -1,13 +1,12 @@
 import React, { useCallback, useState } from "react";
 import Page from "components/Page";
 import TxTable from "components/TxTable";
-import PayButton from "components/PayButton";
-import OnboardingProgress from "components/OnboardingProgress";
-import Button from "@mui/material/Button";
+import OnboardingProgress, { IOnboardingSteps } from "components/OnboardingProgress";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { useWallet } from "use-wallet";
 import { scanStart, resultsToCSV } from "tx-download";
+import usePaymentProcessorProvider from "hooks/usePaymentProcessor";
 import { IDatagridResults } from "tx-download/interfaces";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
@@ -15,7 +14,8 @@ import ListItem from "@mui/material/ListItem";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import LinearProgress from "@mui/material/LinearProgress";
 
-interface TxDownloadProps {}
+// Price to download a dataset, in UBQ for now
+const DownloadPrice = 200;
 
 const SmallCheck = () => {
   return <CheckBoxIcon fontSize="small" />;
@@ -44,7 +44,11 @@ const OnboardingSteps = () => {
         <List sx={{ justifyContent: "center" }} dense={true}>
           <ListItem>
             <SmallCheck />
-            Pay 100 UBQ
+            Connect the address you wish to scan
+          </ListItem>
+          <ListItem>
+            <SmallCheck />
+            Pay {DownloadPrice} UBQ
           </ListItem>
           <ListItem>
             <SmallCheck />
@@ -85,8 +89,9 @@ const ScanProgressBar: React.FC<ScanProgressBarProps> = ({ progress1, progress2 
   );
 };
 
-const TxDownload: React.FC<TxDownloadProps> = () => {
+const TxDownload: React.FC = () => {
   const { account } = useWallet();
+  const { handlePayment } = usePaymentProcessorProvider();
   const [scanResults, setScanResults] = useState("");
   const [scanResultsObject, setScanResultsObject] = useState<Array<IDatagridResults>>();
 
@@ -96,6 +101,36 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
   const [scanProgressTotal, setScanProgressTotal] = useState(0);
   const [currentProgress, setCurrentProgress] = useState(0);
   const [currentProgressTotal, setCurrentProgressTotal] = useState(0);
+
+  const onboardingSteps: Array<IOnboardingSteps> = [
+    {
+      text: account !== null ? account : "Connect your wallet",
+      runFn: () => {
+        if (account === null) {
+          console.log("account is not connected");
+          return;
+        }
+      },
+    },
+    {
+      text: `Pay ${DownloadPrice} Ubiq`,
+      runFn: () => {
+        if (handlePayment !== undefined) {
+          handlePayment("UBQ", DownloadPrice);
+        }
+      },
+    },
+    {
+      text: "Start a Scan",
+      runFn: () => handleStart(),
+    },
+    {
+      text: "Download Transaction",
+      runFn: () => {
+        console.log("implement runFn for download step");
+      },
+    },
+  ];
 
   const handleStart = useCallback(async () => {
     if (account === null) {
@@ -191,11 +226,8 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
   return (
     <Page>
       <Introduction />
-      <OnboardingProgress />
-      <PayButton paymentValue={0.001} paymentSymbol={"UBQ"} />
-      <Button variant="outlined" onClick={handleStart}>
-        Start Scan
-      </Button>
+
+      <OnboardingProgress steps={onboardingSteps} />
 
       <ScanProgressBar progress1={(enumerationProgress / enumerationProgressTotal) * 100} progress2={(scanProgress / scanProgressTotal) * 100} />
 
