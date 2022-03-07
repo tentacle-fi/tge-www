@@ -15,7 +15,7 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import LinearProgress from "@mui/material/LinearProgress";
 
 // Price to download a dataset, in UBQ for now
-const DownloadPrice = 200;
+const DownloadPrice = 0.001;
 
 const SmallCheck = () => {
   return <CheckBoxIcon fontSize="small" />;
@@ -91,7 +91,7 @@ const ScanProgressBar: React.FC<ScanProgressBarProps> = ({ progress1, progress2 
 
 const TxDownload: React.FC = () => {
   const { account } = useWallet();
-  const { handlePayment } = usePaymentProcessorProvider();
+  const { handlePayment, isConfirmed, confirmCount } = usePaymentProcessorProvider();
   const [scanResults, setScanResults] = useState("");
   const [scanResultsObject, setScanResultsObject] = useState<Array<IDatagridResults>>();
 
@@ -121,8 +121,18 @@ const TxDownload: React.FC = () => {
       },
     },
     {
+      text: "Await Confirmation",
+      runFn: () => {
+        console.log("implement runFn for await confirmatiion step", confirmCount);
+      },
+    },
+    {
       text: "Start a Scan",
-      runFn: () => handleStart(),
+      runFn: () => {
+        if (isConfirmed) {
+          handleStart();
+        }
+      },
     },
     {
       text: "Download Transaction",

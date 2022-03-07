@@ -6,10 +6,32 @@ import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Typography from "@mui/material/Typography";
+import usePaymentProcessorProvider from "hooks/usePaymentProcessor";
+import CircularProgress from "@mui/material/CircularProgress";
+import Stack from "@mui/material/Stack";
 import { IOnboardingProgressProps } from "./";
+
+const TxConfirmationBlocks = 2;
+
+interface ConfirmationProgressProps {
+  progress: number;
+}
+
+const ConfirmationProgress: React.FC<ConfirmationProgressProps> = ({ progress }) => {
+  return (
+    <Stack spacing={2} direction="row">
+      <CircularProgress variant="determinate" value={progress} />
+    </Stack>
+  );
+};
 
 const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ steps }) => {
   const [activeStep, setActiveStep] = React.useState(0);
+  const { confirmCount } = usePaymentProcessorProvider();
+
+  if (confirmCount === undefined) {
+    return <></>;
+  }
 
   const handleNext = (currentStep: number) => {
     if (steps[currentStep] === undefined) {
@@ -35,6 +57,11 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ steps }) => {
   const handleReset = () => {
     setActiveStep(0);
   };
+
+  let isNullReceipt = false;
+  if (confirmCount === -1) {
+    isNullReceipt = true;
+  }
 
   return (
     <Box sx={{ width: "80%" }}>
@@ -68,6 +95,7 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ steps }) => {
 
             <Button onClick={() => handleNext(activeStep)}>{activeStep === steps.length - 1 ? "Finish" : "Next"}</Button>
           </ButtonGroup>
+          <ConfirmationProgress progress={isNullReceipt ? 1 : (confirmCount / TxConfirmationBlocks) * 100} />
         </Box>
       )}
     </Box>

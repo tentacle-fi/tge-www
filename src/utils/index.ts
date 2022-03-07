@@ -537,6 +537,9 @@ export const sendUbqEthers = async (userAddress: string, destinationAddress: str
       console.error("Insufficient Funds, need:", ubqValue, "code: ", e.code);
       alert(`Insufficient funds. This action costs ${ubqValue} UBQ plus gas.`);
       return;
+    } else if (e.code === 4001) {
+      console.error("User rejected transaction", e.code);
+      return;
     }
     console.error(
       "sendUbqEthers() threw unexpected error while signing or waiting, please lookup this error and write a routine for it:",
