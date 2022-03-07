@@ -12,6 +12,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 
 // Price to download a dataset, in UBQ for now
 const DownloadPrice = 0.001;
+const TxConfirmCount = 2;
 
 const Introduction = () => {
   return (
@@ -79,7 +80,6 @@ const TxDownload: React.FC = () => {
         }
       },
       validate: () => {
-        console.log("paymentTx", paymentTx);
         if (paymentTx === undefined || paymentTx === "") {
           return false;
         }
@@ -92,18 +92,19 @@ const TxDownload: React.FC = () => {
         console.log("implement runFn for await confirmatiion step", confirmCount);
       },
       validate: () => {
-        return true;
+        if (confirmCount === undefined) {
+          return false;
+        }
+        return confirmCount >= TxConfirmCount;
       },
     },
     {
       text: "Start a Scan",
       runFn: () => {
-        if (isConfirmed) {
-          handleStart();
-        }
+        handleStart();
       },
       validate: () => {
-        return true;
+        return isConfirmed;
       },
     },
     {
@@ -223,18 +224,17 @@ const TxDownload: React.FC = () => {
 
       <OnboardingProgress steps={onboardingSteps} />
 
+      {scanResults !== "" && (
+        <a href={scanResults} download="ubiq_transactions.csv">
+          Download
+        </a>
+      )}
       <ScanProgressBar progress1={(enumerationProgress / enumerationProgressTotal) * 100} progress2={(scanProgress / scanProgressTotal) * 100} />
 
       <Typography variant="body1">
         Current Progress: {currentProgress} / {currentProgressTotal}
       </Typography>
 
-      <div style={{ overflow: "scroll", width: "90%", height: "10vh", border: "1px solid #fff" }}>
-        <pre>{scanResults}</pre>
-        <a href={scanResults} download="ubiq_transactions.csv">
-          Download
-        </a>
-      </div>
       <TxTable transactions={scanResultsObject} displaySelectedRow={displaySelectedRow} />
     </Page>
   );
