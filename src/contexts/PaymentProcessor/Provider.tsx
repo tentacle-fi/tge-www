@@ -10,7 +10,7 @@ const DAO = "0xCC7D76005bf1616e55cfDFF4cbfB5C29199C2808"; // DAO Multisig addres
 const PaymentProcessor: React.FC = ({ children }) => {
   const [paymentTx, setPaymentTx] = useState("");
   const [isConfirmed, setIsConfirmed] = useState(false);
-  const { BlockNum, provider } = useEvm();
+  const { BlockNum, provider, setConfirmModal } = useEvm();
   const { account } = useWallet();
   const [confirmCount, setConfirmCount] = useState(-1);
 
@@ -41,6 +41,7 @@ const PaymentProcessor: React.FC = ({ children }) => {
       }
 
       try {
+        setConfirmModal(true);
         console.log("preparing to send", amount, "UBQ");
         let sendTxHash;
         let finalSendResult;
@@ -65,8 +66,10 @@ const PaymentProcessor: React.FC = ({ children }) => {
       } catch (e) {
         console.error("unable to send tokens", e);
       }
+
+      setConfirmModal(false);
     },
-    [account, provider, BlockNum]
+    [account, provider, BlockNum, setConfirmModal]
   );
 
   useEffect(() => {

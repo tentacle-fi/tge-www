@@ -5,6 +5,7 @@ export interface IOnboardingProgressProps {
 export interface IOnboardingSteps {
   text: string;
   runFn: Function;
+  validate: Function;
 }
 
 export { default } from "./OnboardingProgress";

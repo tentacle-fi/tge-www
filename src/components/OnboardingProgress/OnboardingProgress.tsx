@@ -50,13 +50,19 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ steps }) => {
 
     try {
       // Execute the step's run function
-      steps[currentStep].runFn();
+      const isValid = steps[currentStep].validate();
+      if (isValid !== true) {
+        console.log("step not complete, isValid !== true");
+        steps[currentStep].runFn();
+        return;
+      }
+      steps[currentStep + 1].runFn();
     } catch (e) {
       console.log("OnboardingProgress() threw error while calling the steps runFn:", e);
       return;
     }
 
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setActiveStep(currentStep + 1);
   };
 
   const handleBack = () => {
@@ -139,7 +145,7 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ steps }) => {
   }
 
   return (
-    <Box sx={{ width: "80%" }}>
+    <Box sx={{ width: "80%", margin: "40px 20px" }}>
       <Stepper alternativeLabel sx={{ width: "100%", margin: "auto" }} activeStep={activeStep} connector={<ColorlibConnector />}>
         {steps.map((label, index) => {
           const stepProps: { executeStep?: () => void } = {};

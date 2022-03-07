@@ -2,24 +2,16 @@ import React, { useCallback, useState } from "react";
 import Page from "components/Page";
 import TxTable from "components/TxTable";
 import OnboardingProgress, { IOnboardingSteps } from "components/OnboardingProgress";
-import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { useWallet } from "use-wallet";
 import { scanStart, resultsToCSV } from "tx-download";
 import usePaymentProcessorProvider from "hooks/usePaymentProcessor";
 import { IDatagridResults } from "tx-download/interfaces";
 import Box from "@mui/material/Box";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import LinearProgress from "@mui/material/LinearProgress";
 
 // Price to download a dataset, in UBQ for now
 const DownloadPrice = 0.001;
-
-const SmallCheck = () => {
-  return <CheckBoxIcon fontSize="small" />;
-};
 
 const Introduction = () => {
   return (
@@ -29,42 +21,7 @@ const Introduction = () => {
         Tx Download will help you download transaction history to aid with recordkeeping, tax reporting, and more. To get started, connect the wallet
         account you wish to download history for.
       </Typography>
-      <OnboardingSteps />
     </>
-  );
-};
-
-const OnboardingSteps = () => {
-  return (
-    <Grid sx={{ display: "flex", justifyContent: "center" }} container direction="row">
-      <Grid item>
-        <Typography sx={{ mt: "10px", textAlign: "center" }} variant="h6">
-          Process
-        </Typography>
-        <List sx={{ justifyContent: "center" }} dense={true}>
-          <ListItem>
-            <SmallCheck />
-            Connect the address you wish to scan
-          </ListItem>
-          <ListItem>
-            <SmallCheck />
-            Pay {DownloadPrice} UBQ
-          </ListItem>
-          <ListItem>
-            <SmallCheck />
-            Click Scan button to initiate a scan of the connected address
-          </ListItem>
-          <ListItem>
-            <SmallCheck />
-            When the scan completes, review the results below
-          </ListItem>
-          <ListItem>
-            <SmallCheck />
-            Click the download button to save your data
-          </ListItem>
-        </List>
-      </Grid>
-    </Grid>
   );
 };
 
@@ -91,7 +48,7 @@ const ScanProgressBar: React.FC<ScanProgressBarProps> = ({ progress1, progress2 
 
 const TxDownload: React.FC = () => {
   const { account } = useWallet();
-  const { handlePayment, isConfirmed, confirmCount } = usePaymentProcessorProvider();
+  const { handlePayment, isConfirmed, paymentTx, confirmCount } = usePaymentProcessorProvider();
   const [scanResults, setScanResults] = useState("");
   const [scanResultsObject, setScanResultsObject] = useState<Array<IDatagridResults>>();
 
@@ -105,11 +62,13 @@ const TxDownload: React.FC = () => {
   const onboardingSteps: Array<IOnboardingSteps> = [
     {
       text: account !== null ? "Connected!" : "Connect your wallet",
-      runFn: () => {
+      runFn: () => {},
+      validate: () => {
         if (account === null) {
           console.log("account is not connected");
-          return;
+          return false;
         }
+        return true;
       },
     },
     {
@@ -119,11 +78,21 @@ const TxDownload: React.FC = () => {
           handlePayment("UBQ", DownloadPrice);
         }
       },
+      validate: () => {
+        console.log("paymentTx", paymentTx);
+        if (paymentTx === undefined || paymentTx === "") {
+          return false;
+        }
+        return paymentTx?.length > 0;
+      },
     },
     {
       text: "Await Confirmation",
       runFn: () => {
         console.log("implement runFn for await confirmatiion step", confirmCount);
+      },
+      validate: () => {
+        return true;
       },
     },
     {
@@ -133,17 +102,26 @@ const TxDownload: React.FC = () => {
           handleStart();
         }
       },
+      validate: () => {
+        return true;
+      },
     },
     {
       text: "Download Transaction",
       runFn: () => {
         console.log("implement runFn for download step");
       },
+      validate: () => {
+        return true;
+      },
     },
     {
       text: "Finish",
       runFn: () => {
         console.log("implement runFn for finish step");
+      },
+      validate: () => {
+        return true;
       },
     },
   ];
