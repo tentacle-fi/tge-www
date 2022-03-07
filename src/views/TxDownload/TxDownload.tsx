@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import Page from "components/Page";
 import TxTable from "components/TxTable";
 import PayButton from "components/PayButton";
-import OnboardingProgress from "components/OnboardingProgress";
+import OnboardingProgress, { IOnboardingSteps } from "components/OnboardingProgress";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
@@ -14,6 +14,33 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import LinearProgress from "@mui/material/LinearProgress";
+
+const steps: Array<IOnboardingSteps> = [
+  {
+    text: "Connect your wallet",
+    runFn: () => {
+      console.log("implement runFn for connect step");
+    },
+  },
+  {
+    text: "Pay XXX Ubiq",
+    runFn: () => {
+      console.log("implement runFn for pay step");
+    },
+  },
+  {
+    text: "Start a Scan",
+    runFn: () => {
+      console.log("implement runFn for scan step");
+    },
+  },
+  {
+    text: "Download Transaction",
+    runFn: () => {
+      console.log("implement runFn for download step");
+    },
+  },
+];
 
 interface TxDownloadProps {}
 
@@ -151,7 +178,7 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
   return (
     <Page>
       <Introduction />
-      <OnboardingProgress />
+      <OnboardingProgress steps={steps} />
       <PayButton paymentValue={0.001} paymentSymbol={"UBQ"} />
       <Button variant="outlined" onClick={handleStart}>
         Start Scan
