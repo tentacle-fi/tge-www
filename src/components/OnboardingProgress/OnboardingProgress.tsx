@@ -60,15 +60,15 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ steps }) => {
           </Box>
         </>
       ) : (
-        <>
-          <ButtonGroup sx={{ mt: 5 }}>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <ButtonGroup sx={{ margin: "10px" }}>
             <Button color="inherit" disabled={activeStep === 0} onClick={handleBack}>
               Back
             </Button>
 
             <Button onClick={() => handleNext(activeStep)}>{activeStep === steps.length - 1 ? "Finish" : "Next"}</Button>
           </ButtonGroup>
-        </>
+        </Box>
       )}
     </Box>
   );
