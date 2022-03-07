@@ -1,9 +1,7 @@
 import React, { useCallback, useState } from "react";
 import Page from "components/Page";
 import TxTable from "components/TxTable";
-import PayButton from "components/PayButton";
 import OnboardingProgress, { IOnboardingSteps } from "components/OnboardingProgress";
-import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { useWallet } from "use-wallet";
@@ -15,6 +13,9 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import LinearProgress from "@mui/material/LinearProgress";
+
+// Price to download a dataset, in UBQ for now
+const DownloadPrice = 200;
 
 const SmallCheck = () => {
   return <CheckBoxIcon fontSize="small" />;
@@ -41,9 +42,13 @@ const OnboardingSteps = () => {
           Process
         </Typography>
         <List sx={{ justifyContent: "center" }} dense={true}>
+        <ListItem>
+          <SmallCheck />
+          Connect the address you wish to scan
+        </ListItem>
           <ListItem>
             <SmallCheck />
-            Pay 100 UBQ
+            Pay {DownloadPrice} UBQ
           </ListItem>
           <ListItem>
             <SmallCheck />
@@ -94,10 +99,10 @@ const TxDownload: React.FC = () => {
       },
     },
     {
-      text: "Pay XXX Ubiq",
+      text: `Pay ${DownloadPrice} Ubiq`,
       runFn: () => {
         if (handlePayment !== undefined) {
-          handlePayment("UBQ", 0.001);
+          handlePayment("UBQ", DownloadPrice);
         }
       },
     },
@@ -182,11 +187,6 @@ const TxDownload: React.FC = () => {
     <Page>
       <Introduction />
       <OnboardingProgress steps={onboardingSteps} />
-      <PayButton paymentValue={0.001} paymentSymbol={"UBQ"} />
-      <Button variant="outlined" onClick={handleStart}>
-        Start Scan
-      </Button>
-
       <ScanProgressBar progress={(scanProgress / scanProgressTotal) * 100} />
 
       <Typography variant="body1">
