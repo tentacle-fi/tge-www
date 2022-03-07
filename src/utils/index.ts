@@ -8,6 +8,8 @@ import { GAS } from "ubiq-sdk/utils";
 import ERC20ABI from "constants/abi/ERC20.json";
 import ShinobiPoolERC20 from "ubiq-sdk/lib/clean_build/contracts/ShinobiPool.json";
 
+export const TxConfirmationBlocks = 2; // number of blocks to wait to consider a tx mined
+
 export const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
@@ -91,6 +93,7 @@ export const sendTokens = async (userAddress: string, destinationAddress: string
 };
 
 export const getAllowance = async (userAddress: string, spenderAddress: string, tokenAddress: string, provider: provider): Promise<string> => {
+  // console.log("getAllowance");
   try {
     const tokenContract = getERC20Contract(provider, tokenAddress);
     const allowance: string = await tokenContract.methods.allowance(userAddress, spenderAddress).call();
@@ -136,6 +139,7 @@ export const getBalanceAsBigNum = async (
 };
 
 export const getCoinBalance = async (provider: provider, userAddress: string): Promise<string> => {
+  // console.log("getCoinBalance");
   try {
     const web3 = new Web3(provider);
     const balance: string = await web3.eth.getBalance(userAddress);
@@ -219,6 +223,8 @@ export const getReserves = async (provider: provider, tokenAddress: string, atBl
 };
 
 export const getDailyRewardRate = async (provider: provider, tokenAddress: string): Promise<number> => {
+  // console.log("getDailyRewardRate");
+
   try {
     const tokenContract = getFarmContract(provider, tokenAddress);
     const rewards = bnToDec(new BigNumber(await tokenContract.methods.rewardRate().call()));
@@ -230,6 +236,8 @@ export const getDailyRewardRate = async (provider: provider, tokenAddress: strin
 };
 
 const isRewardsPaused = async (provider: provider, contractAddress: string): Promise<boolean> => {
+  // console.log("isRewardsPaused");
+
   try {
     const web3 = new Web3(provider);
     const tokenContract = new web3.eth.Contract(ShinobiPoolERC20.abi as unknown as AbiItem, contractAddress);
@@ -251,6 +259,8 @@ export const getTokenPrice = async (
   poolLpTokenAddress: string,
   inverted: boolean = false
 ): Promise<ITokenPriceInfo> => {
+  // console.log("getTokenPrice");
+
   const reserves = await getReserves(provider, poolLpTokenAddress);
 
   // DEBUG:
@@ -393,6 +403,8 @@ export const getDailyTransactions = async (provider: provider): Promise<IDailyTr
   if (provider === undefined || provider === null) {
     return { count: 0 };
   }
+  // console.log("getDailyTransactions");
+
   const web3 = new Web3(provider);
 
   const oneDayInSeconds = 60 * 60 * 24;
@@ -450,6 +462,8 @@ export const getCurrentStats = async (
   farmToPoolLPRatio: BigNumber
 ): Promise<ICurrentStats> => {
   try {
+    // console.log("getCurrentStats");
+
     const isPaused = await isRewardsPaused(provider, farmContractAddress);
     const dailyTokenRewardEmissions = await getDailyRewardRate(provider, farmContractAddress);
     const poolTvl = reserves.token0 * token0Price + reserves.token1 * token1Price;
@@ -501,48 +515,73 @@ export const getCurrentStats = async (
     throw e;
   }
 };
-export const shouldUpdateAry = function shouldUpdateAry(
-  old_val: Array<BigNumber> | Array<number> | undefined,
-  new_val: Array<BigNumber> | Array<number> | undefined,
-  elemType: string
-): boolean {
-  if (old_val === undefined || new_val === undefined) {
-    return true;
+
+export const sendUbqEthers = async (userAddress: string, destinationAddress: string, ubqValue: number, provider: any) => {
+  console.log("sending a tx from:", userAddress, "to:", destinationAddress, "with value:", ubqValue);
+  let signer;
+
+  // provider and signer are separate, so we need to fetch the signer (metamask)
+  try {
+    signer = provider.getSigner();
+  } catch (e) {
+    console.error("sendUbqEthers() threw error while getting signer:", e, signer);
+    return;
   }
-  if (old_val instanceof Array) {
-    for (let i = 0; i < old_val.length; i++) {
-      if (old_val !== undefined) {
-        switch (elemType) {
-          case "BigNumber":
-            if (old_val[i] instanceof BigNumber && new_val[i] instanceof BigNumber) {
-              if (!new BigNumber(old_val[i]).isEqualTo(new_val[i])) {
-                return true;
-              }
-            }
-            break;
-          case "number":
-            if (typeof old_val[i] === "number" && typeof new_val[i] === "number") {
-              if (old_val[i] !== new_val[i]) {
-                return true;
-              }
-            }
-            break;
-        }
-      }
+
+  const preparedTx = {
+    from: userAddress,
+    to: destinationAddress,
+    value: ethers.utils.parseUnits(ubqValue.toString()).toHexString(),
+  };
+
+  let signedTx;
+
+  try {
+    signedTx = await signer.sendTransaction(preparedTx);
+  } catch (e: any) {
+    if (e.code === -32603) {
+      console.error("Insufficient Funds, need:", ubqValue, "code: ", e.code);
+      alert(`Insufficient funds. This action costs ${ubqValue} UBQ plus gas.`);
+      return;
+    } else if (e.code === 4001) {
+      console.error("User rejected transaction", e.code);
+      return;
     }
+    console.error(
+      "sendUbqEthers() threw unexpected error while signing or waiting, please lookup this error and write a routine for it:",
+      e,
+      signedTx
+    );
+    return;
   }
-  return false;
+
+  // return just the hash
+  return signedTx.hash;
 };
 
-export const shouldUpdateVal = function shouldUpdateVal(old_val: BigNumber | undefined, new_val: BigNumber | undefined, elemType: string): boolean {
-  if (old_val === undefined || new_val === undefined) {
-    return true;
+export const waitForTransaction = async (provider: any, txHash: string) => {
+  let txResult;
+  try {
+    txResult = await provider.waitForTransaction(txHash, TxConfirmationBlocks);
+  } catch (e) {
+    console.error("waitForTransaction() failed with error:", e);
+    return null;
   }
 
-  if (old_val instanceof BigNumber && new_val instanceof BigNumber) {
-    if (!new BigNumber(old_val).isEqualTo(new BigNumber(new_val))) {
-      return true;
+  return txResult;
+};
+
+export const checkReceipt = async (provider: any, txHash: string) => {
+  let receiptResult;
+  try {
+    receiptResult = await provider.getTransactionReceipt(txHash);
+    // console.log("receipt:", receiptResult)
+
+    if (receiptResult) {
+      return receiptResult.confirmations;
     }
+    return -1; // if there's not a receipt yet that's a special case we check for
+  } catch (e) {
+    console.error("checkReceipt() threw error:", e);
   }
-  return false;
 };

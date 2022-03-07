@@ -21,6 +21,7 @@ const Nav: React.FC = () => {
       </SLink>
       <StyledRouterLink to="/farm">Farm</StyledRouterLink>
       <StyledRouterLink to="/daoinfo">DAO</StyledRouterLink>
+      <StyledRouterLink to="/tx-download">TXs</StyledRouterLink>
     </StyledNav>
   );
 };

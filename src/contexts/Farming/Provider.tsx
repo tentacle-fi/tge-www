@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState, useMemo, useRef } from "react";
 import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
-import ConfirmTransactionModal from "components/ConfirmTransactionModal";
 import useUbiq from "hooks/useUbiq";
 import { AvailableFarms } from "farms/AvailableFarms";
 import { getPoolTotalSupply, getEarned, getStaked } from "ubiq-sdk/utils";
@@ -11,8 +10,6 @@ import useBalances from "hooks/useBalances";
 import { IPooledTokens, IFarmingFns } from "hooks/useFarming";
 
 const Provider: React.FC = ({ children }) => {
-  const [confirmTxModalIsOpen, setConfirmTxModalIsOpen] = useState(false);
-  const [confirmTxModalMessage, setConfirmTxModalMessage] = useState("");
   const { ubiq, BlockNum } = useUbiq();
   const { account, ethereum } = useWallet();
   const { lpTokenReserves, tokenPrices } = useBalances();
@@ -200,19 +197,6 @@ const Provider: React.FC = ({ children }) => {
     setupPooledTokens();
   }, [fetchCurrentStats, fetchTotalSupplyLP, fetchearnedBalances, fetchstakedBalances, setupPooledTokens]);
 
-  const customTxModal = useCallback(async (isOpen: boolean, message?: string) => {
-    if (isOpen === true) {
-      setConfirmTxModalIsOpen(true);
-      if (message !== undefined) {
-        setConfirmTxModalMessage(message);
-      }
-    } else {
-      // reset
-      setConfirmTxModalIsOpen(false);
-      setConfirmTxModalMessage("");
-    }
-  }, []);
-
   const fetchInkTotalSupply = useCallback(
     async (provider) => {
       if (!provider) {
@@ -247,7 +231,6 @@ const Provider: React.FC = ({ children }) => {
     <Context.Provider
       value={{
         farmingStartTimes,
-        setConfirmModal: customTxModal,
         earnedBalances,
         stakedBalances,
         totalFarmSupplyLP,
@@ -263,7 +246,6 @@ const Provider: React.FC = ({ children }) => {
       }}
     >
       {children}
-      <ConfirmTransactionModal message={confirmTxModalMessage} isOpen={confirmTxModalIsOpen} />
     </Context.Provider>
   );
 };
