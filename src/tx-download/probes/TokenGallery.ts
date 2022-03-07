@@ -10,7 +10,7 @@ import { bnToDecStr, spliceEvery, bnTohex, tsFormat, tokenLookupSymbol, testMeth
 const TG_TransferSingle_Event = "0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62";
 
 // TODO: brute force this event name via the keccak 256 hash, and known parameter constraints (plus dictionary words for the function name)
-const TG_TransferSinglePay_Event = "0x3141d8b0da9d06f9dbe8eac7082e76b5181eb89cfdd14b2b4e008b6fc070091c";
+// const TG_TransferSinglePay_Event = "0x3141d8b0da9d06f9dbe8eac7082e76b5181eb89cfdd14b2b4e008b6fc070091c";
 
 // TODO: brute force this event name
 // 2% platform fee along with other 'transfer' fees/costs/values appear to be associated with this event
@@ -115,7 +115,7 @@ const soldNFT = (walletAddress: string, tx: ITxDetail, erc20Purchase: boolean) =
 
   const transferSingleEvent = tx.receipt.logs.filter((log) => log?.topics?.[0]?.toLowerCase() === TG_TransferSingle_Event);
 
-  const paymentEvent = tx.receipt.logs.filter((log) => log?.topics?.[0]?.toLowerCase() === TG_TransferSinglePay_Event);
+  // const paymentEvent = tx.receipt.logs.filter((log) => log?.topics?.[0]?.toLowerCase() === TG_TransferSinglePay_Event);
 
   const paymentFeeEvents = tx.receipt.logs.filter(
     (log) =>
@@ -165,8 +165,6 @@ const soldNFT = (walletAddress: string, tx: ITxDetail, erc20Purchase: boolean) =
   let buyerAddress = bnTohex(transferSingleEvent[0].topics[1]);
   let sellerAddress = bnTohex(transferSingleEvent[0].topics[2]);
   // let twoPercentPlatformFeeValue = bnToDecStr(paymentFeeEvents[0].data); // not needed, platform only
-
-  console.log("test", paymentFeeEvents.length);
 
   for (let i = 0; i < paymentFeeEvents.length; i++) {
     if (paymentFeeEvents[i]?.topics[1] === formatTopic(walletAddress)) {

@@ -2,10 +2,11 @@ import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { Log } from "@ethersproject/abstract-provider";
 // import {TransactionReceipt, TransactionResponse } from "@ethersproject/abstract-provider"// for debug
-import lookupMethod from "./lookupMethod";
-import { ITransactionHashStub, IProcessedData, ITxDetail, ITransferCSVRow } from "./interfaces";
+import { ITransactionHashStub, ITxDetail, ITransferCSVRow } from "./interfaces";
 import Probes from "./probes";
-import { formatTopic, spliceEvery } from "./probes/tools";
+import { formatTopic } from "./probes/tools";
+
+import { lookupBlocksForYear } from "./blockchain";
 
 // ================================================================================
 //
@@ -15,25 +16,47 @@ import DOXXED_JSON from "./DOXXED.json";
 import NFT_DOXXED from "./NFT_DOXXED.json";
 // ================================================================================
 
-export const scanStart = async (address: string, progressCb: Function) => {
+export const scanStart = async (address: string, year: number, progress1Cb: Function, progress2Cb: Function) => {
   const rpcProvider = new ethers.providers.JsonRpcProvider("https://rpc.octano.dev/");
 
   address = address.toLowerCase();
 
-  /*
+  const blocks = lookupBlocksForYear(2021, "Ubiq");
+
+  console.log("starting", blocks);
+
   // Prod:
-  // TODO: iterate over 12 block steps from the start of year selected block, to end of year block
-  const results = await getLogs(rpcProvider, address, numToHex(1729478), numToHex(1761149)); //numToHex(1776000))
+  if (blocks !== undefined) {
+    let results = [] as Array<Log>;
+    const paginateGetLogs = 12;
+    const totalBlocks = blocks.end - blocks.start;
 
-  if (results !== undefined) {
-    const filtered = filterLogs(results);
-    const allTxs = await getAllTxDetails(rpcProvider, filtered, progressCb);
+    progress1Cb(0, paginateGetLogs);
+    for (let i = 0; i < paginateGetLogs; i++) {
+      console.log("getting logs");
+      let plusOne = i > 0 ? 1 : 0;
+      let currentFromBlock = Math.floor(blocks.start + (i * totalBlocks) / paginateGetLogs) + plusOne;
+      let currentEndBlock = Math.floor(blocks.start + ((i + 1) * totalBlocks) / paginateGetLogs);
 
-    return Probes.explore(address, allTxs);
+      let logs = await getLogs(rpcProvider, address, numToHex(currentFromBlock), numToHex(currentEndBlock));
+
+      progress1Cb(i, paginateGetLogs);
+
+      if (logs !== undefined) {
+        results = [...results, ...logs];
+      }
+    }
+
+    if (results !== undefined) {
+      const filtered = filterLogs(results);
+      const allTxs = await getAllTxDetails(rpcProvider, filtered, progress2Cb);
+      console.error("missing NONCEs!", verifyNonceSequential(address, allTxs).length);
+
+      return Probes.explore(address, allTxs);
+    }
   }
-*/
   // console.error("missing NONCEs!", verifyNonceSequential(address, NFT_DOXXED as Array<ITxDetail>).length);
-  return Probes.explore(address, NFT_DOXXED as Array<ITxDetail>);
+  // return Probes.explore(address, NFT_DOXXED as Array<ITxDetail>);
 };
 
 const verifyNonceSequential = (walletAddress: string, list: Array<ITxDetail>): Array<number> => {
@@ -45,7 +68,7 @@ const verifyNonceSequential = (walletAddress: string, list: Array<ITxDetail>): A
     })
     .map((tx) => tx.tx.nonce);
 
-  console.log("sorted", sorted.length);
+  // console.log("sorted", sorted.length);
 
   sorted.sort((a: number, b: number) => {
     if (a < b) {
@@ -63,8 +86,6 @@ const verifyNonceSequential = (walletAddress: string, list: Array<ITxDetail>): A
   let missing = [];
   for (let i = 1; i < sorted.length; i++) {
     if (start + 1 !== sorted[i]) {
-      console.log(start + 1, sorted[i]);
-
       missing.push(start + 1);
     }
     start++;
@@ -106,7 +127,12 @@ export const filterLogs = (list: Array<Log> | Array<ITransactionHashStub>): Arra
 };
 
 // TODO: extend to use a custom rpc provider
-const getLogs = async (rpcProvider: any, originatingAddress: string, fromBlockHex: string = "0x0", toBlockHex: string = "latest") => {
+const getLogs = async (
+  rpcProvider: any,
+  originatingAddress: string,
+  fromBlockHex: string = "0x0",
+  toBlockHex: string = "latest"
+): Promise<Array<Log> | undefined> => {
   // fromBlockHex = fromBlockHex === undefined ? "0x0" : fromBlockHex;
   const filterBase = {
     fromBlock: fromBlockHex,
@@ -142,38 +168,6 @@ export const getAllTxDetails = async (rpcProvider: any, txHashes: Array<string>,
     // TODO: check that txhash string length is properly set with 0x + 64 more chars (66 total)
     results.push(await getTxDetails(rpcProvider, txHashes[i]));
     progressCb(i + 1, txHashes.length);
-  }
-
-  return results;
-};
-
-// process the methodid and data string from a TransactionResponse
-const processInputData = (data: string | undefined): IProcessedData => {
-  const results = {
-    methodId: "",
-    method: "",
-    data: [] as Array<string>,
-  } as IProcessedData;
-
-  if (data === undefined || data.length <= 0) {
-    return results;
-  }
-
-  data = data.replace("0x", "");
-
-  // methodId as hex is prepended to the data, which is chunked as a 64 char hex string
-  const MethodIdHexLen = 8;
-  const DataHexLen = 64;
-  results.methodId = data.substring(0, MethodIdHexLen);
-
-  const methodName = lookupMethod(results.methodId);
-
-  if (methodName !== null) {
-    results.method = methodName.name;
-  }
-
-  if (data.length > MethodIdHexLen) {
-    results.data = spliceEvery(data.substring(MethodIdHexLen), DataHexLen);
   }
 
   return results;

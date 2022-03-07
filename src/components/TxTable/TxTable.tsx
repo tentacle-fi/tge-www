@@ -1,24 +1,8 @@
-import React from "react";
-import styled from "styled-components";
-import {
-  DataGrid,
-  GridRowsProp,
-  GridColDef,
-  GridColumnMenu,
-  GridColumnMenuProps,
-  GridCellParams,
-  MuiEvent,
-  gridPageCountSelector,
-  gridPageSelector,
-  gridPageSizeSelector,
-  useGridApiContext,
-  useGridSelector,
-} from "@mui/x-data-grid";
+import React, { useEffect, useState } from "react";
+import { DataGrid, GridRowsProp, GridColDef, GridCellParams, MuiEvent } from "@mui/x-data-grid";
 import { IDatagridResults } from "tx-download/interfaces";
-import TablePagination from "@mui/material/TablePagination";
 
 // Sets datagrid's default column width when not specified per-column
-const DefaultColumnWidth = 100;
 const DefaultFlex = 0.5;
 
 export const OutputColumns = [
@@ -48,18 +32,37 @@ function makeColumns(columnObj: any) {
   } catch (e) {
     console.error("makeColumns() threw error:", e);
   }
-  console.log(columns);
+  // console.log(columns);
   return columns;
+}
+
+function trimHex(hexString: string) {
+  return hexString.substring(0, 5) + "..." + hexString.substring(hexString.length - 4);
 }
 
 const columns: GridColDef[] = makeColumns(OutputColumns);
 
 interface TxTableProps {
   transactions?: Array<IDatagridResults>;
+  displaySelectedRow: Function;
 }
 
-const TxTable: React.FC<TxTableProps> = ({ transactions }) => {
+const TxTable: React.FC<TxTableProps> = ({ transactions, displaySelectedRow }) => {
+  const [rows, setRows] = useState<Array<IDatagridResults>>();
   const itemsPerPage = 25;
+
+  useEffect(() => {
+    if (transactions === undefined) {
+      return;
+    }
+
+    setRows(
+      transactions.map((element, index) => {
+        return { ...element, txHash: trimHex(element.txHash), from: trimHex(element.from), to: trimHex(element.to) };
+        //return { id: index, ...element };
+      })
+    );
+  }, [transactions]);
 
   return (
     <>
@@ -67,7 +70,7 @@ const TxTable: React.FC<TxTableProps> = ({ transactions }) => {
         <DataGrid
           pageSize={itemsPerPage}
           rowHeight={38}
-          rows={transactions === undefined ? [] : (transactions as GridRowsProp)}
+          rows={rows === undefined ? [] : (rows as GridRowsProp)}
           columns={columns}
           // components={{
           //   ColumnMenu: CustomColumnMenuComponent,
@@ -79,7 +82,9 @@ const TxTable: React.FC<TxTableProps> = ({ transactions }) => {
           }}
           onCellClick={(params: GridCellParams, event: MuiEvent<React.MouseEvent>) => {
             event.defaultMuiPrevented = true;
-            // console.log('on click', params)
+            // console.log("on click", params);
+
+            displaySelectedRow(params.row.id);
             // TODO: here is where a popup or other UI element can show the specific details highlighted
           }}
         />

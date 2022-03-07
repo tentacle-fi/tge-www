@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { useWallet } from "use-wallet";
-import { scanStart, getAllTxDetails, resultsToCSV } from "tx-download";
+import { scanStart, resultsToCSV } from "tx-download";
 import { IDatagridResults } from "tx-download/interfaces";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
@@ -65,13 +65,22 @@ const OnboardingSteps = () => {
 };
 
 interface ScanProgressBarProps {
-  progress: number;
+  progress1: number;
+  progress2: number;
 }
 
-const ScanProgressBar: React.FC<ScanProgressBarProps> = ({ progress }) => {
+const ScanProgressBar: React.FC<ScanProgressBarProps> = ({ progress1, progress2 }) => {
   return (
     <Box sx={{ width: "80%", marginTop: "10px", marginBottom: "10px" }}>
-      <LinearProgress variant="determinate" value={progress} />
+      <LinearProgress
+        sx={{
+          "& .MuiLinearProgress-bar2Buffer": { background: "#784af4" /* purple */ },
+          "& .MuiLinearProgress-bar1Buffer": { background: "#06d6a0" /* green */ },
+        }}
+        variant="buffer"
+        value={progress2}
+        valueBuffer={progress1}
+      />
     </Box>
   );
 };
@@ -80,8 +89,13 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
   const { account } = useWallet();
   const [scanResults, setScanResults] = useState("");
   const [scanResultsObject, setScanResultsObject] = useState<Array<IDatagridResults>>();
+
+  const [enumerationProgress, setEnumerationProgress] = useState(0);
+  const [enumerationProgressTotal, setEnumerationProgressTotal] = useState(0);
   const [scanProgress, setScanProgress] = useState(0);
   const [scanProgressTotal, setScanProgressTotal] = useState(0);
+  const [currentProgress, setCurrentProgress] = useState(0);
+  const [currentProgressTotal, setCurrentProgressTotal] = useState(0);
 
   const handleStart = useCallback(async () => {
     if (account === null) {
@@ -89,12 +103,32 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
     }
     setScanProgress(0);
     setScanProgressTotal(0);
+    setEnumerationProgressTotal(0);
+    setEnumerationProgress(0);
     setScanResults("");
 
-    const results = await scanStart(account, (current: number, total: number) => {
-      setScanProgress(current);
-      setScanProgressTotal(total);
-    });
+    const results = await scanStart(
+      account,
+      2021,
+      (current: number, total: number) => {
+        // progress1
+        setEnumerationProgress(current);
+        setCurrentProgress(current);
+        setEnumerationProgressTotal(total);
+        setScanProgressTotal(total);
+        setCurrentProgressTotal(total);
+      },
+      (current: number, total: number) => {
+        // progress2
+        setScanProgress(current);
+        setCurrentProgress(current);
+
+        setScanProgressTotal(total);
+        setEnumerationProgress(total);
+        setEnumerationProgressTotal(total);
+        setCurrentProgressTotal(total);
+      }
+    );
 
     if (results !== undefined) {
       // DEBUG: show JSON output of the results object
@@ -126,27 +160,33 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
         "reason",
       ];
 
-      setScanResults(
-        headerCSV.join(",") +
-          "\n" +
-          resultsToCSV(headerCSV, [
-            ...results.swap,
-            ...results.tg,
-            // ...results.farm
-          ])
-      );
+      const csv = headerCSV.join(",") + "\n" + resultsToCSV(headerCSV, results.results);
+
+      const blob = new Blob([csv], { type: "text/csv" });
+      const downloadUrl = window.URL.createObjectURL(blob);
+
+      setScanResults(downloadUrl);
 
       setScanResultsObject(
-        results.swap.map((element, index) => {
-          return { id: index, ...element, txHash: trimHex(element.txHash), from: trimHex(element.from), to: trimHex(element.to) };
+        results.results.map((element, index) => {
+          //return { id: index, ...element, txHash: trimHex(element.txHash), from: trimHex(element.from), to: trimHex(element.to) };
+          return { id: index, ...element };
         })
       );
     }
   }, [account]);
 
-  function trimHex(hexString: string) {
-    return hexString.substring(0, 5) + "..." + hexString.substring(hexString.length - 4);
-  }
+  const displaySelectedRow = useCallback(
+    (id: number) => {
+      if (scanResultsObject === undefined) {
+        return;
+      }
+
+      const found = scanResultsObject.filter((row) => row.id === id);
+      console.log("found", found[0]);
+    },
+    [scanResultsObject]
+  );
 
   return (
     <Page>
@@ -157,16 +197,19 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
         Start Scan
       </Button>
 
-      <ScanProgressBar progress={(scanProgress / scanProgressTotal) * 100} />
+      <ScanProgressBar progress1={(enumerationProgress / enumerationProgressTotal) * 100} progress2={(scanProgress / scanProgressTotal) * 100} />
 
       <Typography variant="body1">
-        Progress: {scanProgress} / {scanProgressTotal}
+        Current Progress: {currentProgress} / {currentProgressTotal}
       </Typography>
 
       <div style={{ overflow: "scroll", width: "90%", height: "10vh", border: "1px solid #fff" }}>
         <pre>{scanResults}</pre>
+        <a href={scanResults} download="ubiq_transactions.csv">
+          Download
+        </a>
       </div>
-      <TxTable transactions={scanResultsObject} />
+      <TxTable transactions={scanResultsObject} displaySelectedRow={displaySelectedRow} />
     </Page>
   );
 };

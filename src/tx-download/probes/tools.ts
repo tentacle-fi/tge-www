@@ -2,8 +2,9 @@
 // Tools, like utils, allows for DRY code
 //
 import BigNumber from "bignumber.js";
-import { ITxDetail } from "../interfaces";
+import { ITxDetail, IProcessedData } from "../interfaces";
 import Tokens from "../TOKENS.json";
+import lookupMethod from "../lookupMethod";
 
 export const Transfer_Event = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 export const Withdrawl_Event = "0x7fcf532c15f0a6db0bd6d0e038bea71d30d808c7d98cb3bf7268a95bf5081b65";
@@ -45,7 +46,7 @@ export const spliceEvery = (data: string, nChars: number): Array<string> => {
 
   const result = data.match(new RegExp(`.{1,${nChars}}`, "g"));
 
-  console.log("result", data.length);
+  // console.log("result", data.length);
 
   if (result === null) {
     return [data];
@@ -74,4 +75,36 @@ export const formatTopic = (input: string): string => {
   }
 
   return "0x" + padChars;
+};
+
+// process the methodid and data string from a TransactionResponse
+export const processInputData = (data: string | undefined): IProcessedData => {
+  const results = {
+    methodId: "",
+    method: "",
+    data: [] as Array<string>,
+  } as IProcessedData;
+
+  if (data === undefined || data.length <= 0) {
+    return results;
+  }
+
+  data = data.replace("0x", "");
+
+  // methodId as hex is prepended to the data, which is chunked as a 64 char hex string
+  const MethodIdHexLen = 8;
+  const DataHexLen = 64;
+  results.methodId = data.substring(0, MethodIdHexLen);
+
+  const methodName = lookupMethod(results.methodId);
+
+  if (methodName !== null) {
+    results.method = methodName.name;
+  }
+
+  if (data.length > MethodIdHexLen) {
+    results.data = spliceEvery(data.substring(MethodIdHexLen), DataHexLen);
+  }
+
+  return results;
 };
