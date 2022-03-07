@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { useWallet } from "use-wallet";
+import usePaymentProcessorProvider from "hooks/usePaymentProcessor";
 import { scanStart, getAllTxDetails, resultsToCSV } from "tx-download";
 import { IDatagridResults } from "tx-download/interfaces";
 import Box from "@mui/material/Box";
@@ -14,35 +15,6 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import LinearProgress from "@mui/material/LinearProgress";
-
-const steps: Array<IOnboardingSteps> = [
-  {
-    text: "Connect your wallet",
-    runFn: () => {
-      console.log("implement runFn for connect step");
-    },
-  },
-  {
-    text: "Pay XXX Ubiq",
-    runFn: () => {
-      console.log("implement runFn for pay step");
-    },
-  },
-  {
-    text: "Start a Scan",
-    runFn: () => {
-      console.log("implement runFn for scan step");
-    },
-  },
-  {
-    text: "Download Transaction",
-    runFn: () => {
-      console.log("implement runFn for download step");
-    },
-  },
-];
-
-interface TxDownloadProps {}
 
 const SmallCheck = () => {
   return <CheckBoxIcon fontSize="small" />;
@@ -103,12 +75,40 @@ const ScanProgressBar: React.FC<ScanProgressBarProps> = ({ progress }) => {
   );
 };
 
-const TxDownload: React.FC<TxDownloadProps> = () => {
+const TxDownload: React.FC = () => {
   const { account } = useWallet();
+  const { handlePayment } = usePaymentProcessorProvider();
   const [scanResults, setScanResults] = useState("");
   const [scanResultsObject, setScanResultsObject] = useState<Array<IDatagridResults>>();
   const [scanProgress, setScanProgress] = useState(0);
   const [scanProgressTotal, setScanProgressTotal] = useState(0);
+
+  const onboardingSteps: Array<IOnboardingSteps> = [
+    {
+      text: "Connect your wallet",
+      runFn: () => {
+        console.log("implement runFn for connect step");
+      },
+    },
+    {
+      text: "Pay XXX Ubiq",
+      runFn: () => {
+        if (handlePayment !== undefined) {
+          handlePayment("UBQ", 0.001);
+        }
+      },
+    },
+    {
+      text: "Start a Scan",
+      runFn: () => handleStart(),
+    },
+    {
+      text: "Download Transaction",
+      runFn: () => {
+        console.log("implement runFn for download step");
+      },
+    },
+  ];
 
   const handleStart = useCallback(async () => {
     if (account === null) {
@@ -178,7 +178,7 @@ const TxDownload: React.FC<TxDownloadProps> = () => {
   return (
     <Page>
       <Introduction />
-      <OnboardingProgress steps={steps} />
+      <OnboardingProgress steps={onboardingSteps} />
       <PayButton paymentValue={0.001} paymentSymbol={"UBQ"} />
       <Button variant="outlined" onClick={handleStart}>
         Start Scan
