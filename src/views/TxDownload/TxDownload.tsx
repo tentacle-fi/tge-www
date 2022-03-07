@@ -85,9 +85,12 @@ const TxDownload: React.FC = () => {
 
   const onboardingSteps: Array<IOnboardingSteps> = [
     {
-      text: "Connect your wallet",
+      text: account !== null ? account : "Connect your wallet",
       runFn: () => {
-        console.log("implement runFn for connect step");
+        if (account === null) {
+          console.log("account is not connected");
+          return;
+        }
       },
     },
     {
