@@ -53,6 +53,8 @@ const PaymentProcessor: React.FC = ({ children }) => {
           case "UBQ":
             // generate and broadcast the transaction
             sendTxHash = await sendUbqEthers(account, DAO, amount, provider);
+
+            setConfirmModal(false);
             // set the hash into state so we can separately check it's confirms
             console.log("setting paymentTx:", sendTxHash);
             setPaymentTx(sendTxHash);
