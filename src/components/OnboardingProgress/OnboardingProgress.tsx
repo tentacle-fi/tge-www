@@ -20,7 +20,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import FlagIcon from "@mui/icons-material/Flag";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 
-const TxConfirmationBlocks = 2;
+import { TxConfirmationBlocks } from "utils";
 
 interface ConfirmationProgressProps {
   progress: number;
