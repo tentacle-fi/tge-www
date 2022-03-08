@@ -18,6 +18,7 @@ import Farm from "views/Farm";
 import Home from "views/Home";
 import Addresses from "views/Addresses";
 import Help from "views/Help";
+import Governance from "views/Governance";
 import DaoInfo from "views/DaoInfo";
 import TxDownload from "views/TxDownload";
 
@@ -43,6 +44,7 @@ const App: React.FC = () => {
             <Route path="/farm" element={<Farm />} />
             <Route path="/addresses" element={<Addresses />} />
             <Route path="/help" element={<Help />} />
+            <Route path="/governance" element={<Governance />} />
             <Route path="/daoinfo" element={<DaoInfo />} />
             <Route path="/tx-download" element={<TxDownload />} />
           </Routes>

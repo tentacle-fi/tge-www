@@ -10,9 +10,12 @@ export interface ContextValues {
   farmingStartTimes: Array<number>; // the start time for the given Farm
 
   currentApy?: Array<number>; // Farming Pool APY calculated
+  currentApr?: Array<number>; // Farming Pool APR calculated
   currentTvl?: Array<number>; // Farming Pool TVL (total value locked/lp'd) at current prices
   PooledTokens?: Array<IPooledTokens>; // The 'estimated' tokens pooled inside of the accounts LP tokens
 
   farmFns?: IFarmingFns | undefined; // contains an object with each property being a function to call from the UI
   setFarmFns?: React.Dispatch<React.SetStateAction<IFarmingFns | undefined>>; // setter function
+
+  inkTotalSupply: number;
 }

@@ -20,7 +20,7 @@ interface StatsRibbonProps {
 }
 
 const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
-  const { currentTvl } = useFarming();
+  const { currentTvl, inkTotalSupply } = useFarming();
   const { ethereum } = useWallet();
   const { BlockNum } = useUbiq();
   const { tokenPrices } = useBalances();
@@ -36,19 +36,17 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
   }, [ethereum, setDailyTransactions]);
 
   const fetchCirculatingSupply = useCallback(async () => {
-    const circulatingSupply = await getCirculatingSupply(ethereum);
+    const circulatingSupply = await getCirculatingSupply(ethereum, inkTotalSupply);
 
-    setCirculatingSupply(circulatingSupply.total.toFormat(0));
-  }, [ethereum, setCirculatingSupply]);
+    setCirculatingSupply(circulatingSupply.total.toString());
+  }, [ethereum, setCirculatingSupply, inkTotalSupply]);
 
   const fetchCurrentMarketcap = useCallback(async () => {
     if (tokenPrices === undefined || circulatingSupply === undefined) {
       return;
     }
 
-    // circulatingSupply comes with commas, strip them out so we can parseInt
-    const parsedCirculatingSupply = parseInt(circulatingSupply.replace(/,/g, ""));
-    const mc = new BigNumber(tokenPrices[INK] * parsedCirculatingSupply).toFormat(0);
+    const mc = new BigNumber(tokenPrices[INK]).times(new BigNumber(circulatingSupply)).toFormat(0);
 
     setCurrentMarketcap(mc);
   }, [circulatingSupply, tokenPrices, setCurrentMarketcap]);
@@ -97,10 +95,14 @@ const StatsRibbon: React.FC<StatsRibbonProps> = ({ blockHeight }) => {
       <Typography variant="h5">Ecosystem Stats</Typography>
       <StyledBox>
         <Tooltip title="Doesn't include un-harvested farming rewards">
-          <Chip label={"Circulating INK: " + circulatingSupply} color="primary" variant="outlined" />
+          <Chip
+            label={"Circulating INK: " + new BigNumber(circulatingSupply === undefined ? "0" : circulatingSupply).toFormat(0)}
+            color="primary"
+            variant="outlined"
+          />
         </Tooltip>
         <Chip label={"Ecosystem TVL: $" + ecosystemTvl} color="primary" variant="outlined" />
-        <Tooltip title={"Fully Diluted: $" + new BigNumber(tokenPrices[INK]).times(88 * 1000000).toFormat(0)}>
+        <Tooltip title={"Fully Diluted: $" + new BigNumber(tokenPrices[INK]).times(inkTotalSupply).toFormat(0)}>
           <Chip label={"MarketCap: $" + currentMarketcap} color="primary" variant="outlined" />
         </Tooltip>
         <Chip label={"24hr TXs: " + dailyTransactions} color="primary" variant="outlined" />

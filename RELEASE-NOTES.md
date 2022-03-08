@@ -83,5 +83,17 @@
 - add ubq weth farm
 - show fully diluted marketcap while hovering over marketcap
 
+## 1.5.0
+- add weth to daily transactions on DAO Info
+- APR and APY updates
+- add "more" link for additional resource links in main nav
+
+## 1.5.1
+- hotfix monoceros fee handling
+
+## 1.6.0-alpha
+- voting implemented
+- tx download history implemented
+
 ## Unreleased
 nothing at this time
