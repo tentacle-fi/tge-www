@@ -11,6 +11,7 @@ export interface IDatagridResults extends ITransferCSVRow {
 }
 
 export interface ITransferCSVRow {
+  nonce: number;
   txHash: string;
   timestamp: number;
   date: string;

@@ -25,6 +25,7 @@ const Transfers = (walletAddress: string, allTxs: Array<ITxDetail>): Array<ITran
     }
 
     const details = {
+      nonce: allTxs[i].tx.nonce,
       txHash: allTxs[i].tx.hash,
       fee: allTxs[i].gas.paid,
       feeSymbol: "UBQ",

@@ -1,6 +1,5 @@
 import { ITxDetail } from "../interfaces";
 
-// import Shinobi from "./Shinobi";
 // import Farming from "./Farming";
 import TokenGallery from "./TokenGallery";
 import Transfers from "./Transfers";
