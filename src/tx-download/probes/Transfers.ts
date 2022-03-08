@@ -81,7 +81,7 @@ const findTransfers = (walletAddress: string, tx: ITxDetail) => {
   const methodLookup = processInputData(tx.tx.data);
 
   if (methodLookup.method === "Unknown" && tx.tx.data.length > 2) {
-    console.log("method name not found for", tx);
+    console.warn("method name not found for", tx);
   }
 
   const walletAddressTransfers = transferEvents

@@ -13,7 +13,7 @@ export const scanStart = async (address: string, year: number, progress1Cb: Func
 
   address = address.toLowerCase();
 
-  const blocks = lookupBlocksForYear(2021, "Ubiq");
+  const blocks = lookupBlocksForYear(year, "Ubiq");
 
   console.log("starting", blocks);
 
@@ -25,7 +25,6 @@ export const scanStart = async (address: string, year: number, progress1Cb: Func
 
     progress1Cb(0, paginateGetLogs);
     for (let i = 0; i < paginateGetLogs; i++) {
-      console.log("getting logs");
       let plusOne = i > 0 ? 1 : 0;
       let currentFromBlock = Math.floor(blocks.start + (i * totalBlocks) / paginateGetLogs) + plusOne;
       let currentEndBlock = Math.floor(blocks.start + ((i + 1) * totalBlocks) / paginateGetLogs);
@@ -160,6 +159,12 @@ export const getAllTxDetails = async (rpcProvider: any, txHashes: Array<string>,
     progressCb(i + 1, txHashes.length);
   }
 
+  if (txHashes.length > 0) {
+    progressCb(txHashes.length, txHashes.length);
+  } else {
+    progressCb(1, 1); // default progress so the UI reflects some logical status
+  }
+
   return results;
 };
 
@@ -170,9 +175,10 @@ const getTxDetails = async (rpcProvider: any, txHash: string): Promise<ITxDetail
   // TODO: make a 'get block' cache, to query in case of multiple txs in the same block
   const block = await rpcProvider.getBlock(tx.blockNumber);
 
-  console.log("tx", tx);
-  console.log("receipt", receipt);
-  console.log("block", block);
+  // DEBUG: for dev debugging - it's quite verbose when on
+  // console.log("tx", tx);
+  // console.log("receipt", receipt);
+  // console.log("block", block);
 
   return {
     processed: false,

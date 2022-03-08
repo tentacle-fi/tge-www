@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -23,126 +23,96 @@ import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import { TxConfirmationBlocks } from "utils";
 
 interface ConfirmationProgressProps {
-  progress: number;
+  confirmCount: number;
 }
 
-const ConfirmationProgress: React.FC<ConfirmationProgressProps> = ({ progress }) => {
+const ConfirmationProgress: React.FC<ConfirmationProgressProps> = ({ confirmCount }) => {
+  const progress = confirmCount > 0 ? (confirmCount / TxConfirmationBlocks) * 100 : 0;
+
   return (
-    <Stack spacing={2} direction="row">
+    <Stack spacing={2} direction="row" sx={{ justifyContent: "center", margin: "10px" }}>
       <CircularProgress variant="determinate" value={progress} />
+      <Typography variant="body1" sx={{ lineHeight: "40px" }}>
+        {confirmCount} of {TxConfirmationBlocks} confirmations, please wait
+      </Typography>
     </Stack>
   );
 };
 
-const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ steps }) => {
-  const [activeStep, setActiveStep] = React.useState(0);
-  const { confirmCount } = usePaymentProcessorProvider();
+const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, steps }) => {
+  const [activeStep, setActiveStep] = useState(0);
+  const [activeStepMsg, setActiveStepMsg] = useState("");
+  const [activeStepError, setActiveStepError] = useState("");
+  const { confirmCount, paymentTx, handleReset } = usePaymentProcessorProvider();
 
-  if (confirmCount === undefined) {
-    return <></>;
-  }
+  const onReset = () => {
+    // reset all state
+    setActiveStep(0);
+    setActiveStepMsg("");
+    setActiveStepError("");
 
-  const handleNext = (currentStep: number) => {
-    if (steps[currentStep] === undefined) {
-      console.error("Invalid step", currentStep);
+    if (handleReset !== undefined) {
+      handleReset();
+    }
+
+    resetCb();
+  };
+
+  const handleNext = useCallback(() => {
+    if (steps[activeStep] === undefined) {
+      console.warn("Invalid step", activeStep);
       return;
     }
 
     try {
       // Execute the step's run function
-      const isValid = steps[currentStep].validate();
+      setActiveStepError(""); //reset
+      const isValid = steps[activeStep].validate();
       if (isValid !== true) {
-        console.log("step not complete, isValid !== true");
-        steps[currentStep].runFn();
+        console.log("handleNext() step not complete");
+        if (typeof isValid === "string") {
+          setActiveStepError(isValid);
+        }
+        steps[activeStep].runFn();
         return;
       }
-      steps[currentStep + 1].runFn();
+
+      if (activeStep + 1 < steps.length) {
+        steps[activeStep + 1].runFn();
+      }
     } catch (e) {
-      console.log("OnboardingProgress() threw error while calling the steps runFn:", e);
+      console.error("handleNext() threw error while calling the steps runFn:", e);
       return;
     }
 
-    setActiveStep(currentStep + 1);
-  };
+    setActiveStep(activeStep + 1);
+  }, [activeStep, steps]);
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
+  useEffect(() => {
+    if (paymentTx === undefined || paymentTx === "" || handleNext === undefined) {
+      return;
+    }
+    handleNext();
+  }, [paymentTx, handleNext]);
+
+  useEffect(() => {
+    if (activeStep < steps.length) {
+      setActiveStepMsg(steps[activeStep].msg);
+    }
+  }, [activeStep, steps]);
+
+  const infoMsgStyle = {
+    fontStyle: "italic",
+    padding: "20px",
+    margin: "20px auto",
+    minWidth: "400px",
+    width: "70%",
+    borderRadius: "10px",
   };
-
-  const ColorlibStepIconRoot = styled("div")<{
-    ownerState: { completed?: boolean; active?: boolean };
-  }>(({ theme, ownerState }) => ({
-    backgroundColor: theme.palette.mode === "dark" ? theme.palette.grey[700] : "#ccc",
-    zIndex: 1,
-    color: "#000",
-    width: 50,
-    height: 50,
-    display: "flex",
-    borderRadius: "50%",
-    justifyContent: "center",
-    alignItems: "center",
-    ...(ownerState.active && {
-      background: "#9f7ef7", // light purple
-      // backgroundImage:'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
-      boxShadow: "0 4px 10px 0 rgba(0,0,0,.25)",
-    }),
-    ...(ownerState.completed && {
-      background: "#06d6a0", // green
-      // backgroundImage:        'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
-    }),
-  }));
-
-  function ColorlibStepIcon(props: StepIconProps) {
-    const { active, completed, className } = props;
-
-    const icons: { [index: string]: React.ReactElement } = {
-      1: <ElectricalServicesIcon />,
-      2: <PriceCheckIcon />,
-      3: <QueryBuilderIcon />,
-      4: <PlayArrowIcon />,
-      5: <DownloadIcon />,
-      6: <FlagIcon />,
-    };
-
-    return (
-      <ColorlibStepIconRoot ownerState={{ completed, active }} className={className}>
-        {icons[String(props.icon)]}
-      </ColorlibStepIconRoot>
-    );
-  }
-
-  const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
-    [`&.${stepConnectorClasses.alternativeLabel}`]: {
-      top: 22,
-    },
-    [`&.${stepConnectorClasses.active}`]: {
-      [`& .${stepConnectorClasses.line}`]: {
-        background: "#784af4", // purple
-        //backgroundImage:'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
-      },
-    },
-    [`&.${stepConnectorClasses.completed}`]: {
-      [`& .${stepConnectorClasses.line}`]: {
-        background: "#06d6a0", // green
-        // backgroundImage:          'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
-      },
-    },
-    [`& .${stepConnectorClasses.line}`]: {
-      height: 3,
-      border: 0,
-      backgroundColor: theme.palette.mode === "dark" ? theme.palette.grey[800] : "#eaeaf0",
-      borderRadius: 1,
-    },
-  }));
-
-  let isNullReceipt = false;
-  if (confirmCount === -1) {
-    isNullReceipt = true;
-  }
 
   return (
     <Box sx={{ width: "80%", margin: "40px 20px" }}>
@@ -161,12 +131,36 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ steps }) => {
           );
         })}
       </Stepper>
+
+      {activeStepError !== "" && (
+        <Box
+          sx={{
+            ...infoMsgStyle,
+            border: "1px dashed #c90000",
+          }}
+        >
+          {activeStepError}
+        </Box>
+      )}
+
+      <Box
+        sx={{
+          ...infoMsgStyle,
+          border: "1px dashed #06d6a0",
+        }}
+      >
+        <Typography variant="h6">{activeStepMsg}</Typography>
+
+        {confirmCount !== undefined && confirmCount > -1 && <ConfirmationProgress confirmCount={confirmCount} />}
+      </Box>
       {activeStep === steps.length ? (
         <>
           <Typography sx={{ mt: 2, mb: 1 }}>All steps completed - you're finished</Typography>
           <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
             <Box sx={{ flex: "1 1 auto" }} />
-            <Button onClick={handleReset}>Reset</Button>
+            <Button variant="contained" onClick={onReset}>
+              Reset
+            </Button>
           </Box>
         </>
       ) : (
@@ -176,13 +170,78 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ steps }) => {
               Back
             </Button>
 
-            <Button onClick={() => handleNext(activeStep)}>{activeStep === steps.length - 1 ? "Finish" : "Next"}</Button>
+            <Button onClick={() => handleNext()}>{activeStep === steps.length - 1 ? "Finish" : "Next"}</Button>
           </ButtonGroup>
-          <ConfirmationProgress progress={isNullReceipt ? 1 : (confirmCount / TxConfirmationBlocks) * 100} />
         </Box>
       )}
     </Box>
   );
 };
+
+const ColorlibStepIconRoot = styled("div")<{
+  ownerState: { completed?: boolean; active?: boolean };
+}>(({ theme, ownerState }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? theme.palette.grey[700] : "#ccc",
+  zIndex: 1,
+  color: "#000",
+  width: 50,
+  height: 50,
+  display: "flex",
+  borderRadius: "50%",
+  justifyContent: "center",
+  alignItems: "center",
+  ...(ownerState.active && {
+    background: "#9f7ef7", // light purple
+    // backgroundImage:'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
+    boxShadow: "0 4px 10px 0 rgba(0,0,0,.25)",
+  }),
+  ...(ownerState.completed && {
+    background: "#06d6a0", // green
+    // backgroundImage:        'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
+  }),
+}));
+
+function ColorlibStepIcon(props: StepIconProps) {
+  const { active, completed, className } = props;
+
+  const icons: { [index: string]: React.ReactElement } = {
+    1: <ElectricalServicesIcon />,
+    2: <PriceCheckIcon />,
+    3: <QueryBuilderIcon />,
+    4: <PlayArrowIcon />,
+    5: <DownloadIcon />,
+    6: <FlagIcon />,
+  };
+
+  return (
+    <ColorlibStepIconRoot ownerState={{ completed, active }} className={className}>
+      {icons[String(props.icon)]}
+    </ColorlibStepIconRoot>
+  );
+}
+
+const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
+  [`&.${stepConnectorClasses.alternativeLabel}`]: {
+    top: 22,
+  },
+  [`&.${stepConnectorClasses.active}`]: {
+    [`& .${stepConnectorClasses.line}`]: {
+      background: "#784af4", // purple
+      //backgroundImage:'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
+    },
+  },
+  [`&.${stepConnectorClasses.completed}`]: {
+    [`& .${stepConnectorClasses.line}`]: {
+      background: "#06d6a0", // green
+      // backgroundImage:          'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
+    },
+  },
+  [`& .${stepConnectorClasses.line}`]: {
+    height: 3,
+    border: 0,
+    backgroundColor: theme.palette.mode === "dark" ? theme.palette.grey[800] : "#eaeaf0",
+    borderRadius: 1,
+  },
+}));
 
 export default OnboardingProgress;
