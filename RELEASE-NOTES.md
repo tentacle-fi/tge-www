@@ -96,4 +96,5 @@
 - tx download history implemented
 
 ## Unreleased
-nothing at this time
+- improve download history workflow, status, and errormsgs
+- add nonce to output csv

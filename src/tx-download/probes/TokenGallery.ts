@@ -27,6 +27,7 @@ const TokenGallery = (walletAddress: string, allTxs: Array<ITxDetail>): Array<IT
     }
 
     const details = {
+      nonce: allTxs[i].tx.nonce,
       txHash: allTxs[i].tx.hash,
       fee: allTxs[i].gas.paid,
       feeSymbol: "UBQ",

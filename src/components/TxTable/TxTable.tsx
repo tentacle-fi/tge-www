@@ -7,6 +7,7 @@ const DefaultFlex = 0.5;
 
 export const OutputColumns = [
   { short: "id", long: "Row" },
+  { short: "nonce", long: "nonce" },
   { short: "txHash", long: "Tx Hash" },
   { short: "timestamp", long: "Timestamp" },
   { short: "date", long: "Date" },

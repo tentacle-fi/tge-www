@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import Context from "./Context";
 import { useWallet } from "use-wallet";
 import useEvm from "hooks/useEvmProvider";
@@ -13,6 +13,15 @@ const PaymentProcessor: React.FC = ({ children }) => {
   const { BlockNum, provider, setConfirmModal } = useEvm();
   const { account } = useWallet();
   const [confirmCount, setConfirmCount] = useState(-1);
+  const waitingForConfirmations = useRef(false);
+
+  const handleReset = useCallback(() => {
+    // reset all state
+    setIsConfirmed(false);
+    setPaymentTx("");
+    setConfirmCount(-1);
+    waitingForConfirmations.current = false;
+  }, []);
 
   const fetchTxReciept = useCallback(
     async (txHash: string, provider: any) => {
@@ -22,8 +31,9 @@ const PaymentProcessor: React.FC = ({ children }) => {
 
         if (receiptConfirmations >= TxConfirmationBlocks) {
           setIsConfirmed(true);
+          waitingForConfirmations.current = false; //reset
         }
-        setConfirmCount(receiptConfirmations);
+        setConfirmCount(receiptConfirmations >= TxConfirmationBlocks ? TxConfirmationBlocks : receiptConfirmations);
         console.log("confirm count:", receiptConfirmations, "TxConfirmationBlocks:", TxConfirmationBlocks);
       } catch (e) {
         console.error("fetchTxReciept() threw error:", e);
@@ -42,6 +52,7 @@ const PaymentProcessor: React.FC = ({ children }) => {
 
       try {
         setConfirmModal(true);
+        setConfirmCount(0);
         console.log("preparing to send", amount, "UBQ");
         let sendTxHash;
         let finalSendResult;
@@ -54,10 +65,16 @@ const PaymentProcessor: React.FC = ({ children }) => {
             // generate and broadcast the transaction
             sendTxHash = await sendUbqEthers(account, DAO, amount, provider);
 
+            if (sendTxHash === undefined) {
+              throw new Error("payment rejected or did not succeed");
+            }
+
             setConfirmModal(false);
+            waitingForConfirmations.current = true;
             // set the hash into state so we can separately check it's confirms
             console.log("setting paymentTx:", sendTxHash);
             setPaymentTx(sendTxHash);
+
             // wait for the tx to get mined
             finalSendResult = await waitForTransaction(provider, sendTxHash);
             console.log("finaleSendResult:", finalSendResult);
@@ -67,15 +84,16 @@ const PaymentProcessor: React.FC = ({ children }) => {
         }
       } catch (e) {
         console.error("unable to send tokens", e);
+        setConfirmCount(-1);
       }
 
       setConfirmModal(false);
     },
-    [account, provider, BlockNum, setConfirmModal]
+    [account, provider, BlockNum, setConfirmModal, setConfirmCount]
   );
 
   useEffect(() => {
-    if (!paymentTx || provider === undefined) {
+    if (!paymentTx || provider === undefined || waitingForConfirmations.current === false) {
       return;
     }
 
@@ -89,6 +107,7 @@ const PaymentProcessor: React.FC = ({ children }) => {
         isConfirmed,
         handlePayment,
         confirmCount,
+        handleReset,
       }}
     >
       {children}

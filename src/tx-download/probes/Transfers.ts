@@ -25,6 +25,7 @@ const Transfers = (walletAddress: string, allTxs: Array<ITxDetail>): Array<ITran
     }
 
     const details = {
+      nonce: allTxs[i].tx.nonce,
       txHash: allTxs[i].tx.hash,
       fee: allTxs[i].gas.paid,
       feeSymbol: "UBQ",
@@ -81,7 +82,7 @@ const findTransfers = (walletAddress: string, tx: ITxDetail) => {
   const methodLookup = processInputData(tx.tx.data);
 
   if (methodLookup.method === "Unknown" && tx.tx.data.length > 2) {
-    console.log("method name not found for", tx);
+    console.warn("method name not found for", tx);
   }
 
   const walletAddressTransfers = transferEvents
