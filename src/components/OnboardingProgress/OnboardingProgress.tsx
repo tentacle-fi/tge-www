@@ -151,7 +151,11 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, steps
       >
         <Typography variant="h6">{activeStepMsg}</Typography>
 
-        {confirmCount !== undefined && confirmCount > -1 && <ConfirmationProgress confirmCount={confirmCount} />}
+        {confirmCount !== undefined && paymentTx && confirmCount < 2 ? (
+          <ConfirmationProgress confirmCount={confirmCount === -1 ? 0 : confirmCount} />
+        ) : (
+          <></>
+        )}
       </Box>
       {activeStep === steps.length ? (
         <>
