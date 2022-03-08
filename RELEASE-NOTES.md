@@ -95,6 +95,9 @@
 - voting implemented
 - tx download history implemented
 
-## Unreleased
+## 1.6.1-alpha
 - improve download history workflow, status, and errormsgs
 - add nonce to output csv
+
+## Unreleased
+nothing at this time
