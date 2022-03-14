@@ -20,10 +20,6 @@ const Introduction = () => {
   return (
     <>
       <Typography variant="h4">Welcome to Tx Download!</Typography>
-      <Typography sx={{ width: "80%" }} variant="h5">
-        Tx Download will help you download transaction history to aid with recordkeeping, tax reporting, and more. To get started, connect the wallet
-        account you wish to download history for.
-      </Typography>
     </>
   );
 };
@@ -80,7 +76,7 @@ const TxDownload: React.FC = () => {
   const onboardingSteps: Array<IOnboardingSteps> = [
     {
       text: account !== null ? "Connected!" : "Connect your wallet",
-      msg: "Start by connecting the wallet which you want to download transactions for. Click the Next button to continue to payment.",
+      msg: "Start by connecting the wallet which you want to download transactions for. Click the Next button to continue to payment. Note that this service only retrieves transactions for 2021 currently.",
       runFn: () => {},
       validate: () => {
         if (account === null) {
@@ -124,7 +120,7 @@ const TxDownload: React.FC = () => {
       },
     },
     {
-      text: "Download Transaction",
+      text: "Download Transactions",
       msg: "Click the Download button below to save as a CSV",
       runFn: () => {},
       validate: () => {

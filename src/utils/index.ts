@@ -3,19 +3,7 @@ import { ethers } from "ethers";
 import Web3 from "web3";
 import { provider, TransactionReceipt } from "web3-core";
 import { AbiItem } from "web3-utils";
-import {
-  INK,
-  ESCH,
-  INK_UBQ_FarmContract,
-  INK_GRANS_FarmContract,
-  INK_ESCH_FarmContract,
-  INK_UBQ_ESCH_FarmContract,
-  INK_UBQ_LPAddress,
-  INK_GRANS_LPAddress,
-  INK_ESCH_LPAddress,
-  DAO_MULTISIG,
-  DAO_FARMING,
-} from "farms/AvailableFarms";
+import { INK, ESCH, DAO_MULTISIG, DAO_FARMING, AvailableFarms } from "farms/AvailableFarms";
 import { GAS } from "ubiq-sdk/utils";
 import ERC20ABI from "constants/abi/ERC20.json";
 import ShinobiPoolERC20 from "ubiq-sdk/lib/clean_build/contracts/ShinobiPool.json";
@@ -46,27 +34,29 @@ export const approve = async (
 ): Promise<boolean> => {
   try {
     const tokenContract = getERC20Contract(provider, tokenAddress);
+
+    const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+
+    gas.gas = 80000; // set custom low gas fee for this operation (approve)
+
     return tokenContract.methods
       .approve(spenderAddress, ethers.constants.MaxUint256)
-      .send(
-        { from: userAddress, gas: 80000, gasPrice: GAS.PRICE, maxFeePerGas: GAS.MAXFEEPERGAS, maxPriorityFeePerGas: GAS.MAXPRIORITYFEEPERGAS },
-        async (error: any, txHash: string) => {
-          if (error) {
-            console.log("ERC20 could not be approved", error);
-            onTxHash && onTxHash("");
-            return false;
-          }
-          if (onTxHash) {
-            onTxHash(txHash);
-          }
-          const status = await waitTransaction(provider, txHash);
-          if (!status) {
-            console.log("Approval transaction failed.");
-            return false;
-          }
-          return true;
+      .send({ from: userAddress, ...gas }, async (error: any, txHash: string) => {
+        if (error) {
+          console.log("ERC20 could not be approved", error);
+          onTxHash && onTxHash("");
+          return false;
         }
-      );
+        if (onTxHash) {
+          onTxHash(txHash);
+        }
+        const status = await waitTransaction(provider, txHash);
+        if (!status) {
+          console.log("Approval transaction failed.");
+          return false;
+        }
+        return true;
+      });
   } catch (e) {
     console.error("approve error", e);
     return false;
@@ -76,12 +66,15 @@ export const approve = async (
 export const sendUbq = async (userAddress: string, destinationAddress: string, ubqValue: string, provider: provider) => {
   try {
     const web3 = new Web3(provider);
+
+    const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+
+    console.log("isSparrow");
     web3.eth.sendTransaction({
       to: destinationAddress,
       from: userAddress,
       value: ubqValue,
-      gas: GAS.LIMIT,
-      gasPrice: GAS.OLDGASPRICE,
+      ...gas,
     });
   } catch (e) {
     console.error("sendUbq error", e);
@@ -92,12 +85,11 @@ export const sendTokens = async (userAddress: string, destinationAddress: string
   try {
     const tokenContract = getERC20Contract(provider, tokenAddress);
 
+    const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+
     await tokenContract.methods.transfer(destinationAddress, tokensValue).send({
       from: userAddress,
-      gas: GAS.LIMIT,
-      gasPrice: GAS.PRICE,
-      maxFeePerGas: GAS.MAXFEEPERGAS,
-      maxPriorityFeePerGas: GAS.MAXPRIORITYFEEPERGAS,
+      ...gas,
     });
   } catch (e) {
     console.error("sendTokens error", e);
@@ -115,19 +107,39 @@ export const getAllowance = async (userAddress: string, spenderAddress: string, 
   }
 };
 
-export const getBalance = async (provider: provider, tokenAddress: string, userAddress: string): Promise<string> => {
-  // console.log("getBalance");
+export const getEarnedAt = async (
+  provider: provider,
+  farmContractAddress: string,
+  userAddress: string,
+  atBlockHeight?: number
+): Promise<BigNumber> => {
+  const tokenContract = getFarmContract(provider, farmContractAddress);
+  try {
+    return new BigNumber(await tokenContract.methods.earned(userAddress).call(null, atBlockHeight)).dividedBy(new BigNumber(10).pow(18));
+  } catch (e) {
+    console.error("getEarned", e);
+    return new BigNumber(0);
+  }
+};
+
+export const getBalance = async (provider: provider, tokenAddress: string, userAddress: string, atBlockHeight?: number): Promise<string> => {
   const tokenContract = getERC20Contract(provider, tokenAddress);
   try {
-    const balance: string = await tokenContract.methods.balanceOf(userAddress).call();
+    const balance: string = await tokenContract.methods.balanceOf(userAddress).call(null, atBlockHeight);
     return balance;
   } catch (e) {
+    console.error("getBalance", e);
     return "0";
   }
 };
 
-export const getBalanceAsBigNum = async (provider: provider, tokenAddress: string, userAddress: string): Promise<BigNumber> => {
-  return new BigNumber(await getBalance(provider, tokenAddress, userAddress)).dividedBy(new BigNumber(10).pow(18));
+export const getBalanceAsBigNum = async (
+  provider: provider,
+  tokenAddress: string,
+  userAddress: string,
+  atBlockHeight?: number
+): Promise<BigNumber> => {
+  return new BigNumber(await getBalance(provider, tokenAddress, userAddress, atBlockHeight)).dividedBy(new BigNumber(10).pow(18));
 };
 
 export const getCoinBalance = async (provider: provider, userAddress: string): Promise<string> => {
@@ -180,12 +192,25 @@ export const getNearestBlock = (from: Array<any>, target: number) => {
   });
 };
 
-export const getReserves = async (provider: provider, tokenAddress: string): Promise<IReserves> => {
-  // console.log("getReserves");
+export const getAMPM = (date: any) => {
+  const hours = date.getHours();
+  const ampm = hours >= 12 ? "PM" : "AM";
+  return ampm;
+};
+
+export const getTimestampDate = (obj: { ts: number; ap?: boolean }) => {
+  const d = new Date(obj.ts * 1000);
+  const s = ".";
+  const day = d.getDate();
+  const month = d.getMonth() + 1;
+  const year = d.getFullYear().toString().substring(0, 2) + (obj.ap ? " " + getAMPM(d) : "");
+  return (day < 9 ? "0" + day : day) + s + (month <= 9 ? "0" + month : month) + s + year;
+};
+
+export const getReserves = async (provider: provider, tokenAddress: string, atBlockHeight?: number): Promise<IReserves> => {
   try {
-    const web3 = new Web3(provider);
-    const tokenContract = new web3.eth.Contract(ShinobiPoolERC20.abi as unknown as AbiItem, tokenAddress);
-    const { _reserve0, _reserve1, _blockTimestampLast } = await tokenContract.methods.getReserves().call();
+    const tokenContract = getFarmContract(provider, tokenAddress);
+    const { _reserve0, _reserve1, _blockTimestampLast } = await tokenContract.methods.getReserves().call(null, atBlockHeight);
 
     const ret = {
       token0: bnToDec(new BigNumber(_reserve0)),
@@ -205,13 +230,11 @@ export const getDailyRewardRate = async (provider: provider, tokenAddress: strin
   // console.log("getDailyRewardRate");
 
   try {
-    const web3 = new Web3(provider);
-    const tokenContract = new web3.eth.Contract(ShinobiPoolERC20.abi as unknown as AbiItem, tokenAddress);
+    const tokenContract = getFarmContract(provider, tokenAddress);
     const rewards = bnToDec(new BigNumber(await tokenContract.methods.rewardRate().call()));
     const rate: number = rewards * 60 * 60 * 24;
     return rate;
   } catch (e) {
-    console.error("getDailyRewardRate error", e);
     return -1;
   }
 };
@@ -281,6 +304,7 @@ export interface IReserves {
 export interface ICurrentStats {
   poolTvl: number;
   farmApy: number;
+  farmApr: number;
   farmTvl: number;
   accountPooledTokens: {
     token0: number;
@@ -293,10 +317,7 @@ export interface ICurrentStats {
 }
 
 export interface ICirculatingSupply {
-  heldByMultisig: BigNumber;
-  heldByUBQINK: BigNumber;
-  heldByGRANSUBQ: BigNumber;
-  heldByUBQESCH: BigNumber;
+  // heldByMultisig: BigNumber;
   total: BigNumber;
 }
 
@@ -304,11 +325,6 @@ export interface IDaoHoldings {
   ubq: BigNumber;
   ink: BigNumber;
   esch: BigNumber;
-  lp: {
-    ubqInk: BigNumber;
-    gransInk: BigNumber;
-    inkEsch: BigNumber;
-  };
 }
 
 export const getDaoHoldings = async (provider: provider): Promise<IDaoHoldings> => {
@@ -317,45 +333,36 @@ export const getDaoHoldings = async (provider: provider): Promise<IDaoHoldings> 
   const inkHoldings = (await getBalanceAsBigNum(provider, INK, DAO_MULTISIG)).plus(await getBalanceAsBigNum(provider, INK, DAO_FARMING));
   const eschHoldings = (await getBalanceAsBigNum(provider, ESCH, DAO_MULTISIG)).plus(await getBalanceAsBigNum(provider, ESCH, DAO_FARMING));
 
-  // Get lp holdings from the DAO multisig address and farming address
-  const ubqInkHoldings = (await getBalanceAsBigNum(provider, INK_UBQ_LPAddress, DAO_MULTISIG)).plus(
-    await getBalanceAsBigNum(provider, INK_UBQ_LPAddress, DAO_FARMING)
-  );
-  const gransInkHoldings = (await getBalanceAsBigNum(provider, INK_GRANS_LPAddress, DAO_MULTISIG)).plus(
-    await getBalanceAsBigNum(provider, INK_GRANS_LPAddress, DAO_FARMING)
-  );
-  const inkEschHoldings = (await getBalanceAsBigNum(provider, INK_ESCH_LPAddress, DAO_MULTISIG)).plus(
-    await getBalanceAsBigNum(provider, INK_ESCH_LPAddress, DAO_FARMING)
-  );
+  // (unused currently) - Get lp holdings from the DAO multisig address and farming address
+  // const ubqInkHoldings = (await getBalanceAsBigNum(provider, INK_UBQ_LPAddress, DAO_MULTISIG)).plus(
+  //   await getBalanceAsBigNum(provider, INK_UBQ_LPAddress, DAO_FARMING)
+  // );
 
   return {
     ubq: ubqHoldings,
     ink: inkHoldings,
     esch: eschHoldings,
-    lp: {
-      ubqInk: ubqInkHoldings,
-      gransInk: gransInkHoldings,
-      inkEsch: inkEschHoldings,
-    },
   } as IDaoHoldings;
 };
 
 // Calculates the circulating INK supply based on the amount still held by
 // the DAO minting address plus a sum of all of the individual farm holdings
-export const getCirculatingSupply = async (provider: provider): Promise<ICirculatingSupply> => {
-  // console.log("getCirculatingSupply");
-
-  const totalSupply = new BigNumber(88 * 1000 * 1000); // 88 million
+export const getCirculatingSupply = async (provider: provider, inkTotalSupply: number): Promise<ICirculatingSupply> => {
+  const totalSupply = new BigNumber(inkTotalSupply);
 
   // This address holds the minted INK which is yet to be distributed
   const INKMINTEDHOLDINGADDRESS = "0xB47D5874D2db5f398cfA0E53a5A020362F2AEAeF";
 
-  // Grab all the individual INK quantities
-  let heldByDeployer = await getBalanceAsBigNum(provider, INK, INKMINTEDHOLDINGADDRESS);
-  let heldByUBQINK = await getBalanceAsBigNum(provider, INK, INK_UBQ_FarmContract);
-  let heldByGRANSUBQ = await getBalanceAsBigNum(provider, INK, INK_GRANS_FarmContract);
-  let heldByUBQESCH = await getBalanceAsBigNum(provider, INK, INK_ESCH_FarmContract);
-  const subtotal = heldByDeployer.plus(heldByUBQINK).plus(heldByGRANSUBQ).plus(heldByUBQESCH).toString();
+  // Grab all the individual INK quantities from each farm + the minting holding address
+  let addresses = AvailableFarms.filter((farm) => farm.official === true).map((farm) => farm.yieldfarm.address);
+  addresses.push(INKMINTEDHOLDINGADDRESS);
+
+  let subtotal = new BigNumber(0);
+  for (let i = 0; i < addresses.length; i++) {
+    let balance = await getBalanceAsBigNum(provider, INK, addresses[i]);
+
+    subtotal = subtotal.plus(balance);
+  }
 
   // Total them up, and subtract them from the totalSupply
   const circulatingTotal = totalSupply.minus(subtotal);
@@ -376,12 +383,21 @@ export const getCirculatingSupply = async (provider: provider): Promise<ICircula
   // );
 
   return {
-    heldByMultisig: heldByDeployer,
-    heldByUBQINK: heldByUBQINK,
-    heldByGRANSUBQ: heldByGRANSUBQ,
-    heldByUBQESCH: heldByUBQESCH,
+    // heldByMultisig: heldByDeployer,
     total: circulatingTotal,
   } as ICirculatingSupply;
+};
+
+export const getInkTotalSupply = async (provider: provider) => {
+  const contract = getERC20Contract(provider, INK);
+
+  try {
+    let totalSupply = new BigNumber(await contract.methods.totalSupply().call()).dividedBy(new BigNumber(10).pow(18));
+    return totalSupply.toNumber();
+  } catch (e) {
+    console.error("getInkTotalSupply", e);
+    return 0;
+  }
 };
 
 export interface IDailyTransactions {
@@ -399,47 +415,28 @@ export const getDailyTransactions = async (provider: provider): Promise<IDailyTr
   const oneDayInSeconds = 60 * 60 * 24;
   const blockTime = 22;
   const oneDayInBlocks = Math.floor(oneDayInSeconds / blockTime);
-  let inkResults = [];
-  let inkUbqFarmResults = [];
-  let gransInkFarmResults = [];
-  let inkEschFarmResults = [];
-  let inkUbqEschFarmResults = [];
+
   const currentBlock = await web3.eth.getBlockNumber();
+  let totalTxs = 0;
 
-  try {
-    // TODO: Perhaps we should just store these in available farms?
-    const INKCONTRACT = getERC20Contract(provider, INK);
-    const UBQINKFARMCONTRACT = getFarmContract(provider, INK_UBQ_FarmContract);
-    const GRANSINKFARMCONTRACT = getFarmContract(provider, INK_GRANS_FarmContract);
-    const INKESCHFARMCONTRACT = getFarmContract(provider, INK_ESCH_FarmContract);
-    const INKUBQESCHFARMCONTRACT = getFarmContract(provider, INK_UBQ_ESCH_FarmContract);
+  // get all of the addresses of the farm contracts + INK token address
+  let addresses = AvailableFarms.filter((farm) => farm.official === true).map((farm) => farm.yieldfarm.address);
+  addresses.push(INK);
 
-    // TODO: any way to make this more flexible using availablefarms?
-    inkResults = await INKCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
-    inkUbqFarmResults = await UBQINKFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
-    gransInkFarmResults = await GRANSINKFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
-    inkEschFarmResults = await INKESCHFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
-    inkUbqEschFarmResults = await INKUBQESCHFARMCONTRACT.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
+  for (let i = 0; i < addresses.length; i++) {
+    let contract = getFarmContract(provider, addresses[i]);
 
-    // Not working yet
-    //
-    // // Collect swap volume information
-    // for( const singleEvent of inkResults){
-    //     // If it's a transfer related to the INK contract, someone sent INK
-    //     if ( singleEvent.event === "Transfer" && singleEvent.address === INK){
-    //         console.log("Event:", singleEvent.event, "of INK valued at", bnToDec(new BigNumber(singleEvent.returnValues.value)));
-    //         // This is a Shinobi router address
-    //         if( singleEvent.returnValues.to === "0xf3cE4655A44146C8EeFbf45651F6479F9d67a77a"){
-    //             console.log("Event is a swap")
-    //         }
-    //     }
-    // }
-  } catch (e) {
-    console.error("getDailyTransactions() threw error:", e);
+    try {
+      let txs = await contract.getPastEvents("allEvents", { fromBlock: currentBlock - oneDayInBlocks });
+
+      totalTxs = totalTxs + txs?.length;
+    } catch (e) {
+      console.error("getDailyTransactions() threw error:", e);
+    }
   }
 
   return {
-    count: inkResults.length + inkUbqFarmResults.length + gransInkFarmResults.length + inkEschFarmResults.length + inkUbqEschFarmResults.length,
+    count: totalTxs,
   } as IDailyTransactions;
 };
 
@@ -466,11 +463,16 @@ export const getCurrentStats = async (
     const account_token0 = lpPercent.toNumber() * farm_token0;
     const account_token1 = lpPercent.toNumber() * farm_token1;
     const farmTvl = farm_token0 * token0Price + farm_token1 * token1Price;
-    const farmApy = ((rewardTokenPrice * dailyTokenRewardEmissions * 365) / farmTvl) * 100;
+    const DAYS_IN_YR = 365;
+    const APY_COMPOUNDS = DAYS_IN_YR * 2;
+    const farmApr = ((rewardTokenPrice * dailyTokenRewardEmissions * DAYS_IN_YR) / farmTvl) * 100;
+    const farmApy = (Math.pow(1 + farmApr / 100 / APY_COMPOUNDS, APY_COMPOUNDS) - 1) * 100;
 
     // DEBUG: all the log statements for debug that make sense to have. if statement filters the info by address to reduce noise/mistakes
     // if (farmContractAddress === "0x2f161631b3622881EB7125f3243A4CF35271dE02") {
     // console.log('=======')
+    // console.log("daily emissions", dailyTokenRewardEmissions);
+    // console.log("token price", rewardTokenPrice);
     // console.log("token0 price", token0Price);
     // console.log("token1 price", token1Price);
     // console.log("token0", reserves.token0);
@@ -483,10 +485,11 @@ export const getCurrentStats = async (
     // console.log("pool tvl", poolTvl);
     // console.log("");
     // console.log("poolLpTokenAddress", poolLpTokenAddress);
-    // console.log("farmContractAddress", farmContractAddress)
+    // console.log("farmContractAddress", farmContractAddress);
     // console.log("farm token0", farm_token0);
     // console.log("farm token1", farm_token1);
     // console.log("farm tvl", farmTvl);
+    // console.log("farm apr", farmApr);
     // console.log("farm apy", farmApy);
     // console.log('')
     // }
@@ -494,6 +497,7 @@ export const getCurrentStats = async (
     return {
       poolTvl: poolTvl,
       farmApy: isPaused === true ? 0 : farmApy,
+      farmApr: isPaused === true ? 0 : farmApr,
       farmTvl: farmTvl,
       accountPooledTokens: {
         token0: account_token0,

@@ -7,12 +7,18 @@ BigNumber.config({
 });
 
 export const GAS = {
-  LIMIT: 510000,
-  // TODO: remove this and replace with maxFeePerGas where used when sendTransaction supports EIP-1559
-  OLDGASPRICE: (81 * 1000000000).toString() /*gwei*/,
-  PRICE: (80 * 1000000000).toString() /*gwei*/,
-  MAXFEEPERGAS: (200 * 1000000000).toString() /*gwei*/,
-  MAXPRIORITYFEEPERGAS: (81 * 1000000000).toString() /*gwei*/,
+  MM: {
+    // metamask and other wallets gas fee settings
+    gas: 510000,
+    gasPrice: (81 * 1000000000).toString() /*gwei*/,
+    maxFeePerGas: (81 * 1000000000).toString() /*gwei*/,
+    maxPriorityFeePerGas: (1 * 1000000000).toString() /*gwei*/,
+  },
+  SPARROW: {
+    // sparrows broken 'legacy' gas fee settings
+    gas: 510000,
+    gasPrice: (81 * 1000000000).toString() /*gwei*/,
+  },
 };
 
 export const getPoolTotalSupply = async (poolContract) => {
@@ -20,96 +26,88 @@ export const getPoolTotalSupply = async (poolContract) => {
 };
 
 export const stake = async (ubiq, amount, account, poolContract, onTxHash) => {
+  const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+
   return poolContract.methods
     .stake(new BigNumber(amount).times(new BigNumber(10).pow(18)).toString())
-    .send(
-      { from: account, gas: GAS.LIMIT, gasPrice: GAS.PRICE, maxFeePerGas: GAS.MAXFEEPERGAS, maxPriorityFeePerGas: GAS.MAXPRIORITYFEEPERGAS },
-      async (error, txHash) => {
-        if (error) {
-          onTxHash && onTxHash("");
-          console.log("Staking error", error);
-          return false;
-        }
-        onTxHash && onTxHash(txHash);
-        const status = await waitTransaction(ubiq.web3.eth, txHash);
-        if (!status) {
-          console.log("Staking transaction failed.");
-          return false;
-        }
-        return true;
+    .send({ from: account, ...gas }, async (error, txHash) => {
+      if (error) {
+        onTxHash && onTxHash("");
+        console.log("Staking error", error);
+        return false;
       }
-    );
+      onTxHash && onTxHash(txHash);
+      const status = await waitTransaction(ubiq.web3.eth, txHash);
+      if (!status) {
+        console.log("Staking transaction failed.");
+        return false;
+      }
+      return true;
+    });
 };
 
 export const unstake = async (ubiq, amount, account, poolContract, onTxHash) => {
+  const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+
   return poolContract.methods
     .withdraw(new BigNumber(amount).times(new BigNumber(10).pow(18)).toString())
-    .send(
-      { from: account, gas: GAS.LIMIT, gasPrice: GAS.PRICE, maxFeePerGas: GAS.MAXFEEPERGAS, maxPriorityFeePerGas: GAS.MAXPRIORITYFEEPERGAS },
-      async (error, txHash) => {
-        if (error) {
-          onTxHash && onTxHash("");
-          console.log("Unstaking error", error);
-          return false;
-        }
-        onTxHash && onTxHash(txHash);
-        const status = await waitTransaction(ubiq.web3.eth, txHash);
-        if (!status) {
-          console.log("Unstaking transaction failed.");
-          return false;
-        }
-        return true;
+    .send({ from: account, ...gas }, async (error, txHash) => {
+      if (error) {
+        onTxHash && onTxHash("");
+        console.log("Unstaking error", error);
+        return false;
       }
-    );
+      onTxHash && onTxHash(txHash);
+      const status = await waitTransaction(ubiq.web3.eth, txHash);
+      if (!status) {
+        console.log("Unstaking transaction failed.");
+        return false;
+      }
+      return true;
+    });
 };
 
 export const harvest = async (ubiq, account, poolContract, onTxHash) => {
-  return poolContract.methods
-    .getReward()
-    .send(
-      { from: account, gas: GAS.LIMIT, gasPrice: GAS.PRICE, maxFeePerGas: GAS.MAXFEEPERGAS, maxPriorityFeePerGas: GAS.MAXPRIORITYFEEPERGAS },
-      async (error, txHash) => {
-        if (error) {
-          onTxHash && onTxHash("");
-          console.log("Harvest error", error);
-          return false;
-        }
-        if (onTxHash === undefined) {
-          // if the txHash callback isn't defined, return right away
-          return true;
-        }
+  const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
 
-        onTxHash && onTxHash(txHash);
-        const status = await waitTransaction(ubiq.web3.eth, txHash);
-        if (!status) {
-          console.log("Harvest transaction failed.");
-          return false;
-        }
-        return true;
-      }
-    );
+  return poolContract.methods.getReward().send({ from: account, ...gas }, async (error, txHash) => {
+    if (error) {
+      onTxHash && onTxHash("");
+      console.log("Harvest error", error);
+      return false;
+    }
+    if (onTxHash === undefined) {
+      // if the txHash callback isn't defined, return right away
+      return true;
+    }
+
+    onTxHash && onTxHash(txHash);
+    const status = await waitTransaction(ubiq.web3.eth, txHash);
+    if (!status) {
+      console.log("Harvest transaction failed.");
+      return false;
+    }
+    return true;
+  });
 };
 
 export const redeem = async (ubiq, account, poolContract, onTxHash) => {
-  return poolContract.methods
-    .exit()
-    .send(
-      { from: account, gas: GAS.LIMIT, gasPrice: GAS.PRICE, maxFeePerGas: GAS.MAXFEEPERGAS, maxPriorityFeePerGas: GAS.MAXPRIORITYFEEPERGAS },
-      async (error, txHash) => {
-        if (error) {
-          onTxHash && onTxHash("");
-          console.log("Redeem error", error);
-          return false;
-        }
-        onTxHash && onTxHash(txHash);
-        const status = await waitTransaction(ubiq.web3.eth, txHash);
-        if (!status) {
-          console.log("Redeem transaction failed.");
-          return false;
-        }
-        return true;
-      }
-    );
+  const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+
+  return poolContract.methods.exit().send({ from: account, ...gas }, async (error, txHash) => {
+    if (error) {
+      onTxHash && onTxHash("");
+      console.log("Redeem error", error);
+      return false;
+    }
+    onTxHash && onTxHash(txHash);
+    const status = await waitTransaction(ubiq.web3.eth, txHash);
+    if (!status) {
+      console.log("Redeem transaction failed.");
+      return false;
+    }
+    return true;
+  });
 };
 
 export const getEarned = async (pool, account) => {
