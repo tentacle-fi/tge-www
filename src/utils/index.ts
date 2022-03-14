@@ -511,7 +511,7 @@ export const getCurrentStats = async (
 };
 
 export const sendUbqEthers = async (userAddress: string, destinationAddress: string, ubqValue: number, provider: any) => {
-  console.log("sending a tx from:", userAddress, "to:", destinationAddress, "with value:", ubqValue);
+  // console.log("sending a tx from:", userAddress, "to:", destinationAddress, "with value:", ubqValue);
   let signer;
 
   // provider and signer are separate, so we need to fetch the signer (metamask)

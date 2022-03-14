@@ -3,9 +3,7 @@ import Context from "./Context";
 import { useWallet } from "use-wallet";
 import useEvm from "hooks/useEvmProvider";
 import { sendUbqEthers, waitForTransaction, checkReceipt, TxConfirmationBlocks } from "utils";
-
-// const INK = "0x7845fCbE28ac19ab7ec1C1D9674E34fdCB4917Db";
-const DAO = "0xCC7D76005bf1616e55cfDFF4cbfB5C29199C2808"; // DAO Multisig address
+import { DAO_MULTISIG } from "farms/AvailableFarms";
 
 const PaymentProcessor: React.FC = ({ children }) => {
   const [paymentTx, setPaymentTx] = useState("");
@@ -34,7 +32,7 @@ const PaymentProcessor: React.FC = ({ children }) => {
           waitingForConfirmations.current = false; //reset
         }
         setConfirmCount(receiptConfirmations >= TxConfirmationBlocks ? TxConfirmationBlocks : receiptConfirmations);
-        console.log("confirm count:", receiptConfirmations, "TxConfirmationBlocks:", TxConfirmationBlocks);
+        // console.log("confirm count:", receiptConfirmations, "TxConfirmationBlocks:", TxConfirmationBlocks);
       } catch (e) {
         console.error("fetchTxReciept() threw error:", e);
       }
@@ -53,17 +51,16 @@ const PaymentProcessor: React.FC = ({ children }) => {
       try {
         setConfirmModal(true);
         setConfirmCount(0);
-        console.log("preparing to send", amount, "UBQ");
+        // console.log("preparing to send", amount, "UBQ");
         let sendTxHash;
-        let finalSendResult;
         switch (whatToSend) {
           case "INK":
-            // sendTokens(account, DAO, value, INK);
+            // sendTokens(account, DAO_MULTISIG, value, INK);
             console.log("need to implement INK payments still...");
             break;
           case "UBQ":
             // generate and broadcast the transaction
-            sendTxHash = await sendUbqEthers(account, DAO, amount, provider);
+            sendTxHash = await sendUbqEthers(account, DAO_MULTISIG, amount, provider);
 
             if (sendTxHash === undefined) {
               throw new Error("payment rejected or did not succeed");
@@ -72,12 +69,11 @@ const PaymentProcessor: React.FC = ({ children }) => {
             setConfirmModal(false);
             waitingForConfirmations.current = true;
             // set the hash into state so we can separately check it's confirms
-            console.log("setting paymentTx:", sendTxHash);
+            // console.log("setting paymentTx:", sendTxHash);
             setPaymentTx(sendTxHash);
 
             // wait for the tx to get mined
-            finalSendResult = await waitForTransaction(provider, sendTxHash);
-            console.log("finaleSendResult:", finalSendResult);
+            await waitForTransaction(provider, sendTxHash);
             break;
           default:
             throw new Error("Unknown token type to send!");

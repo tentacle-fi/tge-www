@@ -11,6 +11,8 @@ import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import DownloadIcon from "@mui/icons-material/Download";
 
+import useJsonLoader from "hooks/useJsonLoader";
+
 // Price to download a dataset, in UBQ for now
 const DownloadPrice = 0.001;
 
@@ -60,6 +62,8 @@ const TxDownload: React.FC = () => {
   const [currentProgress, setCurrentProgress] = useState(0);
   const [currentProgressTotal, setCurrentProgressTotal] = useState(0);
   const [downloadedCsv, setDownloadedCsv] = useState(false);
+
+  const { lookupPriceForTime } = useJsonLoader();
 
   const handleReset = useCallback(() => {
     setScanResults("");
@@ -170,10 +174,11 @@ const TxDownload: React.FC = () => {
         setEnumerationProgress(total);
         setEnumerationProgressTotal(total);
         setCurrentProgressTotal(total);
-      }
+      },
+      lookupPriceForTime
     );
 
-    if (results !== undefined) {
+    if (results !== undefined && results?.results?.length > 0) {
       // DEBUG: show JSON output of the results object
       // setScanResults(JSON.stringify(results, null, 2));
       // return;
@@ -185,7 +190,7 @@ const TxDownload: React.FC = () => {
       );
       console.log("results", "processed:", results.raw.filter((tx) => tx.processed === true).length, "out of", results.raw.length);
 
-      // TODO: find a better way to pull the names from the ICSVRow interface at compile time (DRY the code)
+      // TODO: find a better way to pull the names from the ITransferCSVRow interface at compile time (DRY the code)
       const headerCSV = [
         "nonce",
         "txHash",
@@ -198,6 +203,7 @@ const TxDownload: React.FC = () => {
         "to",
         "value",
         "valueUSD",
+        "tokenPrice",
         "tokenSymbol",
         "tokenAddress",
         "reason",
@@ -217,7 +223,7 @@ const TxDownload: React.FC = () => {
         })
       );
     }
-  }, [account]);
+  }, [account, lookupPriceForTime]);
 
   const userDownloadedCsv = useCallback(() => {
     setDownloadedCsv(true);

@@ -21,6 +21,8 @@ import Help from "views/Help";
 import DaoInfo from "views/DaoInfo";
 import TxDownload from "views/TxDownload";
 
+import { JsonLoaderProvider } from "contexts/JsonLoader";
+
 const App: React.FC = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
 
@@ -44,7 +46,14 @@ const App: React.FC = () => {
             <Route path="/addresses" element={<Addresses />} />
             <Route path="/help" element={<Help />} />
             <Route path="/daoinfo" element={<DaoInfo />} />
-            <Route path="/tx-download" element={<TxDownload />} />
+            <Route
+              path="/tx-download"
+              element={
+                <JsonLoaderProvider>
+                  <TxDownload />
+                </JsonLoaderProvider>
+              }
+            />
           </Routes>
         </div>
       </Providers>

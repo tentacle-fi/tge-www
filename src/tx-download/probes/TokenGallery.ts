@@ -34,6 +34,8 @@ const TokenGallery = (walletAddress: string, allTxs: Array<ITxDetail>): Array<IT
       timestamp: allTxs[i].block.timestamp,
       date: tsFormat(allTxs[i].block.timestamp),
       block: allTxs[i].block.number,
+      tokenPrice: "",
+      valueUSD: "",
     };
 
     let sellForUbq = soldNFTForUBQ(walletAddress, allTxs[i]);
@@ -186,7 +188,6 @@ const soldNFT = (walletAddress: string, tx: ITxDetail, erc20Purchase: boolean) =
     from: buyerAddress,
     to: sellerAddress,
     value: bnToDecStr(paidValue),
-    valueUSD: "", // TODO: fill this in with historical USD data
     tokenSymbol: paidCurrencySymbol,
     tokenAddress: paidCurrencyAddress,
     reason: "NFT Sold", // TODO: fill this

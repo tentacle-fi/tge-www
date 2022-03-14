@@ -8,16 +8,17 @@ import { formatTopic } from "./probes/tools";
 
 import { lookupBlocksForYear } from "./blockchain";
 
-export const scanStart = async (address: string, year: number, progress1Cb: Function, progress2Cb: Function) => {
+// DEV ONLY
+// import DOXXED from "./DOXXED.json";
+
+export const scanStart = async (address: string, year: number, progress1Cb: Function, progress2Cb: Function, priceLookupFn: Function) => {
   const rpcProvider = new ethers.providers.JsonRpcProvider("https://rpc.octano.dev/");
+
 
   address = address.toLowerCase();
 
-  const blocks = lookupBlocksForYear(year, "Ubiq");
-
-  console.log("starting", blocks);
-
   // Prod:
+  const blocks = lookupBlocksForYear(year, "Ubiq");
   if (blocks !== undefined) {
     let results = [] as Array<Log>;
     const paginateGetLogs = 12;
@@ -41,11 +42,36 @@ export const scanStart = async (address: string, year: number, progress1Cb: Func
     if (results !== undefined) {
       const filtered = filterLogs(results);
       const allTxs = await getAllTxDetails(rpcProvider, filtered, progress2Cb);
+      let probeData = Probes.explore(address, allTxs);
+      probeData.results = await updatePrices(probeData.results, priceLookupFn);
+
       console.error("missing NONCEs!", verifyNonceSequential(address, allTxs).length);
 
-      return Probes.explore(address, allTxs);
+      return probeData;
     }
   }
+
+  // DEV ONLY
+  // const allTxs = DOXXED as Array<ITxDetail>;
+  // let probeData = Probes.explore(address, allTxs);
+  // probeData.results = await updatePrices(probeData.results, priceLookupFn);
+  // console.error("missing NONCEs!", verifyNonceSequential(address, allTxs).length);
+  // return probeData;
+};
+
+const updatePrices = async (data: Array<ITransferCSVRow>, priceLookupFn: Function): Promise<Array<ITransferCSVRow>> => {
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].tokenAddress === undefined) {
+      console.log("looking up for ", data[i]);
+    }
+
+    let unitPrice = new BigNumber(await priceLookupFn(data[i].tokenAddress, data[i].timestamp));
+    data[i].valueUSD = new BigNumber(data[i].value).times(unitPrice).toFixed(2);
+
+    data[i].tokenPrice = unitPrice.toFixed(6); // arbitrarily set to 6 decimals
+  }
+
+  return data;
 };
 
 const verifyNonceSequential = (walletAddress: string, list: Array<ITxDetail>): Array<number> => {
