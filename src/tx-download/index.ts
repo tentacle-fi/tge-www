@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { Log } from "@ethersproject/abstract-provider";
 // import {TransactionReceipt, TransactionResponse } from "@ethersproject/abstract-provider"// for debug
-import { ITransactionHashStub, ITxDetail, ITransferCSVRow } from "./interfaces";
+import { ITransactionHashStub, ITxDetail, ITransferCSVRow, IRawCSVRow } from "./interfaces";
 import Probes from "./probes";
 import { formatTopic } from "./probes/tools";
 
@@ -102,8 +102,10 @@ const verifyNonceSequential = (walletAddress: string, list: Array<ITxDetail>): A
   for (let i = 1; i < sorted.length; i++) {
     if (start + 1 !== sorted[i]) {
       missing.push(start + 1);
+      start = sorted[i];
+    } else {
+      start++;
     }
-    start++;
   }
 
   return missing;
@@ -118,6 +120,22 @@ export const resultsToCSV = (columns: Array<string>, results: Array<ITransferCSV
         row += ",";
       }
       row += results[i][prop as keyof ITransferCSVRow];
+    }
+    str += row + "\n";
+  }
+
+  return str;
+};
+
+export const rawToCSV = (columns: Array<string>, results: Array<IRawCSVRow>): string => {
+  let str = "";
+  for (let i = 0; i < results.length; i++) {
+    let row = "";
+    for (const prop of columns) {
+      if (row !== "") {
+        row += ",";
+      }
+      row += results[i][prop as keyof IRawCSVRow];
     }
     str += row + "\n";
   }

@@ -10,11 +10,18 @@ export interface IDatagridResults extends ITransferCSVRow {
   flex?: number;
 }
 
-export interface ITransferCSVRow {
+export interface IRawTransaction {
   nonce: number;
   txHash: string;
   timestamp: number;
   date: string;
+}
+
+export interface IRawCSVRow extends IRawTransaction {
+  processed: boolean;
+}
+
+export interface ITransferCSVRow extends IRawTransaction {
   block: number;
   fee: string;
   feeSymbol: string;

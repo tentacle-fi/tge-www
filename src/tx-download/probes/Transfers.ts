@@ -170,7 +170,7 @@ const findWithdrawls = (walletAddress: string, tx: ITxDetail) => {
       // .filter((w) => w.topics[1] === formatTopic(walletAddress))
       .map((w) => {
         return {
-          from: w.topics[1],
+          from: bnTohex(w.topics[1]),
           to: walletAddress,
           value: bnToDecStr(w.data),
           tokenSymbol: "UBQ",

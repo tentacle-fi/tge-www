@@ -9,10 +9,10 @@ import { IJsonData } from "hooks/useJsonLoader";
 type IJsonMap = Map<string, IJsonData>;
 
 // PROD:
-// const GITHUB_URL = "https://raw.githubusercontent.com/tentacle-fi/chart-data/master/";
+const GITHUB_URL = "https://raw.githubusercontent.com/tentacle-fi/chart-data/master/";
 
 // DEBUG ONLY
-const GITHUB_URL = "http://localhost:3000/data/";
+// const GITHUB_URL = "http://localhost:3000/data/";
 
 const useJsonLoader: React.FC = ({ children }) => {
   const Cache = useRef<IJsonMap>(new Map() as IJsonMap);

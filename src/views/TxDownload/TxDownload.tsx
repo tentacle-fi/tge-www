@@ -4,13 +4,13 @@ import TxTable from "components/TxTable";
 import OnboardingProgress, { IOnboardingSteps } from "components/OnboardingProgress";
 import Typography from "@mui/material/Typography";
 import { useWallet } from "use-wallet";
-import { scanStart, resultsToCSV } from "tx-download";
+import { scanStart, resultsToCSV, rawToCSV } from "tx-download";
 import usePaymentProcessorProvider from "hooks/usePaymentProcessor";
-import { IDatagridResults } from "tx-download/interfaces";
+import { IDatagridResults, IRawCSVRow } from "tx-download/interfaces";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import DownloadIcon from "@mui/icons-material/Download";
-
+import { tsFormat } from "tx-download/probes/tools";
 import useJsonLoader from "hooks/useJsonLoader";
 
 // Price to download a dataset, in UBQ for now
@@ -50,6 +50,7 @@ const TxDownload: React.FC = () => {
   const { handlePayment, isConfirmed, paymentTx } = usePaymentProcessorProvider();
   const [scanResults, setScanResults] = useState("");
   const [scanResultsObject, setScanResultsObject] = useState<Array<IDatagridResults>>();
+  const [rawScanResults, setRawScanResults] = useState("");
 
   const [enumerationProgress, setEnumerationProgress] = useState(0);
   const [enumerationProgressTotal, setEnumerationProgressTotal] = useState(0);
@@ -206,18 +207,36 @@ const TxDownload: React.FC = () => {
       ];
 
       const csv = headerCSV.join(",") + "\n" + resultsToCSV(headerCSV, results.results);
-
-      const blob = new Blob([csv], { type: "text/csv" });
-      const downloadUrl = window.URL.createObjectURL(blob);
+      const downloadUrl = window.URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
 
       setScanResults(downloadUrl);
-
       setScanResultsObject(
         results.results.map((element, index) => {
           //return { id: index, ...element, txHash: trimHex(element.txHash), from: trimHex(element.from), to: trimHex(element.to) };
           return { id: index, ...element };
         })
       );
+
+      // setup the RAW csv download
+      const rawHeaderCSV = ["nonce", "txHash", "date", "timestamp", "processed"];
+
+      const rawCsv =
+        rawHeaderCSV.join(",") +
+        "\n" +
+        rawToCSV(
+          rawHeaderCSV,
+          results.raw.map((row) => {
+            return {
+              nonce: row.tx.nonce,
+              txHash: row.tx.hash,
+              date: tsFormat(row.block.timestamp),
+              timestamp: row.block.timestamp,
+              processed: row.processed,
+            } as IRawCSVRow;
+          })
+        );
+      const rawDownloadUrl = window.URL.createObjectURL(new Blob([rawCsv], { type: "text/csv" }));
+      setRawScanResults(rawDownloadUrl);
     }
   }, [account, lookupPriceForTime]);
 
@@ -244,17 +263,27 @@ const TxDownload: React.FC = () => {
       <OnboardingProgress resetCb={handleReset} steps={onboardingSteps} />
 
       {scanResults !== "" && (
-        <a
-          href={scanResults}
-          onClick={() => {
-            userDownloadedCsv();
-          }}
-          download="ubiq_transactions.csv"
-          style={{ lineHeight: "36px", fontSize: "36px", border: "1px solid #06d6a0", padding: "25px", borderRadius: "10px" }}
-        >
-          Download
-          <DownloadIcon sx={{ fontSize: "36px", lineHeight: "36px" }} />
-        </a>
+        <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", gap: "20px" }}>
+          <a
+            href={scanResults}
+            onClick={() => {
+              userDownloadedCsv();
+            }}
+            download={`${account}_ubiq_transactions.csv`}
+            style={{ lineHeight: "36px", fontSize: "36px", border: "1px solid #06d6a0", padding: "25px", borderRadius: "10px" }}
+          >
+            Download Processed
+            <DownloadIcon sx={{ fontSize: "36px", lineHeight: "36px" }} />
+          </a>
+          <a
+            href={rawScanResults}
+            download={`${account}_ubiq_raw.csv`}
+            style={{ lineHeight: "36px", fontSize: "36px", border: "1px solid #06d6a0", padding: "25px", borderRadius: "10px" }}
+          >
+            Download Raw
+            <DownloadIcon sx={{ fontSize: "36px", lineHeight: "36px" }} />
+          </a>
+        </div>
       )}
       <ScanProgressBar progress1={(enumerationProgress / enumerationProgressTotal) * 100} progress2={(scanProgress / scanProgressTotal) * 100} />
 
@@ -263,6 +292,30 @@ const TxDownload: React.FC = () => {
       </Typography>
 
       {scanResultsObject !== undefined && <TxTable transactions={scanResultsObject} displaySelectedRow={displaySelectedRow} />}
+
+      <div style={{ margin: "60px auto", minWidth: "320px", width: "75%", maxWidth: "750px", borderTop: "1px solid #cecece", padding: "30px" }}>
+        <Typography variant="h4">Transaction Download: About</Typography>
+        <div style={{ margin: "10px 20px" }}>
+          <Typography variant="body1">Currently only data from 2021 can be downloaded. More years will be added!</Typography>
+          <Typography variant="body1">
+            Historical prices are estimated for the following tokens: UBQ, INK, ESCH, GRANS, wETH, GEO, SPHR, CAUL2. Any other token, LP or otherwise
+            not on this list is not expected to be estimated.
+          </Typography>
+          <Typography variant="body1">Currently Enmaku payments are not found with this tool.</Typography>
+          <Typography variant="body1">If you encounter any issues, please contact a developer via Discord.</Typography>
+          <Typography variant="body1">
+            Processed download option provides a CSV file with all of the processed transactions, historic price lookups (where possible) and any
+            transfer details that were found.
+          </Typography>
+          <Typography variant="body1">
+            Raw download option provides a CSV file with all of the basic details about the transactions found and if they were processed.
+          </Typography>
+          <Typography variant="body1">
+            If you find any missing NONCE in your Raw or Processed CSV download, the most common reason is the lack of on-chain log events being
+            recorded. One common example is when a transaction fails to execute.
+          </Typography>
+        </div>
+      </div>
     </Page>
   );
 };
