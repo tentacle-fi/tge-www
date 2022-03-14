@@ -14,7 +14,6 @@ import { lookupBlocksForYear } from "./blockchain";
 export const scanStart = async (address: string, year: number, progress1Cb: Function, progress2Cb: Function, priceLookupFn: Function) => {
   const rpcProvider = new ethers.providers.JsonRpcProvider("https://rpc.octano.dev/");
 
-
   address = address.toLowerCase();
 
   // Prod:
