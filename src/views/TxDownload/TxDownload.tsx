@@ -18,7 +18,7 @@ import SLink from "components/SLink";
 import InfoIcon from "@mui/icons-material/Info";
 
 // Price to download a dataset, in UBQ for now
-const DownloadPrice = 0.001;
+const DownloadPrice = 100;
 
 const SmallInfo = () => {
   return <InfoIcon fontSize="small" sx={{ marginRight: "10px" }} />;
