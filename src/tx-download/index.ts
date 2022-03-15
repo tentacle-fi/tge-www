@@ -74,42 +74,42 @@ const updatePrices = async (data: Array<ITransferCSVRow>, priceLookupFn: Functio
   return data;
 };
 
-const verifyNonceSequential = (walletAddress: string, list: Array<ITxDetail>): Array<number> => {
-  let sorted = list
-    .filter((tx) => {
-      // filter out only txs originated from our walletAddress
-      // so the nonce counting can be accurate
-      return tx.tx.from.toLowerCase() === walletAddress;
-    })
-    .map((tx) => tx.tx.nonce);
-
-  // console.log("sorted", sorted.length);
-
-  sorted.sort((a: number, b: number) => {
-    if (a < b) {
-      return -1;
-    }
-    return 1;
-  });
-
-  if (sorted.length < 2) {
-    console.error("verifyNonceSequential() - not enough transactions to verify requires > 1");
-    return sorted;
-  }
-
-  let start = sorted[0];
-  let missing = [];
-  for (let i = 1; i < sorted.length; i++) {
-    if (start + 1 !== sorted[i]) {
-      missing.push(start + 1);
-      start = sorted[i];
-    } else {
-      start++;
-    }
-  }
-
-  return missing;
-};
+// const verifyNonceSequential = (walletAddress: string, list: Array<ITxDetail>): Array<number> => {
+//   let sorted = list
+//     .filter((tx) => {
+//       // filter out only txs originated from our walletAddress
+//       // so the nonce counting can be accurate
+//       return tx.tx.from.toLowerCase() === walletAddress;
+//     })
+//     .map((tx) => tx.tx.nonce);
+//
+//   // console.log("sorted", sorted.length);
+//
+//   sorted.sort((a: number, b: number) => {
+//     if (a < b) {
+//       return -1;
+//     }
+//     return 1;
+//   });
+//
+//   if (sorted.length < 2) {
+//     console.error("verifyNonceSequential() - not enough transactions to verify requires > 1");
+//     return sorted;
+//   }
+//
+//   let start = sorted[0];
+//   let missing = [];
+//   for (let i = 1; i < sorted.length; i++) {
+//     if (start + 1 !== sorted[i]) {
+//       missing.push(start + 1);
+//       start = sorted[i];
+//     } else {
+//       start++;
+//     }
+//   }
+//
+//   return missing;
+// };
 
 export const resultsToCSV = (columns: Array<string>, results: Array<ITransferCSVRow>): string => {
   let str = "";
