@@ -19,7 +19,6 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import DownloadIcon from "@mui/icons-material/Download";
 import FlagIcon from "@mui/icons-material/Flag";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
-
 import { TxConfirmationBlocks } from "utils";
 
 interface ConfirmationProgressProps {
@@ -55,6 +54,8 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, steps
       handleReset();
     }
 
+    window.onbeforeunload = null;
+
     resetCb();
   };
 
@@ -69,7 +70,7 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, steps
       setActiveStepError(""); //reset
       const isValid = steps[activeStep].validate();
       if (isValid !== true) {
-        console.log("handleNext() step not complete");
+        // console.log("handleNext() step not complete");
         if (typeof isValid === "string") {
           setActiveStepError(isValid);
         }
@@ -102,6 +103,12 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, steps
   useEffect(() => {
     if (activeStep < steps.length) {
       setActiveStepMsg(steps[activeStep].msg);
+
+      if (activeStep === 1) {
+        window.onbeforeunload = function () {
+          return true;
+        };
+      }
     }
   }, [activeStep, steps]);
 

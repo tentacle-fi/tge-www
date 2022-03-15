@@ -190,7 +190,7 @@ const methods: Array<IMethod> = [
     id: "cae9ca51",
   },
   {
-    name: "Enmaku::withdraw(...)", // TODO
+    name: "Enmaku::withdraw(...)", // TODO, needs a scanner outside of the frontend for this!
     id: "21a0adb6",
   },
 ];

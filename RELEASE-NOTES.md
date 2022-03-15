@@ -100,4 +100,4 @@
 - add nonce to output csv
 
 ## Unreleased
-nothing at this time
+- add usdt (oracle) based pricing to csv output

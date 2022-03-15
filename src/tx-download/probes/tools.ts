@@ -6,8 +6,14 @@ import { ITxDetail, IProcessedData } from "../interfaces";
 import Tokens from "../TOKENS.json";
 import lookupMethod from "../lookupMethod";
 
+// erc20 transfer
 export const Transfer_Event = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+
+// 'withdrawl' aka deposit from some contract to scanned address of gas coin (aka UBQ)
 export const Withdrawl_Event = "0x7fcf532c15f0a6db0bd6d0e038bea71d30d808c7d98cb3bf7268a95bf5081b65";
+
+// deposit of gas coin (aka UBQ) to an address
+export const Deposit_Event = "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c";
 
 // test a transaction against a methodid hex value (eg, 0xfb3bdb41 NOTE the short hex value)
 export const testMethodId = (tx: ITxDetail, methodID: string) => {
@@ -59,7 +65,7 @@ export const spliceEvery = (data: string, nChars: number): Array<string> => {
 // optional notFound string will be added in parens preceeding the address if not found
 export const tokenLookupSymbol = (tokenAddress: string, notFound: string = "unknown"): string => {
   tokenAddress = tokenAddress.toLowerCase();
-  let result = Tokens.list.filter((token) => token.id.toLowerCase() === tokenAddress);
+  let result = Tokens.list.filter((token) => token.address.toLowerCase() === tokenAddress);
 
   if (result.length === 1) {
     return result[0].symbol;

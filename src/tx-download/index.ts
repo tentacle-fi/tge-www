@@ -2,22 +2,22 @@ import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { Log } from "@ethersproject/abstract-provider";
 // import {TransactionReceipt, TransactionResponse } from "@ethersproject/abstract-provider"// for debug
-import { ITransactionHashStub, ITxDetail, ITransferCSVRow } from "./interfaces";
+import { ITransactionHashStub, ITxDetail, ITransferCSVRow, IRawCSVRow } from "./interfaces";
 import Probes from "./probes";
 import { formatTopic } from "./probes/tools";
 
 import { lookupBlocksForYear } from "./blockchain";
 
-export const scanStart = async (address: string, year: number, progress1Cb: Function, progress2Cb: Function) => {
+// DEV ONLY
+// import DOXXED from "./DOXXED.json";
+
+export const scanStart = async (address: string, year: number, progress1Cb: Function, progress2Cb: Function, priceLookupFn: Function) => {
   const rpcProvider = new ethers.providers.JsonRpcProvider("https://rpc.octano.dev/");
 
   address = address.toLowerCase();
 
-  const blocks = lookupBlocksForYear(year, "Ubiq");
-
-  console.log("starting", blocks);
-
   // Prod:
+  const blocks = lookupBlocksForYear(year, "Ubiq");
   if (blocks !== undefined) {
     let results = [] as Array<Log>;
     const paginateGetLogs = 12;
@@ -41,47 +41,75 @@ export const scanStart = async (address: string, year: number, progress1Cb: Func
     if (results !== undefined) {
       const filtered = filterLogs(results);
       const allTxs = await getAllTxDetails(rpcProvider, filtered, progress2Cb);
-      console.error("missing NONCEs!", verifyNonceSequential(address, allTxs).length);
+      let probeData = Probes.explore(address, allTxs);
+      probeData.results = await updatePrices(probeData.results, priceLookupFn);
 
-      return Probes.explore(address, allTxs);
+      // DEBUG: missing none count
+      // console.error("missing NONCEs!", verifyNonceSequential(address, allTxs).length);
+
+      return probeData;
     }
   }
+
+  // DEV ONLY
+  // const allTxs = DOXXED as Array<ITxDetail>;
+  // let probeData = Probes.explore(address, allTxs);
+  // probeData.results = await updatePrices(probeData.results, priceLookupFn);
+  // console.error("missing NONCEs!", verifyNonceSequential(address, allTxs).length);
+  // return probeData;
 };
 
-const verifyNonceSequential = (walletAddress: string, list: Array<ITxDetail>): Array<number> => {
-  let sorted = list
-    .filter((tx) => {
-      // filter out only txs originated from our walletAddress
-      // so the nonce counting can be accurate
-      return tx.tx.from.toLowerCase() === walletAddress;
-    })
-    .map((tx) => tx.tx.nonce);
+const updatePrices = async (data: Array<ITransferCSVRow>, priceLookupFn: Function): Promise<Array<ITransferCSVRow>> => {
+  for (let i = 0; i < data.length; i++) {
+    // if (data[i].tokenAddress === undefined) {
+    //   console.log("looking up for ", data[i]);
+    // }
 
-  // console.log("sorted", sorted.length);
+    let unitPrice = new BigNumber(await priceLookupFn(data[i].tokenAddress, data[i].timestamp));
+    data[i].valueUSD = new BigNumber(data[i].value).times(unitPrice).toFixed(2);
 
-  sorted.sort((a: number, b: number) => {
-    if (a < b) {
-      return -1;
-    }
-    return 1;
-  });
-
-  if (sorted.length < 2) {
-    console.error("verifyNonceSequential() - not enough transactions to verify requires > 1");
-    return sorted;
+    data[i].tokenPrice = unitPrice.toFixed(6); // arbitrarily set to 6 decimals
   }
 
-  let start = sorted[0];
-  let missing = [];
-  for (let i = 1; i < sorted.length; i++) {
-    if (start + 1 !== sorted[i]) {
-      missing.push(start + 1);
-    }
-    start++;
-  }
-
-  return missing;
+  return data;
 };
+
+// const verifyNonceSequential = (walletAddress: string, list: Array<ITxDetail>): Array<number> => {
+//   let sorted = list
+//     .filter((tx) => {
+//       // filter out only txs originated from our walletAddress
+//       // so the nonce counting can be accurate
+//       return tx.tx.from.toLowerCase() === walletAddress;
+//     })
+//     .map((tx) => tx.tx.nonce);
+//
+//   // console.log("sorted", sorted.length);
+//
+//   sorted.sort((a: number, b: number) => {
+//     if (a < b) {
+//       return -1;
+//     }
+//     return 1;
+//   });
+//
+//   if (sorted.length < 2) {
+//     console.error("verifyNonceSequential() - not enough transactions to verify requires > 1");
+//     return sorted;
+//   }
+//
+//   let start = sorted[0];
+//   let missing = [];
+//   for (let i = 1; i < sorted.length; i++) {
+//     if (start + 1 !== sorted[i]) {
+//       missing.push(start + 1);
+//       start = sorted[i];
+//     } else {
+//       start++;
+//     }
+//   }
+//
+//   return missing;
+// };
 
 export const resultsToCSV = (columns: Array<string>, results: Array<ITransferCSVRow>): string => {
   let str = "";
@@ -92,6 +120,22 @@ export const resultsToCSV = (columns: Array<string>, results: Array<ITransferCSV
         row += ",";
       }
       row += results[i][prop as keyof ITransferCSVRow];
+    }
+    str += row + "\n";
+  }
+
+  return str;
+};
+
+export const rawToCSV = (columns: Array<string>, results: Array<IRawCSVRow>): string => {
+  let str = "";
+  for (let i = 0; i < results.length; i++) {
+    let row = "";
+    for (const prop of columns) {
+      if (row !== "") {
+        row += ",";
+      }
+      row += results[i][prop as keyof IRawCSVRow];
     }
     str += row + "\n";
   }

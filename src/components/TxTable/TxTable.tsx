@@ -17,6 +17,7 @@ export const OutputColumns = [
   { short: "from", long: "From" },
   { short: "to", long: "To" },
   { short: "value", long: "Value" },
+  { short: "tokenPrice", long: "Token USD" },
   { short: "valueUSD", long: "USD" },
   { short: "tokenSymbol", long: "Token Symbol" },
   { short: "tokenAddress", long: "Token Address" },
