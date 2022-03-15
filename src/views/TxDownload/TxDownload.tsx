@@ -301,7 +301,7 @@ const TxDownload: React.FC = () => {
 
       {scanResultsObject !== undefined && <TxTable transactions={scanResultsObject} displaySelectedRow={displaySelectedRow} />}
 
-      <div style={{ border: "dashed 2px black", marginTop: "25px" }}>
+      <div style={{ border: "2px solid black", borderRadius: "10px", marginTop: "25px" }}>
         <Typography sx={{ marginTop: "10px", textAlign: "center" }} variant="h4">
           Transaction Download: About
         </Typography>
