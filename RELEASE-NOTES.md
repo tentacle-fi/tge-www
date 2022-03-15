@@ -91,13 +91,16 @@
 ## 1.5.1
 - hotfix monoceros fee handling
 
-## 1.6.0-alpha
+## 1.6.0
 - voting implemented
 - tx download history implemented
 
-## 1.6.1-alpha
+## 1.6.1
 - improve download history workflow, status, and errormsgs
 - add nonce to output csv
 
-## Unreleased
+## 1.6.2
 - add usdt (oracle) based pricing to csv output
+
+## Unreleased
+nothing at this time
