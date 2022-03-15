@@ -44,7 +44,8 @@ export const scanStart = async (address: string, year: number, progress1Cb: Func
       let probeData = Probes.explore(address, allTxs);
       probeData.results = await updatePrices(probeData.results, priceLookupFn);
 
-      console.error("missing NONCEs!", verifyNonceSequential(address, allTxs).length);
+      // DEBUG: missing none count
+      // console.error("missing NONCEs!", verifyNonceSequential(address, allTxs).length);
 
       return probeData;
     }
@@ -60,9 +61,9 @@ export const scanStart = async (address: string, year: number, progress1Cb: Func
 
 const updatePrices = async (data: Array<ITransferCSVRow>, priceLookupFn: Function): Promise<Array<ITransferCSVRow>> => {
   for (let i = 0; i < data.length; i++) {
-    if (data[i].tokenAddress === undefined) {
-      console.log("looking up for ", data[i]);
-    }
+    // if (data[i].tokenAddress === undefined) {
+    //   console.log("looking up for ", data[i]);
+    // }
 
     let unitPrice = new BigNumber(await priceLookupFn(data[i].tokenAddress, data[i].timestamp));
     data[i].valueUSD = new BigNumber(data[i].value).times(unitPrice).toFixed(2);

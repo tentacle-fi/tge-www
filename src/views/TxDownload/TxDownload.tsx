@@ -181,11 +181,11 @@ const TxDownload: React.FC = () => {
       // return;
 
       // DEBUG: show CSV output
-      console.log(
-        "unprocessed results",
-        results.raw.filter((tx) => tx.processed !== true)
-      );
-      console.log("results", "processed:", results.raw.filter((tx) => tx.processed === true).length, "out of", results.raw.length);
+      // console.log(
+      //   "unprocessed results",
+      //   results.raw.filter((tx) => tx.processed !== true)
+      // );
+      // console.log("results", "processed:", results.raw.filter((tx) => tx.processed === true).length, "out of", results.raw.length);
 
       // TODO: find a better way to pull the names from the ITransferCSVRow interface at compile time (DRY the code)
       const headerCSV = [
