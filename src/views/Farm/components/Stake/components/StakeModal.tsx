@@ -1,10 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
-
 import BigNumber from "bignumber.js";
-
 import TokenInput from "components/TokenInput";
 import useBalances from "hooks/useBalances";
-import useFarming from "hooks/useFarming";
 import { getFullDisplayBalance } from "utils";
 import { AvailableFarms } from "farms/AvailableFarms";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -13,6 +10,7 @@ import useUbiq from "hooks/useUbiq";
 import { useWallet } from "use-wallet";
 import { stake } from "ubiq-sdk/utils";
 import { styled } from "@mui/system";
+import useEvm from "hooks/useEvmProvider";
 
 const StyledStakeButton = styled(LoadingButton)(({ theme }) => ({
   backgroundColor: theme.palette.secondary.main,
@@ -28,7 +26,7 @@ interface StakeModalProps {
 const StakeModal: React.FC<StakeModalProps> = ({ farmKey }) => {
   const [val, setVal] = useState("");
   const { LPBalances } = useBalances();
-  const { setConfirmModal } = useFarming();
+  const { setConfirmModal } = useEvm();
   const [isStaking, setisStaking] = useState(false);
   const { ubiq } = useUbiq();
   const { account } = useWallet();

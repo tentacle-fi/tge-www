@@ -10,7 +10,7 @@ import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import WifiIcon from "@mui/icons-material/Wifi";
 import SignalWifiStatusbarConnectedNoInternet4Icon from "@mui/icons-material/SignalWifiStatusbarConnectedNoInternet4";
 import { switchToUBQNetwork } from "metamask.js";
-import useFarming from "hooks/useFarming";
+import useEvm from "hooks/useEvmProvider";
 
 interface WalletButtonProps {
   blockHeightButton?: object;
@@ -21,7 +21,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
   const [unlockModalIsOpen, setUnlockModalIsOpen] = useState(false);
   const [userAccount, setUserAccount] = useState<string | null>();
   const { account, status, connect } = useWallet();
-  const { setConfirmModal } = useFarming();
+  const { setConfirmModal } = useEvm();
 
   const ConnectedElements = useCallback(() => {
     if (status === "connected") {

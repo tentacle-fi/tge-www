@@ -11,6 +11,7 @@ import { useWallet } from "use-wallet";
 import { unstake } from "ubiq-sdk/utils";
 import { styled } from "@mui/system";
 import Tooltip from "@mui/material/Tooltip";
+import useEvm from "hooks/useEvmProvider";
 
 const StyledUnstakeButton = styled(LoadingButton)(({ theme }) => ({
   backgroundColor: theme.palette.warning,
@@ -25,7 +26,8 @@ interface UnstakeModalProps {
 
 const UnstakeModal: React.FC<UnstakeModalProps> = ({ farmKey }) => {
   const [val, setVal] = useState("");
-  const { stakedBalances, setConfirmModal } = useFarming();
+  const { setConfirmModal } = useEvm();
+  const { stakedBalances } = useFarming();
   const [isUnstaking, setisUnstaking] = useState(false);
   const stakedAmount = stakedBalances === undefined ? null : stakedBalances[farmKey];
   const { ubiq } = useUbiq();

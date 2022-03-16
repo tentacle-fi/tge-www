@@ -27,6 +27,7 @@ import InfoIconWithTooltip from "components/InfoIconWithTooltip";
 import Tooltip from "@mui/material/Tooltip";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import LabelIcon from "@mui/icons-material/Label";
+import useEvm from "hooks/useEvmProvider";
 
 interface YieldFarmProps {
   farmKey: number;
@@ -131,7 +132,7 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
   // TODO: move this to an external file
   const farm = AvailableFarms[farmKey];
   const [manageFarm, setManageFarm] = useState(false);
-  const { setConfirmModal } = useFarming();
+  const { setConfirmModal } = useEvm();
   const { isApproved, isApproving, onApprove } = useApproval(AvailableFarms[farmKey].lp.address, AvailableFarms[farmKey].yieldfarm.address, () =>
     setConfirmModal(false)
   );
@@ -316,7 +317,7 @@ interface HarvestAllProps {
 const HarvestAll: React.FC<HarvestAllProps> = React.memo(({ farmKey }) => {
   const [isRedeeming, setisRedeeming] = useState(false);
   const { ubiq } = useUbiq();
-  const { setConfirmModal } = useFarming();
+  const { setConfirmModal } = useEvm();
   const { account } = useWallet();
 
   const handleRedeem = useCallback(async () => {

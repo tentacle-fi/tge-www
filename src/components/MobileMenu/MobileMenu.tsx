@@ -42,6 +42,12 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onDismiss, visible }) => {
           <StyledRouterLink to="/daoinfo" onClick={onDismiss}>
             DAO
           </StyledRouterLink>
+          <StyledRouterLink to="/tx-download" onClick={onDismiss}>
+            Tx Download
+          </StyledRouterLink>
+          <StyledRouterLink to="/governance" onClick={onDismiss}>
+            Governance
+          </StyledRouterLink>
           <StyledRouterLink to="/help" onClick={onDismiss}>
             Help
           </StyledRouterLink>

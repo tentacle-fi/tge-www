@@ -9,6 +9,7 @@ import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
 import useUbiq from "hooks/useUbiq";
 import { harvest } from "ubiq-sdk/utils";
+import useEvm from "hooks/useEvmProvider";
 
 interface HarvestProps {
   farmKey: number;
@@ -58,7 +59,8 @@ const UnHarvested: React.FC<UnHarvestProps> = React.memo(({ farmKey, earnedBalan
 
   const { status, account } = useWallet();
   const { ubiq } = useUbiq();
-  const { setConfirmModal, setFarmFns } = useFarming();
+  const { setConfirmModal } = useEvm();
+  const { setFarmFns } = useFarming();
 
   const handleHarvest = useCallback(
     async (all: boolean = false) => {

@@ -15,6 +15,7 @@ const DropdownOptions = [
       {
         name: "Nomics",
         url: "https://nomics.com/assets/ink4-tentacle-finance",
+        type: "external",
       },
     ],
   },
@@ -24,14 +25,32 @@ const DropdownOptions = [
       {
         name: "Twitter",
         url: "https://twitter.com/TentacleFinance",
+        type: "external",
       },
       {
         name: "Medium",
         url: "https://medium.com/@tentaclefinance",
+        type: "external",
       },
       {
         name: "Discord",
         url: "https://discord.gg/CbTa6Z2JYM",
+        type: "external",
+      },
+    ],
+  },
+  {
+    categoryName: "DAO Products",
+    links: [
+      {
+        name: "Tx Download",
+        url: "/tx-download",
+        type: "internal",
+      },
+      {
+        name: "Governance",
+        url: "/governance",
+        type: "internal",
       },
     ],
   },
@@ -68,7 +87,7 @@ const ResourceLinks = () => {
       return (
         <MenuItem sx={{ color: "white", bgcolor: "black" }} key={"menu-item-" + index} onClick={(event) => handleMenuItemClick(event, index)}>
           {
-            <SLink external href={link.url} key={"slink-" + index}>
+            <SLink external={link.type === "external" ? true : false} href={link.url} key={"slink-" + index}>
               {link.name}
             </SLink>
           }

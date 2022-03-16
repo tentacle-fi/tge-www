@@ -4,18 +4,25 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { UseWalletProvider } from "use-wallet";
 
+import type {} from "@mui/x-data-grid/themeAugmentation";
 import MobileMenu from "components/MobileMenu";
 import TopBar from "components/TopBar";
 
+import EvmProvider from "contexts/EvmProvider";
+import UbiqProvider from "contexts/UbiqProvider";
 import { BalancesProvider } from "contexts/Balances";
 import { FarmingProvider } from "contexts/Farming";
-import UbiqProvider from "contexts/UbiqProvider";
+import { PaymentProcessorProvider } from "contexts/PaymentProcessor";
 
 import Farm from "views/Farm";
 import Home from "views/Home";
 import Addresses from "views/Addresses";
 import Help from "views/Help";
+import Governance from "views/Governance";
 import DaoInfo from "views/DaoInfo";
+import TxDownload from "views/TxDownload";
+
+import { JsonLoaderProvider } from "contexts/JsonLoader";
 
 const App: React.FC = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -39,7 +46,16 @@ const App: React.FC = () => {
             <Route path="/farm" element={<Farm />} />
             <Route path="/addresses" element={<Addresses />} />
             <Route path="/help" element={<Help />} />
+            <Route path="/governance" element={<Governance />} />
             <Route path="/daoinfo" element={<DaoInfo />} />
+            <Route
+              path="/tx-download"
+              element={
+                <JsonLoaderProvider>
+                  <TxDownload />
+                </JsonLoaderProvider>
+              }
+            />
           </Routes>
         </div>
       </Providers>
@@ -60,6 +76,73 @@ const Providers: React.FC = ({ children }) => {
 
   // DOCS: https://mui.com/customization/palette/#palette-colors
   const muiTheme = createTheme({
+    components: {
+      MuiStepLabel: {
+        styleOverrides: {
+          labelContainer: {
+            "*": {
+              color: "#fff !important",
+            },
+          },
+        },
+      },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            background: "#001c2b",
+            color: "#fff",
+            borderRadius: "10px",
+          },
+        },
+      },
+      MuiDataGrid: {
+        styleOverrides: {
+          overlay: {
+            backgroundColor: "#222",
+            color: "#fff",
+          },
+          columnHeader: {
+            color: "#fff",
+          },
+          sortIcon: {
+            color: "#fff",
+          },
+          menuIcon: {
+            "*": { color: "#fff" },
+          },
+          cell: {
+            color: "#fff",
+          },
+          selectedRowCount: {
+            color: "#fff",
+          },
+        },
+      },
+      MuiTablePagination: {
+        styleOverrides: {
+          root: {
+            color: "#fff",
+          },
+          selectIcon: {
+            color: "#fff",
+          },
+          actions: {
+            "& .MuiSvgIcon-root": {
+              color: "#fff",
+            },
+          },
+        },
+      },
+      MuiMenuItem: {
+        styleOverrides: {
+          root: {
+            "&:hover": {
+              background: "#000",
+            },
+          },
+        },
+      },
+    },
     palette: {
       primary: {
         main: "#06d6a0",
@@ -124,11 +207,15 @@ const Providers: React.FC = ({ children }) => {
             },
           }}
         >
-          <UbiqProvider>
-            <BalancesProvider>
-              <FarmingProvider>{children}</FarmingProvider>
-            </BalancesProvider>
-          </UbiqProvider>
+          <EvmProvider>
+            <UbiqProvider>
+              <BalancesProvider>
+                <PaymentProcessorProvider>
+                  <FarmingProvider>{children}</FarmingProvider>
+                </PaymentProcessorProvider>
+              </BalancesProvider>
+            </UbiqProvider>
+          </EvmProvider>
         </UseWalletProvider>
       </ThemeProvider>
     </NEUThemeProvider>

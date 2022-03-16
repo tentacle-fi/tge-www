@@ -1,15 +1,13 @@
 import React, { useCallback } from "react";
-
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
-
 import { sendUbq, sendTokens } from "utils";
 import { useWallet } from "use-wallet";
 import BigNumber from "bignumber.js";
 
-import { INK } from "farms/AvailableFarms";
+import { INK, DAO_MULTISIG } from "farms/AvailableFarms";
 
 function easyWei(amount: number): string {
   return new BigNumber(amount).times(new BigNumber(10).pow(18)).toString();
@@ -23,15 +21,14 @@ const Donate: React.FC = () => {
       if (!ethereum || !account) return;
 
       try {
-        const DAO = "0xCC7D76005bf1616e55cfDFF4cbfB5C29199C2808";
         const value = easyWei(amount);
 
         switch (whatToSend) {
           case "INK":
-            sendTokens(account, DAO, value, INK, ethereum);
+            sendTokens(account, DAO_MULTISIG, value, INK, ethereum);
             break;
           case "UBQ":
-            sendUbq(account, DAO, value, ethereum);
+            sendUbq(account, DAO_MULTISIG, value, ethereum);
             break;
           default:
             throw new Error("Unknown token type to send!");
