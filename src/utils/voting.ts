@@ -17,10 +17,6 @@ export interface IVoteDetails {
   contractAddress: string;
 }
 
-const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
-
-gas.gas = 80000; // set custom low gas fee for this operation (approve)
-
 export const getDeployedVotingContracts = async () => {
   const votingBlock = 2000000; // arbitrary vote start block to avoid excessive rpc use
 
@@ -176,9 +172,12 @@ export const getVotes = async (provider: provider, voteContractAddress: string):
 };
 
 export const submitVote = async (provider: provider, walletAddress: string, voteOption: number, voteContractAddress: string): Promise<boolean> => {
+  const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+
+  gas.gas = 80000; // gas for just submitVote
+
   try {
     const contract = getVoteContract(provider, voteContractAddress);
-
     await contract.methods.vote(voteOption.toString()).send({ from: walletAddress, ...gas }, async (error: any, txHash: string) => {
       console.log("submitVote callback", error, txHash);
     });
