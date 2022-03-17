@@ -102,5 +102,8 @@
 ## 1.6.2
 - add usdt (oracle) based pricing to csv output
 
+## 1.7.0
+- add temp warning about leaving the tx download page before downloading CSV
+
 ## Unreleased
 nothing at this time
