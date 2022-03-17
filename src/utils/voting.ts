@@ -172,7 +172,6 @@ export const getVotes = async (provider: provider, voteContractAddress: string):
 };
 
 export const submitVote = async (provider: provider, walletAddress: string, voteOption: number, voteContractAddress: string): Promise<boolean> => {
-
   const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
 
   gas.gas = 80000; // gas for just submitVote

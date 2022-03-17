@@ -69,7 +69,7 @@ export const sendUbq = async (userAddress: string, destinationAddress: string, u
 
     const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
 
-    gas.gas = 21000 // gas specific to Ubiq send
+    gas.gas = 21000; // gas specific to Ubiq send
 
     console.log("isSparrow");
     web3.eth.sendTransaction({
@@ -89,7 +89,7 @@ export const sendTokens = async (userAddress: string, destinationAddress: string
 
     const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
 
-    gas.gas = 50000 // gas specific to Token send
+    gas.gas = 50000; // gas specific to Token send
 
     await tokenContract.methods.transfer(destinationAddress, tokensValue).send({
       from: userAddress,
