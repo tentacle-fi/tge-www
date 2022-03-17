@@ -104,6 +104,7 @@
 
 ## 1.7.0
 - add temp warning about leaving the tx download page before downloading CSV
+- fix gas price limits
 
 ## Unreleased
 nothing at this time
