@@ -6,19 +6,31 @@ BigNumber.config({
   DECIMAL_PLACES: 80,
 });
 
-export const GAS = {
-  MM: {
-    // metamask and other wallets gas fee settings
+const GAS = {
+  defaults: {
+    // default values for ALL wallets
     gas: 510000,
+  },
+  EIP_1559: {
+    // metamask and other wallets gas fee settings
     gasPrice: (81 * 1000000000).toString() /*gwei*/,
     maxFeePerGas: (81 * 1000000000).toString() /*gwei*/,
     maxPriorityFeePerGas: (1 * 1000000000).toString() /*gwei*/,
   },
   SPARROW: {
     // sparrows broken 'legacy' gas fee settings
-    gas: 510000,
     gasPrice: (81 * 1000000000).toString() /*gwei*/,
   },
+};
+
+// return a copy of the gas object so any code can modify the values before using
+export const GET_GAS = () => {
+  return Object.assign(
+    {
+      ...GAS.defaults,
+    },
+    window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.EIP_1559
+  );
 };
 
 export const getPoolTotalSupply = async (poolContract) => {
@@ -26,7 +38,7 @@ export const getPoolTotalSupply = async (poolContract) => {
 };
 
 export const stake = async (ubiq, amount, account, poolContract, onTxHash) => {
-  const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+  const gas = GET_GAS();
 
   gas.gas = 120000; // gas for stake()
 
@@ -49,7 +61,7 @@ export const stake = async (ubiq, amount, account, poolContract, onTxHash) => {
 };
 
 export const unstake = async (ubiq, amount, account, poolContract, onTxHash) => {
-  const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+  const gas = GET_GAS();
 
   gas.gas = 160000; // gas for withdraw()
 
@@ -72,9 +84,9 @@ export const unstake = async (ubiq, amount, account, poolContract, onTxHash) => 
 };
 
 export const harvest = async (ubiq, account, poolContract, onTxHash) => {
-  const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+  const gas = GET_GAS();
 
-  gas.gas = 110000;
+  gas.gas = 200000;
 
   return poolContract.methods.getReward().send({ from: account, ...gas }, async (error, txHash) => {
     if (error) {
@@ -98,7 +110,7 @@ export const harvest = async (ubiq, account, poolContract, onTxHash) => {
 };
 
 export const redeem = async (ubiq, account, poolContract, onTxHash) => {
-  const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+  const gas = GET_GAS();
 
   gas.gas = 180000; // gas for exit()
 
