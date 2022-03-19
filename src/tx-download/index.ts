@@ -76,7 +76,7 @@ const updatePrices = async (data: Array<ITransferCSVRow>, priceLookupFn: Functio
 
 // TODO: when nonces are missing, show the user what's not going to be in their download.
 // UI still won't be able to show anything but the nonce number, since it hasn't found the txHash
-// 
+//
 // const verifyNonceSequential = (walletAddress: string, list: Array<ITxDetail>): Array<number> => {
 //   let sorted = list
 //     .filter((tx) => {
