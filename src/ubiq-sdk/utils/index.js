@@ -28,6 +28,8 @@ export const getPoolTotalSupply = async (poolContract) => {
 export const stake = async (ubiq, amount, account, poolContract, onTxHash) => {
   const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
 
+  gas.gas = 120000; // gas for stake()
+
   return poolContract.methods
     .stake(new BigNumber(amount).times(new BigNumber(10).pow(18)).toString())
     .send({ from: account, ...gas }, async (error, txHash) => {
@@ -49,6 +51,8 @@ export const stake = async (ubiq, amount, account, poolContract, onTxHash) => {
 export const unstake = async (ubiq, amount, account, poolContract, onTxHash) => {
   const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
 
+  gas.gas = 160000; // gas for withdraw()
+
   return poolContract.methods
     .withdraw(new BigNumber(amount).times(new BigNumber(10).pow(18)).toString())
     .send({ from: account, ...gas }, async (error, txHash) => {
@@ -69,6 +73,8 @@ export const unstake = async (ubiq, amount, account, poolContract, onTxHash) => 
 
 export const harvest = async (ubiq, account, poolContract, onTxHash) => {
   const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+
+  gas.gas = 110000;
 
   return poolContract.methods.getReward().send({ from: account, ...gas }, async (error, txHash) => {
     if (error) {
@@ -93,6 +99,8 @@ export const harvest = async (ubiq, account, poolContract, onTxHash) => {
 
 export const redeem = async (ubiq, account, poolContract, onTxHash) => {
   const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+
+  gas.gas = 180000; // gas for exit()
 
   return poolContract.methods.exit().send({ from: account, ...gas }, async (error, txHash) => {
     if (error) {

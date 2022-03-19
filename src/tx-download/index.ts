@@ -44,7 +44,8 @@ export const scanStart = async (address: string, year: number, progress1Cb: Func
       let probeData = Probes.explore(address, allTxs);
       probeData.results = await updatePrices(probeData.results, priceLookupFn);
 
-      console.error("missing NONCEs!", verifyNonceSequential(address, allTxs).length);
+      // DEBUG: missing none count
+      // console.error("missing NONCEs!", verifyNonceSequential(address, allTxs).length);
 
       return probeData;
     }
@@ -60,11 +61,9 @@ export const scanStart = async (address: string, year: number, progress1Cb: Func
 
 const updatePrices = async (data: Array<ITransferCSVRow>, priceLookupFn: Function): Promise<Array<ITransferCSVRow>> => {
   for (let i = 0; i < data.length; i++) {
-    // console.log("looking up for ", data[i]);
-
-    if (data[i].tokenAddress === undefined) {
-      console.log("looking up for ", data[i]);
-    }
+    // if (data[i].tokenAddress === undefined) {
+    //   console.log("looking up for ", data[i]);
+    // }
 
     let unitPrice = new BigNumber(await priceLookupFn(data[i].tokenAddress, data[i].timestamp));
     data[i].valueUSD = new BigNumber(data[i].value).times(unitPrice).toFixed(2);
@@ -75,42 +74,45 @@ const updatePrices = async (data: Array<ITransferCSVRow>, priceLookupFn: Functio
   return data;
 };
 
-const verifyNonceSequential = (walletAddress: string, list: Array<ITxDetail>): Array<number> => {
-  let sorted = list
-    .filter((tx) => {
-      // filter out only txs originated from our walletAddress
-      // so the nonce counting can be accurate
-      return tx.tx.from.toLowerCase() === walletAddress;
-    })
-    .map((tx) => tx.tx.nonce);
-
-  // console.log("sorted", sorted.length);
-
-  sorted.sort((a: number, b: number) => {
-    if (a < b) {
-      return -1;
-    }
-    return 1;
-  });
-
-  if (sorted.length < 2) {
-    console.error("verifyNonceSequential() - not enough transactions to verify requires > 1");
-    return sorted;
-  }
-
-  let start = sorted[0];
-  let missing = [];
-  for (let i = 1; i < sorted.length; i++) {
-    if (start + 1 !== sorted[i]) {
-      missing.push(start + 1);
-      start = sorted[i];
-    } else {
-      start++;
-    }
-  }
-
-  return missing;
-};
+// TODO: when nonces are missing, show the user what's not going to be in their download.
+// UI still won't be able to show anything but the nonce number, since it hasn't found the txHash
+// 
+// const verifyNonceSequential = (walletAddress: string, list: Array<ITxDetail>): Array<number> => {
+//   let sorted = list
+//     .filter((tx) => {
+//       // filter out only txs originated from our walletAddress
+//       // so the nonce counting can be accurate
+//       return tx.tx.from.toLowerCase() === walletAddress;
+//     })
+//     .map((tx) => tx.tx.nonce);
+//
+//   // console.log("sorted", sorted.length);
+//
+//   sorted.sort((a: number, b: number) => {
+//     if (a < b) {
+//       return -1;
+//     }
+//     return 1;
+//   });
+//
+//   if (sorted.length < 2) {
+//     console.error("verifyNonceSequential() - not enough transactions to verify requires > 1");
+//     return sorted;
+//   }
+//
+//   let start = sorted[0];
+//   let missing = [];
+//   for (let i = 1; i < sorted.length; i++) {
+//     if (start + 1 !== sorted[i]) {
+//       missing.push(start + 1);
+//       start = sorted[i];
+//     } else {
+//       start++;
+//     }
+//   }
+//
+//   return missing;
+// };
 
 export const resultsToCSV = (columns: Array<string>, results: Array<ITransferCSVRow>): string => {
   let str = "";

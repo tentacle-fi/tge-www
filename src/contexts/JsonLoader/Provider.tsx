@@ -86,9 +86,8 @@ const useJsonLoader: React.FC = ({ children }) => {
         },
         (error) => {
           // TODO: set a state var that shows the user some error info about this, give option to retry?
-          console.error("loadData() error loading json", "SyntaxError:", url, error instanceof SyntaxError);
+          // console.error("loadData() error loading json", "SyntaxError:", url, error instanceof SyntaxError);
           // setUiMsg("Candle Data failed to load", "error");
-
           // error = true;
         }
       );

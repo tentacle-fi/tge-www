@@ -8,14 +8,22 @@ import { scanStart, resultsToCSV, rawToCSV } from "tx-download";
 import usePaymentProcessorProvider from "hooks/usePaymentProcessor";
 import { IDatagridResults, IRawCSVRow } from "tx-download/interfaces";
 import Box from "@mui/material/Box";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 import LinearProgress from "@mui/material/LinearProgress";
 import Button from "@mui/material/Button";
 import DownloadIcon from "@mui/icons-material/Download";
 import { tsFormat } from "tx-download/probes/tools";
 import useJsonLoader from "hooks/useJsonLoader";
+import SLink from "components/SLink";
+import InfoIcon from "@mui/icons-material/Info";
 
 // Price to download a dataset, in UBQ for now
-const DownloadPrice = 0.001;
+const DownloadPrice = 100;
+
+const SmallInfo = () => {
+  return <InfoIcon fontSize="small" sx={{ marginRight: "10px" }} />;
+};
 
 const Introduction = () => {
   return (
@@ -79,7 +87,7 @@ const TxDownload: React.FC = () => {
   const onboardingSteps: Array<IOnboardingSteps> = [
     {
       text: account !== null ? "Connected!" : "Connect your wallet",
-      msg: "Start by connecting the wallet which you want to download transactions for. Click the Next button to continue to payment. Note that this service only retrieves transactions for 2021 currently.",
+      msg: 'Start by connecting the wallet which you want to download transactions for. Read the "About" section on the bottom of this page before paying. Click the Next button to continue to payment.',
       runFn: () => {},
       validate: () => {
         if (account === null) {
@@ -91,7 +99,7 @@ const TxDownload: React.FC = () => {
     },
     {
       text: `Pay ${DownloadPrice} Ubiq`,
-      msg: "Send payment to continue. Click next to proceed.",
+      msg: "Send payment to continue. Warning: Don't close your browser after payment! Click next to proceed.",
       runFn: () => {
         if (handlePayment !== undefined) {
           handlePayment("UBQ", DownloadPrice);
@@ -106,7 +114,7 @@ const TxDownload: React.FC = () => {
     },
     {
       text: "Await Confirmation",
-      msg: "Please wait for transaction confirmations",
+      msg: "Please wait for transaction confirmations. Warning: Don't close your browser until you've downloaded your data!",
       runFn: () => {},
       validate: () => {
         return isConfirmed === true;
@@ -124,17 +132,17 @@ const TxDownload: React.FC = () => {
     },
     {
       text: "Download Transactions",
-      msg: "Click the Download button below to save as a CSV",
+      msg: "Click the Download button below to save as a CSV. Warning: Don't close your browser until you've downloaded your data!",
       runFn: () => {},
       validate: () => {
         if (downloadedCsv === false) {
-          return "Click the download button to save your results as a CSV file";
+          return "Click the download button to save your results as a CSV file. Warning: Don't close your browser until you've downloaded your data!";
         }
         return downloadedCsv;
       },
     },
     {
-      text: "Finish",
+      text: "Finished",
       msg: "Thank you for using this service!",
       runFn: () => {},
       validate: () => {
@@ -142,6 +150,73 @@ const TxDownload: React.FC = () => {
       },
     },
   ];
+
+  const AboutSection = () => {
+    return (
+      <div style={{ border: "2px solid black", borderRadius: "10px", marginTop: "25px", width: "80%" }}>
+        <Typography sx={{ marginTop: "10px", textAlign: "center" }} variant="h4">
+          Transaction Download: About
+        </Typography>
+
+        <div style={{ margin: "10px 20px" }}>
+          <List>
+            <ListItem>
+              <SmallInfo />
+              <Typography variant="body1">Currently only data from 2021 can be downloaded. More years will be added!</Typography>
+            </ListItem>
+
+            <ListItem>
+              <SmallInfo />
+
+              <Typography variant="body1">
+                Historical prices are estimated for the following tokens: UBQ, INK, ESCH, GRANS, wETH, GEO, SPHR, CAUL2. Any other token, LP or
+                otherwise, not on this list is not expected to be estimated.
+              </Typography>
+            </ListItem>
+
+            <ListItem>
+              <SmallInfo />
+
+              <Typography variant="body1">Currently Enmaku payments are not found with this tool.</Typography>
+            </ListItem>
+
+            <ListItem>
+              <SmallInfo />
+
+              <Typography variant="body1">
+                If you encounter any issues, please contact a developer via{" "}
+                <SLink external href="https://discord.gg/CbTa6Z2JYM">
+                  Discord
+                </SLink>
+                .
+              </Typography>
+            </ListItem>
+            <ListItem>
+              <SmallInfo />
+
+              <Typography variant="body1">
+                If you find any missing NONCE in your Raw or Processed CSV download, the most common reason is the lack of on-chain log events being
+                recorded. One common example is when a transaction fails to execute.
+              </Typography>
+            </ListItem>
+          </List>
+          <Typography sx={{ marginTop: "10px" }} variant="h5">
+            When processing completes users are presented with two CSV download options:
+          </Typography>
+
+          <List sx={{ justifyContent: "center" }}>
+            <ListItem>
+              1. Raw - Only minimal, unprocessed, data is returned. If we don't currently process a particular contract's methods, this is where you
+              will find those transactions.
+            </ListItem>
+            <ListItem>
+              2. Processed - methodIds are retrieved, prices are looked up, transfers are recorded. This contains the most thorough information.
+            </ListItem>
+          </List>
+        </div>
+      </div>
+    );
+  };
 
   const handleStart = useCallback(async () => {
     if (account === null) {
@@ -195,11 +270,11 @@ const TxDownload: React.FC = () => {
       // return;
 
       // DEBUG: show CSV output
-      console.log(
-        "unprocessed results",
-        results.raw.filter((tx) => tx.processed !== true)
-      );
-      console.log("results", "processed:", results.raw.filter((tx) => tx.processed === true).length, "out of", results.raw.length);
+      // console.log(
+      //   "unprocessed results",
+      //   results.raw.filter((tx) => tx.processed !== true)
+      // );
+      // console.log("results", "processed:", results.raw.filter((tx) => tx.processed === true).length, "out of", results.raw.length);
 
       // TODO: find a better way to pull the names from the ITransferCSVRow interface at compile time (DRY the code)
       const headerCSV = [
@@ -330,29 +405,7 @@ const TxDownload: React.FC = () => {
       )}
       {scanResultsObject !== undefined && <TxTable transactions={scanResultsObject} displaySelectedRow={displaySelectedRow} />}
 
-      <div style={{ margin: "60px auto", minWidth: "320px", width: "75%", maxWidth: "750px", borderTop: "1px solid #cecece", padding: "30px" }}>
-        <Typography variant="h4">Transaction Download: About</Typography>
-        <div style={{ margin: "10px 20px" }}>
-          <Typography variant="body1">Currently only data from 2021 can be downloaded. More years will be added!</Typography>
-          <Typography variant="body1">
-            Historical prices are estimated for the following tokens: UBQ, INK, ESCH, GRANS, wETH, GEO, SPHR, CAUL2. Any other token, LP or otherwise
-            not on this list is not expected to be estimated.
-          </Typography>
-          <Typography variant="body1">Currently Enmaku payments are not found with this tool.</Typography>
-          <Typography variant="body1">If you encounter any issues, please contact a developer via Discord.</Typography>
-          <Typography variant="body1">
-            Processed download option provides a CSV file with all of the processed transactions, historic price lookups (where possible) and any
-            transfer details that were found.
-          </Typography>
-          <Typography variant="body1">
-            Raw download option provides a CSV file with all of the basic details about the transactions found and if they were processed.
-          </Typography>
-          <Typography variant="body1">
-            If you find any missing NONCE in your Raw or Processed CSV download, the most common reason is the lack of on-chain log events being
-            recorded. One common example is when a transaction fails to execute.
-          </Typography>
-        </div>
-      </div>
+      <AboutSection />
     </Page>
   );
 };
