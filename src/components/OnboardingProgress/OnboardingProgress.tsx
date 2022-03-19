@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -38,7 +38,8 @@ const ConfirmationProgress: React.FC<ConfirmationProgressProps> = ({ confirmCoun
   );
 };
 
-const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, steps }) => {
+const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, RetryScanComponent, retryAttempt, steps }) => {
+  const currentRetryAttempt = useRef(0);
   const [activeStep, setActiveStep] = useState(0);
   const [activeStepMsg, setActiveStepMsg] = useState("");
   const [activeStepError, setActiveStepError] = useState("");
@@ -104,13 +105,22 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, steps
     if (activeStep < steps.length) {
       setActiveStepMsg(steps[activeStep].msg);
 
-      if (activeStep === 1) {
+      if (activeStep === 2) {
         window.onbeforeunload = function () {
           return true;
         };
       }
     }
   }, [activeStep, steps]);
+
+  useEffect(() => {
+    if (retryAttempt > 0 && retryAttempt % 2 === 0) {
+      currentRetryAttempt.current = retryAttempt;
+      setActiveStepError("Error scanning, please click retry to start again.");
+    } else {
+      setActiveStepError(""); //reset
+    }
+  }, [retryAttempt]);
 
   const infoMsgStyle = {
     fontStyle: "italic",
@@ -144,9 +154,14 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, steps
           sx={{
             ...infoMsgStyle,
             border: "1px dashed #c90000",
+            textAlign: "center",
           }}
         >
-          {activeStepError}
+          <Typography variant="h6" sx={{ padding: "10px" }}>
+            {activeStepError}
+          </Typography>
+
+          {retryAttempt === currentRetryAttempt.current && <>{RetryScanComponent}</>}
         </Box>
       )}
 

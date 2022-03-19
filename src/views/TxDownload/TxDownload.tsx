@@ -9,6 +9,7 @@ import usePaymentProcessorProvider from "hooks/usePaymentProcessor";
 import { IDatagridResults, IRawCSVRow } from "tx-download/interfaces";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
+import Button from "@mui/material/Button";
 import DownloadIcon from "@mui/icons-material/Download";
 import { tsFormat } from "tx-download/probes/tools";
 import useJsonLoader from "hooks/useJsonLoader";
@@ -59,6 +60,7 @@ const TxDownload: React.FC = () => {
   const [currentProgress, setCurrentProgress] = useState(0);
   const [currentProgressTotal, setCurrentProgressTotal] = useState(0);
   const [downloadedCsv, setDownloadedCsv] = useState(false);
+  const [retryScanAttempts, setRetryScanAttempts] = useState(0);
 
   const { lookupPriceForTime } = useJsonLoader();
 
@@ -150,30 +152,42 @@ const TxDownload: React.FC = () => {
     setEnumerationProgressTotal(0);
     setEnumerationProgress(0);
     setScanResults("");
+    setRetryScanAttempts((prev) => prev + 1);
 
-    const results = await scanStart(
-      account,
-      2021, // year
-      (current: number, total: number) => {
-        // progress1
-        setEnumerationProgress(current);
-        setCurrentProgress(current);
-        setEnumerationProgressTotal(total);
-        setScanProgressTotal(total);
-        setCurrentProgressTotal(total);
-      },
-      (current: number, total: number) => {
-        // progress2
-        setScanProgress(current);
-        setCurrentProgress(current);
+    let results;
 
-        setScanProgressTotal(total);
-        setEnumerationProgress(total);
-        setEnumerationProgressTotal(total);
-        setCurrentProgressTotal(total);
-      },
-      lookupPriceForTime
-    );
+    try {
+      results = await scanStart(
+        account,
+        2021, // year
+        (current: number, total: number) => {
+          // progress1
+          setEnumerationProgress(current);
+          setCurrentProgress(current);
+          setEnumerationProgressTotal(total);
+          setScanProgressTotal(total);
+          setCurrentProgressTotal(total);
+        },
+        (current: number, total: number) => {
+          // progress2
+          setScanProgress(current);
+          setCurrentProgress(current);
+
+          setScanProgressTotal(total);
+          setEnumerationProgress(total);
+          setEnumerationProgressTotal(total);
+          setCurrentProgressTotal(total);
+        },
+        lookupPriceForTime
+      );
+    } catch (e) {
+      // TODO: show a 'retry' option due to a failure of the download. allow n retries
+      console.log("caught error with scan, setting retry");
+      setRetryScanAttempts((prev) => prev + 1);
+      // setScanErrorMsg("ERROR_RETRY_SCAN")
+      handleReset();
+      return;
+    }
 
     if (results !== undefined && results?.results?.length > 0) {
       // DEBUG: show JSON output of the results object
@@ -238,7 +252,11 @@ const TxDownload: React.FC = () => {
       const rawDownloadUrl = window.URL.createObjectURL(new Blob([rawCsv], { type: "text/csv" }));
       setRawScanResults(rawDownloadUrl);
     }
-  }, [account, lookupPriceForTime]);
+  }, [account, lookupPriceForTime, handleReset, setRetryScanAttempts]);
+
+  const handleRetry = useCallback(() => {
+    handleStart();
+  }, [handleStart]);
 
   const userDownloadedCsv = useCallback(() => {
     setDownloadedCsv(true);
@@ -256,11 +274,26 @@ const TxDownload: React.FC = () => {
     [scanResultsObject]
   );
 
+  const RetryButton = () => {
+    return (
+      <Button
+        variant="contained"
+        size="large"
+        color="error"
+        onClick={() => {
+          handleRetry();
+        }}
+      >
+        Retry
+      </Button>
+    );
+  };
+
   return (
     <Page>
       <Introduction />
 
-      <OnboardingProgress resetCb={handleReset} steps={onboardingSteps} />
+      <OnboardingProgress RetryScanComponent={<RetryButton />} retryAttempt={retryScanAttempts} resetCb={handleReset} steps={onboardingSteps} />
 
       {scanResults !== "" && (
         <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", gap: "20px" }}>
@@ -285,12 +318,16 @@ const TxDownload: React.FC = () => {
           </a>
         </div>
       )}
-      <ScanProgressBar progress1={(enumerationProgress / enumerationProgressTotal) * 100} progress2={(scanProgress / scanProgressTotal) * 100} />
 
-      <Typography variant="body1">
-        Current Progress: {currentProgress} / {currentProgressTotal}
-      </Typography>
+      {enumerationProgressTotal > 0 && (
+        <>
+          <ScanProgressBar progress1={(enumerationProgress / enumerationProgressTotal) * 100} progress2={(scanProgress / scanProgressTotal) * 100} />
 
+          <Typography variant="body1">
+            Current Progress: {currentProgress} / {currentProgressTotal}
+          </Typography>
+        </>
+      )}
       {scanResultsObject !== undefined && <TxTable transactions={scanResultsObject} displaySelectedRow={displaySelectedRow} />}
 
       <div style={{ margin: "60px auto", minWidth: "320px", width: "75%", maxWidth: "750px", borderTop: "1px solid #cecece", padding: "30px" }}>

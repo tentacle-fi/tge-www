@@ -60,6 +60,8 @@ export const scanStart = async (address: string, year: number, progress1Cb: Func
 
 const updatePrices = async (data: Array<ITransferCSVRow>, priceLookupFn: Function): Promise<Array<ITransferCSVRow>> => {
   for (let i = 0; i < data.length; i++) {
+    // console.log("looking up for ", data[i]);
+
     if (data[i].tokenAddress === undefined) {
       console.log("looking up for ", data[i]);
     }
@@ -185,10 +187,31 @@ const getLogs = async (
     topics: [null, null, null, formatTopic(originatingAddress)],
   };
 
-  try {
-    return [...(await rpcProvider.getLogs(filter)), ...(await rpcProvider.getLogs(filter2)), ...(await rpcProvider.getLogs(filter3))];
-  } catch (e) {
-    console.error("getlogs error", e);
+  const filter4 = {
+    ...filterBase,
+    address: originatingAddress,
+    topics: [null, null, null],
+  };
+
+  let retries = 0;
+  const totalTries = 3;
+  while (retries < totalTries) {
+    try {
+      return [
+        ...(await rpcProvider.getLogs(filter)),
+        ...(await rpcProvider.getLogs(filter2)),
+        ...(await rpcProvider.getLogs(filter3)),
+        ...(await rpcProvider.getLogs(filter4)),
+      ];
+    } catch (e) {
+      console.error("getlogs error", e);
+
+      if (retries + 1 >= totalTries) {
+        throw new Error("getLogs() unable to retrieve logs, fatal error");
+      }
+    }
+
+    retries++;
   }
 };
 
@@ -212,11 +235,31 @@ export const getAllTxDetails = async (rpcProvider: any, txHashes: Array<string>,
 };
 
 const getTxDetails = async (rpcProvider: any, txHash: string): Promise<ITxDetail> => {
-  const tx = await rpcProvider.getTransaction(txHash);
-  const receipt = await tx.wait(0);
+  let tx;
+  let receipt;
+  let block;
 
-  // TODO: make a 'get block' cache, to query in case of multiple txs in the same block
-  const block = await rpcProvider.getBlock(tx.blockNumber);
+  let retries = 0;
+  const totalTries = 3;
+  while (retries < totalTries) {
+    try {
+      tx = await rpcProvider.getTransaction(txHash);
+      receipt = await tx.wait(0);
+
+      // TODO: make a 'get block' cache, to query in case of multiple txs in the same block
+      block = await rpcProvider.getBlock(tx.blockNumber);
+
+      break; // done getting info, stop loop
+    } catch (e) {
+      console.error("getTxDetails error", e);
+
+      if (retries + 1 >= totalTries) {
+        throw new Error("RPC error: unable to get tx details. times tried: " + totalTries);
+      }
+    }
+
+    retries++;
+  }
 
   // DEBUG: for dev debugging - it's quite verbose when on
   // console.log("tx", tx);
