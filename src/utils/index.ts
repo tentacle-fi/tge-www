@@ -518,7 +518,7 @@ export const getCurrentStats = async (
   }
 };
 
-export const sendUbqEthers = async (userAddress: string, destinationAddress: string, ubqValue: number, provider: any) => {
+export const sendUbqEthers = async (userAddress: string, destinationAddress: string, ubqValue: number, provider: any, data?: string) => {
   // console.log("sending a tx from:", userAddress, "to:", destinationAddress, "with value:", ubqValue);
   let signer;
 
@@ -530,11 +530,24 @@ export const sendUbqEthers = async (userAddress: string, destinationAddress: str
     return;
   }
 
-  const preparedTx = {
+  const txDefaults = {
     from: userAddress,
     to: destinationAddress,
     value: ethers.utils.parseUnits(ubqValue.toString()).toHexString(),
   };
+
+  let preparedTx;
+
+  if (data !== undefined && data !== "") {
+    preparedTx = {
+      ...txDefaults,
+      data: ethers.utils.formatBytes32String(data),
+    };
+  } else {
+    preparedTx = {
+      ...txDefaults,
+    };
+  }
 
   let signedTx;
 

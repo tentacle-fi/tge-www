@@ -5,6 +5,7 @@ export interface IOnboardingProgressProps {
   resetCb: Function;
   RetryScanComponent: ReactNode;
   retryAttempt: number;
+  scanRunning: number;
 }
 
 export interface IOnboardingSteps {

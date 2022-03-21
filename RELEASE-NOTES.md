@@ -107,4 +107,5 @@
 - fix gas price limits
 
 ## Unreleased
-nothing at this time
+- gas price fix for harvest function
+- tx download: multiple fixes (retry download on failure, re-download once paid for the year selected, better ux)

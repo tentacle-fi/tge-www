@@ -236,7 +236,7 @@ export const getAllTxDetails = async (rpcProvider: any, txHashes: Array<string>,
   return results;
 };
 
-const getTxDetails = async (rpcProvider: any, txHash: string): Promise<ITxDetail> => {
+export const getTxDetails = async (rpcProvider: any, txHash: string): Promise<ITxDetail> => {
   let tx;
   let receipt;
   let block;

@@ -20,6 +20,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import FlagIcon from "@mui/icons-material/Flag";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import { TxConfirmationBlocks } from "utils";
+import { useWallet } from "use-wallet";
 
 interface ConfirmationProgressProps {
   confirmCount: number;
@@ -38,8 +39,10 @@ const ConfirmationProgress: React.FC<ConfirmationProgressProps> = ({ confirmCoun
   );
 };
 
-const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, RetryScanComponent, retryAttempt, steps }) => {
-  const currentRetryAttempt = useRef(0);
+const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, scanRunning, RetryScanComponent, retryAttempt, steps }) => {
+  const { account } = useWallet();
+  const currentRetryAttempt = useRef(-1);
+  const stepsCount = useRef(0);
   const [activeStep, setActiveStep] = useState(0);
   const [activeStepMsg, setActiveStepMsg] = useState("");
   const [activeStepError, setActiveStepError] = useState("");
@@ -50,6 +53,8 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, Retry
     setActiveStep(0);
     setActiveStepMsg("");
     setActiveStepError("");
+    currentRetryAttempt.current = -1;
+    stepsCount.current = 0;
 
     if (handleReset !== undefined) {
       handleReset();
@@ -77,10 +82,6 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, Retry
         }
         steps[activeStep].runFn();
         return;
-      }
-
-      if (activeStep + 1 < steps.length) {
-        steps[activeStep + 1].runFn();
       }
     } catch (e) {
       console.error("handleNext() threw error while calling the steps runFn:", e);
@@ -121,6 +122,23 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, Retry
       setActiveStepError(""); //reset
     }
   }, [retryAttempt]);
+
+  useEffect(() => {
+    if (setActiveStep === undefined || steps === undefined) {
+      return;
+    }
+    if (stepsCount.current !== steps.length) {
+      stepsCount.current = steps.length;
+      setActiveStep(0);
+    }
+  }, [setActiveStep, steps]);
+
+  useEffect(() => {
+    if (!account) {
+      return;
+    }
+    setActiveStep(1);
+  }, [account, setActiveStep]);
 
   const infoMsgStyle = {
     fontStyle: "italic",
@@ -169,6 +187,7 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, Retry
         sx={{
           ...infoMsgStyle,
           border: "1px dashed #06d6a0",
+          minHeight: "140px",
         }}
       >
         <Typography variant="h6">{activeStepMsg}</Typography>
@@ -192,7 +211,7 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, Retry
       ) : (
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <ButtonGroup variant="outlined" sx={{ margin: "10px" }}>
-            <Button disabled={activeStep === 0} onClick={handleBack}>
+            <Button disabled={activeStep === 0 || scanRunning > 0} onClick={handleBack}>
               Back
             </Button>
 
