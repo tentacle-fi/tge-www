@@ -1,6 +1,11 @@
+import { ReactNode } from "react";
+
 export interface IOnboardingProgressProps {
   steps: Array<IOnboardingSteps>;
   resetCb: Function;
+  RetryScanComponent: ReactNode;
+  retryAttempt: number;
+  scanRunning: number;
 }
 
 export interface IOnboardingSteps {

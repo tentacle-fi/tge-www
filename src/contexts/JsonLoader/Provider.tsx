@@ -102,7 +102,7 @@ const useJsonLoader: React.FC = ({ children }) => {
       }
       // lookinto cache, if not in cache, start downloading
 
-      const tokenUrl = `${tokenAddress.toLowerCase()}_USDT`; //lookupTokenFromMap(tokenAddress);
+      const tokenUrl = tokenAddress !== "UBQ" ? `${tokenAddress.toLowerCase()}_USDT` : "UBQ_USDT"; //lookupTokenFromMap(tokenAddress);
 
       // console.log("tokenUrl", tokenUrl);
 
