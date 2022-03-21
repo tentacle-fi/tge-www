@@ -1,7 +1,7 @@
 export interface ContextValues {
   paymentTx?: string;
   isConfirmed?: boolean;
-  handlePayment?: (paymentSymbol: string, paymentValue: number) => void;
+  handlePayment?: Function;
   confirmCount?: number;
   handleReset?: Function;
 }

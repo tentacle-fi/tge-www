@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -20,6 +20,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import FlagIcon from "@mui/icons-material/Flag";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import { TxConfirmationBlocks } from "utils";
+import { useWallet } from "use-wallet";
 
 interface ConfirmationProgressProps {
   confirmCount: number;
@@ -38,7 +39,10 @@ const ConfirmationProgress: React.FC<ConfirmationProgressProps> = ({ confirmCoun
   );
 };
 
-const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, steps }) => {
+const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, scanRunning, RetryScanComponent, retryAttempt, steps }) => {
+  const { account } = useWallet();
+  const currentRetryAttempt = useRef(-1);
+  const stepsCount = useRef(0);
   const [activeStep, setActiveStep] = useState(0);
   const [activeStepMsg, setActiveStepMsg] = useState("");
   const [activeStepError, setActiveStepError] = useState("");
@@ -49,6 +53,8 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, steps
     setActiveStep(0);
     setActiveStepMsg("");
     setActiveStepError("");
+    currentRetryAttempt.current = -1;
+    stepsCount.current = 0;
 
     if (handleReset !== undefined) {
       handleReset();
@@ -77,10 +83,6 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, steps
         steps[activeStep].runFn();
         return;
       }
-
-      if (activeStep + 1 < steps.length) {
-        steps[activeStep + 1].runFn();
-      }
     } catch (e) {
       console.error("handleNext() threw error while calling the steps runFn:", e);
       return;
@@ -104,13 +106,39 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, steps
     if (activeStep < steps.length) {
       setActiveStepMsg(steps[activeStep].msg);
 
-      if (activeStep === 1) {
+      if (activeStep === 2) {
         window.onbeforeunload = function () {
           return true;
         };
       }
     }
   }, [activeStep, steps]);
+
+  useEffect(() => {
+    if (retryAttempt > 0 && retryAttempt % 2 === 0) {
+      currentRetryAttempt.current = retryAttempt;
+      setActiveStepError("Error scanning, please click retry to start again.");
+    } else {
+      setActiveStepError(""); //reset
+    }
+  }, [retryAttempt]);
+
+  useEffect(() => {
+    if (setActiveStep === undefined || steps === undefined) {
+      return;
+    }
+    if (stepsCount.current !== steps.length) {
+      stepsCount.current = steps.length;
+      setActiveStep(0);
+    }
+  }, [setActiveStep, steps]);
+
+  useEffect(() => {
+    if (!account) {
+      return;
+    }
+    setActiveStep(1);
+  }, [account, setActiveStep]);
 
   const infoMsgStyle = {
     fontStyle: "italic",
@@ -144,9 +172,14 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, steps
           sx={{
             ...infoMsgStyle,
             border: "1px dashed #c90000",
+            textAlign: "center",
           }}
         >
-          {activeStepError}
+          <Typography variant="h6" sx={{ padding: "10px" }}>
+            {activeStepError}
+          </Typography>
+
+          {retryAttempt === currentRetryAttempt.current && <>{RetryScanComponent}</>}
         </Box>
       )}
 
@@ -154,6 +187,7 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, steps
         sx={{
           ...infoMsgStyle,
           border: "1px dashed #06d6a0",
+          minHeight: "140px",
         }}
       >
         <Typography variant="h6">{activeStepMsg}</Typography>
@@ -177,7 +211,7 @@ const OnboardingProgress: React.FC<IOnboardingProgressProps> = ({ resetCb, steps
       ) : (
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <ButtonGroup variant="outlined" sx={{ margin: "10px" }}>
-            <Button disabled={activeStep === 0} onClick={handleBack}>
+            <Button disabled={activeStep === 0 || scanRunning > 0} onClick={handleBack}>
               Back
             </Button>
 

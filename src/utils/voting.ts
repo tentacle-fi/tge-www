@@ -4,7 +4,7 @@ import { provider } from "web3-core";
 import { getBalanceAsBigNum, getReserves, getERC20Contract } from "./index";
 import { AbiItem } from "web3-utils";
 import { IFarm, INK } from "farms/AvailableFarms";
-import { GAS } from "ubiq-sdk/utils";
+import { GET_GAS } from "ubiq-sdk/utils";
 import { ethers } from "ethers";
 import VotingABI from "constants/abi/Voting.json";
 
@@ -172,7 +172,7 @@ export const getVotes = async (provider: provider, voteContractAddress: string):
 };
 
 export const submitVote = async (provider: provider, walletAddress: string, voteOption: number, voteContractAddress: string): Promise<boolean> => {
-  const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+  const gas = GET_GAS();
 
   gas.gas = 80000; // gas for just submitVote
 

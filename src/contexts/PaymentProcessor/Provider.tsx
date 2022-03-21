@@ -8,7 +8,7 @@ import { DAO_MULTISIG } from "farms/AvailableFarms";
 const PaymentProcessor: React.FC = ({ children }) => {
   const [paymentTx, setPaymentTx] = useState("");
   const [isConfirmed, setIsConfirmed] = useState(false);
-  const { BlockNum, provider, setConfirmModal } = useEvm();
+  const { BlockNum, evmProvider, setConfirmModal } = useEvm();
   const { account } = useWallet();
   const [confirmCount, setConfirmCount] = useState(-1);
   const waitingForConfirmations = useRef(false);
@@ -41,10 +41,10 @@ const PaymentProcessor: React.FC = ({ children }) => {
   );
 
   const handlePayment = useCallback(
-    async (whatToSend: string, amount: number) => {
-      if (!account || !provider) {
+    async (whatToSend: string, amount: number, year: number) => {
+      if (!account || !evmProvider) {
         console.log("missing provider or account");
-        console.log("account:", account, "provider:", provider, BlockNum);
+        console.log("account:", account, "provider:", evmProvider, BlockNum);
         return;
       }
 
@@ -60,7 +60,7 @@ const PaymentProcessor: React.FC = ({ children }) => {
             break;
           case "UBQ":
             // generate and broadcast the transaction
-            sendTxHash = await sendUbqEthers(account, DAO_MULTISIG, amount, provider);
+            sendTxHash = await sendUbqEthers(account, DAO_MULTISIG, amount, evmProvider, "txdl_" + year);
 
             if (sendTxHash === undefined) {
               throw new Error("payment rejected or did not succeed");
@@ -73,7 +73,7 @@ const PaymentProcessor: React.FC = ({ children }) => {
             setPaymentTx(sendTxHash);
 
             // wait for the tx to get mined
-            await waitForTransaction(provider, sendTxHash);
+            await waitForTransaction(evmProvider, sendTxHash);
             break;
           default:
             throw new Error("Unknown token type to send!");
@@ -85,16 +85,16 @@ const PaymentProcessor: React.FC = ({ children }) => {
 
       setConfirmModal(false);
     },
-    [account, provider, BlockNum, setConfirmModal, setConfirmCount]
+    [account, evmProvider, BlockNum, setConfirmModal, setConfirmCount]
   );
 
   useEffect(() => {
-    if (!paymentTx || provider === undefined || waitingForConfirmations.current === false) {
+    if (!paymentTx || evmProvider === undefined || waitingForConfirmations.current === false) {
       return;
     }
 
-    fetchTxReciept(paymentTx, provider);
-  }, [BlockNum, paymentTx, provider, fetchTxReciept]);
+    fetchTxReciept(paymentTx, evmProvider);
+  }, [BlockNum, paymentTx, evmProvider, fetchTxReciept]);
 
   return (
     <Context.Provider

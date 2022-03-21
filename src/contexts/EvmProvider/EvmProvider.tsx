@@ -4,13 +4,13 @@ import { ethers } from "ethers";
 import { useWallet } from "use-wallet";
 
 export interface EvmContext {
-  provider?: any;
+  evmProvider?: any;
   BlockNum: number;
   setConfirmModal: (isOpen: boolean, message?: string) => void; // display a modal and a given string message, or hide the modal
 }
 
 export const Context = createContext<EvmContext>({
-  provider: undefined,
+  evmProvider: undefined,
   BlockNum: 0,
   setConfirmModal: () => {},
 });
@@ -78,7 +78,7 @@ const EvmProvider: React.FC = ({ children }) => {
   }, [account]);
 
   return (
-    <Context.Provider value={{ provider: Provider, setConfirmModal: customTxModal, BlockNum }}>
+    <Context.Provider value={{ evmProvider: Provider, setConfirmModal: customTxModal, BlockNum }}>
       {children}
 
       <ConfirmTransactionModal message={confirmTxModalMessage} isOpen={confirmTxModalIsOpen} />

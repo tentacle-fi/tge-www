@@ -4,7 +4,7 @@ import Web3 from "web3";
 import { provider, TransactionReceipt } from "web3-core";
 import { AbiItem } from "web3-utils";
 import { INK, ESCH, DAO_MULTISIG, DAO_FARMING, AvailableFarms } from "farms/AvailableFarms";
-import { GAS } from "ubiq-sdk/utils";
+import { GET_GAS } from "ubiq-sdk/utils";
 import ERC20ABI from "constants/abi/ERC20.json";
 import ShinobiPoolERC20 from "ubiq-sdk/lib/clean_build/contracts/ShinobiPool.json";
 
@@ -35,7 +35,7 @@ export const approve = async (
   try {
     const tokenContract = getERC20Contract(provider, tokenAddress);
 
-    const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+    const gas = GET_GAS();
 
     gas.gas = 80000; // set custom low gas fee for this operation (approve)
 
@@ -67,7 +67,7 @@ export const sendUbq = async (userAddress: string, destinationAddress: string, u
   try {
     const web3 = new Web3(provider);
 
-    const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+    const gas = GET_GAS();
 
     gas.gas = 21000; // gas specific to Ubiq send
 
@@ -87,7 +87,7 @@ export const sendTokens = async (userAddress: string, destinationAddress: string
   try {
     const tokenContract = getERC20Contract(provider, tokenAddress);
 
-    const gas = window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.MM;
+    const gas = GET_GAS();
 
     gas.gas = 50000; // gas specific to Token send
 
@@ -518,7 +518,7 @@ export const getCurrentStats = async (
   }
 };
 
-export const sendUbqEthers = async (userAddress: string, destinationAddress: string, ubqValue: number, provider: any) => {
+export const sendUbqEthers = async (userAddress: string, destinationAddress: string, ubqValue: number, provider: any, data?: string) => {
   // console.log("sending a tx from:", userAddress, "to:", destinationAddress, "with value:", ubqValue);
   let signer;
 
@@ -530,11 +530,24 @@ export const sendUbqEthers = async (userAddress: string, destinationAddress: str
     return;
   }
 
-  const preparedTx = {
+  const txDefaults = {
     from: userAddress,
     to: destinationAddress,
     value: ethers.utils.parseUnits(ubqValue.toString()).toHexString(),
   };
+
+  let preparedTx;
+
+  if (data !== undefined && data !== "") {
+    preparedTx = {
+      ...txDefaults,
+      data: ethers.utils.formatBytes32String(data),
+    };
+  } else {
+    preparedTx = {
+      ...txDefaults,
+    };
+  }
 
   let signedTx;
 
