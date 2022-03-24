@@ -174,7 +174,7 @@ export const getVotes = async (provider: provider, voteContractAddress: string):
 export const submitVote = async (provider: provider, walletAddress: string, voteOption: number, voteContractAddress: string): Promise<boolean> => {
   const gas = GET_GAS();
 
-  gas.gas = 80000; // gas for just submitVote
+  gas.gas = 120000; // gas for just submitVote
 
   try {
     const contract = getVoteContract(provider, voteContractAddress);
