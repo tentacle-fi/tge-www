@@ -110,5 +110,8 @@
 - gas price fix for harvest function
 - tx download: multiple fixes (retry download on failure, re-download once paid for the year selected, better ux)
 
+## 1.9.0
+- gas hotfix for vote function
+
 ## Unreleased
 nothing at this time
