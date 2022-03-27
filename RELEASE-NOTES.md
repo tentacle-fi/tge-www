@@ -115,3 +115,5 @@
 
 ## Unreleased
 - voting ux improvements and rpc call optimizations
+- update homepage layout
+- improve donate component
