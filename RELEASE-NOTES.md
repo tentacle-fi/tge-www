@@ -114,4 +114,6 @@
 - gas hotfix for vote function
 
 ## Unreleased
-nothing at this time
+- voting ux improvements, styling improvements, and rpc call optimizations
+- update homepage layout
+- improve donate component

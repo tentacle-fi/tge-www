@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState, useRef } from "react";
 import Typography from "@mui/material/Typography";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
@@ -9,12 +9,13 @@ import Chip from "@mui/material/Chip";
 import { AvailableFarms } from "farms/AvailableFarms";
 import useUbiq from "hooks/useUbiq";
 import { useWallet } from "use-wallet";
-import { submitVote, getVotingPower, getVotes, getVoteDetails, getWalletVote, IVoteDetails } from "utils/voting";
+import { submitVote, getVotingPower, getVotes, getVoteDetails, getWalletVote, IVoteDetails, IVote } from "utils/voting";
 import LinearProgress, { LinearProgressProps } from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import useEvm from "hooks/useEvmProvider";
 import Alert from "@mui/material/Alert";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const LinearProgressWithLabel = (props: LinearProgressProps & { value: number }) => {
   return (
@@ -39,6 +40,7 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
   // const { setConfirmModal } = useFarming();
   const { setConfirmModal } = useEvm();
   const { BlockNum } = useUbiq();
+  const lastBlockNum = useRef(-1);
 
   const [votingPower, setVotingPower] = useState("0");
   const [myWalletVote, setMyWalletVote] = useState(1);
@@ -47,6 +49,9 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
   const [isVoting, setIsVoting] = useState(false);
   const [hasVoted, setHasVoted] = useState(false);
   const [voteError, setVoteError] = useState("");
+
+  const [gatheringVotes, setGatheringVotes] = useState(0);
+  const [previousVotes, setPreviousVotes] = useState<Array<IVote>>();
 
   const fetchVotingPower = useCallback(async () => {
     if (!ethereum || !account || AvailableFarms.length < 1 || vote === undefined) {
@@ -57,21 +62,49 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
   }, [account, ethereum, vote]);
 
   const fetchVotes = useCallback(async () => {
-    if (!ethereum || !account || !vote) {
+    if (!ethereum || !account || !vote || gatheringVotes > 0) {
+      lastBlockNum.current = -1;
       return;
     }
     const listOfVotes = await getVotes(ethereum, vote.contractAddress);
+
+    // check if any of the votes have changed, reload ones that have.
+    // assumes that no voting weight can change after the vote has started,
+    // so only reload if the vote ballet (option) has changed! saves RPC calls
+    if (previousVotes === undefined) {
+      setPreviousVotes(listOfVotes);
+    } else {
+      // check for any vote changes to reduce rpc calls
+      let newVotes = false;
+      for (let i = 0; i < listOfVotes.length; i++) {
+        if (listOfVotes[i].address === previousVotes[i].address && listOfVotes[i].option !== previousVotes[i].option) {
+          // there is a new vote and should be loaded
+          newVotes = true;
+          setPreviousVotes(listOfVotes);
+          break;
+        }
+      }
+      if (newVotes === false) {
+        return;
+      }
+    }
 
     let results = vote.options.map((v, i) => {
       return 0;
     });
 
+    setGatheringVotes(0);
+
     for (let i = 0; i < listOfVotes.length; i++) {
       results[listOfVotes[i].option - 1] += await getVotingPower(ethereum, listOfVotes[i].address, AvailableFarms, vote);
+
+      setGatheringVotes(Math.ceil((100 * i) / (listOfVotes.length - 1)));
     }
 
+    setGatheringVotes(0);
+
     setVoteResults(results);
-  }, [ethereum, vote, account]);
+  }, [ethereum, vote, account, gatheringVotes, previousVotes]);
 
   const fetchVoteDetails = useCallback(async () => {
     if (!ethereum || !voteAddress) {
@@ -115,11 +148,15 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
 
       setConfirmModal(true);
       setIsVoting(true);
-      await submitVote(ethereum, account, voteOption, voteAddress);
+      const res = await submitVote(ethereum, account, voteOption, voteAddress);
       setIsVoting(false);
       setConfirmModal(false);
+
+      if (res === true) {
+        setHasVoted(true);
+      }
     },
-    [ethereum, account, voteAddress, setConfirmModal]
+    [ethereum, account, voteAddress, setConfirmModal, setHasVoted]
   );
 
   useEffect(() => {
@@ -131,6 +168,10 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
   }, [fetchVotingPower]);
 
   useEffect(() => {
+    if (fetchVotes === undefined || BlockNum === lastBlockNum.current) {
+      return;
+    }
+    lastBlockNum.current = BlockNum;
     fetchVotes();
   }, [fetchVotes, BlockNum]);
 
@@ -151,6 +192,13 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
       <Typography variant="body1" sx={{ minWidth: "320px", width: "90%", maxWidth: "900px" }}>
         {vote.desc}
       </Typography>
+
+      {gatheringVotes > 0 && (
+        <Box sx={{ display: "flex", gap: "10px", alignItems: "center", margin: "15px" }}>
+          <CircularProgress size={34} variant="determinate" value={gatheringVotes} />
+          <Typography>Loading Votes, please wait {gatheringVotes}%</Typography>
+        </Box>
+      )}
 
       <VoteFormComponent
         voteError={voteError}
@@ -273,19 +321,21 @@ const VoteFormComponent: React.FC<IVoteFormProps> = ({ voteError, hasVoted, isVo
         </div>
       </RadioGroup>
       {vote !== undefined && BlockNum >= vote.startBlock && BlockNum < vote.endBlock && (
-        <Button sx={{ marginTop: "20px" }} variant="contained" onClick={() => submitFn(selectedValue + 1)}>
+        <Button sx={{ marginTop: "20px" }} disabled={parseFloat(votingPower) <= 0} variant="contained" onClick={() => submitFn(selectedValue + 1)}>
           Vote with {votingPower}!
         </Button>
       )}
 
-      {isVoting === false && hasVoted === false && (
+      {parseFloat(votingPower) > 0 && isVoting === false && hasVoted === false && (
         <Typography variant="h5" sx={{ textAlign: "center", padding: "15px" }}>
           Don't forget to cast your vote!
         </Typography>
       )}
 
       {hasVoted === true && (
-        <Typography variant="body1">Thank you for voting! Check back after the vote has finished to get the final results.</Typography>
+        <Typography variant="body1" sx={{ margin: "20px", textAlign: "center" }}>
+          Thank you for voting! Check back after the vote has finished to get the final results.
+        </Typography>
       )}
 
       {voteError !== "" && <Alert severity="error">{voteError}</Alert>}
