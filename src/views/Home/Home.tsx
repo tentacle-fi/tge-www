@@ -76,7 +76,7 @@ function RoadmapTimeline() {
         <TimelinePhase title="Phase 1" desc="Launch INK, Launch Tentacle.Finance Site, Begin Farming" complete={true} />
         <TimelinePhase title="Phase 2" desc="Launch Additional Farms, Enhance Farm UI" complete={true} />
         <TimelinePhase title="Phase 3" desc="Additional Farming Features, Secret Launch, DAO Info Page" complete={true} />
-        <TimelinePhase title="Phase 4" desc="Governance, and More!" />
+        <TimelinePhase title="Phase 4" desc="Governance, and More!" complete={true} />
       </Timeline>
       <hr style={{ color: "#0c001c", borderWidth: "5px", width: "80%" }} />
     </>
