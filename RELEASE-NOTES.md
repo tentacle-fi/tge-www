@@ -113,7 +113,10 @@
 ## 1.9.0
 - gas hotfix for vote function
 
-## Unreleased
+## 1.10.0
 - voting ux improvements, styling improvements, and rpc call optimizations
 - update homepage layout
 - improve donate component
+
+## Unreleased
+nothing at this time
