@@ -333,7 +333,7 @@ const VoteFormComponent: React.FC<IVoteFormProps> = ({ voteError, hasVoted, isVo
       )}
 
       {hasVoted === true && (
-        <Typography variant="body1" sx={{ margin: "20px" }}>
+        <Typography variant="body1" sx={{ margin: "20px", textAlign: "center" }}>
           Thank you for voting! Check back after the vote has finished to get the final results.
         </Typography>
       )}
