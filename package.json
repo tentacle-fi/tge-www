@@ -1,6 +1,6 @@
 {
   "name": "ubiq-tge-www",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "private": true,
   "scripts": {
     "start": "BROWSER=none react-scripts start",
@@ -9,7 +9,8 @@
     "eslint": "eslint . --fix",
     "test": "react-scripts test",
     "eject": "echo 'do not run this!' && exit(1) && #react-scripts eject",
-    "husky_setup": "husky install"
+    "husky_setup": "husky install",
+    "git_cleanup": "git branch -d $(git branch --merged=master | grep -v master) && git fetch --prune"
   },
   "engines": {
     "npm": ">=6.0.0",

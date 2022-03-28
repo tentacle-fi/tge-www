@@ -2,6 +2,7 @@ import React from "react";
 import Page from "components/Page";
 import PageHeader from "components/PageHeader";
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import Timeline from "@mui/lab/Timeline";
 import TimelineItem from "@mui/lab/TimelineItem";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
@@ -48,8 +49,8 @@ const Home: React.FC = () => {
     <Page>
       <PageHeader icon={<NightsStayIcon sx={{ fontSize: "98px" }} />} title="Welcome to Tentacle.Finance" />
       <Introduction />
-      <Donate />
       <RoadmapTimeline />
+      <Donate />
     </Page>
   );
 };
@@ -58,8 +59,9 @@ function Introduction() {
   return (
     <Box sx={{ textAlign: "center", maxWidth: "800px" }}>
       <p>
-        Tentacle Finance is a collection of Decentralized Finance (DeFi) apps and traditional Smart Contract Decentralized Apps (dApps). These are
-        produced and maintained by the Tentacle Finance Decentralized Autonomous Organization (DAO).
+        Tentacle Finance is a collection of Decentralized Finance (DeFi) apps and traditional Smart Contract Decentralized Apps (dApps), currently
+        running on the Ubiq blockchain. These are produced and maintained by the Tentacle Finance Decentralized Autonomous Organization (DAO) which is
+        open for participation to everyone. Join the Discord now to learn how you can contribute.
       </p>
     </Box>
   );
@@ -67,12 +69,17 @@ function Introduction() {
 
 function RoadmapTimeline() {
   return (
-    <Timeline position="alternate">
-      <TimelinePhase title="Phase 1" desc="Launch INK, Launch Tentacle.Finance Site, Begin Farming" complete={true} />
-      <TimelinePhase title="Phase 2" desc="Launch Additional Farms, Enhance Farm UI" complete={true} />
-      <TimelinePhase title="Phase 3" desc="Additional Farming Features, Secret Launch, DAO Info Page" complete={true} />
-      <TimelinePhase title="Phase 4" desc="Governance, and More!" />
-    </Timeline>
+    <>
+      <hr style={{ color: "#0c001c", borderWidth: "5px", width: "80%" }} />
+      <Typography variant="h4">Phases</Typography>
+      <Timeline position="alternate">
+        <TimelinePhase title="Phase 1" desc="Launch INK, Launch Tentacle.Finance Site, Begin Farming" complete={true} />
+        <TimelinePhase title="Phase 2" desc="Launch Additional Farms, Enhance Farm UI" complete={true} />
+        <TimelinePhase title="Phase 3" desc="Additional Farming Features, Secret Launch, DAO Info Page" complete={true} />
+        <TimelinePhase title="Phase 4" desc="Governance, and More!" complete={true} />
+      </Timeline>
+      <hr style={{ color: "#0c001c", borderWidth: "5px", width: "80%" }} />
+    </>
   );
 }
 

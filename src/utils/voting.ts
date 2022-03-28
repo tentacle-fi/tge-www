@@ -172,20 +172,20 @@ export const getVotes = async (provider: provider, voteContractAddress: string):
 };
 
 export const submitVote = async (provider: provider, walletAddress: string, voteOption: number, voteContractAddress: string): Promise<boolean> => {
-  const gas = GET_GAS();
+  return new Promise((resolve, reject) => {
+    const gas = GET_GAS();
+    gas.gas = 120000; // gas for just submitVote
 
-  gas.gas = 120000; // gas for just submitVote
-
-  try {
-    const contract = getVoteContract(provider, voteContractAddress);
-    await contract.methods.vote(voteOption.toString()).send({ from: walletAddress, ...gas }, async (error: any, txHash: string) => {
-      console.log("submitVote callback", error, txHash);
-    });
-
-    return true;
-  } catch (e) {
-    return false;
-  }
+    try {
+      const contract = getVoteContract(provider, voteContractAddress);
+      contract.methods.vote(voteOption.toString()).send({ from: walletAddress, ...gas }, async (error: any, txHash: string) => {
+        console.log("submitVote callback", error, txHash);
+        resolve(true);
+      });
+    } catch (e) {
+      resolve(false);
+    }
+  });
 };
 
 export const getVoteDetails = async (provider: provider, voteContractAddress: string): Promise<IVoteDetails | undefined> => {

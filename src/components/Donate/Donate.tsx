@@ -82,14 +82,14 @@ const Donate: React.FC = () => {
         maxWidth: "600px",
         borderRadius: "15px",
         padding: "30px",
-        textAlign: "left",
+        textAlign: "center",
       }}
     >
       <Typography variant="h4">Donate today!</Typography>
       <Typography variant="h5">Will you help Us build a better UBQ network?</Typography>
       <Typography variant="body1" style={{ textAlign: "center" }}>
-        Tentacle.finance is dedicated to continual development on the UBQ network. This has already been shown with the multi-farming interface,
-        allowing You to manage your farms in a single place!
+        Tentacle.finance is dedicated to continual growth and development on the Ubiq network. Donate Today to help the DAO extend its tentacles into
+        other networks and projects!
       </Typography>
 
       <Box
