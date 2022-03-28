@@ -117,6 +117,7 @@
 - voting ux improvements, styling improvements, and rpc call optimizations
 - update homepage layout
 - improve donate component
+- mark phase 4 completed
 
 ## Unreleased
 nothing at this time
