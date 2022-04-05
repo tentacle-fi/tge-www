@@ -145,7 +145,10 @@
 - a voting contract deployment ux is now created
 - a voting ballot deployment ux is now created
 
-## Unreleased
+## 1.12.0
+
 - voting invalid list now dynamically loaded for future vote tests
+
+## Unreleased
 
 nothing at this time
