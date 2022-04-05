@@ -257,7 +257,7 @@ const CreateNewVote: React.FC = () => {
         <Button onClick={() => handleValidate()} variant="outlined">
           Validate
         </Button>
-        <Button disabled={validationComplete === 2} onClick={() => handleDeployContract()} variant="outlined">
+        <Button disabled={validationComplete !== 2} onClick={() => handleDeployContract()} variant="outlined">
           Deploy
         </Button>
 
