@@ -40,7 +40,7 @@ export const getDeployedVotingContracts = async () => {
     return [];
   }
 
-  return logs.map((log) => log.address).reverse();
+  return logs.map((log) => log.address.toLowerCase()).reverse();
 };
 
 // get all voting power for the wallet address, at the specified block height
