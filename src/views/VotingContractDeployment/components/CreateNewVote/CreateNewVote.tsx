@@ -51,7 +51,7 @@ const CreateNewVote: React.FC = () => {
         const l = load[i];
 
         let tmp = "";
-        await fetch(`${GITHUB_URL}${l.url}`)
+        await fetch(`${GITHUB_URL}${l.url}?r=${Math.random().toFixed(6)}`)
           .then((res) => res.text())
           .then((data) => (tmp = data));
 

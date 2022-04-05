@@ -142,7 +142,12 @@
 ## 1.11.0
 
 - voting now will show better formatting, specifically newlines are displayed
+- a voting contract deployment ux is now created
 - a voting ballot deployment ux is now created
+
+## 1.12.0
+
+- voting invalid list now dynamically loaded for future vote tests
 
 ## Unreleased
 
