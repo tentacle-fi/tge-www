@@ -120,4 +120,5 @@
 - mark phase 4 completed
 
 ## Unreleased
-nothing at this time
+- voting now will show better formatting, specifically newlines are displayed
+- a voting contract deployment ux is now created

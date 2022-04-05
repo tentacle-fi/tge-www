@@ -117,7 +117,6 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
       return;
     }
 
-    // setVote({startBlock: results.startBlock, endBlock:results.endBlock, desc:results.desc, title: results.title, options:results.options, contractAddress: voteAddress} as IVoteDetails);
     setVote({ ...results, contractAddress: voteAddress });
   }, [ethereum, voteAddress]);
 
@@ -189,7 +188,7 @@ const VotingBooth: React.FC<IVotingBoothProps> = ({ voteAddress }) => {
 
       <Typography variant="h4">{vote.title}</Typography>
 
-      <Typography variant="body1" sx={{ minWidth: "320px", width: "90%", maxWidth: "900px" }}>
+      <Typography variant="body1" sx={{ whiteSpace: "pre-line", minWidth: "320px", width: "90%", maxWidth: "900px" }}>
         {vote.desc}
       </Typography>
 
