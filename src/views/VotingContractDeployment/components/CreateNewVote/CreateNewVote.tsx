@@ -22,7 +22,7 @@ const CreateNewVote: React.FC = () => {
   const [endBlock, setEndBlock] = useState(DefaultEndBlocks);
   const [title, setTitle] = useState<string>();
   const [desc, setDesc] = useState<string>();
-  const [options, setOptions] = useState<Array<string>>(["", ""]);
+  const [options, setOptions] = useState<Array<string>>(["", "", "", "", "", "", "", ""]);
   const [abi, setAbi] = useState<string>();
   const [bytecode, setBytecode] = useState<string>();
 
@@ -89,10 +89,11 @@ const CreateNewVote: React.FC = () => {
           return;
         }
         setOptions((prev) => {
+          let tmp = [...prev];
           if (index < prev.length) {
             // update at index
-            let tmp = [...prev];
             tmp[index] = value;
+
             return tmp;
           }
           return prev;
@@ -252,7 +253,7 @@ const CreateNewVote: React.FC = () => {
   }, [fetchAbiBytecode]);
 
   return (
-    <FlexBox sx={{ maxWidth: "600px" }}>
+    <FlexBox sx={{ maxWidth: "90%" }}>
       <FlexBox>
         <Button onClick={() => handleValidate()} variant="outlined">
           Validate
