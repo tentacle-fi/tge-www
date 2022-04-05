@@ -1,9 +1,11 @@
 # Release Notes for Tentacle.Finance
 
 ## 0.1.0
+
 - initial launch of INK/UBQ Yield Farm, with Tentacle.Finance branding and tweaks
 
 ## 1.0.1
+
 - added versioning to build outputs, update `package.json` `version` for next release
 - further UI improvements for a link on the Farming page to Shinobi LP addition
 - added LP % for staked amount to the Farm page and shortened the displayed digits for easier reading
@@ -31,6 +33,7 @@
 - Mobile styling updates
 
 ## 1.0.2
+
 - reload page on account change
 - Address page updates
 - Wallet modal fix very small balances
@@ -39,26 +42,32 @@
 - ubq Price oracle timeframe expanded to reduce potential for missing the latest price
 
 ## 1.0.3
+
 - TGE1 Community Farm added
 - cleanup
 - update block timer to use new 22 second average target
 - update oracle block calculations to use new 22 second target
 
 ## 1.1.0
+
 - bumping version number to `1.1.0` with a future release incrementing the minor number
 - hotfix for gas spending due to EIP-1559
 
 ## 1.1.1
+
 - fix for gas prices on donate button(s)
 
 ## 1.2.0
+
 - ubq/esch farm added
 
 ## 1.3.0
+
 - hotfix for staked token value calculations
 - updated TGE1 farm pair name
 
 ## 1.4.0
+
 - add farm tier label to the Tentacle farms (tier 1, tier 2, etc...)
 - added tooltip to tier label
 - adjusted dao info page text (summary)
@@ -69,6 +78,7 @@
 - APY is now 0% when contract `isPaused` or current date is after `periodFinish`
 
 #### DAO Info Page
+
 - ecosystemTvl added
 - circulating INK added NOTE: Calculates based on harvested INK. IE, unharvested INK is not circulating based on this calculation.
 - daily transaction count added
@@ -79,47 +89,63 @@
 - ToS added to footer
 
 ## 1.4.3
+
 - mobile styling of DAO info page
 - add ubq weth farm
 - show fully diluted marketcap while hovering over marketcap
 
 ## 1.5.0
+
 - add weth to daily transactions on DAO Info
 - APR and APY updates
 - add "more" link for additional resource links in main nav
 
 ## 1.5.1
+
 - hotfix monoceros fee handling
 
 ## 1.6.0
+
 - voting implemented
 - tx download history implemented
 
 ## 1.6.1
+
 - improve download history workflow, status, and errormsgs
 - add nonce to output csv
 
 ## 1.6.2
+
 - add usdt (oracle) based pricing to csv output
 
 ## 1.7.0
+
 - add temp warning about leaving the tx download page before downloading CSV
 - fix gas price limits
 
 ## 1.8.0
+
 - gas price fix for harvest function
 - tx download: multiple fixes (retry download on failure, re-download once paid for the year selected, better ux)
 
 ## 1.9.0
+
 - gas hotfix for vote function
 
 ## 1.10.0
+
 - voting ux improvements, styling improvements, and rpc call optimizations
 - update homepage layout
 - improve donate component
 - mark phase 4 completed
 
-## Unreleased
+## 1.11.0
+
 - voting now will show better formatting, specifically newlines are displayed
 - a voting contract deployment ux is now created
+- a voting ballot deployment ux is now created
+
+## Unreleased
 - voting invalid list now dynamically loaded for future vote tests
+
+nothing at this time
