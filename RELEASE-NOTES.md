@@ -122,3 +122,4 @@
 ## Unreleased
 - voting now will show better formatting, specifically newlines are displayed
 - a voting contract deployment ux is now created
+- voting invalid list now dynamically loaded for future vote tests

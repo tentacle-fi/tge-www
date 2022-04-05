@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import Page from "components/Page";
 import PageHeader from "components/PageHeader";
 import HowToVoteIcon from "@mui/icons-material/HowToVote";
@@ -76,29 +76,55 @@ const Instructions = () => {
   );
 };
 
-// list of invalid ballots that should not be voted on.
-// either they had the wrong params deployed or some other error that causes them to be unwanted.
-// the voting contract doesn't have a way to 'destroy' or invalidate a vote contract.
-// this is by design.
-const invalidBallots = ["0x76249d2b17077b97A5E5c391fB4Aa11317b42EA4"];
-
 const Governance: React.FC = () => {
   const { status } = useWallet();
 
-  const [allVotes, setAllVotes] = useState<Array<string>>();
+  const [invalidBallots, setInvalidBallots] = useState<Array<string>>();
+  const [allBallots, setAllBallots] = useState<Array<string>>();
+  const [validBallots, setValidBallots] = useState<Array<string>>();
+
+  const fetchInvalidVoteList = useCallback(async () => {
+    // list of invalid ballots that should not be voted on.
+    // either they had the wrong params deployed or some other error that causes them to be unwanted.
+    // the voting contract doesn't have a way to 'destroy' or invalidate a vote contract.
+    // this is by design.
+    const GITHUB_URL =
+      "https://raw.githubusercontent.com/tentacle-fi/tge-www/master/src/views/Governance/invalidBallots.json?r=" + Math.random().toFixed(6);
+
+    try {
+      let tmp = [] as string[];
+      await fetch(GITHUB_URL)
+        .then((res) => res.json())
+        .then((data) => (tmp = data));
+
+      setInvalidBallots(tmp?.map((f) => f.toLowerCase()));
+    } catch (e) {
+      console.error("failed to load", e);
+    }
+  }, []);
 
   const fetchAllVotes = useCallback(async () => {
     const tmp = await getDeployedVotingContracts();
-    setAllVotes(tmp.filter((f) => invalidBallots.indexOf(f) < 0));
+    setAllBallots(tmp);
   }, []);
 
   useEffect(() => {
+    fetchInvalidVoteList();
     fetchAllVotes();
-  }, [fetchAllVotes]);
+  }, [fetchAllVotes, fetchInvalidVoteList]);
 
-  const Votes = allVotes?.map((v, i) => {
-    return <VotingBooth key={i} voteAddress={v} />;
-  });
+  useEffect(() => {
+    if (invalidBallots === undefined || allBallots === undefined) {
+      return;
+    }
+    setValidBallots(allBallots.filter((f) => invalidBallots.indexOf(f) < 0));
+  }, [invalidBallots, allBallots]);
+
+  const Votes = useMemo(() => {
+    return validBallots?.map((v, i) => {
+      return <VotingBooth key={i} voteAddress={v} />;
+    });
+  }, [validBallots]);
 
   if (status === "disconnected") {
     return (
