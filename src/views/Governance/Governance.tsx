@@ -76,13 +76,20 @@ const Instructions = () => {
   );
 };
 
+// list of invalid ballots that should not be voted on.
+// either they had the wrong params deployed or some other error that causes them to be unwanted.
+// the voting contract doesn't have a way to 'destroy' or invalidate a vote contract.
+// this is by design.
+const invalidBallots = ["0x76249d2b17077b97A5E5c391fB4Aa11317b42EA4"];
+
 const Governance: React.FC = () => {
   const { status } = useWallet();
 
   const [allVotes, setAllVotes] = useState<Array<string>>();
 
   const fetchAllVotes = useCallback(async () => {
-    setAllVotes(await getDeployedVotingContracts());
+    const tmp = await getDeployedVotingContracts();
+    setAllVotes(tmp.filter((f) => invalidBallots.indexOf(f) < 0));
   }, []);
 
   useEffect(() => {

@@ -23,6 +23,7 @@ import DaoInfo from "views/DaoInfo";
 import TxDownload from "views/TxDownload";
 
 import { JsonLoaderProvider } from "contexts/JsonLoader";
+import VotingContractDeployment from "views/VotingContractDeployment";
 
 const App: React.FC = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -48,6 +49,7 @@ const App: React.FC = () => {
             <Route path="/help" element={<Help />} />
             <Route path="/governance" element={<Governance />} />
             <Route path="/daoinfo" element={<DaoInfo />} />
+            <Route path="/vote-deploy" element={<VotingContractDeployment />} />
             <Route
               path="/tx-download"
               element={
