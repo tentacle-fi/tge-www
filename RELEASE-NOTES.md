@@ -149,5 +149,10 @@
 
 - voting invalid list now dynamically loaded for future vote tests
 
-## Unreleased
+## 1.13.0
+
 - new sparrow release now supports proper gas, updated gas calculations
+
+## Unreleased
+
+nothing at this time
