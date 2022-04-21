@@ -25,11 +25,14 @@ const GAS = {
 
 // return a copy of the gas object so any code can modify the values before using
 export const GET_GAS = () => {
+  // window.ethereum.isSparrow && window.ethereum.isUIP16 // new sparrow (2022 update)
+  // window.ethereumisSparrow && !window.ethereum.isUIP16 // old sparrow (pre eip1559)
+
   return Object.assign(
     {
       ...GAS.defaults,
     },
-    window.ethereum?.isSparrow === true ? GAS.SPARROW : GAS.EIP_1559
+    window.ethereum?.isSparrow && !window.ethereum?.isUIP16 ? GAS.SPARROW : GAS.EIP_1559
   );
 };
 
