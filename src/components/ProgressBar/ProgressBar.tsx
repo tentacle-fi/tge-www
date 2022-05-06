@@ -2,13 +2,13 @@ import React from "react";
 import styled from "styled-components";
 import { useTheme } from "react-neu";
 
-interface BarProgressProps {
+interface IProgressBarProps {
   value?: number;
   invert?: boolean;
   type?: "buffer" | "normal";
 }
 
-const Bar: React.FC<BarProgressProps> = ({ value, invert, type }) => {
+const ProgressBar: React.FC<IProgressBarProps> = ({ value, invert, type }) => {
   if (invert) {
     value = 100 - (value || 0);
   }
@@ -18,7 +18,7 @@ const Bar: React.FC<BarProgressProps> = ({ value, invert, type }) => {
     <>
       <StyledBar className="progressbar" darkMode={darkMode}>
         <StyledBarInner className={`${type === "buffer" ? "buffer" : ""}`} style={{ width: `${value}%` }} />
-        <StyledBarProgressText darkMode={darkMode}>{value}%</StyledBarProgressText>
+        <StyledProgressBarText darkMode={darkMode}>{value}%</StyledProgressBarText>
       </StyledBar>
     </>
   );
@@ -48,7 +48,7 @@ const StyledBarInner = styled.div`
   transition: width 0.8s ease-in;
 `;
 
-const StyledBarProgressText = styled.div<StyledBarProgressTextProps>`
+const StyledProgressBarText = styled.div<StyledBarProgressTextProps>`
   cursor: default;
   position: relative;
   top: 0px;
@@ -61,4 +61,4 @@ const StyledBarProgressText = styled.div<StyledBarProgressTextProps>`
   opacity: 0.95;
 `;
 
-export default Bar;
+export default ProgressBar;
