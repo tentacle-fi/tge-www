@@ -68,4 +68,4 @@ const StyledOuter = styled.div`
   left: 0;
 `;
 
-export default Dial;
+export default React.memo(Dial);

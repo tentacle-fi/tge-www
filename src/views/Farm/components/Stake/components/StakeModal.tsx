@@ -23,7 +23,7 @@ interface StakeModalProps {
   farmKey: number;
 }
 
-const StakeModal: React.FC<StakeModalProps> = ({ farmKey }) => {
+const StakeModal: React.FC<StakeModalProps> = ({ farmKey, children }) => {
   const [val, setVal] = useState("");
   const { LPBalances } = useBalances();
   const { setConfirmModal } = useEvm();

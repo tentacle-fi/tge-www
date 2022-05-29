@@ -42,4 +42,4 @@ const StyledText = styled.span`
   }
 `;
 
-export default Logo;
+export default React.memo(Logo);

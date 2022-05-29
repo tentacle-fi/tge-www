@@ -145,4 +145,4 @@ const ValueHint = styled.span<ValueHintProps>`
   }
 `;
 
-export default FancyValue;
+export default React.memo(FancyValue);

@@ -109,4 +109,4 @@ const StyledSubtitle = styled.h3<StyledSubtitleProps>`
   text-align: center;
 `;
 
-export default PageHeader;
+export default React.memo(PageHeader);

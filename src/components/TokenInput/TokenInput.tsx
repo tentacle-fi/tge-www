@@ -9,6 +9,7 @@ interface TokenInputProps extends InputProps {
   max: number | string;
   symbol: string;
   onSelectMax?: () => void;
+  children?: React.ReactElement;
 }
 
 const TokenInput: React.FC<TokenInputProps> = ({ max, symbol, onChange, onSelectMax, value, children }) => {
@@ -39,4 +40,4 @@ const StyledTokenInput = styled.div`
   display: flex;
 `;
 
-export default TokenInput;
+export default React.memo(TokenInput);

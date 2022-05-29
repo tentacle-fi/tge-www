@@ -47,4 +47,4 @@ const StyledNav = styled("nav")({
   },
 });
 
-export default Nav;
+export default React.memo(Nav);

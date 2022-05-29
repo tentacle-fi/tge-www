@@ -30,4 +30,4 @@ const BuyUBQButtons: React.FC = () => {
   );
 };
 
-export default BuyUBQButtons;
+export default React.memo(BuyUBQButtons);

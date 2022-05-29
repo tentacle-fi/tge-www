@@ -206,4 +206,4 @@ const AddressStart = styled.span`
   text-overflow: ellipsis;
 `;
 
-export default AddressButton;
+export default React.memo(AddressButton);

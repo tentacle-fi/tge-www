@@ -21,4 +21,4 @@ const StyledMain = styled.div`
   padding: ${(props) => props.theme.spacing[6]}px 0;
 `;
 
-export default Page;
+export default Page; // can't use react.memo here

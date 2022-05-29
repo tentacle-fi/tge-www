@@ -29,4 +29,4 @@ const DarkModeSwitch: React.FC = () => {
   );
 };
 
-export default DarkModeSwitch;
+export default React.memo(DarkModeSwitch);

@@ -49,4 +49,4 @@ const StyledText = styled.div`
   text-align: center;
 `;
 
-export default ConfirmTransactionModal;
+export default React.memo(ConfirmTransactionModal);

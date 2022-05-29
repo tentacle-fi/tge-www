@@ -33,4 +33,4 @@ const StyledSplitColumn = styled.div`
   }
 `;
 
-export default Split;
+export default React.memo(Split);

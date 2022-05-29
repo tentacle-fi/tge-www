@@ -61,4 +61,4 @@ const StyledProgressBarText = styled.div<StyledBarProgressTextProps>`
   opacity: 0.95;
 `;
 
-export default ProgressBar;
+export default React.memo(ProgressBar);

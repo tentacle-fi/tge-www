@@ -28,4 +28,4 @@ const StyledSVG = styled.svg.attrs(() => ({
   fill: ${(props) => props.color};
 `;
 
-export default Menu;
+export default React.memo(Menu);
