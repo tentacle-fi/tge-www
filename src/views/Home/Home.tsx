@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import Page from "components/Page";
 import PageHeader from "components/PageHeader";
 import Box from "@mui/material/Box";
@@ -13,6 +13,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import Tooltip from "@mui/material/Tooltip";
 import Donate from "components/Donate";
+import { Button, Grid } from "@mui/material";
 
 interface TimelinePhaseProps {
   title: string;
@@ -44,6 +45,60 @@ const TimelinePhase: React.FC<TimelinePhaseProps> = ({ title, desc, complete = f
   );
 };
 
+// I have an activeColor
+// I have a separate canvas grid square
+// I want to click the canvas grid square and activate it
+// I then want to click "paint"
+// This should set the canvas grid square to the activeColor
+const PaintingCanvas: React.FC = () => {
+  const [myColor, setMyColor] = useState<string>("red");
+  const colors = ["red", "blue", "black", "orange"];
+
+  const [activeColor, setActiveColor] = useState("red");
+
+  const handleColorChange = useCallback(
+    (event) => {
+      console.log(`myColor: ${myColor} activeColor: ${activeColor}`);
+      setMyColor(activeColor);
+    },
+    [activeColor, myColor]
+  );
+
+  const handleColorPick = useCallback((e: any) => {
+    console.log("picked color clicked", e.innerHTML);
+    setActiveColor(e.innerHTML);
+  }, []);
+
+  const colorGrid = colors.map((item, index) => {
+    return (
+      <>
+        <Button onClick={(e) => handleColorPick(e.target)}>
+          <Grid sx={{ border: "1px solid white", width: "100px", height: "100px", backgroundColor: item }} item>
+            {item}
+            {activeColor === item ? "*" : ""}
+          </Grid>
+        </Button>
+      </>
+    );
+  });
+
+  return (
+    <>
+      <Typography>Canvas</Typography>
+      <Grid container sx={{ width: "500px" }}>
+        <Button onClick={(e) => handleColorChange(e)}>
+          <Grid sx={{ border: "1px solid white", width: "100px", height: "100px", backgroundColor: myColor }} item></Grid>
+        </Button>
+      </Grid>
+
+      <Typography>Pick a color</Typography>
+      <Grid container direction="row" sx={{ width: "500px" }}>
+        {colorGrid}
+      </Grid>
+    </>
+  );
+};
+
 const Home: React.FC = () => {
   return (
     <Page>
@@ -51,6 +106,7 @@ const Home: React.FC = () => {
       <Introduction />
       <RoadmapTimeline />
       <Donate />
+      <PaintingCanvas />
     </Page>
   );
 };
