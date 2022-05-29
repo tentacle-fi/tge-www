@@ -4,10 +4,10 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { sendUbq, sendTokens } from "utils";
-import { useWallet } from "use-wallet";
 import BigNumber from "bignumber.js";
-
 import { INK, DAO_MULTISIG } from "farms/AvailableFarms";
+import { useWallet } from "use-wallet";
+import styled from "styled-components";
 
 function easyWei(amount: number): string {
   return new BigNumber(amount).times(new BigNumber(10).pow(18)).toString();
@@ -73,18 +73,7 @@ const Donate: React.FC = () => {
   });
 
   return (
-    <Box
-      sx={{
-        "*": {
-          padding: "10px 20px",
-        },
-        backgroundColor: "#000",
-        maxWidth: "600px",
-        borderRadius: "15px",
-        padding: "30px",
-        textAlign: "center",
-      }}
-    >
+    <StyledBoxWrapper>
       <Typography variant="h4">Donate today!</Typography>
       <Typography variant="h5">Will you help Us build a better UBQ network?</Typography>
       <Typography variant="body1" style={{ textAlign: "center" }}>
@@ -92,20 +81,31 @@ const Donate: React.FC = () => {
         other networks and projects!
       </Typography>
 
-      <Box
-        sx={{
-          "*": {
-            padding: "5px 10px",
-          },
-          textAlign: "center",
-        }}
-      >
+      <StyledInnerBox>
         <ButtonGroup variant="outlined">{INKDonateButtons}</ButtonGroup>
         <ButtonGroup variant="outlined">{UBQDonateButtons}</ButtonGroup>
         <Typography variant="body2">Click the value to donate.</Typography>
-      </Box>
-    </Box>
+      </StyledInnerBox>
+    </StyledBoxWrapper>
   );
 };
 
-export default Donate;
+const StyledBoxWrapper = styled(Box)(({ theme }) => ({
+  "*": {
+    padding: "10px 20px",
+  },
+  backgroundColor: "#000",
+  maxWidth: "600px",
+  borderRadius: "15px",
+  padding: "30px",
+  textAlign: "center",
+}));
+
+const StyledInnerBox = styled(Box)(({ theme }) => ({
+  "*": {
+    padding: "5px 10px",
+  },
+  textAlign: "center",
+}));
+
+export default React.memo(Donate);
