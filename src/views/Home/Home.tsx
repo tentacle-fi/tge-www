@@ -15,9 +15,13 @@ import Tooltip from "@mui/material/Tooltip";
 import Donate from "components/Donate";
 import { Button, Grid, styled } from "@mui/material";
 
+// canvas dimensions (pixels)
 const canvasHeight = 200;
 const canvasWidth = 200;
 const canvasGridPadding = 10;
+const canvasGridSize = 40;
+const canvasBorderWidth = 0.5;
+const canvasOffsetDimension = canvasGridSize + canvasGridPadding + canvasBorderWidth; // used to calculate which grid square is clicked
 
 interface TimelinePhaseProps {
   title: string;
@@ -53,7 +57,6 @@ const PaintingCanvas: React.FC = () => {
   const [myColor, setMyColor] = useState<string>("red");
   const colors = ["red", "blue", "black", "orange"];
   const canvasRef = useRef(null);
-
   const [activeColor, setActiveColor] = useState("red");
 
   const handleColorChange = useCallback(() => {
@@ -66,6 +69,31 @@ const PaintingCanvas: React.FC = () => {
     setActiveColor(e.innerHTML);
   }, []);
 
+  const handleFillSquare = useCallback(
+    (e: any) => {
+      const canvas: any = canvasRef.current;
+      if (canvas === null) return;
+      const context = canvas.getContext("2d");
+
+      const cursorPosition = calculateCursorPosition(canvas, e);
+      const gridLocationClicked: any = calculateGridSquare(cursorPosition, canvasOffsetDimension);
+      console.log(`filling square: ${gridLocationClicked}`);
+      const xIndex = 0;
+      const yIndex = 1;
+      const fillParams = [
+        (gridLocationClicked[yIndex] - 1) * canvasGridSize + canvasGridPadding,
+        (gridLocationClicked[xIndex] - 1) * canvasGridSize + canvasGridPadding,
+        canvasGridSize,
+        canvasGridSize,
+      ];
+      context.fillStyle = activeColor;
+      console.log("preparing to fill with params: ", fillParams, activeColor);
+
+      context.fillRect(...fillParams);
+    },
+    [activeColor]
+  );
+
   useEffect(() => {
     const canvas: any = canvasRef.current;
     if (canvas === null) return;
@@ -74,14 +102,14 @@ const PaintingCanvas: React.FC = () => {
     if (context) {
       console.log("got canvas", canvas);
 
-      for (let x = 0; x <= canvasWidth; x += 40) {
-        context.moveTo(0.5 + x + canvasGridPadding, canvasGridPadding);
-        context.lineTo(0.5 + x + canvasGridPadding, canvasHeight + canvasGridPadding);
+      for (let x = 0; x <= canvasWidth; x += canvasGridSize) {
+        context.moveTo(canvasBorderWidth + x + canvasGridPadding, canvasGridPadding);
+        context.lineTo(canvasBorderWidth + x + canvasGridPadding, canvasHeight + canvasGridPadding);
       }
 
-      for (let x = 0; x <= canvasHeight; x += 40) {
-        context.moveTo(canvasGridPadding, 0.5 + x + canvasGridPadding);
-        context.lineTo(canvasWidth + canvasGridPadding, 0.5 + x + canvasGridPadding);
+      for (let x = 0; x <= canvasHeight; x += canvasGridSize) {
+        context.moveTo(canvasGridPadding, canvasBorderWidth + x + canvasGridPadding);
+        context.lineTo(canvasWidth + canvasGridPadding, canvasBorderWidth + x + canvasGridPadding);
       }
       context.strokeStyle = "black";
       context.stroke();
@@ -116,12 +144,7 @@ const PaintingCanvas: React.FC = () => {
       </Grid>
 
       <Typography>HTML Canvas</Typography>
-      <StyledCanvas
-        onClick={(e) => console.log(`canvas clicked at x: ${e.clientX} y: ${e.clientY}`)}
-        ref={canvasRef}
-        width={canvasWidth + 20}
-        height={canvasHeight + 20}
-      ></StyledCanvas>
+      <StyledCanvas onClick={(e) => handleFillSquare(e)} ref={canvasRef} width={canvasWidth + 20} height={canvasHeight + 20}></StyledCanvas>
     </>
   );
 };
@@ -169,5 +192,29 @@ function RoadmapTimeline() {
 const StyledCanvas = styled("canvas")(({ theme }) => ({
   background: "red",
 }));
+
+//
+// Helper Functions
+//
+
+// calculates the coordinates of the cursor in the supplied canvas
+const calculateCursorPosition = (canvas: any, event: any) => {
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+  return [x, y];
+};
+
+// based on the coordinates and gridSizing, this returns the column and row which was clicked
+const calculateGridSquare = (coordinates: any, gridSize: number) => {
+  let rowClicked = 0;
+  let columnClicked = 0;
+
+  columnClicked = Math.floor(coordinates[0] / gridSize) + 1;
+  rowClicked = Math.floor(coordinates[1] / gridSize) + 1;
+
+  console.log(`coords: ${coordinates} row: ${rowClicked} column: ${columnClicked}`);
+  return [rowClicked, columnClicked];
+};
 
 export default React.memo(Home);
