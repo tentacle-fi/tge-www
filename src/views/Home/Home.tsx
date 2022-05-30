@@ -54,15 +54,9 @@ const TimelinePhase: React.FC<TimelinePhaseProps> = ({ title, desc, complete = f
 };
 
 const PaintingCanvas: React.FC = () => {
-  const [myColor, setMyColor] = useState<string>("red");
   const colors = ["red", "blue", "black", "orange"];
   const canvasRef = useRef(null);
   const [activeColor, setActiveColor] = useState("red");
-
-  const handleColorChange = useCallback(() => {
-    console.log(`myColor: ${myColor} activeColor: ${activeColor}`);
-    setMyColor(activeColor);
-  }, [activeColor, myColor]);
 
   const handleColorPick = useCallback((e: any) => {
     console.log("picked color clicked", e.innerHTML);
@@ -131,13 +125,6 @@ const PaintingCanvas: React.FC = () => {
 
   return (
     <>
-      <Typography>Canvas</Typography>
-      <Grid container sx={{ width: "500px" }}>
-        <Button onClick={handleColorChange}>
-          <Grid sx={{ border: "1px solid white", width: "100px", height: "100px", backgroundColor: myColor }} item></Grid>
-        </Button>
-      </Grid>
-
       <Typography>Pick a color</Typography>
       <Grid container direction="row" sx={{ width: "500px" }}>
         {colorGrid}
