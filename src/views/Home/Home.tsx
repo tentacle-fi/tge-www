@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Page from "components/Page";
 import PageHeader from "components/PageHeader";
 import Box from "@mui/material/Box";
@@ -13,7 +13,11 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import Tooltip from "@mui/material/Tooltip";
 import Donate from "components/Donate";
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, styled } from "@mui/material";
+
+const canvasHeight = 200;
+const canvasWidth = 200;
+const canvasGridPadding = 10;
 
 interface TimelinePhaseProps {
   title: string;
@@ -45,28 +49,43 @@ const TimelinePhase: React.FC<TimelinePhaseProps> = ({ title, desc, complete = f
   );
 };
 
-// I have an activeColor
-// I have a separate canvas grid square
-// I want to click the canvas grid square and activate it
-// I then want to click "paint"
-// This should set the canvas grid square to the activeColor
 const PaintingCanvas: React.FC = () => {
   const [myColor, setMyColor] = useState<string>("red");
   const colors = ["red", "blue", "black", "orange"];
+  const canvasRef = useRef(null);
 
   const [activeColor, setActiveColor] = useState("red");
 
-  const handleColorChange = useCallback(
-    (event) => {
-      console.log(`myColor: ${myColor} activeColor: ${activeColor}`);
-      setMyColor(activeColor);
-    },
-    [activeColor, myColor]
-  );
+  const handleColorChange = useCallback(() => {
+    console.log(`myColor: ${myColor} activeColor: ${activeColor}`);
+    setMyColor(activeColor);
+  }, [activeColor, myColor]);
 
   const handleColorPick = useCallback((e: any) => {
     console.log("picked color clicked", e.innerHTML);
     setActiveColor(e.innerHTML);
+  }, []);
+
+  useEffect(() => {
+    const canvas: any = canvasRef.current;
+    if (canvas === null) return;
+    const context = canvas.getContext("2d");
+
+    if (context) {
+      console.log("got canvas", canvas);
+
+      for (let x = 0; x <= canvasWidth; x += 40) {
+        context.moveTo(0.5 + x + canvasGridPadding, canvasGridPadding);
+        context.lineTo(0.5 + x + canvasGridPadding, canvasHeight + canvasGridPadding);
+      }
+
+      for (let x = 0; x <= canvasHeight; x += 40) {
+        context.moveTo(canvasGridPadding, 0.5 + x + canvasGridPadding);
+        context.lineTo(canvasWidth + canvasGridPadding, 0.5 + x + canvasGridPadding);
+      }
+      context.strokeStyle = "black";
+      context.stroke();
+    }
   }, []);
 
   const colorGrid = colors.map((item, index) => {
@@ -86,7 +105,7 @@ const PaintingCanvas: React.FC = () => {
     <>
       <Typography>Canvas</Typography>
       <Grid container sx={{ width: "500px" }}>
-        <Button onClick={(e) => handleColorChange(e)}>
+        <Button onClick={handleColorChange}>
           <Grid sx={{ border: "1px solid white", width: "100px", height: "100px", backgroundColor: myColor }} item></Grid>
         </Button>
       </Grid>
@@ -95,6 +114,14 @@ const PaintingCanvas: React.FC = () => {
       <Grid container direction="row" sx={{ width: "500px" }}>
         {colorGrid}
       </Grid>
+
+      <Typography>HTML Canvas</Typography>
+      <StyledCanvas
+        onClick={(e) => console.log(`canvas clicked at x: ${e.clientX} y: ${e.clientY}`)}
+        ref={canvasRef}
+        width={canvasWidth + 20}
+        height={canvasHeight + 20}
+      ></StyledCanvas>
     </>
   );
 };
@@ -138,5 +165,9 @@ function RoadmapTimeline() {
     </>
   );
 }
+
+const StyledCanvas = styled("canvas")(({ theme }) => ({
+  background: "red",
+}));
 
 export default React.memo(Home);
