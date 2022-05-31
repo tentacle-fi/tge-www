@@ -14,6 +14,53 @@ import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import Tooltip from "@mui/material/Tooltip";
 import Donate from "components/Donate";
 import { Button, Grid, styled } from "@mui/material";
+import useUbiq from "hooks/useUbiq";
+
+const xIndex = 0;
+const yIndex = 1;
+
+const colorPalette = ["red", "blue", "black", "orange", "purple", "pink", "teal", "gray"];
+
+const defaultActiveColor = colorPalette[0];
+
+const StubbedContractEvents = [
+  {
+    type: "event",
+    events: [
+      {
+        paint: {
+          address: "0x000",
+          pixel: [0, 1],
+          color: "red",
+        },
+      },
+    ],
+  },
+  {
+    type: "event",
+    events: [
+      {
+        paint: {
+          address: "0x111",
+          pixel: [3, 3],
+          color: "blue",
+        },
+      },
+    ],
+  },
+  {
+    type: "event",
+    events: [
+      {
+        paint: {
+          address: "0x222",
+          pixel: [5, 1],
+          color: "orange",
+        },
+      },
+    ],
+  },
+];
 
 // canvas dimensions (pixels)
 const canvasHeight = 200;
@@ -54,40 +101,31 @@ const TimelinePhase: React.FC<TimelinePhaseProps> = ({ title, desc, complete = f
 };
 
 const PaintingCanvas: React.FC = () => {
-  const colors = ["red", "blue", "black", "orange"];
+  const colors = colorPalette;
   const canvasRef = useRef(null);
-  const [activeColor, setActiveColor] = useState("red");
+  const [activeColor, setActiveColor] = useState(defaultActiveColor);
+  const [selectedGridCoordinates, setSelectedGridCoordinates] = useState<Array<number> | undefined>();
+  const { BlockNum } = useUbiq();
 
   const handleColorPick = useCallback((e: any) => {
-    console.log("picked color clicked", e.innerHTML);
     setActiveColor(e.innerHTML);
   }, []);
 
-  const handleFillSquare = useCallback(
-    (e: any) => {
-      const canvas: any = canvasRef.current;
-      if (canvas === null) return;
-      const context = canvas.getContext("2d");
+  const handleSquareSelection = useCallback((e: any) => {
+    const canvas: any = canvasRef.current;
+    if (canvas === null) return;
+    const cursorPosition = calculateCursorPosition(canvas, e);
+    const gridLocationClicked: any = calculateGridSquare(cursorPosition, canvasOffsetDimension);
+    console.log(`setting selected square: ${gridLocationClicked}`);
+    setSelectedGridCoordinates(gridLocationClicked);
+  }, []);
 
-      const cursorPosition = calculateCursorPosition(canvas, e);
-      const gridLocationClicked: any = calculateGridSquare(cursorPosition, canvasOffsetDimension);
-      console.log(`filling square: ${gridLocationClicked}`);
-      const xIndex = 0;
-      const yIndex = 1;
-      const fillParams = [
-        (gridLocationClicked[yIndex] - 1) * canvasGridSize + canvasGridPadding,
-        (gridLocationClicked[xIndex] - 1) * canvasGridSize + canvasGridPadding,
-        canvasGridSize,
-        canvasGridSize,
-      ];
-      context.fillStyle = activeColor;
-      console.log("preparing to fill with params: ", fillParams, activeColor);
+  const handleUserPaintAPixel = useCallback(() => {
+    if (selectedGridCoordinates === undefined) return;
+    paintAPixel(selectedGridCoordinates, canvasRef.current, activeColor);
+  }, [activeColor, selectedGridCoordinates]);
 
-      context.fillRect(...fillParams);
-    },
-    [activeColor]
-  );
-
+  // Processes the smart contract events on each block update and paints the canvas accordingly
   useEffect(() => {
     const canvas: any = canvasRef.current;
     if (canvas === null) return;
@@ -95,20 +133,10 @@ const PaintingCanvas: React.FC = () => {
 
     if (context) {
       console.log("got canvas", canvas);
-
-      for (let x = 0; x <= canvasWidth; x += canvasGridSize) {
-        context.moveTo(canvasBorderWidth + x + canvasGridPadding, canvasGridPadding);
-        context.lineTo(canvasBorderWidth + x + canvasGridPadding, canvasHeight + canvasGridPadding);
-      }
-
-      for (let x = 0; x <= canvasHeight; x += canvasGridSize) {
-        context.moveTo(canvasGridPadding, canvasBorderWidth + x + canvasGridPadding);
-        context.lineTo(canvasWidth + canvasGridPadding, canvasBorderWidth + x + canvasGridPadding);
-      }
-      context.strokeStyle = "black";
-      context.stroke();
+      drawGridLines(context);
+      processContractData(context);
     }
-  }, []);
+  }, [BlockNum]);
 
   const colorGrid = colors.map((item, index) => {
     return (
@@ -131,7 +159,10 @@ const PaintingCanvas: React.FC = () => {
       </Grid>
 
       <Typography>HTML Canvas</Typography>
-      <StyledCanvas onClick={(e) => handleFillSquare(e)} ref={canvasRef} width={canvasWidth + 20} height={canvasHeight + 20}></StyledCanvas>
+      <StyledCanvas onClick={(e) => handleSquareSelection(e)} ref={canvasRef} width={canvasWidth + 20} height={canvasHeight + 20}></StyledCanvas>
+      <Button onClick={handleUserPaintAPixel} disabled={selectedGridCoordinates === undefined ? true : false} variant="contained">
+        Paint!
+      </Button>
     </>
   );
 };
@@ -202,6 +233,65 @@ const calculateGridSquare = (coordinates: any, gridSize: number) => {
 
   console.log(`coords: ${coordinates} row: ${rowClicked} column: ${columnClicked}`);
   return [rowClicked, columnClicked];
+};
+
+const drawGridLines = (context: any) => {
+  for (let x = 0; x <= canvasWidth; x += canvasGridSize) {
+    context.moveTo(canvasBorderWidth + x + canvasGridPadding, canvasGridPadding);
+    context.lineTo(canvasBorderWidth + x + canvasGridPadding, canvasHeight + canvasGridPadding);
+  }
+
+  for (let x = 0; x <= canvasHeight; x += canvasGridSize) {
+    context.moveTo(canvasGridPadding, canvasBorderWidth + x + canvasGridPadding);
+    context.lineTo(canvasWidth + canvasGridPadding, canvasBorderWidth + x + canvasGridPadding);
+  }
+  context.strokeStyle = "black";
+  context.stroke();
+};
+
+const fillSquare = (gridLocationClicked: any, context: any, color: string) => {
+  const fillParams = [
+    (gridLocationClicked[yIndex] - 1) * canvasGridSize + canvasGridPadding,
+    (gridLocationClicked[xIndex] - 1) * canvasGridSize + canvasGridPadding,
+    canvasGridSize,
+    canvasGridSize,
+  ];
+  context.fillStyle = color;
+  context.fillRect(...fillParams);
+};
+
+const processContractData = (context: any) => {
+  for (const events of StubbedContractEvents) {
+    // not confusing at all, self documenting code
+    for (const event of events.events) {
+      console.log(
+        `processing individual event: ${JSON.stringify(event.paint)} from: ${event.paint.address} pixel: ${event.paint.pixel} color: ${
+          event.paint.color
+        }`
+      );
+
+      fillSquare(event.paint.pixel, context, event.paint.color);
+    }
+  }
+};
+
+const paintAPixel = (pixelCoordinates: Array<number>, context: any, color: string) => {
+  console.log("preparing to paint pixel: ", pixelCoordinates, color);
+
+  const newTransaction = {
+    type: "event",
+    events: [
+      {
+        paint: {
+          address: "0xABCD",
+          pixel: pixelCoordinates,
+          color: color,
+        },
+      },
+    ],
+  };
+
+  StubbedContractEvents.push(newTransaction);
 };
 
 export default React.memo(Home);
