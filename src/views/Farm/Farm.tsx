@@ -196,12 +196,12 @@ const YieldFarm: React.FC<YieldFarmProps> = React.memo(({ farmKey }) => {
 
           <div style={{ height: "60%", minHeight: "130px" }}>
             <img
-              src={farm.tokenA.logo}
+              src={`/tokens/${farm.tokenA.logo}`}
               alt={`${farm.tokenA.symbol} Logo`}
               style={{ width: "50px", height: "50px", background: "white", borderRadius: "40px" }}
             />
             <img
-              src={farm.tokenB.logo}
+              src={`/tokens/${farm.tokenB.logo}`}
               alt={`${farm.tokenB.symbol} Logo`}
               style={{ width: "50px", height: "50px", background: "white", borderRadius: "40px", marginRight: "-20px" }}
             />

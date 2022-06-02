@@ -40,7 +40,7 @@ const Harvest: React.FC<HarvestProps> = ({ farmKey }) => {
     <>
       <div style={{ display: "block", height: "60%", minHeight: "140px", padding: "10px 5px 0 5px" }}>
         <img
-          src={AvailableFarms[farmKey].yieldfarm.reward.logo}
+          src={`/tokens/${AvailableFarms[farmKey].yieldfarm.reward.logo}`}
           alt={AvailableFarms[farmKey].yieldfarm.reward.symbol + " token logo"}
           style={{ height: 64, alignSelf: "center", background: "white", borderRadius: 110 }}
         />
