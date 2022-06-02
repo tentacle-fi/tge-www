@@ -37,8 +37,8 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
     return (
       <WalletToken
         tokenName={token.symbol}
-        tokenIcon={token.publicLogo}
-        tokenOnClick={() => addTokenToWallet(token.symbol, token.address, token.publicLogo)}
+        tokenIcon={token.logo}
+        tokenOnClick={() => addTokenToWallet(token.symbol, token.address, token.logo)}
         tokenBalance={balance}
         key={index.toString()}
       />

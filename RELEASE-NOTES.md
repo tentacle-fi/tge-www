@@ -156,5 +156,6 @@
 ## Unreleased
 
 - #87, fixed footer vote link to governance
+- #54, removes duplicate logos to utilize the hosted images only (/tokens/*.png)
 
 nothing at this time

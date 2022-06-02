@@ -1,23 +1,10 @@
-import inkLogo from "assets/tokens/ink_black_alpha.png";
-import ubqLogo from "assets/tokens/ubq.png";
-import gransLogo from "assets/tokens/grans-flat.png";
-import eschLogo from "assets/tokens/esch-logo.png";
-import tge1Logo from "assets/tokens/tge1.png";
-import wethLogo from "assets/tokens/weth.png";
-
 // Significant addresses:
 
 export const DAO_MULTISIG = "0xCC7D76005bf1616e55cfDFF4cbfB5C29199C2808";
 export const DAO_FARMING = "0x2e21bA1c05b6f7090091d053A0d0cf9e986A1c12";
 
 // Token addresses:
-export const Logos = {
-  ink: inkLogo,
-  ubq: ubqLogo,
-  grans: gransLogo,
-  esch: eschLogo,
-  tge1: tge1Logo,
-};
+
 export const UBQ = "0x1fa6a37c64804c0d797ba6bc1955e50068fbf362"; // UBQ Token address (wUBQ technically)
 export const INK = "0x7845fCbE28ac19ab7ec1C1D9674E34fdCB4917Db";
 export const GRANS = "0x0826180a4c981d5095cb5c48bb2a098a44cf6f73";
@@ -50,43 +37,37 @@ export const TGE1_ESCH_UBQ_FarmContract = "0x32DEDccBf19F5AbF40dd8D2A1204bdcE4dE
 
 const UBQ_token: IToken = {
   symbol: "UBQ", // wUBQ token address
-  logo: ubqLogo,
-  publicLogo: "ubq.png",
+  logo: "ubq.png",
   address: UBQ,
 };
 
 const INK_token: IToken = {
   symbol: "INK",
-  logo: inkLogo,
-  publicLogo: "ink.png",
+  logo: "ink.png",
   address: INK,
 };
 
 const GRANS_token: IToken = {
   symbol: "GRANS",
-  logo: gransLogo,
-  publicLogo: "grans.png",
+  logo: "grans.png",
   address: GRANS,
 };
 
 const ESCH_token: IToken = {
   symbol: "ESCH",
-  logo: eschLogo,
-  publicLogo: "esch.png",
+  logo: "esch.png",
   address: ESCH,
 };
 
 const TGE1_token: IToken = {
   symbol: "TGE1",
-  logo: tge1Logo,
-  publicLogo: "tge1.png",
+  logo: "tge1.png",
   address: TGE1,
 };
 
 const WETH_token: IToken = {
   symbol: "wETH",
-  logo: wethLogo,
-  publicLogo: "weth.png",
+  logo: "weth.png",
   address: WETH,
 };
 
@@ -241,10 +222,8 @@ export const Tokens: Array<IToken> = findTokensFromFarms();
 interface IToken {
   // symbol (usually 3 or 4 letters) for this token (capitalized)
   symbol: string;
-  // location for the image, currently imported from /assets
-  logo: string;
   // name of the logo file located in the /public/tokens/ folder (publicly hosted at /tokens/)
-  publicLogo: string;
+  logo: string;
   // token address
   address: string;
 }
