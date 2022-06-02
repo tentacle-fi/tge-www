@@ -155,4 +155,6 @@
 
 ## Unreleased
 
+- #87, fixed footer vote link to governance
+
 nothing at this time
