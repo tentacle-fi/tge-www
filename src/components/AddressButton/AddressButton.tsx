@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import styled from "styled-components";
 import copy from "assets/copy.svg";
 import confirm from "assets/copy_confirm.svg";
-import { useTheme } from "react-neu";
 
 import Box from "@mui/material/Box";
 
@@ -16,19 +15,16 @@ interface AddressButtonProps {
 }
 
 const AddressButton: React.FC<AddressButtonProps> = ({ name, address, shinobi, shinobitext, shinobilink }) => {
-  const { darkMode } = useTheme();
-
   const DisplayShinobi = useMemo(() => {
     if (shinobi) {
       return (
         <>
           <StyledLink
-            darkMode={darkMode}
             href={shinobilink ? shinobilink + address : "https://shinobi.ubiq.ninja/swap?inputCurrency=" + address}
             target="_blank"
             color="white"
           >
-            <StyledShinobiButton darkMode={darkMode}>
+            <StyledShinobiButton>
               <StyledSpan>
                 <span>{shinobitext ? shinobitext : "Buy at Shinobi"}</span>
               </StyledSpan>
@@ -37,7 +33,7 @@ const AddressButton: React.FC<AddressButtonProps> = ({ name, address, shinobi, s
         </>
       );
     }
-  }, [darkMode, shinobi, address, shinobilink, shinobitext]);
+  }, [shinobi, address, shinobilink, shinobitext]);
 
   const DisplayAddress = useMemo(() => {
     if (shinobi) {
@@ -60,16 +56,13 @@ const AddressButton: React.FC<AddressButtonProps> = ({ name, address, shinobi, s
   return (
     <>
       <Box sx={{ borderRadius: "10px" }}>
-        <StyledButton darkMode={darkMode} shinobi={shinobi}>
+        <StyledButton shinobi={shinobi}>
           <StyledSpan>
-            <StyledName darkMode={darkMode} shinobi={shinobi}>
-              {name ? name + " " : ""}
-            </StyledName>
-            <StyledLink darkMode={darkMode} color="hsl(339deg 89% 49% / 100%)" href={"https://ubiqscan.io/address/" + address} target="_blank">
+            <StyledName shinobi={shinobi}>{name ? name + " " : ""}</StyledName>
+            <StyledLink color="hsl(339deg 89% 49% / 100%)" href={"https://ubiqscan.io/address/" + address} target="_blank">
               {DisplayAddress}
             </StyledLink>
             <StyledCopy
-              darkMode={darkMode}
               shinobi={shinobi}
               onClick={() => {
                 navigator.clipboard.writeText(address ? address : "");
