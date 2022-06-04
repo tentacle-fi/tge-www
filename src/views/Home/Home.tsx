@@ -227,9 +227,10 @@ const calculateCursorPosition = (canvas: any, event: any) => {
 const calculateGridSquare = (coordinates: any, gridSize: number) => {
   let rowClicked = 0;
   let columnClicked = 0;
+  const humanReadableGridIncrementor = 1; // Offsets the calculated grid by +1 so 0,0 is actually 1,1 which is more friendly for humans
 
-  columnClicked = Math.floor(coordinates[0] / gridSize) + 1;
-  rowClicked = Math.floor(coordinates[1] / gridSize) + 1;
+  columnClicked = Math.floor(coordinates[0] / gridSize) + humanReadableGridIncrementor;
+  rowClicked = Math.floor(coordinates[1] / gridSize) + humanReadableGridIncrementor;
 
   console.log(`coords: ${coordinates} row: ${rowClicked} column: ${columnClicked}`);
   return [rowClicked, columnClicked];
