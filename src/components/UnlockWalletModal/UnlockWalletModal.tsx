@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from "react";
-import { Box, Modal, ModalActions, ModalContent, ModalProps } from "react-neu";
+import { Modal, ModalActions, ModalContent, ModalProps } from "react-neu";
 import styled from "styled-components";
 import { useWallet } from "use-wallet";
 import metamaskLogo from "assets/metamask-fox.svg";
@@ -7,7 +7,7 @@ import sparrowLogo from "assets/sparrow.png";
 import Button from "@mui/material/Button";
 import WalletProviderCard from "./components/WalletProviderCard";
 import { switchToUBQNetwork } from "metamask.js";
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 declare const window: any;
 
@@ -61,11 +61,11 @@ const UnlockWalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
         </StyledWalletsWrapper>
       </ModalContent>
       <ModalActions>
-        <Box flex={1} row justifyContent="center">
+        <StyledBox>
           <Button onClick={onDismiss} variant="contained">
             Cancel
           </Button>
-        </Box>
+        </StyledBox>
       </ModalActions>
     </Modal>
   );
@@ -73,6 +73,11 @@ const UnlockWalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
 
 const StyledModalTitle = styled(Typography)(({ theme }) => ({
   paddingTop: "20px",
+}));
+
+const StyledBox = styled(Box)(({ theme }) => ({
+  justifyContent: "center",
+  alignContent: "center",
 }));
 
 const StyledWalletsWrapper = styled.div`
