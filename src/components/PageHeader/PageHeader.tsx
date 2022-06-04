@@ -1,6 +1,7 @@
+import { Container } from "@mui/material";
 import React, { useMemo } from "react";
 
-import { Container, Spacer, useTheme } from "react-neu";
+import { useTheme } from "react-neu";
 import styled from "styled-components";
 
 interface PageHeaderProps {
@@ -39,10 +40,9 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   }, [subtitle, subtitleOpacity, subtitleWeight]);
 
   return (
-    <Container size="sm">
+    <Container>
       <StyledPageHeader subtitle={subtitle}>
         <StyledIcon>{icon}</StyledIcon>
-        <Spacer size="sm" />
         <div className={className}>
           <StyledTitle titleSize={titleSize} titleWeight={titleWeight} titleColor={titleColor} darkMode={darkMode}>
             {title}
