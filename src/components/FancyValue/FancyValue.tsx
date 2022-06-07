@@ -1,10 +1,9 @@
 import React, { useMemo } from "react";
-import { Box, Spacer, useTheme } from "react-neu";
 import styled from "styled-components";
 import ReactTooltip from "react-tooltip";
-
-import Label from "components/Label";
 import Value from "components/Value";
+import { Box, Stack, useTheme } from "@mui/material";
+import Label from "components/Label";
 
 interface FancyValueProps {
   icon?: React.ReactNode;
@@ -19,26 +18,17 @@ interface FancyValueProps {
 }
 
 const FancyValue: React.FC<FancyValueProps> = ({ icon, label, value, valueSize, valueColor, valueBold, wrap, hint, tooltip }) => {
-  const { darkMode, colors } = useTheme();
+  const { palette } = useTheme();
 
-  let labelColor: string;
-  let borderColor: string;
-  let backgroundColor: string;
-  if (darkMode) {
-    labelColor = colors.primary.main;
-    borderColor = colors.primary.main;
-    backgroundColor = colors.grey[800];
-  } else {
-    labelColor = colors.grey[600];
-    borderColor = colors.grey[600];
-    backgroundColor = colors.grey[400];
-  }
+  const labelColor = palette.grey[600];
+  const borderColor = palette.grey[600];
+  const backgroundColor = palette.grey[400];
 
   const DisplayHint = useMemo(() => {
     if (hint) {
       return (
         <>
-          <ValueHint data-tip={tooltip} darkMode={darkMode}>
+          <ValueHint data-tip={tooltip}>
             <div>{hint}</div>
           </ValueHint>
           <ReactTooltip
@@ -54,7 +44,7 @@ const FancyValue: React.FC<FancyValueProps> = ({ icon, label, value, valueSize, 
         </>
       );
     }
-  }, [hint, darkMode, backgroundColor, borderColor, labelColor, tooltip]);
+  }, [hint, backgroundColor, borderColor, labelColor, tooltip]);
 
   const FancyLabelDisplay = useMemo(() => {
     if (wrap) {
@@ -74,16 +64,15 @@ const FancyValue: React.FC<FancyValueProps> = ({ icon, label, value, valueSize, 
         </>
       );
     }
-  }, [icon, label, DisplayHint, wrap]);
+  }, [wrap, DisplayHint, label, icon]);
 
   const IconDisplay = useMemo(() => {
     if (icon) {
       return (
         <>
-          <Box row justifyContent="center" minWidth={48}>
+          <StyledBox justifyContent="center">
             <StyledIcon>{icon}</StyledIcon>
-          </Box>
-          <Spacer size="sm" />
+          </StyledBox>
         </>
       );
     }
@@ -92,13 +81,13 @@ const FancyValue: React.FC<FancyValueProps> = ({ icon, label, value, valueSize, 
   return (
     <>
       <DisplayFancyValue>
-        <Box alignItems="center" row>
+        <Stack direction="row">
           {IconDisplay}
-          <Box flex={1}>
+          <Stack direction="column">
             <Value value={value} valuePosition={!icon ? "center" : "left"} valueSize={valueSize} valueColor={valueColor} valueBold={valueBold} />
             {FancyLabelDisplay}
-          </Box>
-        </Box>
+          </Stack>
+        </Stack>
       </DisplayFancyValue>
     </>
   );
@@ -108,12 +97,17 @@ interface ValueHintProps {
   darkMode?: boolean;
 }
 
+const StyledBox = styled(Box)(({ theme }) => ({
+  minWidth: "48px",
+}));
+
 const DisplayFancyValue = styled.div`
   position: relative;
 `;
 
 const StyledIcon = styled.span.attrs({ role: "img" })`
   font-size: 32px;
+  padding-right: 10px;
 `;
 
 const LabelWrapDisplay = styled.span`
