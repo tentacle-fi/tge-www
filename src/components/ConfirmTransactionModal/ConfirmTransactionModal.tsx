@@ -1,10 +1,7 @@
 import React, { useMemo } from "react";
-import { Modal, ModalContent, ModalProps, Spacer } from "react-neu";
+import { Modal, ModalContent, ModalProps } from "react-neu";
 import styled from "styled-components";
 import { useWallet } from "use-wallet";
-
-import metamaskLogo from "assets/metamask-fox.svg";
-import sparrowLogo from "assets/sparrow.png";
 
 declare const window: any;
 
@@ -19,17 +16,17 @@ const ConfirmTransactionModal: React.FC<CustomModalProps> = ({ isOpen, message }
     message = "Confirm transaction in wallet.";
   }
 
-  let injectedLogo = metamaskLogo;
+  let injectedLogo = "metamask-fox.svg";
 
   if (window.ethereum) {
     if (window.ethereum.isSparrow) {
-      injectedLogo = sparrowLogo;
+      injectedLogo = "sparrow.png";
     }
   }
 
   const WalletLogo = useMemo(() => {
     if (connector === "injected") {
-      return <img src={injectedLogo} alt="Wallet Logo" style={{ height: 96, width: 96, alignSelf: "center" }} />;
+      return <img src={`/wallets/${injectedLogo}`} alt="Wallet Logo" style={{ height: 110, margin: 20, alignSelf: "center" }} />;
     }
   }, [connector, injectedLogo]);
 
@@ -37,7 +34,6 @@ const ConfirmTransactionModal: React.FC<CustomModalProps> = ({ isOpen, message }
     <Modal isOpen={isOpen}>
       <ModalContent>
         {WalletLogo}
-        <Spacer />
         <StyledText>{message}</StyledText>
       </ModalContent>
     </Modal>
