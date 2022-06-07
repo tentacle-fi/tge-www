@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
 import numeral from "numeral";
 
-import { Modal, ModalActions, ModalContent, ModalProps, ModalTitle, Separator } from "react-neu";
+import { Modal, ModalActions, ModalContent, ModalProps, ModalTitle } from "react-neu";
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -53,7 +53,6 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
           <Grid>{WalletTokens}</Grid>
         </Box>
       </ModalContent>
-      <Separator />
       <ModalActions>
         <Button onClick={onDismiss} variant="contained">
           Close
