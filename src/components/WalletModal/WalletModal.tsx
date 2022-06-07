@@ -8,7 +8,6 @@ import FancyValue from "components/FancyValue";
 import { addTokenToWallet } from "metamask.js";
 import { Tokens } from "farms/AvailableFarms";
 import CustomModal from "components/CustomModal";
-import { borderBottom } from "@mui/system";
 
 interface WalletModalProps {
   isOpen: boolean;
