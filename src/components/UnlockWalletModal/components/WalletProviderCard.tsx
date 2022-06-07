@@ -1,9 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-
-// TODO: change this to a regular img import
-import { CardIcon } from "react-neu";
-
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 
@@ -15,7 +11,7 @@ interface WalletProviderCardProps {
 const WalletProviderCard: React.FC<WalletProviderCardProps> = ({ icon, name, onSelect }) => (
   <Box sx={{ display: "flex", flexDirection: "column" }}>
     <Button onClick={onSelect} variant="outlined">
-      <CardIcon>{icon}</CardIcon>
+      {icon}
       <StyledName>{name}</StyledName>
     </Button>
   </Box>
