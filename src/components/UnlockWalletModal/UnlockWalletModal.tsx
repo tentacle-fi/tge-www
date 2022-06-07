@@ -2,8 +2,6 @@ import React, { useCallback, useEffect } from "react";
 import { Modal, ModalActions, ModalContent, ModalProps } from "react-neu";
 import styled from "styled-components";
 import { useWallet } from "use-wallet";
-import metamaskLogo from "assets/metamask-fox.svg";
-import sparrowLogo from "assets/sparrow.png";
 import Button from "@mui/material/Button";
 import WalletProviderCard from "./components/WalletProviderCard";
 import { switchToUBQNetwork } from "metamask.js";
@@ -24,12 +22,12 @@ const UnlockWalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
     connect("injected");
   }, [connect]);
 
-  let injectedLogo = metamaskLogo;
+  let injectedLogo = "metamask-fox.svg";
   let injectedName = "Metamask";
 
   if (window.ethereum) {
     if (window.ethereum.isSparrow) {
-      injectedLogo = sparrowLogo;
+      injectedLogo = "sparrow.png";
       injectedName = "Sparrow";
     }
   }
@@ -45,7 +43,6 @@ const UnlockWalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
 
   return (
     <Modal isOpen={isOpen}>
-      {/* <ModalTitle text="Select a wallet provider." /> */}
       <StyledModalTitle variant="h4" align="center">
         Select a wallet provider
       </StyledModalTitle>
@@ -53,7 +50,7 @@ const UnlockWalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
         <StyledWalletsWrapper>
           <Box flex={1}>
             <WalletProviderCard
-              icon={<img src={injectedLogo} style={{ height: 32 }} alt="Wallet Logo" />}
+              icon={<img src={`/wallets/${injectedLogo}`} style={{ height: 110, margin: 20 }} alt="Wallet Logo" />}
               name={injectedName}
               onSelect={handleConnectMetamask}
             />
