@@ -1,15 +1,21 @@
 import React, { useCallback, useState, useMemo } from "react";
-import { Box, Button, Grid } from "@mui/material";
+import { Box, Button, Grid, styled, Typography } from "@mui/material";
 import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
 import useBalances from "hooks/useBalances";
 import numeral from "numeral";
-import { Modal, ModalActions, ModalContent, ModalProps, ModalTitle } from "react-neu";
 import FancyValue from "components/FancyValue";
 import { addTokenToWallet } from "metamask.js";
 import { Tokens } from "farms/AvailableFarms";
+import CustomModal from "components/CustomModal";
+import { borderBottom } from "@mui/system";
 
-const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
+interface WalletModalProps {
+  isOpen: boolean;
+  onDismiss: () => void;
+}
+
+const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onDismiss }) => {
   const [, setWalletModalIsOpen] = useState(false);
   const { reset } = useWallet();
   const { tokenBalances } = useBalances();
@@ -38,24 +44,29 @@ const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
     );
   });
 
-  return (
-    <Modal isOpen={isOpen}>
-      <ModalTitle text="My Wallet" />
-      <ModalContent>
+  const ModalContent = useMemo(() => {
+    return (
+      <>
+        <StyledTypography align="center" variant="h4">
+          My Wallet
+        </StyledTypography>
+
         <Box>
           <Grid>{WalletTokens}</Grid>
         </Box>
-      </ModalContent>
-      <ModalActions>
-        <Button onClick={onDismiss} variant="contained">
-          Close
-        </Button>
-        <Button onClick={handleSignOut} color="error">
-          Sign Out
-        </Button>
-      </ModalActions>
-    </Modal>
-  );
+        <Box sx={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+          <Button onClick={onDismiss} variant="contained">
+            Close
+          </Button>
+          <Button onClick={handleSignOut} color="error">
+            Sign Out
+          </Button>
+        </Box>
+      </>
+    );
+  }, [WalletTokens, onDismiss, handleSignOut]);
+
+  return <CustomModal isOpen={isOpen} content={ModalContent} />;
 };
 
 interface WalletTokenProps {
@@ -114,5 +125,11 @@ const WalletToken: React.FC<WalletTokenProps> = ({ tokenName, tokenIcon, tokenOn
     </Box>
   );
 };
+
+const StyledTypography = styled(Typography)(({ theme }) => ({
+  padding: "10px",
+  borderBottom: "1px solid black",
+  marginBottom: "20px",
+}));
 
 export default WalletModal;

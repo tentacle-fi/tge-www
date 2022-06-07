@@ -157,7 +157,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ blockHeightButton }) => {
         )}
       </ButtonGroup>
       <WalletModal isOpen={walletModalIsOpen} onDismiss={handleDismissWalletModal} />
-      <UnlockWalletModal isOpen={unlockModalIsOpen} onDismiss={handleDismissUnlockModal} />
+      <UnlockWalletModal isOpen={unlockModalIsOpen} onDismiss={() => handleDismissUnlockModal()} />
     </>
   );
 };

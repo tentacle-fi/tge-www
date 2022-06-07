@@ -1,15 +1,20 @@
-import React, { useCallback, useEffect } from "react";
-import { Modal, ModalActions, ModalContent, ModalProps } from "react-neu";
+import React, { useCallback, useEffect, useMemo } from "react";
 import styled from "styled-components";
 import { useWallet } from "use-wallet";
 import Button from "@mui/material/Button";
 import WalletProviderCard from "./components/WalletProviderCard";
 import { switchToUBQNetwork } from "metamask.js";
 import { Box, Typography } from "@mui/material";
+import CustomModal from "components/CustomModal";
 
 declare const window: any;
 
-const UnlockWalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
+interface UnlockWalletModalProps {
+  isOpen: boolean;
+  onDismiss: () => void;
+}
+
+const UnlockWalletModal: React.FC<UnlockWalletModalProps> = ({ isOpen, onDismiss }) => {
   const { account, connector, connect } = useWallet();
 
   const handleConnectMetamask = useCallback(async () => {
@@ -32,6 +37,33 @@ const UnlockWalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
     }
   }
 
+  const ModalContent = useMemo(() => {
+    return (
+      <>
+        <StyledModalTitle variant="h4" align="center">
+          Select a wallet provider
+        </StyledModalTitle>
+        <Box>
+          <StyledWalletsWrapper>
+            <Box flex={1}>
+              <WalletProviderCard
+                icon={<img src={`/wallets/${injectedLogo}`} style={{ height: 110, margin: 20 }} alt="Wallet Logo" />}
+                name={injectedName}
+                onSelect={handleConnectMetamask}
+              />
+            </Box>
+          </StyledWalletsWrapper>
+        </Box>
+
+        <StyledBox>
+          <Button onClick={onDismiss} variant="contained">
+            Cancel
+          </Button>
+        </StyledBox>
+      </>
+    );
+  }, [injectedLogo, injectedName, handleConnectMetamask, onDismiss]);
+
   useEffect(() => {
     if (account) {
       onDismiss && onDismiss();
@@ -41,31 +73,7 @@ const UnlockWalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
     }
   }, [account, onDismiss, connector]);
 
-  return (
-    <Modal isOpen={isOpen}>
-      <StyledModalTitle variant="h4" align="center">
-        Select a wallet provider
-      </StyledModalTitle>
-      <ModalContent>
-        <StyledWalletsWrapper>
-          <Box flex={1}>
-            <WalletProviderCard
-              icon={<img src={`/wallets/${injectedLogo}`} style={{ height: 110, margin: 20 }} alt="Wallet Logo" />}
-              name={injectedName}
-              onSelect={handleConnectMetamask}
-            />
-          </Box>
-        </StyledWalletsWrapper>
-      </ModalContent>
-      <ModalActions>
-        <StyledBox>
-          <Button onClick={onDismiss} variant="contained">
-            Cancel
-          </Button>
-        </StyledBox>
-      </ModalActions>
-    </Modal>
-  );
+  return <CustomModal isOpen={isOpen} content={ModalContent} />;
 };
 
 const StyledModalTitle = styled(Typography)(({ theme }) => ({
@@ -73,8 +81,10 @@ const StyledModalTitle = styled(Typography)(({ theme }) => ({
 }));
 
 const StyledBox = styled(Box)(({ theme }) => ({
-  justifyContent: "center",
-  alignContent: "center",
+  display: "flex",
+  gap: "10px",
+  justifyContent: "flex-end",
+  margin: "20px",
 }));
 
 const StyledWalletsWrapper = styled.div`
