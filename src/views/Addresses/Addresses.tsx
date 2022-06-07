@@ -1,15 +1,10 @@
 import React, { useCallback } from "react";
-import { Container } from "react-neu";
-
+import { Box, Container, styled, Typography } from "@mui/material";
+import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import Page from "components/Page";
 import PageHeader from "components/PageHeader";
 import AddressButton from "components/AddressButton";
-import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
-import Typography from "@mui/material/Typography";
-
-import Box from "@mui/material/Box";
 import BuyUBQButtons from "components/BuyUBQButtons";
-
 import { UBQ, AvailableFarms, Tokens } from "farms/AvailableFarms";
 
 const Addresses: React.FC = () => {
@@ -39,7 +34,7 @@ const Addresses: React.FC = () => {
   return (
     <Page>
       <PageHeader icon={<AlternateEmailIcon sx={{ fontSize: "96px" }} />} title={"Addresses"} subtitle={"Official Addresses"} />
-      <Container size="md">
+      <StyledContainer>
         <Typography variant="h4">Token Addresses</Typography>
 
         <AddressButton name="UBQ" address={UBQ} shinobi={false} />
@@ -58,9 +53,14 @@ const Addresses: React.FC = () => {
           Community Farm Addresses
         </Typography>
         {CommunityFarmAddresses}
-      </Container>
+      </StyledContainer>
     </Page>
   );
 };
+
+const StyledContainer = styled(Container)(({ theme }) => ({
+  width: "50%",
+  minWidth: "400px",
+}));
 
 export default React.memo(Addresses);
