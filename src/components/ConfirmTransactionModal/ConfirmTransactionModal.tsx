@@ -1,15 +1,16 @@
 import React, { useMemo } from "react";
-import { Modal, ModalContent, ModalProps } from "react-neu";
-import styled from "styled-components";
+import CustomModal from "components/CustomModal";
 import { useWallet } from "use-wallet";
+import styled from "styled-components";
 
 declare const window: any;
 
-interface CustomModalProps extends ModalProps {
+interface ConfirmTransactionModalProps {
+  isOpen: boolean;
   message?: string;
 }
 
-const ConfirmTransactionModal: React.FC<CustomModalProps> = ({ isOpen, message }) => {
+const ConfirmTransactionModal: React.FC<ConfirmTransactionModalProps> = ({ isOpen, message }) => {
   const { connector } = useWallet();
 
   if (message === undefined || message === "") {
@@ -30,14 +31,16 @@ const ConfirmTransactionModal: React.FC<CustomModalProps> = ({ isOpen, message }
     }
   }, [connector, injectedLogo]);
 
-  return (
-    <Modal isOpen={isOpen}>
-      <ModalContent>
+  const ContentMemo = useMemo(() => {
+    return (
+      <>
         {WalletLogo}
         <StyledText>{message}</StyledText>
-      </ModalContent>
-    </Modal>
-  );
+      </>
+    );
+  }, [message, WalletLogo]);
+
+  return <CustomModal isOpen={isOpen} content={ContentMemo} />;
 };
 
 const StyledText = styled.div`
