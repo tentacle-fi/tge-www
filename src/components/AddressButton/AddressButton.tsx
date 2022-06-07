@@ -1,9 +1,8 @@
 import React, { useMemo } from "react";
+import Box from "@mui/material/Box";
 import styled from "styled-components";
 import copy from "assets/copy.svg";
 import confirm from "assets/copy_confirm.svg";
-
-import Box from "@mui/material/Box";
 
 interface AddressButtonProps {
   name?: string;
@@ -99,14 +98,9 @@ interface StyledCopyProps {
 }
 
 const StyledButton = styled.div<StyledButtonProps>`
-  background: ${(props) =>
-    props.darkMode
-      ? "radial-gradient(circle at top,hsl(339deg 17% 15% / 100%),hsl(339deg 20% 10% / 100%))"
-      : "radial-gradient(circle at top,hsl(338deg 20% 96% / 100%),hsl(338deg 20% 94% / 100%))"};
-  box-shadow: ${(props) =>
-    props.darkMode
-      ? "-8px 8px 16px 0 hsl(339deg 20% 5% / 100%), 8px -8px 16px 0px hsl(339deg 100% 100% / 7.5%)"
-      : "-8px 8px 16px 0 hsl(338deg 95% 4% / 15%), 8px -8px 16px 0px hsl(338deg 100% 100% / 100%);"};
+  background: radial-gradient(circle at top, hsl(339deg 17% 15% / 100%), hsl(339deg 20% 10% / 100%));
+  box-shadow: -8px 8px 16px 0 hsl(339deg 20% 5% / 100%), 8px -8px 16px 0px hsl(339deg 100% 100% / 2.5%);
+
   -webkit-align-items: center;
   -webkit-box-align: center;
   -ms-flex-align: center;
@@ -146,7 +140,7 @@ const StyledShinobiButton = styled(StyledButton)`
 `;
 
 const StyledName = styled.span<StyledSpanProps>`
-  color: ${(props) => (props.darkMode ? props.theme.colors.grey[100] : props.theme.colors.grey[400])};
+  color: ${(props) => props.theme.colors.grey[100]};
   margin: 0px 5px 0px 0px;
   min-width: ${(props) => (!props.shinobi ? "85" : "45")}px;
   overflow: hidden;
@@ -163,7 +157,7 @@ const StyledLink = styled.a<StyledLinkProps>`
   white-space: nowrap;
   margin: 0px 5px;
   &:hover {
-    color: ${(props) => (!props.darkMode ? (props.color ? props.theme.colors.grey[400] : "white") : "white")};
+    color: ${(props) => (props.color ? props.theme.colors.grey[400] : "white")};
   }
 `;
 
