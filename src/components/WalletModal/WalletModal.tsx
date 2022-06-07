@@ -1,19 +1,12 @@
 import React, { useCallback, useState, useMemo } from "react";
-
+import { Box, Button, Grid } from "@mui/material";
 import BigNumber from "bignumber.js";
 import { useWallet } from "use-wallet";
-import numeral from "numeral";
-
-import { Modal, ModalActions, ModalContent, ModalProps, ModalTitle } from "react-neu";
-
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-
-import FancyValue from "components/FancyValue";
 import useBalances from "hooks/useBalances";
+import numeral from "numeral";
+import { Modal, ModalActions, ModalContent, ModalProps, ModalTitle } from "react-neu";
+import FancyValue from "components/FancyValue";
 import { addTokenToWallet } from "metamask.js";
-
 import { Tokens } from "farms/AvailableFarms";
 
 const WalletModal: React.FC<ModalProps> = ({ isOpen, onDismiss }) => {
