@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import Box from "@mui/material/Box";
-import styled from "styled-components";
+import { styled } from "@mui/material/styles";
 import copy from "assets/copy.svg";
 import confirm from "assets/copy_confirm.svg";
 
@@ -77,120 +77,113 @@ const AddressButton: React.FC<AddressButtonProps> = ({ name, address, shinobi, s
 
 interface StyledButtonProps {
   to?: string;
-  darkMode?: boolean;
   shinobi?: boolean;
 }
 
 interface StyledSpanProps {
-  darkMode?: boolean;
   shinobi?: boolean;
 }
 
 interface StyledLinkProps {
-  darkMode?: boolean;
   color?: string;
   overflow?: boolean;
 }
 
 interface StyledCopyProps {
-  darkMode?: boolean;
   shinobi?: boolean;
 }
 
-const StyledButton = styled.div<StyledButtonProps>`
-  background: radial-gradient(circle at top, hsl(339deg 17% 15% / 100%), hsl(339deg 20% 10% / 100%));
-  box-shadow: -8px 8px 16px 0 hsl(339deg 20% 5% / 100%), 8px -8px 16px 0px hsl(339deg 100% 100% / 2.5%);
+const StyledButton = styled("div")<StyledButtonProps>(({ shinobi }) => ({
+  background: "radial-gradient(circle at top, hsl(339deg 17% 15% / 100%), hsl(339deg 20% 10% / 100%))",
+  boxShadow: "-8px 8px 16px 0 hsl(339deg 20% 5% / 100%), 8px -8px 16px 0px hsl(339deg 100% 100% / 2.5%)",
 
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  border: 0;
-  border-radius: 28px;
-  box-sizing: border-box;
-  color: hsl(339deg 89% 49% / 100%);
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  font-size: 16px;
-  font-weight: 700;
-  height: 48px;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  margin: 0;
-  outline: none;
-  padding-left: 24px;
-  padding-right: 24px;
-  white-space: nowrap;
-  line-height: 50px;
-  min-width: 48px;
-  width: ${(props) => (!props.shinobi ? "-webkit-fill-available" : null)};
-`;
+  "-webkit-align-items": "center",
+  "-webkit-box-align": "center",
+  "-ms-flex-align": "center",
+  alignItems: "center",
+  border: 0,
+  borderRadius: "28px",
+  boxSizing: "border-box",
+  color: "hsl(339deg 89% 49% / 100%)",
+  display: "flex",
+  fontSize: "16px",
+  fontWeight: 700,
+  height: "48px",
+  "-webkit-box-pack": "center",
+  "-webkit-justify-content": "center",
+  "-ms-flex-pack": "center",
+  justifyContent: "center",
+  margin: 0,
+  outline: "none",
+  paddingLeft: "24px",
+  paddingRight: "24px",
+  whiteSpace: "nowrap",
+  lineHeight: "50px",
+  minWidth: "48px",
+  width: !shinobi ? "-webkit-fill-available" : "",
+}));
 
-const StyledShinobiButton = styled(StyledButton)`
-  border-radius: 9px;
-  color: #ffffff;
-  background: radial-gradient(174.47% 188.91% at 1.84% 10%, rgb(255, 0, 122) 0%, rgb(6 44 97) 80%), rgb(237, 238, 242);
-  min-width: 152px;
-  padding-left: 10px;
-  padding-right: 10px;
-`;
+const StyledShinobiButton = styled(StyledButton)({
+  borderRadius: "9px",
+  color: "#ffffff",
+  background: "radial-gradient(174.47% 188.91% at 1.84% 10%, rgb(255, 0, 122) 0%, rgb(6 44 97) 80%), rgb(237, 238, 242)",
+  minWidth: "152px",
+  paddingLeft: "10px",
+  paddingRight: "10px",
+});
 
-const StyledName = styled.span<StyledSpanProps>`
-  color: ${(props) => props.theme.colors.grey[100]};
-  margin: 0px 5px 0px 0px;
-  min-width: ${(props) => (!props.shinobi ? "85" : "45")}px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
+const StyledName = styled("div")<StyledSpanProps>(({ theme, shinobi }) => ({
+  color: theme.palette.grey[100],
+  margin: "0px 5px 0px 0px",
+  minWidth: `${!shinobi ? "85" : "45"}px`,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+}));
 
-const StyledLink = styled.a<StyledLinkProps>`
-  cursor: pointer;
-  color: ${(props) => (props.color ? props.color : "white")};
-  overflow: ${(props) => (props.overflow ? "inherit" : "hidden")};
-  text-decoration: none;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  margin: 0px 5px;
-  &:hover {
-    color: ${(props) => (props.color ? props.theme.colors.grey[400] : "white")};
-  }
-`;
+const StyledLink = styled("a")<StyledLinkProps>(({ theme, color, overflow }) => ({
+  cursor: "pointer",
+  color: color ? color : "white",
+  overflow: overflow ? "inherit" : "hidden",
+  textDecoration: "none",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+  margin: "0px 5px",
+  "&:hover": {
+    color: color ? theme.palette.grey[400] : "white",
+  },
+}));
 
-const StyledSpan = styled.span`
-  display: flex;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
+const StyledSpan = styled("span")({
+  display: "flex",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+});
 
-const StyledCopy = styled.span<StyledCopyProps>`
-  cursor: pointer;
-  mask-image: url(${copy});
-  -webkit-mask-image: url(${copy});
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: 12px;
-  background-color: #fff;
-  width: ${(props) => (!props.shinobi ? "32" : "50")}px;
-  margin: 20px 0px 16px 5px;
-  &:hover {
-    opacity: 0.6;
-  }
-  &:active {
-    -webkit-mask-image: url(${confirm});
-    mask-image: url(${confirm});
-    opacity: 1;
-  }
-`;
+const StyledCopy = styled("span")<StyledCopyProps>(({ shinobi }) => ({
+  cursor: "pointer",
+  maskImage: `url(${copy})`,
+  "-webkit-mask-image": `url(${copy})`,
+  "-webkit-mask-repeat": "no-repeat",
+  "-webkit-mask-size": "12px",
+  backgroundColor: "#fff",
+  width: `${!shinobi ? "32" : "50"}px`,
+  margin: "20px 0px 16px 5px",
+  "&:hover": {
+    opacity: 0.6,
+  },
+  "&:active": {
+    "-webkit-mask-image": `url(${confirm})`,
+    maskImage: `url(${confirm})`,
+    opacity: 1,
+  },
+}));
 
-const AddressStart = styled.span`
-  display: inline-block;
-  width: calc(50% + 22px);
-  text-overflow: ellipsis;
-`;
+const AddressStart = styled("span")({
+  display: "inline-block",
+  width: "calc(50% + 22px)",
+  textOverflow: "ellipsis",
+});
 
 export default React.memo(AddressButton);
