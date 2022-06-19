@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React from "react";
 import Page from "components/Page";
 import PageHeader from "components/PageHeader";
 import Box from "@mui/material/Box";
@@ -13,62 +13,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import Tooltip from "@mui/material/Tooltip";
 import Donate from "components/Donate";
-import { Button, Grid, styled } from "@mui/material";
-import useUbiq from "hooks/useUbiq";
-
-const xIndex = 0;
-const yIndex = 1;
-
-const colorPalette = ["red", "blue", "black", "orange", "purple", "pink", "teal", "gray"];
-
-const defaultActiveColor = colorPalette[0];
-
-const StubbedContractEvents = [
-  {
-    type: "event",
-    events: [
-      {
-        paint: {
-          address: "0x000",
-          pixel: [0, 1],
-          color: "red",
-        },
-      },
-    ],
-  },
-  {
-    type: "event",
-    events: [
-      {
-        paint: {
-          address: "0x111",
-          pixel: [3, 3],
-          color: "blue",
-        },
-      },
-    ],
-  },
-  {
-    type: "event",
-    events: [
-      {
-        paint: {
-          address: "0x222",
-          pixel: [5, 1],
-          color: "orange",
-        },
-      },
-    ],
-  },
-];
-
-// canvas dimensions (pixels)
-const canvasHeight = 200;
-const canvasWidth = 200;
-const canvasGridPadding = 10;
-const canvasGridSize = 40;
-const canvasBorderWidth = 0.5;
-const canvasOffsetDimension = canvasGridSize + canvasGridPadding + canvasBorderWidth; // used to calculate which grid square is clicked
+import Konvas from "components/Konvas";
 
 interface TimelinePhaseProps {
   title: string;
@@ -100,73 +45,6 @@ const TimelinePhase: React.FC<TimelinePhaseProps> = ({ title, desc, complete = f
   );
 };
 
-const PaintingCanvas: React.FC = () => {
-  const colors = colorPalette;
-  const canvasRef = useRef(null);
-  const [activeColor, setActiveColor] = useState(defaultActiveColor);
-  const [selectedGridCoordinates, setSelectedGridCoordinates] = useState<Array<number> | undefined>();
-  const { BlockNum } = useUbiq();
-
-  const handleColorPick = useCallback((e: any) => {
-    setActiveColor(e.innerHTML);
-  }, []);
-
-  const handleSquareSelection = useCallback((e: any) => {
-    const canvas: any = canvasRef.current;
-    if (canvas === null) return;
-    const cursorPosition = calculateCursorPosition(canvas, e);
-    const gridLocationClicked: any = calculateGridSquare(cursorPosition, canvasOffsetDimension);
-    console.log(`setting selected square: ${gridLocationClicked}`);
-    setSelectedGridCoordinates(gridLocationClicked);
-  }, []);
-
-  const handleUserPaintAPixel = useCallback(() => {
-    if (selectedGridCoordinates === undefined) return;
-    paintAPixel(selectedGridCoordinates, canvasRef.current, activeColor);
-  }, [activeColor, selectedGridCoordinates]);
-
-  // Processes the smart contract events on each block update and paints the canvas accordingly
-  useEffect(() => {
-    const canvas: any = canvasRef.current;
-    if (canvas === null) return;
-    const context = canvas.getContext("2d");
-
-    if (context) {
-      console.log("got canvas", canvas);
-      drawGridLines(context);
-      processContractData(context);
-    }
-  }, [BlockNum]);
-
-  const colorGrid = colors.map((item, index) => {
-    return (
-      <>
-        <Button onClick={(e) => handleColorPick(e.target)}>
-          <Grid sx={{ border: "1px solid white", width: "100px", height: "100px", backgroundColor: item }} item>
-            {item}
-            {activeColor === item ? "*" : ""}
-          </Grid>
-        </Button>
-      </>
-    );
-  });
-
-  return (
-    <>
-      <Typography>Pick a color</Typography>
-      <Grid container direction="row" sx={{ width: "500px" }}>
-        {colorGrid}
-      </Grid>
-
-      <Typography>HTML Canvas</Typography>
-      <StyledCanvas onClick={(e) => handleSquareSelection(e)} ref={canvasRef} width={canvasWidth + 20} height={canvasHeight + 20}></StyledCanvas>
-      <Button onClick={handleUserPaintAPixel} disabled={selectedGridCoordinates === undefined ? true : false} variant="contained">
-        Paint!
-      </Button>
-    </>
-  );
-};
-
 const Home: React.FC = () => {
   return (
     <Page>
@@ -174,7 +52,8 @@ const Home: React.FC = () => {
       <Introduction />
       <RoadmapTimeline />
       <Donate />
-      <PaintingCanvas />
+      <Typography>Konva Kanvas</Typography>
+      <Konvas />
     </Page>
   );
 };
@@ -207,92 +86,92 @@ function RoadmapTimeline() {
   );
 }
 
-const StyledCanvas = styled("canvas")(({ theme }) => ({
-  background: "red",
-}));
+// const StyledCanvas = styled("canvas")(({ theme }) => ({
+//   background: "red",
+// }));
 
 //
 // Helper Functions
 //
 
 // calculates the coordinates of the cursor in the supplied canvas
-const calculateCursorPosition = (canvas: any, event: any) => {
-  const rect = canvas.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-  return [x, y];
-};
+// const calculateCursorPosition = (canvas: any, event: any) => {
+//   const rect = canvas.getBoundingClientRect();
+//   const x = event.clientX - rect.left;
+//   const y = event.clientY - rect.top;
+//   return [x, y];
+// };
 
 // based on the coordinates and gridSizing, this returns the column and row which was clicked
-const calculateGridSquare = (coordinates: any, gridSize: number) => {
-  let rowClicked = 0;
-  let columnClicked = 0;
-  const humanReadableGridIncrementor = 1; // Offsets the calculated grid by +1 so 0,0 is actually 1,1 which is more friendly for humans
+// const calculateGridSquare = (coordinates: any, gridSize: number) => {
+//   let rowClicked = 0;
+//   let columnClicked = 0;
+//   const humanReadableGridIncrementor = 1; // Offsets the calculated grid by +1 so 0,0 is actually 1,1 which is more friendly for humans
 
-  columnClicked = Math.floor(coordinates[0] / gridSize) + humanReadableGridIncrementor;
-  rowClicked = Math.floor(coordinates[1] / gridSize) + humanReadableGridIncrementor;
+//   columnClicked = Math.floor(coordinates[0] / gridSize) + humanReadableGridIncrementor;
+//   rowClicked = Math.floor(coordinates[1] / gridSize) + humanReadableGridIncrementor;
 
-  console.log(`coords: ${coordinates} row: ${rowClicked} column: ${columnClicked}`);
-  return [rowClicked, columnClicked];
-};
+//   console.log(`coords: ${coordinates} row: ${rowClicked} column: ${columnClicked}`);
+//   return [rowClicked, columnClicked];
+// };
 
-const drawGridLines = (context: any) => {
-  for (let x = 0; x <= canvasWidth; x += canvasGridSize) {
-    context.moveTo(canvasBorderWidth + x + canvasGridPadding, canvasGridPadding);
-    context.lineTo(canvasBorderWidth + x + canvasGridPadding, canvasHeight + canvasGridPadding);
-  }
+// const drawGridLines = (context: any) => {
+//   for (let x = 0; x <= canvasWidth; x += canvasGridSize) {
+//     context.moveTo(canvasBorderWidth + x + canvasGridPadding, canvasGridPadding);
+//     context.lineTo(canvasBorderWidth + x + canvasGridPadding, canvasHeight + canvasGridPadding);
+//   }
 
-  for (let x = 0; x <= canvasHeight; x += canvasGridSize) {
-    context.moveTo(canvasGridPadding, canvasBorderWidth + x + canvasGridPadding);
-    context.lineTo(canvasWidth + canvasGridPadding, canvasBorderWidth + x + canvasGridPadding);
-  }
-  context.strokeStyle = "black";
-  context.stroke();
-};
+//   for (let x = 0; x <= canvasHeight; x += canvasGridSize) {
+//     context.moveTo(canvasGridPadding, canvasBorderWidth + x + canvasGridPadding);
+//     context.lineTo(canvasWidth + canvasGridPadding, canvasBorderWidth + x + canvasGridPadding);
+//   }
+//   context.strokeStyle = "black";
+//   context.stroke();
+// };
 
-const fillSquare = (gridLocationClicked: any, context: any, color: string) => {
-  const fillParams = [
-    (gridLocationClicked[yIndex] - 1) * canvasGridSize + canvasGridPadding,
-    (gridLocationClicked[xIndex] - 1) * canvasGridSize + canvasGridPadding,
-    canvasGridSize,
-    canvasGridSize,
-  ];
-  context.fillStyle = color;
-  context.fillRect(...fillParams);
-};
+// const fillSquare = (gridLocationClicked: any, context: any, color: string) => {
+//   const fillParams = [
+//     (gridLocationClicked[yIndex] - 1) * canvasGridSize + canvasGridPadding,
+//     (gridLocationClicked[xIndex] - 1) * canvasGridSize + canvasGridPadding,
+//     canvasGridSize,
+//     canvasGridSize,
+//   ];
+//   context.fillStyle = color;
+//   context.fillRect(...fillParams);
+// };
 
-const processContractData = (context: any) => {
-  for (const events of StubbedContractEvents) {
-    // not confusing at all, self documenting code
-    for (const event of events.events) {
-      console.log(
-        `processing individual event: ${JSON.stringify(event.paint)} from: ${event.paint.address} pixel: ${event.paint.pixel} color: ${
-          event.paint.color
-        }`
-      );
+// const processContractData = (context: any) => {
+//   for (const events of StubbedContractEvents) {
+//     // not confusing at all, self documenting code
+//     for (const event of events.events) {
+//       console.log(
+//         `processing individual event: ${JSON.stringify(event.paint)} from: ${event.paint.address} pixel: ${event.paint.pixel} color: ${
+//           event.paint.color
+//         }`
+//       );
 
-      fillSquare(event.paint.pixel, context, event.paint.color);
-    }
-  }
-};
+//       fillSquare(event.paint.pixel, context, event.paint.color);
+//     }
+//   }
+// };
 
-const paintAPixel = (pixelCoordinates: Array<number>, context: any, color: string) => {
-  console.log("preparing to paint pixel: ", pixelCoordinates, color);
+// const paintAPixel = (pixelCoordinates: Array<number>, context: any, color: string) => {
+//   console.log("preparing to paint pixel: ", pixelCoordinates, color);
 
-  const newTransaction = {
-    type: "event",
-    events: [
-      {
-        paint: {
-          address: "0xABCD",
-          pixel: pixelCoordinates,
-          color: color,
-        },
-      },
-    ],
-  };
+//   const newTransaction = {
+//     type: "event",
+//     events: [
+//       {
+//         paint: {
+//           address: "0xABCD",
+//           pixel: pixelCoordinates,
+//           color: color,
+//         },
+//       },
+//     ],
+//   };
 
-  StubbedContractEvents.push(newTransaction);
-};
+//   StubbedContractEvents.push(newTransaction);
+// };
 
 export default React.memo(Home);
