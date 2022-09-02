@@ -15,7 +15,7 @@ const Nav: React.FC = () => {
       </SLink>
 
       <SLink href="/addresses">Addresses</SLink>
-      <SLink href="/vote">Voting</SLink>
+      <SLink href="/governance">Governance</SLink>
       <SLink external href="https://twitter.com/TentacleFinance">
         Twitter
       </SLink>
@@ -47,4 +47,4 @@ const StyledNav = styled("nav")({
   },
 });
 
-export default Nav;
+export default React.memo(Nav);

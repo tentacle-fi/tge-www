@@ -24,6 +24,7 @@ import TxDownload from "views/TxDownload";
 
 import { JsonLoaderProvider } from "contexts/JsonLoader";
 import VotingContractDeployment from "views/VotingContractDeployment";
+import Custom404 from "./views/Custom404";
 
 const App: React.FC = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -58,6 +59,7 @@ const App: React.FC = () => {
                 </JsonLoaderProvider>
               }
             />
+            <Route path="*" element={<Custom404 />} />
           </Routes>
         </div>
       </Providers>

@@ -1,6 +1,5 @@
+import { Container } from "@mui/material";
 import React, { useMemo } from "react";
-
-import { Container, Spacer, useTheme } from "react-neu";
 import styled from "styled-components";
 
 interface PageHeaderProps {
@@ -26,8 +25,6 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   subtitleWeight,
   subtitleOpacity,
 }) => {
-  const { darkMode } = useTheme();
-
   const DisplaySubtitle = useMemo(() => {
     if (subtitle) {
       return (
@@ -39,12 +36,11 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   }, [subtitle, subtitleOpacity, subtitleWeight]);
 
   return (
-    <Container size="sm">
+    <Container>
       <StyledPageHeader subtitle={subtitle}>
         <StyledIcon>{icon}</StyledIcon>
-        <Spacer size="sm" />
         <div className={className}>
-          <StyledTitle titleSize={titleSize} titleWeight={titleWeight} titleColor={titleColor} darkMode={darkMode}>
+          <StyledTitle titleSize={titleSize} titleWeight={titleWeight} titleColor={titleColor}>
             {title}
           </StyledTitle>
         </div>
@@ -55,7 +51,6 @@ const PageHeader: React.FC<PageHeaderProps> = ({
 };
 
 interface StyledTitleProps {
-  darkMode?: boolean;
   titleSize?: number;
   titleColor?: string;
   titleWeight?: string;
@@ -90,8 +85,7 @@ const StyledIcon = styled.span.attrs({
 `;
 
 const StyledTitle = styled.h1<StyledTitleProps>`
-  color: ${(props) =>
-    props.titleColor ? props.titleColor : !props.darkMode && props.titleSize && props.titleSize > 60 ? "hsl(339deg 20% 70%)" : props.theme.textColor};
+  color: ${(props) => (props.titleColor ? props.titleColor : props.theme.textColor)};
   font-size: ${(props) => (props.titleSize ? props.titleSize.toString() : "36")}px;
   font-weight: ${(props) => (props.titleWeight ? props.titleWeight : "700")};
   margin: 0;
@@ -109,4 +103,4 @@ const StyledSubtitle = styled.h3<StyledSubtitleProps>`
   text-align: center;
 `;
 
-export default PageHeader;
+export default React.memo(PageHeader);

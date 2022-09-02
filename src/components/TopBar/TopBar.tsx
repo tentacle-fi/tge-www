@@ -96,4 +96,4 @@ const StyledMenuButton = styled.button`
   }
 `;
 
-export default TopBar;
+export default React.memo(TopBar);

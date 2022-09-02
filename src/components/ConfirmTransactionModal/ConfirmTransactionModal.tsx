@@ -1,47 +1,46 @@
 import React, { useMemo } from "react";
-import { Modal, ModalContent, ModalProps, Spacer } from "react-neu";
-import styled from "styled-components";
+import CustomModal from "components/CustomModal";
 import { useWallet } from "use-wallet";
-
-import metamaskLogo from "assets/metamask-fox.svg";
-import sparrowLogo from "assets/sparrow.png";
+import styled from "styled-components";
 
 declare const window: any;
 
-interface CustomModalProps extends ModalProps {
+interface ConfirmTransactionModalProps {
+  isOpen: boolean;
   message?: string;
 }
 
-const ConfirmTransactionModal: React.FC<CustomModalProps> = ({ isOpen, message }) => {
+const ConfirmTransactionModal: React.FC<ConfirmTransactionModalProps> = ({ isOpen, message }) => {
   const { connector } = useWallet();
 
   if (message === undefined || message === "") {
     message = "Confirm transaction in wallet.";
   }
 
-  let injectedLogo = metamaskLogo;
+  let injectedLogo = "metamask-fox.svg";
 
   if (window.ethereum) {
     if (window.ethereum.isSparrow) {
-      injectedLogo = sparrowLogo;
+      injectedLogo = "sparrow.png";
     }
   }
 
   const WalletLogo = useMemo(() => {
     if (connector === "injected") {
-      return <img src={injectedLogo} alt="Wallet Logo" style={{ height: 96, width: 96, alignSelf: "center" }} />;
+      return <img src={`/wallets/${injectedLogo}`} alt="Wallet Logo" style={{ height: 110, margin: 20, alignSelf: "center" }} />;
     }
   }, [connector, injectedLogo]);
 
-  return (
-    <Modal isOpen={isOpen}>
-      <ModalContent>
+  const ContentMemo = useMemo(() => {
+    return (
+      <>
         {WalletLogo}
-        <Spacer />
         <StyledText>{message}</StyledText>
-      </ModalContent>
-    </Modal>
-  );
+      </>
+    );
+  }, [message, WalletLogo]);
+
+  return <CustomModal isOpen={isOpen} content={ContentMemo} />;
 };
 
 const StyledText = styled.div`
@@ -49,4 +48,4 @@ const StyledText = styled.div`
   text-align: center;
 `;
 
-export default ConfirmTransactionModal;
+export default React.memo(ConfirmTransactionModal);

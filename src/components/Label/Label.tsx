@@ -17,4 +17,4 @@ const StyledLabel = styled.div<LabelProps>`
   text-align: ${(props) => (props.labelPosition ? props.labelPosition : "left")};
 `;
 
-export default Label;
+export default React.memo(Label);

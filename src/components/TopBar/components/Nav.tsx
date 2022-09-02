@@ -47,4 +47,4 @@ const StyledRouterLink = styled(NavLink)`
   }
 `;
 
-export default Nav;
+export default React.memo(Nav);

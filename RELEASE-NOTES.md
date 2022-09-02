@@ -155,4 +155,8 @@
 
 ## Unreleased
 
+- #87, fixed footer vote link to governance
+- #54, removes duplicate logos to utilize the hosted images only (/tokens/*.png)
+- #49, custom 404 page
+
 nothing at this time

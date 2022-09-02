@@ -59,4 +59,4 @@ const StyledFooterInner = styled.div`
   max-width: ${(props) => props.theme.siteWidth}px;
 `;
 
-export default Footer;
+export default React.memo(Footer);
